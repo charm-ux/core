@@ -1,0 +1,108 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="palette"></div>
+  </body>
+
+  <style>
+    .palette {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .palette > div {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 8px;
+      gap: 16px;
+    }
+
+    .palette > div > span {
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+    }
+  </style>
+
+  <script>
+    const colors = [
+      {
+        0: 'hsl(0,0%,100%)',
+        50: 'hsl(150,30%,96.08%)',
+        100: 'hsl(152.31,31.71%,91.96%)',
+        200: 'hsl(148.8,30.86%,84.12%)',
+        300: 'hsl(150.81,30.08%,75.88%)',
+        400: 'hsl(149.39,30.06%,68.04%)',
+        500: 'hsl(150,30.39%,60%)',
+        600: 'hsl(149.6,30.61%,48.04%)',
+        700: 'hsl(150,30.43%,36.08%)',
+        800: 'hsl(149.19,30.08%,24.12%)',
+        900: 'hsl(151.58,31.15%,11.96%)',
+        950: 'hsl(146.67,29.03%,6.08%)',
+        1000: 'hsl(0,0%,0%)',
+      },
+      {
+        0: 'hsl(0,0%,100%)',
+        50: 'hsl(0,76%,95.1%)',
+        100: 'hsl(0,72.55%,90%)',
+        200: 'hsl(0,73.2%,80.98%)',
+        300: 'hsl(0,74.15%,71.18%)',
+        400: 'hsl(0,73.2%,61.96%)',
+        500: 'hsl(0,73.66%,52.35%)',
+        600: 'hsl(0,73.83%,41.96%)',
+        700: 'hsl(0,73.42%,30.98%)',
+        800: 'hsl(0,73.83%,20.98%)',
+        900: 'hsl(0,72.55%,10%)',
+        950: 'hsl(0,76%,4.9%)',
+        1000: 'hsl(0,0%,0%)',
+      },
+      {
+        0: 'hsl(0,0%,100%)',
+        50: 'hsl(223.33,90%,96.08%)',
+        100: 'hsl(202.5,88.89%,92.94%)',
+        200: 'hsl(183.69,91.55%,86.08%)',
+        300: 'hsl(163.92,90.65%,79.02%)',
+        400: 'hsl(143.54,91.55%,72.16%)',
+        500: 'hsl(123.68,91.06%,64.9%)',
+        600: 'hsl(143.68,91.02%,51.96%)',
+        700: 'hsl(163.76,90.95%,39.02%)',
+        800: 'hsl(183.97,90.98%,26.08%)',
+        900: 'hsl(203,90.91%,12.94%)',
+        950: 'hsl(222.86,93.33%,5.88%)',
+        1000: 'hsl(0,0%,0%)',
+      },
+      {
+        0: 'hsl(0,0%,100%)',
+        50: 'hsl(123.33,90%,96.08%)',
+        100: 'hsl(123.75,88.89%,92.94%)',
+        200: 'hsl(123.69,91.55%,86.08%)',
+        300: 'hsl(123.71,90.65%,79.02%)',
+        400: 'hsl(123.69,91.55%,72.16%)',
+        500: 'hsl(123.68,91.06%,64.9%)',
+        600: 'hsl(123.77,91.02%,51.96%)',
+        700: 'hsl(123.65,90.95%,39.02%)',
+        800: 'hsl(123.47,90.98%,26.08%)',
+        900: 'hsl(124,90.91%,12.94%)',
+        950: 'hsl(124.29,93.33%,5.88%)',
+        1000: 'hsl(0,0%,0%)',
+      },
+    ];
+
+    const palette = document.querySelector('.palette');
+
+    colors.forEach(variations => {
+      const variationElement = document.createElement('div');
+      for (const color in variations) {
+        const colorElement = document.createElement('span');
+        colorElement.style.backgroundColor = variations[color];
+        colorElement.textContent = color;
+        variationElement.appendChild(colorElement);
+      }
+      palette.appendChild(variationElement);
+    });
+  </script>
+</html>

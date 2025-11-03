@@ -1,0 +1,346 @@
+{
+  "name": "docsite",
+  "entries": [
+    {
+      "date": "Thu, 09 Oct 2025 16:28:42 GMT",
+      "version": "0.0.2-alpha.12",
+      "tag": "docsite_v0.0.2-alpha.12",
+      "comments": {
+        "none": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "1ccf53dc0838e2ee2e61714b796e844e1ec1bb9b",
+            "comment": "[Docsite] Added scoping and extending doc pages"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "5b6e695037695e0c2cf522b893d8ddcd8ac3fc6b",
+            "comment": "[Release] v0.1.0-alpha.69"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 30 Sep 2025 20:57:27 GMT",
+      "version": "0.0.2-alpha.12",
+      "tag": "docsite_v0.0.2-alpha.12",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-mihatch@microsoft.com",
+            "package": "docsite",
+            "commit": "84131081e5b078873ddb7500e9e25d0a6642df2b",
+            "comment": "[Docsite] Fix markdown table formatting issues for property types"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 04 Sep 2025 17:43:38 GMT",
+      "version": "0.0.2-alpha.11",
+      "tag": "docsite_v0.0.2-alpha.11",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "4d5c3a93ddfc7109222f543c209aabd9d7d563c1",
+            "comment": "[Packaging] Updating types and configs to pass lint/build"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "e8aa5d9901de8630a424a326e3dfddf97518ba92",
+            "comment": "[Documentation] Added usage page to docsite"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "4fc4ecc6e8d75a019c59f642f0a69f2db7e734f4",
+            "comment": "[Documentation] Updating the docs site with theming documentation"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "1866c1b1f1eb20cda333d98b2b682b35b5345d28",
+            "comment": "[Documentation] Added a getting started/installation page"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 26 Aug 2025 19:34:08 GMT",
+      "version": "0.0.2-alpha.10",
+      "tag": "docsite_v0.0.2-alpha.10",
+      "comments": {
+        "none": [
+          {
+            "author": "v-mihatch@microsoft.com",
+            "package": "docsite",
+            "commit": "f6554942500f51e8886ffc4ab3fa2b20c39c1176",
+            "comment": "[Release] v0.1.0-alpha.64"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 13 Aug 2025 15:30:15 GMT",
+      "version": "0.0.2-alpha.10",
+      "tag": "docsite_v0.0.2-alpha.10",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "4e99fabfb5f32fbac17b5675cdb8bb5f827a9e89",
+            "comment": "[Release] v0.1.0-alpha.63"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 28 Jul 2025 16:29:50 GMT",
+      "version": "0.0.2-alpha.9",
+      "tag": "docsite_v0.0.2-alpha.9",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "2bc857e9969043051c5fff28b29be0f86e0dd640",
+            "comment": "[Release] v0.1.0-alpha.62"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Fri, 25 Jul 2025 19:02:04 GMT",
+      "version": "0.0.2-alpha.8",
+      "tag": "docsite_v0.0.2-alpha.8",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-michaelgut@microsoft.com",
+            "package": "docsite",
+            "commit": "933fe3fc41cd932c044a6a9558fee13ea5ce1378",
+            "comment": "[Release] 0.1.0-alpha.61"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 21 Jul 2025 22:31:12 GMT",
+      "version": "0.0.2-alpha.7",
+      "tag": "docsite_v0.0.2-alpha.7",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "f96812f2ae856fb6c7704b0155a551ed34e26349",
+            "comment": "[Release] 0.1.0-alpha.60"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 15 Jul 2025 16:27:40 GMT",
+      "version": "0.0.2-alpha.6",
+      "tag": "docsite_v0.0.2-alpha.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "v-michaelgut@microsoft.com",
+            "package": "docsite",
+            "commit": "573b296fd6776e167b91065c5fa4ab512d4eebcd",
+            "comment": "[Release] CHARM Core v0.1.0-alpha.59"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 26 Jun 2025 16:39:26 GMT",
+      "version": "0.0.2-alpha.5",
+      "tag": "docsite_v0.0.2-alpha.5",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "db216abcf5476a25c534db3e6507eaf7fbf8712e",
+            "comment": "Update CEM"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 12 Jun 2025 21:49:01 GMT",
+      "version": "0.0.2-alpha.4",
+      "tag": "docsite_v0.0.2-alpha.4",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "de7c069de38594d5a1bdcc034a3e55aa21f85b86",
+            "comment": "dont need docsite in changelog"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 29 May 2025 18:17:45 GMT",
+      "version": "0.0.2-alpha.3",
+      "tag": "docsite_v0.0.2-alpha.3",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-michaelgut@microsoft.com",
+            "package": "docsite",
+            "commit": "549dbff1db5da196971eee791c343bf5b9ce4ee0",
+            "comment": "[Release] 0.1.0-alpha.54"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 28 May 2025 17:27:59 GMT",
+      "version": "0.0.2-alpha.2",
+      "tag": "docsite_v0.0.2-alpha.2",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "427744ad8a7972cb5624ee42e02b8f304c582eef",
+            "comment": "[Tabs, Tab, Tab Panel] Update docs for beta"
+          },
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "61589d2f8e3d308d13928c0046380d0906636648",
+            "comment": "[Docs] Upgrade code-bubble dependency"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 09 Apr 2025 20:55:03 GMT",
+      "version": "0.0.2-alpha.1",
+      "tag": "docsite_v0.0.2-alpha.1",
+      "comments": {
+        "prerelease": [
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "26ff2607f8907fbabc094815b8a8be449d6d0d7d",
+            "comment": "[Docs] Added the release state of the component to component page in docs site"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "26ff2607f8907fbabc094815b8a8be449d6d0d7d",
+            "comment": "[Demo] Updated demo package to implement changes to accordion and menu core components"
+          },
+          {
+            "author": "v-nbamford@microsoft.com",
+            "package": "docsite",
+            "commit": "26ff2607f8907fbabc094815b8a8be449d6d0d7d",
+            "comment": "[Docs] Updated Astro and Starlight versions for docs site"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 20 Nov 2024 18:12:10 GMT",
+      "version": "0.0.2-alpha.0",
+      "tag": "docsite_v0.0.2-alpha.0",
+      "comments": {
+        "none": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "cf582c2c30217bf436412ae153724840340bf143",
+            "comment": "[CodeBubble] Upgraded to prevent content from being cut off"
+          },
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "ec2a990c05257b4f3d156edef059908bd0f4d1c3",
+            "comment": "[Docs] Removed copied changelogs from source control"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 03 Oct 2024 21:23:35 GMT",
+      "version": "0.0.2-alpha.0",
+      "tag": "docsite_v0.0.2-alpha.0",
+      "comments": {
+        "none": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "18b33314c883b235fd48fe563d10b201d965faf7",
+            "comment": "[Docs] Upgraded Code Bubble to v1.0.0"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 17 Sep 2024 16:01:10 GMT",
+      "version": "0.0.2-alpha.0",
+      "tag": "docsite_v0.0.2-alpha.0",
+      "comments": {
+        "none": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "b262989a1f4c5e942d22f8d746d17fc161f1aec9",
+            "comment": "[Docs] Fixed global styles that were affecting component examples"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 29 Aug 2024 15:54:31 GMT",
+      "version": "0.0.2-alpha.0",
+      "tag": "docsite_v0.0.2-alpha.0",
+      "comments": {
+        "none": [
+          {
+            "author": "v-gloper@microsoft.com",
+            "package": "docsite",
+            "commit": "b667ef0c297e47684cb5675ce530d5f02208c53c",
+            "comment": "Added Version management documentation"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 07 Mar 2024 21:29:59 GMT",
+      "version": "0.0.2-alpha.0",
+      "tag": "docsite_v0.0.2-alpha.0",
+      "comments": {
+        "none": [
+          {
+            "author": "burtonsmith@microsoft.com",
+            "package": "docsite",
+            "commit": "2af15b1395029debe22e7d39b4addcd6e29a2621",
+            "comment": "add public and private apis to docs"
+          }
+        ],
+        "minor": [
+          {
+            "author": "v-grfisher@microsoft.com",
+            "package": "docsite",
+            "commit": "144c355356539acb75ff38cad98c9c762810e5a3",
+            "comment": "Add initial docsite"
+          }
+        ]
+      }
+    }
+  ]
+}

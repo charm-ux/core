@@ -1,0 +1,34 @@
+# ButtonGroupOverflow
+
+The ButtonGroupOverflow component extends Overflow to work with nested button groups.
+
+## Slots
+
+- Start slot is used for static content before the collapsible content
+- Default slot is used for collapsible content
+- End slot is used for static content after the collapsible content
+
+## Examples
+
+<code-bubble>
+
+```html
+<ch-button-group>
+  <ch-button--group-overflow>
+    <ch-button-group>
+      <ch-button>Home</ch-button>
+      <ch-button>About</ch-button>
+      <ch-button>Contact</ch-button>
+      <ch-button-group>
+    </ch-button-group>
+    <ch-button-group>
+      <ch-button>Account</ch-button>
+      <ch-button>Settings</ch-button>
+      <ch-button>Help</ch-button>
+      <ch-button-group>
+    </ch-button-group>
+  </ch-button--group-overflow>
+<ch-button-group>
+```
+
+</code-bubble>

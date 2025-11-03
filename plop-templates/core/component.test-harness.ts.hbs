@@ -1,0 +1,53 @@
+import { expect } from '@open-wc/testing';
+import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import type { Core{{pascalCase name}} } from './index.js';
+
+export class Core{{pascalCase name}}Tests<T extends Core{{pascalCase name}}> extends CharmElementTests<T> {
+  public constructor() {
+    super();
+
+    this.updateTests({
+      {{camelCase name}}: {
+        description: '{{camelCase name}}',
+        tests: {
+          // attribute and property tests
+          properties: {
+            description: 'properties',
+            tests: {
+              sampleTestName: {
+                description: 'This is a sample test.',
+                test: async () => {
+                  expect(true).to.be.true;
+                },
+              },
+            },
+          },
+
+          // method tests
+          methods: {
+            description: 'methods',
+            tests: {},
+          },
+
+          // slot tests
+          slots: {
+            description: 'slots',
+            tests: {},
+          },
+
+          // event tests
+          events: {
+            description: 'events',
+            tests: {},
+          },
+
+          // interaction tests
+          interactions: {
+            description: 'interactions',
+            tests: {},
+          },
+        },
+      },
+    });
+  }
+}

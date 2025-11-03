@@ -1,0 +1,37 @@
+# Breadcrumb
+
+A breadcrumb component is a navigational tool displayed on a website or a web application, showing the hierarchical path to the current page. It enables users to understand their location within the site's structure and easily navigate back to previous pages.
+
+## Basic breadcrumb
+
+Use `<ch-breadcrumb-items>` as links within the opening and closing of the `<ch-breadcrumb>` element.
+
+<code-bubble>
+
+```html
+<ch-breadcrumb>
+  <ch-breadcrumb-item>Catalog</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Clothing</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Men's</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Suits</ch-breadcrumb-item>
+</ch-breadcrumb>
+```
+
+</code-bubble>
+
+## Accessibility
+
+Use the `label` attribute within the `<ch-breadcrumb>` element to set the `aria-label` on the breadcrumb. This will not be shown on the screen, but it will be announced by screen readers and other assistive devices to provide more context for users.
+
+<code-bubble>
+
+```html
+<ch-breadcrumb label="Breadcrumb for catalogs">
+  <ch-breadcrumb-item>Catalog</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Clothing</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Men's</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Suits</ch-breadcrumb-item>
+</ch-breadcrumb>
+```
+
+</code-bubble>

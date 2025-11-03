@@ -1,0 +1,86 @@
+# Skeleton
+
+A skeleton is used as a visual placeholder for an element while it is in a loading state and usually presents itself as a simplified wireframe-like version of the UI it is representing.
+
+## Basic skeleton
+
+<code-bubble>
+
+```html
+<ch-skeleton></ch-skeleton>
+```
+
+</code-bubble>
+
+## Animation
+
+You can specify the animation style of the Skeleton: `wave`, `pulse`, or none.
+
+<code-bubble>
+
+```html
+<p>Wave Animation</p>
+<div style="box-sizing: border-box;">
+  <ch-skeleton style="width: 50px; height: 50px;" shape="circle" animation="wave"></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="wave"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="wave"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="wave"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="
+      border-radius: 4px;
+      width: 75px;
+      height: 30px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    "
+    shape="rect"
+    animation="wave"
+  ></ch-skeleton>
+</div>
+
+<p>Pulse Animation</p>
+
+<div style="box-sizing: border-box;">
+  <ch-skeleton style="width: 50px; height: 50px;" shape="circle" animation="pulse"></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="pulse"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="pulse"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="border-radius: 4px; margin-top: 10px; height: 10px;"
+    shape="rect"
+    animation="pulse"
+  ></ch-skeleton>
+  <ch-skeleton
+    style="
+      border-radius: 4px;
+      width: 75px;
+      height: 30px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    "
+    shape="rect"
+    animation="pulse"
+  ></ch-skeleton>
+</div>
+```
+
+</code-bubble>

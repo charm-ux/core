@@ -1,0 +1,62 @@
+import { Meta, StoryObj } from '@storybook/web-components';
+import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import './index.js';
+import type { CoreSwitch } from './index.js';
+
+const { args, argTypes, events, template } = getWcStorybookHelpers('ch-switch');
+
+const meta: Meta<CoreSwitch> = {
+  title: 'Core/Switch',
+  component: 'ch-switch',
+  args,
+  argTypes,
+  parameters: {
+    actions: {
+      handles: events,
+    },
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<CoreSwitch & typeof args>;
+
+export const Default: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'My label',
+    'checked-message-slot': 'On',
+    'unchecked-message-slot': 'Off',
+  },
+};
+
+export const disabled: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'My label',
+    disabled: true,
+    'checked-message-slot': 'On',
+    'unchecked-message-slot': 'Off',
+  },
+};
+
+export const required: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'My label',
+    required: true,
+    'help-text': 'Help text',
+    'checked-message-slot': 'On',
+    'unchecked-message-slot': 'Off',
+  },
+};
+
+export const labelPosition: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'My label',
+    'label-position': 'start',
+    'checked-message-slot': 'On',
+    'unchecked-message-slot': 'Off',
+  },
+};

@@ -1,0 +1,18 @@
+export const keys = {
+  ArrowDown: 'ArrowDown',
+  ArrowLeft: 'ArrowLeft',
+  ArrowRight: 'ArrowRight',
+  ArrowUp: 'ArrowUp',
+  Backspace: 'Backspace',
+  Delete: 'Delete',
+  Enter: 'Enter',
+  Escape: 'Escape',
+  Home: 'Home',
+  End: 'End',
+  PageDown: 'PageDown',
+  PageUp: 'PageUp',
+  Shift: 'Shift',
+  Space: ' ',
+  Tab: 'Tab',
+  F2: 'F2',
+};

@@ -1,0 +1,143 @@
+# Button Group
+
+Button groups can be used to group related buttons into sections.
+
+## Basic button group
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group>
+  <ch-button>Left</ch-button>
+  <ch-button>Center</ch-button>
+  <ch-button>Right</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Accessibility with label
+
+Use the `label` attribute to provide an accessible name for the button group, which will be used as the `aria-label`.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group label="Text formatting options">
+  <ch-button>Bold</ch-button>
+  <ch-button>Italic</ch-button>
+  <ch-button>Underline</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Dropdowns in button groups
+
+Dropdowns can be placed inside button groups as long as the trigger is a `<ch-button>` element.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group>
+  <ch-button>Button</ch-button>
+  <ch-button>Button</ch-button>
+  <ch-menu style="--popup-z-index: 1;">
+    <ch-button slot="trigger">Dropdown</ch-button>
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Vertical button groups
+
+The `vertical` attribute can be used to create a vertical button group.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group vertical>
+  <ch-button>Button</ch-button>
+  <ch-button>Button</ch-button>
+  <ch-menu style="--popup-z-index: 1;">
+    <ch-button slot="trigger">Dropdown</ch-button>
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Split button groups
+
+The `split` attribute can be used to create a split button group, styled as a single button with multiple actions.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group split>
+  <ch-button>Button</ch-button>
+  <ch-button>Button</ch-button>
+  <ch-menu style="--popup-z-index: 1;">
+    <ch-button slot="trigger">Dropdown</ch-button>
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Toolbar button groups
+
+The `toolbar` attribute can be used to cause the button group to function as a toolbar. This adds the `toolbar` ARIA role and enables keyboard navigation between buttons using arrow keys, with a roving tab index pattern for improved accessibility.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group toolbar>
+  <ch-button>Button</ch-button>
+  <ch-button>Button</ch-button>
+  <ch-button>Button</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Button group with select
+
+The `select` attribute can be set to "single" to allow the selection of a single button, or "multiple" for multiple selections. When buttons in a button group with the `select` attribute are toggled, the button group emits a `change` event.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group select="single" style="--button-pressed-bg-color: var(--button-active-bg-color);">
+  <ch-button>Select Single</ch-button>
+  <ch-button>Select Single</ch-button>
+  <ch-button>Select Single</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group
+  select="multiple"
+  style="--button-pressed-bg-color: var(--button-active-bg-color);"
+>
+  <ch-button>Select Multiple</ch-button>
+  <ch-button>Select Multiple</ch-button>
+  <ch-button>Select Multiple</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
