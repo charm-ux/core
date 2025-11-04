@@ -10,7 +10,7 @@
 **/dist
 **.d.ts
 storybook-static*
-packages/docsite/public/charm
+packages/docs/public/charm
 kitchen-sink.ts
 public
 token-helpers.js

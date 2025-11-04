@@ -13,8 +13,8 @@
 pipeline-*.yaml
 .astro
 storybook-static*
-packages/docsite/public/charm
-packages/docsite/src/content/docs/reference
-packages/docsite/src/content/docs/changelog
+packages/docs/public/charm
+packages/docs/src/content/docs/reference
+packages/docs/src/content/docs/changelog
 packages/**/kitchen-sink.ts
 packages/**/token-helpers.js

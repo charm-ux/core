@@ -2176,7 +2176,9 @@
               }
             }
           ],
-          "modulePath": "src/components/accordion/accordion.ts"
+          "modulePath": "src/components/accordion/accordion.ts",
+          "cssParts": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -3093,7 +3095,8 @@
               }
             }
           ],
-          "modulePath": "src/components/avatar/avatar.ts"
+          "modulePath": "src/components/avatar/avatar.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -3267,7 +3270,8 @@
               }
             }
           ],
-          "modulePath": "src/components/badge/badge.ts"
+          "modulePath": "src/components/badge/badge.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -3998,7 +4002,9 @@
               }
             }
           ],
-          "modulePath": "src/components/breadcrumb/breadcrumb.ts"
+          "modulePath": "src/components/breadcrumb/breadcrumb.ts",
+          "cssProperties": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -4821,7 +4827,8 @@
               }
             }
           ],
-          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts"
+          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -5218,7 +5225,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/button-group/button-group.ts"
+          "modulePath": "src/components/button-group/button-group.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -6398,7 +6406,8 @@
               }
             }
           ],
-          "modulePath": "src/components/card/card.ts"
+          "modulePath": "src/components/card/card.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -9270,7 +9279,9 @@
               }
             }
           ],
-          "modulePath": "src/components/divider/divider.ts"
+          "modulePath": "src/components/divider/divider.ts",
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -9533,7 +9544,10 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/icon/icon.ts"
+          "modulePath": "src/components/icon/icon.ts",
+          "cssProperties": [],
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -11471,7 +11485,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-group/menu-group.ts"
+          "modulePath": "src/components/menu-group/menu-group.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -12115,7 +12130,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-item/menu-item.ts"
+          "modulePath": "src/components/menu-item/menu-item.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -13426,7 +13442,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/overflow/overflow.ts"
+          "modulePath": "src/components/overflow/overflow.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -14873,7 +14890,8 @@
               }
             }
           ],
-          "modulePath": "src/components/progress-bar/progress-bar.ts"
+          "modulePath": "src/components/progress-bar/progress-bar.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -17426,7 +17444,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/radio/radio.ts"
+          "modulePath": "src/components/radio/radio.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -17737,7 +17756,10 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/scoped-styles/scoped-styles.ts"
+          "modulePath": "src/components/scoped-styles/scoped-styles.ts",
+          "cssProperties": [],
+          "cssParts": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -19305,7 +19327,9 @@
               }
             }
           ],
-          "modulePath": "src/components/skeleton/skeleton.ts"
+          "modulePath": "src/components/skeleton/skeleton.ts",
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -19567,7 +19591,8 @@
               }
             }
           ],
-          "modulePath": "src/components/spinner/spinner.ts"
+          "modulePath": "src/components/spinner/spinner.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -21254,7 +21279,8 @@
               }
             }
           ],
-          "modulePath": "src/components/tab-panel/tab-panel.ts"
+          "modulePath": "src/components/tab-panel/tab-panel.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -21554,7 +21580,8 @@
               }
             }
           ],
-          "modulePath": "src/components/tab/tab.ts"
+          "modulePath": "src/components/tab/tab.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -22008,7 +22035,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/tabs/tabs.ts"
+          "modulePath": "src/components/tabs/tabs.ts",
+          "cssStates": []
         }
       ],
       "exports": [

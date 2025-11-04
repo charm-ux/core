@@ -1,172 +1,247 @@
-# Introduction
+# Charm UX
 
-CHARM - Coherence + HARMony Core components
+A modern, accessible, and customizable web component library built with Lit. Charm provides a comprehensive set of headless UI components and theming utilities to help you build beautiful, performant design systems.
 
-## Getting Started
+## ✨ Features
 
-Choose the steps between macOS/Linux or Windows to get started.
+- **🎨 Fully Themable** - Built-in theming system with design token support
+- **♿ Accessible by Default** - WCAG compliant components with proper ARIA attributes
+- **🚀 Framework Agnostic** - Works with React, Vue, Angular, or vanilla JavaScript
+- **📦 Tree-Shakeable** - Import only what you need
+- **⚡ Built with Lit** - Leverages the power of modern web standards
+- **🎯 Type-Safe** - Full TypeScript support
+- **🧪 Well Tested** - Comprehensive test coverage
 
-##### macOS/Linux
+## 📦 Packages
 
-1. Get new PAT in ADO for `charm-pilot` (`https://dev.azure.com/charm-pilot/_usersSettings/tokens`)
-   1. make sure to add `Read` access to `Packaging`
+This monorepo contains the following packages:
 
-1. Base64 Encode PAT
+- **[@charm-ux/core](./packages/core)** - Core component library
+- **[@charm-ux/theming](./packages/theming)** - Theme generation and design token utilities
+- **[docs](./packages/docs)** - Documentation and component showcase
 
-   ```bash
-   node -e "require('readline') .createInterface({input:process.stdin,output:process.stdout,historySize:0}) .question('PAT> ',p => { b64=Buffer.from(p.trim()).toString('base64');console.log(b64);process.exit(); })"
-   ```
+## 🚀 Quick Start
 
-1. Place base64 encoded PAT in your root `~/.npmrc` file
-
-   ```bash
-   ; begin auth token
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/registry/:username=[ENTER_ANY_VALUE_BUT_NOT_AN_EMPTY_STRING]
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/registry/:_password=[BASE64_ENCODED_PERSONAL_ACCESS_TOKEN]
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/registry/:email=npm requires email to be set but doesn't use the value
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/:username=[ANY_VALUE_BUT_NOT_AN_EMPTY_STRING]
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/:_password=[BASE64_ENCODED_PERSONAL_ACCESS_TOKEN]
-   //pkgs.dev.azure.com/charm-pilot/charm-pilot/_packaging/charm-feed/npm/:email=npm requires email to be set but doesn't use the value
-   ; end auth token
-   ```
-
-1. [install pnpm](https://pnpm.io/installation#using-npm) at **latest version 8**.
-   - We use version 8 to avoid issues where version 9 updates the lockfile format.
-
-   - To install globally:
-     1. Using NPM > `npm install -g pnpm@latest-9`
-     2. Using Homebrew (mac) > `brew install pnpm@9`
-
-1. run `pnpm i`
-
-##### Windows
-
-1. Run `vsts-npm-auth` to get an Azure Artifacts token added to your user-level `.npmrc` file
-
-> **NOTE**
-> If you run into this error:
-> `vsts-npm-auth: The term 'vsts-npm-auth' is not recognized as a name of a cmdlet, function, script file, or executable program.`
->
-> You need to install `vsts-npm-auth`.
-> `npm i -g vsts-npm-auth`
->
-> Then, to generate an .npmrc file, run
-> `vsts-npm-auth -config .npmrc`
-
-2. [install pnpm](https://pnpm.io/installation#using-npm)
-
-3. run `pnpm i`
-
-### Node version
-
-We recommend using [nvm](https://github.com/nvm-sh/nvm) or [nvm-for-windows](https://github.com/coreybutler/nvm-windows) to manage node versions.
-
-You will need node version >=18.14.1 in order to run the docsite package. If you have NVM installed, you can run `nvm use`, which will automatically switch to the node version specified in this project's .nvmrc file.
-
-## Storybook
-
-You can run [storybook](https://storybook.js.org/docs/web-components/get-started/why-storybook) for each package using the `dev` command - ie
+### Installation
 
 ```bash
-# runs the storybook for the web components in the core project
-pnpm dev:core
-
-# runs the storybook for the web components in the demo project
-pnpm dev:demo
-
-# runs the storybook for the react components in the demo project
-pnpm dev:react
+npm install @charm-ux/core @charm-ux/theming
 ```
-
-## Docsite
-
-You can run the docsite by running `pnpm dev:docsite`
-
-## Testing
-
-There are a variety of tests that can be run within each project - all tests, a single component tests, and performance test.
-
-### Running All Tests
-
-To run all tests for each project, you can run:
 
 ```bash
-pnpm test:core
-
-# or
-
-pnpm test:demo
+pnpm add @charm-ux/core @charm-ux/theming
 ```
-
-### Single Component Tests
-
-To run a single test, run the "single" test script followed by the name of the test you want to run:
 
 ```bash
-pnpm test:core-single scope
-
-# or
-
-pnpm test:demo-single button
+yarn add @charm-ux/core @charm-ux/theming
 ```
 
-### Performance Tests
+### Basic Usage
 
-Performance tests are run independently from other tests.
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="module">
+      import '@charm-ux/core/components/button/button.js';
+    </script>
+  </head>
+  <body>
+    <charm-button>Click Me</charm-button>
+  </body>
+</html>
+```
+
+### Using with JavaScript
+
+```javascript
+import { CharmButton } from '@charm-ux/core';
+
+// Components are automatically registered
+const button = document.createElement('charm-button');
+button.textContent = 'Click Me';
+document.body.appendChild(button);
+```
+
+### Using with TypeScript
+
+```typescript
+import { CharmButton } from '@charm-ux/core';
+
+const button = new CharmButton();
+button.textContent = 'Click Me';
+button.variant = 'primary';
+document.body.appendChild(button);
+```
+
+## 🧩 Available Components
+
+Charm includes a comprehensive set of UI components:
+
+### Layout & Structure
+
+- **Card** - Flexible content containers
+- **Divider** - Visual content separators
+- **Push Pane** - Sliding panel component
+
+### Navigation
+
+- **Breadcrumb** & **Breadcrumb Item** - Navigation hierarchy
+- **Menu**, **Menu Group**, & **Menu Item** - Contextual menus
+- **Tabs**, **Tab**, & **Tab Panel** - Tabbed interfaces
+
+### Form Controls
+
+- **Button** & **Button Group** - Action triggers
+- **Checkbox** - Boolean selection
+- **Input** - Text input fields
+- **Radio** & **Radio Group** - Single selection
+- **Select** - Dropdown selection
+- **Switch** - Toggle control
+- **Text Area** - Multi-line text input
+
+### Feedback
+
+- **Alert** - Contextual messages
+- **Dialog** - Modal dialogs
+- **Progress Bar** - Progress indicators
+- **Spinner** - Loading indicators
+- **Tooltip** - Contextual hints
+- **Skeleton** - Loading placeholders
+
+### Data Display
+
+- **Avatar** - User avatars
+- **Badge** - Labels and tags
+- **Icon** - Iconography
+
+### Utilities
+
+- **Accordion** & **Accordion Item** - Collapsible content
+- **Disclosure** - Show/hide content
+- **Overflow** - Handle content overflow
+- **Popup** - Positioned floating elements
+- **Scoped Styles** - Component-specific styling
+
+## 🎨 Theming
+
+Charm uses a powerful theming system based on design tokens:
+
+```typescript
+import { generateTheme } from '@charm-ux/theming';
+
+const theme = generateTheme({
+  primaryColor: '#0066cc',
+  secondaryColor: '#6c757d',
+  // ... more token configurations
+});
+
+// Apply theme to your application
+document.documentElement.style.cssText = theme;
+```
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Node.js 20 or higher
+- pnpm 8 or higher
+
+### Setup
+
+1. Clone the repository:
 
 ```bash
-pnpm test:core-performance
+git clone https://github.com/charm-ux/core.git
+cd core
 ```
 
-## Contribute
-
-Please see our [CONTRIBUTING.md](./CONTRIBUTING.md) guide for detailed information on how to contribute to this project.
-
-### Version management
-
-Charm uses Changesets for version management and release automation. When making changes that should be published, you need to add a changeset:
+2. Install dependencies:
 
 ```bash
-pnpm changeset
+pnpm install
 ```
 
-For detailed instructions on when and how to add changesets, see the [CONTRIBUTING.md](./CONTRIBUTING.md#creating-a-changeset) file.
-
-> **Note:** We also maintain beachball for legacy support. You can learn more about how to use beachball in our version-management wiki page.
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
-
-### Changelog
-
-#### Using Changesets (Recommended)
-
-For new changes, use Changesets to document your changes:
+3. Build all packages:
 
 ```bash
-pnpm changeset
+pnpm run build
 ```
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md#creating-a-changeset) for detailed instructions.
-
-#### Using Beachball (Legacy)
-
-Adding items to the changelog using beachball:
+### Development Commands
 
 ```bash
-pnpm beachball:change
+# Start development server for core components
+pnpm run dev:core
+
+# Start documentation site
+pnpm run dev:docs
+
+# Run tests
+pnpm run test
+
+# Run tests in watch mode
+pnpm run test:watch
+
+# Lint code
+pnpm run lint
+
+# Format code
+pnpm run prettier
+
+# Generate a new component
+pnpm run generate
 ```
 
-Add a [descriptive change message](https://charmcore.z5.web.core.windows.net/docsite/contributing/version-management/#describing-changes).
+## 🧪 Testing
 
-### Releasing
+Charm has comprehensive test coverage using Web Test Runner and Playwright:
 
-1. Make sure everything on the `main` branch is ready for release (changelog, version number bump, etc) and pull down next.
-1. Create a branch from "main" for release preparation: `git checkout -b alias/release-prep-alpha19`
-1. Run the following: `pnpm beachball:bump`, inspect `/packages/core/CHANGELOG.md` and make sure it looks correct.
-   This will automatically bump the version in `package.json` so it doesn't need to be manually edited.
-1. Make a PR onto "main" with your preparations.
-1. Once your PR is merged, visit the [Release pipeline](https://dev.azure.com/charm-pilot/charm-pilot/_build?definitionId=2) and click "Run Pipeline" and run on the main branch.
+```bash
+# Run all tests
+pnpm run test
+
+# Run core package tests only
+pnpm run test:core
+
+# Run performance tests
+pnpm run test:core-performance
+
+# Run tests in watch mode
+pnpm run test:watch
+```
+
+## 📖 Documentation
+
+Visit our [documentation site](./packages/docs) for:
+
+- Component API documentation
+- Usage examples
+- Theming guides
+- Accessibility information
+- Migration guides
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details on:
+
+- Development setup
+- Code style guidelines
+- Submitting pull requests
+- Creating changesets
+
+## 📄 License
+
+MIT © [charm-ux](https://github.com/charm-ux)
+
+## 🙏 Acknowledgments
+
+Built with:
+
+- [Lit](https://lit.dev/) - Modern web component framework
+- [Floating UI](https://floating-ui.com/) - Positioning engine
+- [Storybook](https://storybook.js.org/) - Component development
+
+---
+
+**Made with ❤️ by the Charm UX team**

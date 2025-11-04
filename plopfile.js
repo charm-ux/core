@@ -3,7 +3,7 @@
 const PACKAGE_PATHS = {
   core: 'packages/core',
   demo: 'packages/demo',
-  docs: 'packages/docsite',
+  docs: 'packages/docs',
 };
 
 const CORE_PATHS = {

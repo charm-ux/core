@@ -1,8 +1,4 @@
 export default `
-:not(:defined) {
-  visibility: hidden;
-}
-
 *,
 *::before,
 *::after {

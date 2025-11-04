@@ -26,16 +26,19 @@ Thank you for your interest in contributing to Charm! This document provides gui
 ### Running the Development Server
 
 To start the development server for the core package:
+
 ```bash
 pnpm run dev:core
 ```
 
 To start the documentation site:
+
 ```bash
-pnpm run dev:docsite
+pnpm run dev:docs
 ```
 
 To start the demo:
+
 ```bash
 pnpm run dev:demo
 ```
@@ -43,16 +46,19 @@ pnpm run dev:demo
 ### Running Tests
 
 Run all tests:
+
 ```bash
 pnpm run test
 ```
 
 Run tests for the core package only:
+
 ```bash
 pnpm run test:core
 ```
 
 Run tests in watch mode:
+
 ```bash
 pnpm run test:watch
 ```
@@ -60,21 +66,25 @@ pnpm run test:watch
 ### Linting and Formatting
 
 Check for linting errors:
+
 ```bash
 pnpm run lint
 ```
 
 Fix linting errors automatically:
+
 ```bash
 pnpm run lint:fix
 ```
 
 Check code formatting:
+
 ```bash
 pnpm run prettier:check
 ```
 
 Format code:
+
 ```bash
 pnpm run prettier
 ```
@@ -94,6 +104,7 @@ Add a changeset when your changes include:
 - **Documentation updates** - Significant documentation improvements
 
 You **don't** need a changeset for:
+
 - Internal refactoring that doesn't affect the public API
 - Test updates
 - Development tooling changes
@@ -129,7 +140,7 @@ After running `pnpm changeset`, you'll create a file like `.changeset/mighty-bea
 
 ```markdown
 ---
-"@charm-ux/core": minor
+'@charm-ux/core': minor
 ---
 
 Add new tooltip component with customizable positioning and animation options
@@ -141,8 +152,8 @@ If your changes affect multiple packages, select all relevant packages when prom
 
 ```markdown
 ---
-"@charm-ux/core": minor
-"@charm-ux/theming": patch
+'@charm-ux/core': minor
+'@charm-ux/theming': patch
 ---
 
 Add new color tokens and update button component to use them
@@ -151,6 +162,7 @@ Add new color tokens and update button component to use them
 ## Pull Request Process
 
 1. Create a feature branch from `main`:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -158,6 +170,7 @@ Add new color tokens and update button component to use them
 2. Make your changes and add a changeset (if applicable)
 
 3. Ensure all tests pass and code is properly formatted:
+
    ```bash
    pnpm run verify
    pnpm run test
@@ -192,6 +205,7 @@ Releases are automated via GitHub Actions:
 When creating a new component:
 
 1. Use the component generator:
+
    ```bash
    pnpm run generate
    ```

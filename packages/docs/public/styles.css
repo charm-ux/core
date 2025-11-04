@@ -1,0 +1,15 @@
+@media (max-width: 880px) {
+  [data-mobile-menu-expanded] .sidebar-content li {
+    visibility: visible !important;
+  }
+}
+
+@media (min-width: 800px) {
+  .sidebar-content li {
+    visibility: visible !important;
+  }
+}
+
+.sl-markdown-content code-bubble * {
+  margin-top: unset !important;
+}

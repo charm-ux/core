@@ -23,22 +23,22 @@ const preview = {
       },
     },
   },
-  decorators: [
-    withActions,
-    withBrandThemes({
-      themes: {
-        fluent: 'charm-light',
-      },
-      defaultTheme: 'charm-light',
-    }),
-    withThemeByClassName({
-      themes: {
-        'charm-light': 'charm-light',
-        'charm-dark': 'charm-dark',
-      },
-      defaultTheme: 'charm-light',
-    }),
-  ],
+  // decorators: [
+  //   withActions,
+  //   withBrandThemes({
+  //     themes: {
+  //       fluent: 'charm-light',
+  //     },
+  //     defaultTheme: 'charm-light',
+  //   }),
+  //   withThemeByClassName({
+  //     themes: {
+  //       'charm-light': 'charm-light',
+  //       'charm-dark': 'charm-dark',
+  //     },
+  //     defaultTheme: 'charm-light',
+  //   }),
+  // ],
 };
 
 export default preview;

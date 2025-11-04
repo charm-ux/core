@@ -9,7 +9,6 @@ results
 settings.json
 storybook-static*
 packages/demo/custom-elements.json
-packages/docsite/custom-elements.json
+packages/docs/custom-elements.json
 packages/theming/demo/themes
 kitchen-sink.ts
-public
