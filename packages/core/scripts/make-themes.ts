@@ -1,4 +1,4 @@
 import { generateTheme } from '@charm-ux/theming';
-import { charmThemeConfig } from '../dist/theme/charm/theme-config.js';
+import { charmThemeConfig } from '../src/theme/charm/theme-config.ts';
 
 generateTheme(charmThemeConfig);
