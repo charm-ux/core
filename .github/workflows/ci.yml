@@ -79,6 +79,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Run install
+        run: pnpm install
+
+      - name: Run build
+        run: pnpm build
+
       - name: Run linter
         run: pnpm lint
 
@@ -116,6 +122,12 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
+      - name: Run install
+        run: pnpm install
+
+      - name: Run build
+        run: pnpm build
 
       - name: Run tests
         run: pnpm test
