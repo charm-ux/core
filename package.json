@@ -24,7 +24,6 @@
     "build:docs": "pnpm --filter=\"./packages/docs\" run build",
     "build:theming": "pnpm --filter=\"./packages/theming\" run build",
     "build:fresh": "pnpm clean && pnpm i && pnpm build",
-    "ci:package": "pnpm clean && pnpm i --no-frozen-lockfile && pnpm --filter=\"@charm-ux/core\" --filter=\"@charm-ux/theming\" run build",
     "clean": "git clean -fqdx",
     "dev": "pnpm -r run dev",
     "dev:core": "pnpm --filter @charm-ux/core run dev",
