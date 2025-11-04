@@ -21,7 +21,8 @@
     "composed-offset-position": "^0.0.6",
     "lit": "^3.2.1",
     "marked": "^15.0.7",
-    "sharp": "^0.34.0"
+    "sharp": "^0.34.0",
+    "starlight-theme-obsidian": "^0.4.1"
   },
   "devDependencies": {
     "custom-elements-manifest": "^2.1.0",

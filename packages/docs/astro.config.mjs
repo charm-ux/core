@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightThemeObsidian from 'starlight-theme-obsidian';
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,7 +19,16 @@ export default defineConfig({
         // Override the default PageTitle component
         PageTitle: './src/components/ComponentTitle.astro',
       },
-      social: [],
+      social: [
+        {
+          icon: 'github',
+          label: 'GitHub',
+          href: 'https://github.com/charm-ux/core',
+        },
+      ],
+      editLink: {
+        baseUrl: 'https://github.com/charm-ux/core/tree/main/packages/docs',
+      },
       // Proper minimal i18n configuration to avoid errors
       head: [
         {
@@ -100,6 +110,7 @@ export default defineConfig({
           autogenerate: { directory: 'theming' },
         },
       ],
+      plugins: [starlightThemeObsidian()],
     }),
   ],
 });
