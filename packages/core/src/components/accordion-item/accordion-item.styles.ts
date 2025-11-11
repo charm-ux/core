@@ -80,7 +80,7 @@ export default css`
     padding-inline: 0.75rem 1rem;
     padding-block: 0.5rem;
     margin-inline-start: 0;
-    border: var(--accordion-item-border-width, 1px) solid var(--accordion-item-border-color, transparent);
+    border: var(--accordion-item-border-width) solid var(--accordion-item-border-color);
   }
 
   .summary > h1,

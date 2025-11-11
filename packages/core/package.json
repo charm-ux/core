@@ -11,7 +11,7 @@
     "build": "npm run analyze && npm run generate:kitchen-sink && tsc && npm run generate:theme",
     "dev": "run-p analyze:dev storybook:dev",
     "generate:kitchen-sink": "node --disable-warning=ExperimentalWarning ./scripts/make-kitchen-sink.js",
-    "generate:theme": "node --experimental-strip-types --disable-warning=ExperimentalWarning ./scripts/make-themes.ts",
+    "generate:theme": "pnpx tsx ./scripts/make-themes.ts",
     "prepare": "pnpx playwright install-deps",
     "storybook:dev": "storybook dev -p 6006",
     "storybook:build": "cem analyze && storybook build -c .storybook",
@@ -67,7 +67,7 @@
     "sinon": "^17.0.0",
     "storybook": "^10.0.3",
     "storybook-addon-rtl": "^1.0.1",
-    "typescript": "^5.6.3",
+    "typescript": "^5.9.3",
     "vite": "^5.3.4",
     "wc-storybook-helpers": "^2.0.3",
     "web-test-runner-performance": "^0.1.6"

@@ -16,6 +16,7 @@
       "emitDeclarationOnly": true,
       "declaration": true,
       "esModuleInterop": true,
+      "erasableSyntaxOnly": true,
   
       /* Linting */
       "strict": true,
