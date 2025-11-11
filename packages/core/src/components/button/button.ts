@@ -5,7 +5,6 @@ import { property } from 'lit/decorators.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
 import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
-import { type LooseString } from '../../types/string/index.js';
 import { type CharmDismissibleElement } from '../../base/index.js';
 import styles from './button.styles.js';
 
@@ -114,7 +113,7 @@ export class CoreButton extends CharmFocusableElement {
    * Only applies to links.
    */
   @property({ attribute: 'referrerpolicy' })
-  public referrerPolicy: LooseString<
+  public referrerPolicy:
     | 'no-referrer'
     | 'no-referrer-when-downgrade'
     | 'origin'
@@ -123,13 +122,13 @@ export class CoreButton extends CharmFocusableElement {
     | 'strict-origin'
     | 'strict-origin-when-cross-origin'
     | 'unsafe-url'
-  > = 'strict-origin-when-cross-origin';
+    | (string & {}) = 'strict-origin-when-cross-origin';
 
   /**
    * Tells the browser where to open the link. Only used when `href` is set.
    */
   @property()
-  public target?: LooseString<'_blank' | '_parent' | '_self' | '_top'>;
+  public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
   /**
    * Allows a toggling behavior on the component that emits change event if not disabled.

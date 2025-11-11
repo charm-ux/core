@@ -4,7 +4,6 @@ import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
-import { type LooseString } from '../../types/string/index.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { CorePopup } from '../popup/popup.js';
 import CoreIcon from '../icon/icon.js';
@@ -112,7 +111,7 @@ export class CoreMenuItem extends CharmElement {
 
   /** Tells the browser where to open the link. Only used when `href` is set. */
   @property()
-  public target?: LooseString<'_blank' | '_parent' | '_self' | '_top'>;
+  public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
   @state()
   protected focusIndex = 0;

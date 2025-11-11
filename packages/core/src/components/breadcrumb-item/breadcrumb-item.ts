@@ -2,7 +2,6 @@ import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { startContentEndTemplate } from '../../templates/start-content-end.js';
-import { LooseString } from '../../types/index.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './breadcrumb-item.styles.js';
@@ -76,7 +75,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
    * Only applies to links.
    */
   @property({ attribute: 'referrerpolicy' })
-  public referrerPolicy: LooseString<
+  public referrerPolicy:
     | 'no-referrer'
     | 'no-referrer-when-downgrade'
     | 'origin'
@@ -85,13 +84,13 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
     | 'strict-origin'
     | 'strict-origin-when-cross-origin'
     | 'unsafe-url'
-  > = 'strict-origin-when-cross-origin';
+    | (string & {}) = 'strict-origin-when-cross-origin';
 
   /**
    * Tells the browser where to open the link. Only used when `href` is set.
    */
   @property()
-  public target?: LooseString<'_blank' | '_parent' | '_self' | '_top'>;
+  public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
   public static override get dependencies() {
     return [CoreIcon];

@@ -74,6 +74,7 @@ module.exports = {
           { exceptAfterOverload: true, exceptAfterSingleLine: true },
         ],
         '@typescript-eslint/explicit-member-accessibility': 'error',
+        '@typescript-eslint/ban-types': 'off',
       },
     },
     {
