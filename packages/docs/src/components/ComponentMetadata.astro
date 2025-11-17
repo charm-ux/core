@@ -10,7 +10,7 @@ import {
 } from '../utils/doc-templates.ts';
 import { marked } from 'marked';
 import { Tabs, TabItem } from '@astrojs/starlight/components';
-const component = componentFromPath(Astro.url.pathname)
+const component = componentFromPath(Astro.url.pathname);
 const propertiesMarkdown = marked.parse(getPropertiesTemplate(component));
 const methodsMarkdown = marked.parse(getMethodsTemplate(component));
 const slotsMarkdown = marked.parse(getSlotTemplate(component));
@@ -18,6 +18,8 @@ const eventsMarkdown = marked.parse(getEventsTemplate(component));
 const cssPropertiesMarkdown = marked.parse(getCSSPropertiesTemplate(component));
 const cssPartsMarkdown = marked.parse(getCSSPartsTemplate(component));
 ---
+
+<wc-dox tag="ch-accordion"></wc-dox>
 
 <Tabs>
   <TabItem label="Public API">
@@ -33,8 +35,15 @@ const cssPartsMarkdown = marked.parse(getCSSPartsTemplate(component));
   </TabItem>
 </Tabs>
 
-<!-- Add Code Bubbles to examples -->
 <script type="module">
+  import { setWcDoxConfig } from 'wc-dox';
+  import manifest from '../../custom-elements.json';
+  console.log('manifest', manifest);
+  setWcDoxConfig(manifest);
+</script>
+
+<!-- Add Code Bubbles to examples -->
+<!-- <script type="module">
   import { CodeBubble } from 'https://esm.run/code-bubble@1.3.3';
   
   async function fetchLibData(url) {
@@ -98,4 +107,4 @@ const cssPartsMarkdown = marked.parse(getCSSPartsTemplate(component));
       },
     },
   });
-</script>
+</script> -->

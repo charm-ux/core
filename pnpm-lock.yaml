@@ -201,6 +201,9 @@ importers:
       astro:
         specifier: ^5.15.3
         version: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
+      code-bubble:
+        specifier: ^1.3.3
+        version: 1.3.3
       composed-offset-position:
         specifier: ^0.0.6
         version: 0.0.6(@floating-ui/utils@0.2.10)
@@ -214,7 +217,7 @@ importers:
         specifier: ^0.34.0
         version: 0.34.4
       wc-dox:
-        specifier: ^1.3.4
+        specifier: ^1.3.5
         version: 1.3.5
     devDependencies:
       '@wc-toolkit/wctools':
@@ -1852,6 +1855,10 @@ packages:
     resolution:
       { integrity: sha512-DE427ROAphMQzU4ENbliGYrBSYPXF+TtLg9S8vzeA+OF4ZKzoDdzfL8sxuMUGS/lgRhM6j1URSk9ghf7Xo1tyA== }
 
+  '@stackblitz/sdk@1.11.0':
+    resolution:
+      { integrity: sha512-DFQGANNkEZRzFk1/rDP6TcFdM82ycHE+zfl9C/M/jXlH68jiqHWHFMQURLELoD8koxvu/eW5uhg94NSAZlYrUQ== }
+
   '@storybook/addon-a11y@10.0.3':
     resolution:
       { integrity: sha512-nnH8h1+xY9Kx9VZTZgnaNxP22UUxKVhCGBFAklux+pYNGJZABxfAb3mmYhFBLjGiFIpHlrR846yaBzGS9q20GQ== }
@@ -3434,6 +3441,10 @@ packages:
     resolution:
       { integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ== }
     engines: { iojs: '>= 1.0.0', node: '>= 0.12.0' }
+
+  code-bubble@1.3.3:
+    resolution:
+      { integrity: sha512-+4drxWqbzL7bssaLP78DwBVoVi1O3LF6CCit2NWlo1JyfYpv3ryY7v9pmX/HdrZq2lNm1oPrr9rzsPrnWAdjMQ== }
 
   collapse-white-space@2.1.0:
     resolution:
@@ -10723,6 +10734,8 @@ snapshots:
 
   '@sinonjs/text-encoding@0.7.3': {}
 
+  '@stackblitz/sdk@1.11.0': {}
+
   '@storybook/addon-a11y@10.0.3(storybook@10.0.3(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vite@5.4.21(@types/node@24.10.0)(terser@5.44.0)))':
     dependencies:
       '@storybook/global': 5.0.0
@@ -12368,6 +12381,11 @@ snapshots:
       type-is: 1.6.18
 
   co@4.6.0: {}
+
+  code-bubble@1.3.3:
+    dependencies:
+      '@stackblitz/sdk': 1.11.0
+      lit: 3.3.1
 
   collapse-white-space@2.1.0: {}
 

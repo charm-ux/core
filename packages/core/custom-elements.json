@@ -3588,14 +3588,14 @@
               "kind": "field",
               "name": "referrerPolicy",
               "type": {
-                "text": "LooseString<\n    | 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n  >"
+                "text": "| 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n    | (string & {})"
               },
               "privacy": "public",
               "default": "'strict-origin-when-cross-origin'",
               "description": "Defining which referrer is sent when fetching the resource.\nOnly applies to links.",
               "attribute": "referrerpolicy",
               "parsedType": {
-                "text": "LooseString< | 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'\n  >"
+                "text": "'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' | (string & {})"
               }
             },
             {
@@ -3640,7 +3640,7 @@
               "kind": "field",
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "privacy": "public",
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
@@ -3718,13 +3718,13 @@
             {
               "name": "referrerpolicy",
               "type": {
-                "text": "LooseString<\n    | 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n  >"
+                "text": "| 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n    | (string & {})"
               },
               "default": "'strict-origin-when-cross-origin'",
               "description": "Defining which referrer is sent when fetching the resource.\nOnly applies to links.",
               "fieldName": "referrerPolicy",
               "parsedType": {
-                "text": "LooseString< | 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'\n  >"
+                "text": "'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' | (string & {})"
               }
             },
             {
@@ -3739,7 +3739,7 @@
             {
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
               "fieldName": "target"
@@ -5709,14 +5709,14 @@
               "kind": "field",
               "name": "referrerPolicy",
               "type": {
-                "text": "LooseString<\n    | 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n  >"
+                "text": "| 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n    | (string & {})"
               },
               "privacy": "public",
               "default": "'strict-origin-when-cross-origin'",
               "description": "Defining which referrer is sent when fetching the resource.\nOnly applies to links.",
               "attribute": "referrerpolicy",
               "parsedType": {
-                "text": "LooseString< | 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'\n  >"
+                "text": "'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' | (string & {})"
               }
             },
             {
@@ -5767,7 +5767,7 @@
               "kind": "field",
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "privacy": "public",
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
@@ -5984,13 +5984,13 @@
             {
               "name": "referrerpolicy",
               "type": {
-                "text": "LooseString<\n    | 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n  >"
+                "text": "| 'no-referrer'\n    | 'no-referrer-when-downgrade'\n    | 'origin'\n    | 'origin-when-cross-origin'\n    | 'same-origin'\n    | 'strict-origin'\n    | 'strict-origin-when-cross-origin'\n    | 'unsafe-url'\n    | (string & {})"
               },
               "default": "'strict-origin-when-cross-origin'",
               "description": "Defining which referrer is sent when fetching the resource.\nOnly applies to links.",
               "fieldName": "referrerPolicy",
               "parsedType": {
-                "text": "LooseString< | 'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'\n  >"
+                "text": "'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' | (string & {})"
               }
             },
             {
@@ -6004,7 +6004,7 @@
             {
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
               "fieldName": "target"
@@ -10789,7 +10789,7 @@
               "privacy": "public",
               "attribute": "type",
               "parsedType": {
-                "text": "'number' | 'search' | 'date' | 'datetime-local' | 'email' | 'password' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
+                "text": "'number' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
               }
             },
             {
@@ -11161,7 +11161,7 @@
               },
               "fieldName": "type",
               "parsedType": {
-                "text": "'number' | 'search' | 'date' | 'datetime-local' | 'email' | 'password' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
+                "text": "'number' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
               }
             },
             {
@@ -11985,7 +11985,7 @@
               "kind": "field",
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "privacy": "public",
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
@@ -12096,7 +12096,7 @@
             {
               "name": "target",
               "type": {
-                "text": "LooseString<'_blank' | '_parent' | '_self' | '_top'> | undefined"
+                "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
               },
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
               "fieldName": "target"

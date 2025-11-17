@@ -34,14 +34,18 @@ The
 <code-bubble>
 
 ```html
-<ch-card
-  media-slot="<img src='https://via.placeholder.com/100x100' width='100' height='100' alt='image alt text' />"
-  default-slot="Content slot."
-  media-position="bottom"
-  heading-slot="Heading slot."
-  subheading-slot="Subheading slot."
-  footer-slot="Footer slot."
-><div slot=heading"></div></ch-card>
+<ch-card media-position="bottom">
+  <img
+    slot="media"
+    src="https://via.placeholder.com/100x100"
+    width="100"
+    height="100"
+    alt="image alt text"
+  />
+  <div slot="heading">Heading Text</div>
+  <div slot="subheading">Subheading Text</div>
+  <div slot="footer">Footer Text</div>
+</ch-card>
 ```
 
 </code-bubble>

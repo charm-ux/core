@@ -65,7 +65,7 @@ export const StartEndIcon: Story = {
   render: args => template(args),
   args: {
     '--button-content-gap': '8px',
-    'start-slot': `<ch-badge>PDF</-badge>`,
+    'start-slot': `<ch-badge>PDF</ch-badge>`,
     'default-slot': 'quarterly_report.pdf',
     'end-slot': `<span>2.4MB</span>`,
   },
@@ -119,8 +119,8 @@ export const LinkInContext: Story = {
   render: args => html`
     <p>
       Lorem ipsum dolor sit amet,
-      <ch-button href="https://microsoft.com" inline>an example button link</ch-button> consectetur adipiscing elit.
-      Duis consectetur ultricies accumsan.
+      <ch-button href="https://microsoft.com">an example button link</ch-button> consectetur adipiscing elit. Duis
+      consectetur ultricies accumsan.
     </p>
   `,
 };
