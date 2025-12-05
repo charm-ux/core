@@ -42,7 +42,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build packages
         run: pnpm build
@@ -80,7 +80,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Run install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Run build
         run: pnpm build
@@ -124,7 +124,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Run install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
