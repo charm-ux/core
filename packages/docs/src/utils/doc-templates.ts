@@ -1,5 +1,5 @@
 import { getComponentMethods, getComponentProperties } from './cem-utils.ts';
-import type { Component } from './types';
+import type { Component } from './types.js';
 
 export function getPropertiesTemplate(component?: Component) {
   const properties = getComponentProperties(component);

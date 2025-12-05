@@ -1,6 +1,6 @@
-import { cemInheritancePlugin } from "@wc-toolkit/cem-inheritance";
+import { cemInheritancePlugin } from '@wc-toolkit/cem-inheritance';
 import { cemSorterPlugin } from '@wc-toolkit/cem-sorter';
-import { jsDocTagsPlugin } from "@wc-toolkit/jsdoc-tags";
+import { jsDocTagsPlugin } from '@wc-toolkit/jsdoc-tags';
 import { getTsProgram, typeParserPlugin } from '@wc-toolkit/type-parser';
 
 export default {
