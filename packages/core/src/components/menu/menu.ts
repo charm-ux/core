@@ -1,6 +1,6 @@
 import { html } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
-import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CorePopup, PopupPlacement } from '../popup/popup.js';
 import { CoreMenuItem } from '../menu-item/menu-item.js';
 import { CoreMenuGroup } from '../menu-group/menu-group.js';
@@ -80,7 +80,7 @@ export class CoreMenu extends CharmDismissibleElement {
   /** Query for the trigger element */
   protected trigger?: HTMLElement;
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CorePopup];
   }
 
@@ -219,11 +219,18 @@ export class CoreMenu extends CharmDismissibleElement {
               currentItem.expanded = true;
               await this.updateComplete;
             } else {
+              currentItem.click();
               this.requestClose('change');
             }
           }
           keyHandled = true;
         }
+        break;
+      case 'Tab':
+        this.open = false;
+        this.items[this.focusIndex].setAttribute('tabindex', '-1');
+        this.items[0].setAttribute('tabindex', '0');
+        this.focusIndex = 0;
         break;
     }
 

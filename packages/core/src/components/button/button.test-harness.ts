@@ -1,6 +1,7 @@
 import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
+import { project } from '../../utilities/index.js';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { CoreButton } from './index.js';
 
@@ -84,6 +85,62 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.innerHTML = 'Link';
                   await elementUpdated(el);
                   await expect(el.shadowRoot?.querySelector('a')!.getAttribute('name')).to.be.null;
+                },
+              },
+              ariaLabelTransferToShadowDOM: {
+                description: 'should transfer aria-label from light DOM to shadow DOM control',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const el = document.createElement(tag) as CoreButton;
+                  el.setAttribute('aria-label', 'Custom Label');
+                  el.innerHTML = 'Button';
+                  document.body.appendChild(el);
+                  await elementUpdated(el);
+                  const controlElement = el.shadowRoot?.querySelector('.control') as HTMLElement;
+                  expect(controlElement?.getAttribute('aria-label')).to.equal('Custom Label');
+                  el.remove();
+                },
+              },
+              ariaLabelOnButtonElement: {
+                description: 'should apply aria-label to button element',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const el = document.createElement(tag) as CoreButton;
+                  el.setAttribute('aria-label', 'Test Button Label');
+                  el.innerHTML = 'Button';
+                  document.body.appendChild(el);
+                  await elementUpdated(el);
+                  const buttonElement = el.shadowRoot?.querySelector('button') as HTMLElement;
+                  expect(buttonElement?.getAttribute('aria-label')).to.equal('Test Button Label');
+                  el.remove();
+                },
+              },
+              ariaLabelOnLinkElement: {
+                description: 'should apply aria-label to link element',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const el = document.createElement(tag) as CoreButton;
+                  el.href = '#';
+                  el.setAttribute('aria-label', 'Test Link Label');
+                  el.innerHTML = 'Link';
+                  document.body.appendChild(el);
+                  await elementUpdated(el);
+                  const linkElement = el.shadowRoot?.querySelector('a') as HTMLElement;
+                  expect(linkElement?.getAttribute('aria-label')).to.equal('Test Link Label');
+                  el.remove();
+                },
+              },
+              noAriaLabelWhenNotSet: {
+                description: 'should not set aria-label on control when not provided',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const el = document.createElement(tag) as CoreButton;
+                  el.innerHTML = 'Button';
+                  document.body.appendChild(el);
+                  await elementUpdated(el);
+                  const controlElement = el.shadowRoot?.querySelector('.control') as HTMLElement;
+                  expect(controlElement?.getAttribute('aria-label')).to.be.null;
+                  el.remove();
                 },
               },
             },

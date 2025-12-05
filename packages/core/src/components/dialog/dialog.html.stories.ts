@@ -33,8 +33,8 @@ export const Default: Story = {
         html`<span slot="heading">dialog heading</span>
           dialog content
           <div slot="footer">
-            <ch-button hides="dialog1">Cancel</ch-button>
-            <ch-button hides="dialog1">Save</ch-button>
+            <ch-button id="cancel" hides="dialog1">Cancel</ch-button>
+            <ch-button id="save" hides="dialog1">Save</ch-button>
           </div>`
       )} <ch-button shows="dialog1">open dialog</ch-button>`,
   args: {

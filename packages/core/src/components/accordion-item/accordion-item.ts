@@ -1,7 +1,7 @@
 import { html, unsafeStatic } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { CharmDismissibleElement } from '../../base/index.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { startTemplate } from '../../templates/start.js';
 import { endTemplate } from '../../templates/end.js';
 import CoreIcon from '../icon/icon.js';
@@ -103,7 +103,7 @@ export class CoreAccordionItem extends CharmDismissibleElement {
     super();
   }
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

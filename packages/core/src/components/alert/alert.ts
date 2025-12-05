@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { HasSlotController } from '../../controller/slot.js';
-import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './alert.styles.js';
 
@@ -75,7 +75,7 @@ export class CoreAlert extends CharmDismissibleElement {
   protected originalTrigger?: HTMLElement | null;
   protected _politeness: PolitenessType = 'polite';
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

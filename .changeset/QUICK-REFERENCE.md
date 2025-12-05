@@ -21,27 +21,33 @@ pnpm changeset:publish
 ## When to Use Each Version Type
 
 ### Patch (0.0.X)
+
 **Use for:** Bug fixes, minor tweaks, dependency updates that don't affect the API
 
 **Examples:**
+
 - Fix button hover state not working
 - Correct typo in component documentation
 - Update internal dependency versions
 - Performance improvements without API changes
 
 ### Minor (0.X.0)
+
 **Use for:** New features, new components, non-breaking API additions
 
 **Examples:**
+
 - Add new tooltip component
 - Add new `variant` prop to existing button component
 - Add new utility function to exports
 - Deprecate old API (but keep it working)
 
 ### Major (X.0.0)
+
 **Use for:** Breaking changes that require users to update their code
 
 **Examples:**
+
 - Remove previously deprecated API
 - Change component prop names
 - Change default behavior significantly
@@ -96,10 +102,11 @@ When you run `pnpm changeset`, it creates a file like `.changeset/weird-cats-sle
 
 ```markdown
 ---
-"@charm-ux/core": minor
+'@charm-ux/core': minor
 ---
 
 Add tooltip component with customizable positioning options:
+
 - Support for top, bottom, left, right positions
 - Auto-positioning when near viewport edges
 - Customizable offset and padding
@@ -116,6 +123,7 @@ Add tooltip component with customizable positioning options:
 ## Skipping Changeset Requirements
 
 Add one of these labels to your PR to skip the changeset check:
+
 - `no-changeset` - For documentation, tests, or tooling changes
 - `dependencies` - For dependency update PRs
 

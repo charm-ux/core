@@ -35,7 +35,8 @@ export const IconOnly: Story = {
   render: args => template(args),
   args: {
     'icon-only': true,
-    'default-slot': `<ch-icon name="person" label="person"></ch-icon>`,
+    'default-slot': `<ch-icon name="person"></ch-icon>`,
+    'aria-label': 'Person',
   },
 };
 

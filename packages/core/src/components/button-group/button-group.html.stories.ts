@@ -301,7 +301,7 @@ export const ToolbarWithTooltip: Story = {
 
 export const NestedToolbar: Story = {
   render: () => html`
-    <ch-button-group toolbar>
+    <ch-button-group style="width: fit-content" toolbar>
       <ch-button-group>
         <ch-button>First</ch-button>
         <ch-button>Inner</ch-button>

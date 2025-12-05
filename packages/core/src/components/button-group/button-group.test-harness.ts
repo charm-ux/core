@@ -885,6 +885,144 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
               toolbar: true,
             },
           },
+          DirectNestedButtonGroups: {
+            description: 'should propagate toolbar attribute to direct nested button groups when toolbar is set',
+            test: async () => {
+              const el = this.component;
+              const nestedGroups = el.querySelectorAll(project.scope.tagName('button-group'));
+              // Should have toolbar attribute on all nested groups
+              nestedGroups.forEach(group => {
+                if (group !== el) {
+                  expect(group.getAttribute('toolbar')).not.to.be.null;
+                }
+              });
+            },
+            config: {
+              toolbar: true,
+            },
+          },
+          DeeplyNestedButtonGroups: {
+            description: 'should propagate toolbar attribute to deeply nested button groups (multiple levels)',
+            test: async () => {
+              const container = document.createElement('div');
+              const buttonGroupTag = project.scope.tagName('button-group');
+              const buttonTag = project.scope.tagName('button');
+              document.body.appendChild(container);
+              // Create deeply nested structure: toolbar > group > group > button
+              container.innerHTML = `
+                <${buttonGroupTag} toolbar>
+                  <${buttonTag}>Button 1</${buttonTag}>
+                  <${buttonGroupTag}>
+                    <${buttonTag}>Nested Button 1</${buttonTag}>
+                    <${buttonGroupTag}>
+                      <${buttonTag}>Deep Button 1</${buttonTag}>
+                    </${buttonGroupTag}>
+                  </${buttonGroupTag}>
+                </${buttonGroupTag}>
+              `;
+              const rootGroup = container.querySelector(project.scope.tagName('button-group')) as CoreButtonGroup;
+              await elementUpdated(rootGroup);
+              // All nested groups should have toolbar attribute
+              const allNestedGroups = rootGroup.querySelectorAll(project.scope.tagName('button-group'));
+              allNestedGroups.forEach(group => {
+                if (group !== rootGroup) {
+                  expect(group.getAttribute('toolbar')).not.to.be.null;
+                }
+              });
+              document.body.removeChild(container);
+            },
+            config: {},
+          },
+          MixedButtonsAndNestedGroups: {
+            description: 'should apply toolbar to nested groups while also managing buttons when toolbar is set',
+            test: async () => {
+              const container = document.createElement('div');
+              const buttonGroupTag = project.scope.tagName('button-group');
+              const buttonTag = project.scope.tagName('button');
+              document.body.appendChild(container);
+              // Create structure with both buttons and nested groups
+              container.innerHTML = `
+                <${buttonGroupTag} toolbar>
+                  <${buttonTag}>Button 1</${buttonTag}>
+                  <${buttonGroupTag}>
+                    <${buttonTag}>Nested Button 1</${buttonTag}>
+                    <${buttonTag}>Nested Button 2</${buttonTag}>
+                  </${buttonGroupTag}>
+                  <${buttonTag}>Button 2</${buttonTag}>
+                </${buttonGroupTag}>
+              `;
+              const rootGroup = container.querySelector(project.scope.tagName('button-group')) as CoreButtonGroup;
+              await elementUpdated(rootGroup);
+              // Check that nested group has toolbar attribute
+              const nestedGroup = rootGroup.querySelector(project.scope.tagName('button-group'));
+              expect(nestedGroup?.getAttribute('toolbar')).not.to.be.null;
+              // Check that buttons in root group have correct tabindex
+              const buttons = rootGroup.querySelectorAll(project.scope.tagName('button'));
+              expect(buttons[0].getAttribute('tabindex')).to.equal('0'); // First button should be 0
+              document.body.removeChild(container);
+            },
+            config: {},
+          },
+          NestedGroupsWithoutToolbar: {
+            description: 'should not propagate toolbar when parent toolbar is not set',
+            test: async () => {
+              const container = document.createElement('div');
+              const buttonGroupTag = project.scope.tagName('button-group');
+              const buttonTag = project.scope.tagName('button');
+              document.body.appendChild(container);
+              // Create structure without toolbar on parent
+              container.innerHTML = `
+                <${buttonGroupTag}>
+                  <${buttonTag}>Button 1</${buttonTag}>
+                  <${buttonGroupTag}>
+                    <${buttonTag}>Nested Button 1</${buttonTag}>
+                  </${buttonGroupTag}>
+                </${buttonGroupTag}>
+              `;
+              const rootGroup = container.querySelector(project.scope.tagName('button-group')) as CoreButtonGroup;
+              await elementUpdated(rootGroup);
+              // Nested group should not have toolbar attribute
+              const nestedGroup = rootGroup.querySelector(project.scope.tagName('button-group'));
+              expect(nestedGroup?.getAttribute('toolbar')).to.be.null;
+              document.body.removeChild(container);
+            },
+            config: {},
+          },
+          NestedGroupToolbarToggle: {
+            description: 'should add toolbar to nested groups when toolbar attribute is added to parent',
+            test: async () => {
+              const container = document.createElement('div');
+              const buttonGroupTag = project.scope.tagName('button-group');
+              const buttonTag = project.scope.tagName('button');
+              document.body.appendChild(container);
+              // Create structure without toolbar initially
+              container.innerHTML = `
+                <${buttonGroupTag} id="root">
+                  <${buttonTag}>Button 1</${buttonTag}>
+                  <${buttonGroupTag} id="nested">
+                    <${buttonTag}>Nested Button 1</${buttonTag}>
+                  </${buttonGroupTag}>
+                </${buttonGroupTag}>
+              `;
+              const rootGroup = container.querySelector('#root') as CoreButtonGroup;
+              const nestedGroup = container.querySelector('#nested') as CoreButtonGroup;
+              await elementUpdated(rootGroup);
+              // Initially no toolbar
+              expect(nestedGroup.getAttribute('toolbar')).to.be.null;
+              // Add toolbar to parent
+              rootGroup.setAttribute('toolbar', '');
+              await elementUpdated(rootGroup);
+              // Trigger slotchange to initialize slotted elements and propagate toolbar
+              const slot = rootGroup.shadowRoot?.querySelector('slot') as HTMLSlotElement;
+              const slotChangeEvent = new Event('slotchange');
+              slot?.dispatchEvent(slotChangeEvent);
+              await elementUpdated(rootGroup);
+              // Nested group should now have toolbar
+              expect(nestedGroup.getAttribute('toolbar')).not.to.be.null;
+              document.body.removeChild(container);
+            },
+            config: {},
+          },
         },
       },
     });

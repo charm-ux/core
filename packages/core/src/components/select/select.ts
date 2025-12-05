@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import CharmFormControlElement from '../../base/form-control-element/charm-form-control-element.js';
+import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './select.styles.js';
@@ -54,7 +54,7 @@ export class CoreSelect extends CharmFormControlElement {
   @state()
   protected options?: Array<HTMLOptionElement> = [];
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
