@@ -1,8 +1,9 @@
 import { CodeBubble } from 'https://esm.run/code-bubble@1.3.3';
 
 async function fetchLibData(url) {
+  let base;
   try {
-    const base = location.href.includes('localhost') ? '' : document.location.origin + '/docs';
+    base = location.href.includes('localhost') ? '' : document.location.origin + '/docs';
     const response = await fetch(base + url); // Make the request
     return await response.text(); // Extract JSON data
   } catch (error) {
