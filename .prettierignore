@@ -12,6 +12,7 @@
 *.json
 pipeline-*.yaml
 .astro
+pnpm-lock.yaml
 storybook-static*
 packages/docs/public/charm
 packages/docs/src/content/docs/reference

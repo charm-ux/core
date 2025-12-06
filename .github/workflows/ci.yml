@@ -126,6 +126,9 @@ jobs:
       - name: Run install
         run: pnpm install
 
+      - name: Install Playwright Browsers
+        run: pnpm --filter @charm-ux/core exec playwright install --with-deps
+
       - name: Run build
         run: pnpm build
 

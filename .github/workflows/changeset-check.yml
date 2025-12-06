@@ -10,12 +10,12 @@ jobs:
   changeset-check:
     name: Check for Changeset
     runs-on: ubuntu-latest
-    
+
     # Skip this check if the PR has the "no-changeset" label
     if: |
       !contains(github.event.pull_request.labels.*.name, 'no-changeset') &&
       !contains(github.event.pull_request.labels.*.name, 'dependencies')
-    
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
         run: |
           # Check if any changesets exist (excluding README.md and config.json)
           CHANGESET_COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l)
-          
+
           if [ "$CHANGESET_COUNT" -eq 0 ]; then
             echo "❌ No changeset found!"
             echo ""
