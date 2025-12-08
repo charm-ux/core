@@ -249,16 +249,6 @@ export class CoreButton extends CharmFocusableElement {
     }
   }
 
-  public override firstUpdated(): void {
-    super.firstUpdated?.();
-    const ariaLabel = this.getAttribute('aria-label');
-    if (ariaLabel) {
-      this.shadowRoot
-        ?.querySelector<HTMLButtonElement | HTMLAnchorElement>('.control')
-        ?.setAttribute('aria-label', ariaLabel);
-    }
-  }
-
   /** @internal Overrides the click method to delegate to the internal element. */
   public override click(): void {
     super.click();

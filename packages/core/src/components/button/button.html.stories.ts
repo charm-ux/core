@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/web-components';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import { getWcStorybookHelpers } from 'wc-storybook-helpers';
 import './index.js';
@@ -35,8 +35,7 @@ export const IconOnly: Story = {
   render: args => template(args),
   args: {
     'icon-only': true,
-    'default-slot': `<ch-icon name="person"></ch-icon>`,
-    'aria-label': 'Person',
+    'default-slot': `<ch-icon label="person" name="person"></ch-icon>`,
   },
 };
 
