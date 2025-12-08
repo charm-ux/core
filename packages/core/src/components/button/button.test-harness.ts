@@ -1,7 +1,6 @@
 import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { project } from '../../utilities/index.js';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { CoreButton } from './index.js';
 
