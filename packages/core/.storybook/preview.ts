@@ -1,4 +1,4 @@
-import { setCustomElementsManifest } from '@storybook/web-components';
+import { setCustomElementsManifest } from '@storybook/web-components-vite';
 import customElements from '../custom-elements.json';
 import { setStorybookHelpersConfig } from '@wc-toolkit/storybook-helpers';
 import '../dist/themes/charm/selector-theme.css';
@@ -9,7 +9,7 @@ import './types.d.ts';
 setStorybookHelpersConfig({});
 setCustomElementsManifest(customElements);
 
-/** @type { import('@storybook/web-components').Preview } */
+/** @type { import('@storybook/web-components-vite').Preview } */
 const preview = {
   parameters: {
     controls: {

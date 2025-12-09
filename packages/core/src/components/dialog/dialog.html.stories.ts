@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/web-components';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';

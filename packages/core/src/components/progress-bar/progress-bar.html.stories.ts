@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import { StoryObj } from '@storybook/web-components';
+import { StoryObj } from '@storybook/web-components-vite';
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreProgressBar } from './index.js';
