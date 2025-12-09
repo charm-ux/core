@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreRadioGroup } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-radio-group');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-radio-group');
 
 const meta: Meta<CoreRadioGroup> = {
   title: 'Core/RadioGroup',

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreButtonGroup } from './index.js';
 import '../divider/index.js';
@@ -10,7 +10,7 @@ import '../tooltip/index.js';
 import '../button-group-overflow/index.js';
 import '../overflow/index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-button-group');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-button-group');
 
 const meta: Meta<CoreButtonGroup> = {
   title: 'Core/ButtonGroup',

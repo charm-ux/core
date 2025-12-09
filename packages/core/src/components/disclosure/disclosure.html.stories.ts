@@ -1,13 +1,13 @@
 import { html } from 'lit';
 import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 
 import '../button/index.js';
 import '../icon/index.js';
 import './index.js';
 import type { CoreDisclosure } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-disclosure');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-disclosure');
 
 const meta: Meta<CoreDisclosure> = {
   title: 'Core/Disclosure',

@@ -4,7 +4,7 @@ import { setStorybookHelpersConfig } from '@wc-toolkit/storybook-helpers';
 import '../dist/themes/charm/selector-theme.css';
 import '../dist/themes/charm/reset.css';
 import '../dist/themes/charm/utility-classes.css';
-import './storybook.d.ts';
+import './types.d.ts';
 
 setStorybookHelpersConfig({});
 setCustomElementsManifest(customElements);

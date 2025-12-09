@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreAlert } from './index.js';
 import '../button/index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-alert');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-alert');
 
 const meta: Meta<CoreAlert> = {
   title: 'Core/Alert',

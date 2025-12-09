@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import '../menu-group/index.js';
 import '../menu-item/index.js';
 import '../button/index.js';
 import './index.js';
 import type { CoreMenu } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-menu');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-menu');
 
 const meta: Meta<CoreMenu> = {
   title: 'Core/Menu',

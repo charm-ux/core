@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import '../button/index.js';
 import './index.js';
 import type { CoreTooltip } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-tooltip');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-tooltip');
 
 const meta: Meta<CoreTooltip> = {
   title: 'Core/Tooltip',

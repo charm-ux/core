@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreSelect } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-select');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-select');
 
 const meta: Meta<CoreSelect> = {
   title: 'Core/Select',

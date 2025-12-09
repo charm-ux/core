@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html, LitElement } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import '../button/index.js';
 import './index.js';
 import '../menu/index.js';
 import '../select/index.js';
 import type { CoreDialog } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-dialog');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-dialog');
 
 const meta: Meta<CoreDialog> = {
   title: 'Core/Dialog',

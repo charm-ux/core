@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { Core{{pascalCase name}} } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-{{kebabCase name}}');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-{{kebabCase name}}');
 
 const meta: Meta<Core{{pascalCase name}}> = {
   title: 'Core/{{pascalCase name}}',

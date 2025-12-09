@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import '../menu/index.js';
 import '../menu-item/index.js';
 import '../checkbox/index.js';
@@ -8,7 +8,7 @@ import '../radio/index.js';
 import './index.js';
 import type { CoreMenuGroup } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-menu-group');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-menu-group');
 
 const meta: Meta<CoreMenuGroup> = {
   title: 'Core/MenuGroup',

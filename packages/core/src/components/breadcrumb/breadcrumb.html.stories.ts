@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import '../breadcrumb-item/index.js';
 import '../overflow/index.js';
 import type { CoreBreadcrumb } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-breadcrumb');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-breadcrumb');
 
 const meta: Meta<CoreBreadcrumb> = {
   title: 'Core/Breadcrumb',

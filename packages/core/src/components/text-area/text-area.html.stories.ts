@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreTextArea } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-text-area');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-text-area');
 
 const meta: Meta<CoreTextArea> = {
   title: 'Core/TextArea',

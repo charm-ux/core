@@ -1,10 +1,10 @@
 import { StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import { CoreMenuItem } from './index.js';
 import '../icon/index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-menu-item');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-menu-item');
 
 export default {
   title: 'Core/MenuItem',

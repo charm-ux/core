@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CorePushPane } from './index.js';
 import '../button/index.js';
 import '../icon/index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-push-pane');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-push-pane');
 
 const meta: Meta<CorePushPane> = {
   title: 'Core/Push Pane',

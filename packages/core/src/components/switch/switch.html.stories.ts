@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreSwitch } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-switch');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-switch');
 
 const meta: Meta<CoreSwitch> = {
   title: 'Core/Switch',

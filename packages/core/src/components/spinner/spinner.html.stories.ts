@@ -1,10 +1,10 @@
 import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import { html } from 'lit';
 import type { CoreSpinner } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-spinner');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-spinner');
 
 const meta: Meta<CoreSpinner> = {
   title: 'Core/Spinner',

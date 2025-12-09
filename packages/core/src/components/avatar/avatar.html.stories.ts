@@ -1,11 +1,11 @@
 import { StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import { html } from 'lit';
 import './index.js';
 import { CoreAvatar } from './index.js';
 import '../icon/index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-avatar');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-avatar');
 
 export default {
   title: 'Core/Avatar',

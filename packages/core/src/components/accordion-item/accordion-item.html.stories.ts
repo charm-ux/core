@@ -1,10 +1,10 @@
 import { StoryObj } from '@storybook/web-components';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreAccordionItem } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-accordion-item');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-accordion-item');
 
 export default {
   title: 'Core/Accordion Item',
