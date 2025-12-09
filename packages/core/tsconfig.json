@@ -109,6 +109,6 @@
       }
     ]
   },
-  "include": ["src", ".storybook/**/*.d.ts"],
+  "include": ["src"],
   "exclude": ["**/*.stories.tsx", "**/*.stories.ts", "**/*.styles.ts", "**/*.performance.ts"]
 }
