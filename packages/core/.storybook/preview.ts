@@ -1,14 +1,12 @@
 import { setCustomElementsManifest } from '@storybook/web-components';
 import customElements from '../custom-elements.json';
-import { setWcStorybookHelpersConfig } from 'wc-storybook-helpers';
-import { withThemeByClassName } from '@storybook/addon-themes';
-import { withBrandThemes } from './withBrandThemes.decorator';
+import { setStorybookHelpersConfig } from '@wc-toolkit/storybook-helpers';
 import '../dist/themes/charm/selector-theme.css';
 import '../dist/themes/charm/reset.css';
 import '../dist/themes/charm/utility-classes.css';
-import { withActions } from '@storybook/addon-actions/decorator';
+import './storybook.d.ts';
 
-setWcStorybookHelpersConfig({ typeRef: 'parsedType' });
+setStorybookHelpersConfig({});
 setCustomElementsManifest(customElements);
 
 /** @type { import('@storybook/web-components').Preview } */

@@ -1,13 +1,13 @@
 /** @type { import('@storybook/web-components-vite').StorybookConfig } */
 const config = {
   stories: ['../src/**/*.mdx', '../src/**/*html.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y', 'storybook-addon-rtl'],
+  addons: ['@storybook/addon-links', '@storybook/addon-a11y'],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
   },
   docs: {},
-  async viteFinal(config) {
+  async viteFinal(config: any) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
 
