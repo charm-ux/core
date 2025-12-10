@@ -3,6 +3,7 @@ const config = {
   stories: ['../src/**/*.mdx', '../src/**/*html.stories.@(js|jsx|ts|tsx)'],
   addons: [
     '@storybook/addon-links',
+    '@storybook/addon-themes',
     '@storybook/addon-a11y',
     {
       name: '@storybook/addon-docs',
