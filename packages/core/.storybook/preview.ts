@@ -5,7 +5,6 @@ import customElements from '../custom-elements.json';
 import '../dist/themes/charm/selector-theme.css';
 import '../dist/themes/charm/reset.css';
 import '../dist/themes/charm/utility-classes.css';
-import { withBrandThemes } from './withBrandThemes.decorator.js';
 
 setStorybookHelpersConfig({});
 setCustomElementsManifest(customElements);
@@ -23,18 +22,12 @@ const preview = {
     },
   },
   decorators: [
-    withBrandThemes({
-      themes: {
-        fluent: 'charm-light',
-      },
-      defaultTheme: 'charm-light',
-    }),
     withThemeByClassName({
       themes: {
-        'charm-light': 'charm-light',
-        'charm-dark': 'charm-dark',
+        light: 'charm-light',
+        dark: 'charm-dark',
       },
-      defaultTheme: 'charm-light',
+      defaultTheme: 'light',
     }),
   ],
 };
