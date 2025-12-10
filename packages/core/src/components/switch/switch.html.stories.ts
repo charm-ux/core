@@ -30,7 +30,7 @@ export const Default: Story = {
   },
 };
 
-export const disabled: Story = {
+export const Disabled: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',
@@ -40,7 +40,7 @@ export const disabled: Story = {
   },
 };
 
-export const required: Story = {
+export const Required: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',
@@ -51,7 +51,7 @@ export const required: Story = {
   },
 };
 
-export const labelPosition: Story = {
+export const LabelPosition: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',

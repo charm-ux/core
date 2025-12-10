@@ -262,7 +262,7 @@ export const HideCloseButton: Story = {
   },
 };
 
-export const noHeader: Story = {
+export const NoHeader: Story = {
   render: args => html`
     <div class="push-pane-overview">
       ${template(args, html`Push pane content`)}

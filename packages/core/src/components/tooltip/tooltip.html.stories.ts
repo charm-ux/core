@@ -41,7 +41,7 @@ export const InitiallyOpen: Story = {
   },
 };
 
-export const anchor: Story = {
+export const Anchor: Story = {
   render: args => html`
     <ch-button id="button1">Paint</ch-button>
     ${template(args)}
@@ -52,7 +52,7 @@ export const anchor: Story = {
   },
 };
 
-export const delay: Story = {
+export const Delay: Story = {
   render: args => template(args, html` <ch-button>Paint</ch-button> `),
   args: {
     content: 'Paintbrush tool',
