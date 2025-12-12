@@ -21,6 +21,7 @@ const config = {
     options: {},
   },
   docs: {},
+  staticDirs: ['../public'],
   async viteFinal(config: any) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
