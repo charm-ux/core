@@ -1,5 +1,7 @@
 import { property, query, state } from 'lit/decorators.js';
 import { html } from 'lit/static-html.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { when } from 'lit/directives/when.js';
 import { repeat } from 'lit/directives/repeat.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
@@ -15,8 +17,9 @@ export interface OverflowMenuItem {
   text: string;
   icons: { name: string; slot: string | null }[];
   disabled: boolean;
+  end?: string;
   subMenuItems: OverflowMenuItem[];
-  id: string;
+  id?: string;
 }
 
 /**
@@ -72,6 +75,12 @@ export class CoreOverflow extends CharmElement {
    */
   @property({ attribute: 'menu-position', reflect: true })
   public menuPosition: 'start' | 'end' | 'none' = 'end';
+
+  /**
+   * Overflow menu placement (the 'placement' property to pass to the overflow menu).
+   */
+  @property({ attribute: 'menu-placement' })
+  public menuPlacement?: string;
 
   /**
    * Side to start hiding/adding elements when collapsing/expanding.
@@ -215,6 +224,11 @@ export class CoreOverflow extends CharmElement {
   protected hideElements(slottedElements: HTMLElement[]) {
     slottedElements.find(item => {
       this.hideItem(item);
+      // if we have hidden fewer than 2 items, keep hiding them
+      if (this.overflowSet.size < 2) {
+        return false;
+      }
+      // stop hiding items if we have gotten down to the minimum visible or we are not overflowing anymore
       return this.slottedElements.length - this.overflowSet.size <= this.min || !this.isOverflowing();
     });
   }
@@ -229,8 +243,9 @@ export class CoreOverflow extends CharmElement {
       return this.isOverflowing();
     });
 
-    // If we overflowed, re-hide the item
+    // If we overflowed, re-hide the last 2 items
     if (result) {
+      this.hideItem(slottedElements[slottedElements.length - 2]);
       this.hideItem(result);
     }
   }
@@ -292,7 +307,7 @@ export class CoreOverflow extends CharmElement {
   }
 
   protected parseOverflowMenuItem(element: HTMLElement, ignoreEndSlot?: boolean) {
-    return {
+    const result: OverflowMenuItem = {
       hostElement: element,
       tagName: element.tagName,
       text: element.textContent || element.innerText,
@@ -300,6 +315,20 @@ export class CoreOverflow extends CharmElement {
       subMenuItems: [] as OverflowMenuItem[],
       disabled: element.hasAttribute('disabled'),
     };
+
+    const slotEnd = element.querySelector('.slot-end');
+    if (slotEnd) {
+      // store the end content separately
+      result.end = (slotEnd.textContent || '').trim();
+      // clone the trigger, remove the slot-end node and use remaining text
+      const clone = element.cloneNode(true) as HTMLElement;
+      const clonedSlotEnd = clone.querySelector('.slot-end');
+      if (clonedSlotEnd) clonedSlotEnd.remove();
+      result.text = (clone.textContent || '').trim();
+    } else {
+      result.text = (element.textContent || '').trim();
+    }
+    return result;
   }
 
   protected parseMenu(menu: Menu) {
@@ -322,17 +351,53 @@ export class CoreOverflow extends CharmElement {
   }
 
   protected generateOverflowMenu() {
-    this.dropdownOpen = !this.dropdownOpen;
-    if (!this.dropdownOpen) return;
-
     const results: OverflowMenuItem[] = [];
     let index = 0;
 
+    const findMenuDescendant = (root: HTMLElement, maxDepth = 3): HTMLElement | undefined => {
+      const queue: Array<{ node: HTMLElement; depth: number }> = [{ node: root, depth: 0 }];
+      while (queue.length) {
+        const { node, depth } = queue.shift()!;
+        if (node.hasAttribute && node.hasAttribute('menu')) {
+          return node;
+        }
+        if (depth < maxDepth) {
+          const children = Array.from(node.children) as HTMLElement[];
+          for (const child of children) {
+            queue.push({ node: child, depth: depth + 1 });
+          }
+        }
+      }
+      return undefined;
+    };
+    const findButtonDescendant = (root: HTMLElement, maxDepth = 3): HTMLElement | undefined => {
+      const queue: Array<{ node: HTMLElement; depth: number }> = [{ node: root, depth: 0 }];
+      while (queue.length) {
+        const { node, depth } = queue.shift()!;
+        if (node.hasAttribute && node.hasAttribute('button')) {
+          return node;
+        }
+        if (depth < maxDepth) {
+          const children = Array.from(node.children) as HTMLElement[];
+          for (const child of children) {
+            queue.push({ node: child, depth: depth + 1 });
+          }
+        }
+      }
+      return undefined;
+    };
+
     this.overflowSet.forEach((element: HTMLElement) => {
-      if (element.hasAttribute('menu')) {
-        results.push({ ...this.parseMenu(element as Menu), id: `menu-${index}` });
+      const menuEl = findMenuDescendant(element);
+      if (menuEl) {
+        results.push({ ...this.parseMenu(menuEl as Menu), id: `menu-${index}` });
       } else {
-        results.push({ ...this.parseOverflowMenuItem(element), id: `item-${index}` });
+        const buttonEl = findButtonDescendant(element);
+        if (buttonEl) {
+          results.push({ ...this.parseOverflowMenuItem(buttonEl as Button), id: `item-${index}` });
+        } else {
+          results.push({ ...this.parseOverflowMenuItem(element), id: `item-${index}` });
+        }
       }
       index++;
     });
@@ -404,7 +469,13 @@ export class CoreOverflow extends CharmElement {
             )}> `
         )}
         ${overFlowItem.text}
-        ${overFlowItem.subMenuItems.length > 0 ? this.overflowMenuItemListTemplate(overFlowItem.subMenuItems) : ''}
+        ${when(
+          overFlowItem.end,
+          () => html`
+            <span slot="end" class="overflow-menu-item-end" part="overflow-menu-item-end">${overFlowItem.end}</span>
+          `
+        )}
+        ${when(overFlowItem.subMenuItems.length > 0, () => this.overflowMenuItemListTemplate(overFlowItem.subMenuItems))}
       </${this.scope.tag('menu-item')}>
     `;
   }
@@ -419,6 +490,7 @@ export class CoreOverflow extends CharmElement {
           fixed-placement
           part="overflow-menu"
           class="overflow-menu"
+          placement=${ifDefined(this.menuPlacement ?? undefined)}
         >
           ${this.overflowMenuTriggerTemplate()}
           ${this.overflowMenuItemListTemplate(this.overflowMenuItems)}
