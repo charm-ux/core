@@ -1,17 +1,16 @@
-:not(:defined) {
-  opacity: 0;
-}
-
-code-bubble {
+code-bubble[code-bubble] {
   margin-bottom: 2rem;
-}
 
-code-bubble[code-bubble] pre[slot] {
-  margin: 0;
-}
+  pre {
+    &[slot] {
+      padding: 2rem;
+      margin: 0;
+    }
 
-code-bubble[code-bubble] pre button {
-  display: none;
+    button {
+      display: none;
+    }
+  }
 }
 
 .docblock-source.sb-unstyled {
