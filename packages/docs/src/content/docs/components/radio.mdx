@@ -1,0 +1,45 @@
+---
+title: Radio
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Radio buttons allow users to select a single option from a group of choices. They are designed to be used within a radio group.
+
+:::info
+This is a subcomponent of [RadioGroup](/components/radio-group)
+:::
+
+## Adding a label
+
+The label can be set by the `label` attribute which supports label as a string or the default slot which supports label of all formats.
+
+<code-bubble>
+
+```html
+<ch-radio label="Radio"></ch-radio>
+<ch-radio>
+  Banana
+  <br />
+  <div>
+    <ch-icon name="warning"></ch-icon>
+    This is an example subtext.
+  </div>
+</ch-radio>
+```
+
+</code-bubble>
+
+## Disabled
+
+Use the disabled attribute to deactivate options in the list that are not applicable.
+
+<code-bubble>
+
+```html
+<ch-radio disabled>Disabled</ch-radio>
+```
+
+</code-bubble>
+
+## API

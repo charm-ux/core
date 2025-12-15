@@ -1,0 +1,44 @@
+---
+title: Accordion
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Accordion consists of multiple details elements, stacked vertically for default layout. Each element contains a summary and a content area, which is what the details part references. Users can click on the summary to expand or collapse the details element.
+
+## Default
+
+Use [accordion items](/components/accordion-item/) to create individual sections or panels within the opening and closing of the `<ch-accordion>` element.
+
+<code-bubble>
+
+```html
+<ch-accordion>
+  <ch-accordion-item heading="Panel One">Section Content One</ch-accordion-item>
+  <ch-accordion-item heading="Panel Two">Section Content Two</ch-accordion-item>
+  <ch-accordion-item heading="Panel Three">Section Content Three</ch-accordion-item>
+  <ch-accordion></ch-accordion>
+</ch-accordion>
+```
+
+</code-bubble>
+
+## Single Expand Mode
+
+By default, the accordion has its `open-single` set to `false`. To ensure that only one accordion item opens at a time, set the `open-single` attribute's value to `single`.
+
+<code-bubble>
+
+```html
+<ch-accordion open-single>
+  <ch-accordion-item heading="Panel One">Section Content One</ch-accordion-item>
+  <ch-accordion-item heading="Panel Two">Section Content Two</ch-accordion-item>
+  <ch-accordion-item heading="Panel Three">Section Content Three</ch-accordion-item>
+</ch-accordion>
+```
+
+</code-bubble>
+
+## API
+
+<ComponentMetadata />

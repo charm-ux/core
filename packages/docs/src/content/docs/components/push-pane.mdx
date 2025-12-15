@@ -1,0 +1,314 @@
+---
+title: Push Pane
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Use PushPane for additional options, information, or context to main content. Pushes content over as pane, overlaps as panel when needed.
+
+## Default push pane
+
+<code-bubble>
+
+```html
+<div class="push-pane-overview">
+  <ch-push-pane heading="Push pane heading" id="push-pane-default">
+    <p>Push pane content</p>
+  </ch-push-pane>
+  <div>
+    <ch-button toggles="push-pane-default">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum
+        mi, venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget,
+        ornare ac erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut
+        pellentesque malesuada molestie.
+      </p>
+    </article>
+  </div>
+</div>
+<style>
+  .push-pane-overview {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Placement at end
+
+Setting the `position` property to `end` will position the pane on the right side of the screen.
+
+<code-bubble>
+
+```html
+<div class="push-pane-overview-end">
+  <div>
+    <ch-button toggles="push-pane">toggle pane</ch-button>
+    <ch-push-pane heading="Push pane heading" position="end" id="push-pane">
+      <p>Push pane content</p>
+    </ch-push-pane>
+  </div>
+</div>
+<style>
+  .push-pane-overview-end {
+    display: grid;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Placement at bottom
+
+Setting the `position` property to `bottom` will position the pane on the bottom of the screen.
+
+<code-bubble>
+
+```html
+<div class="push-pane-overview-bottom">
+  <div class="text">
+    <ch-button toggles="push-pane-bottom">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum
+        mi, venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget,
+        ornare ac erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut
+        pellentesque malesuada molestie.
+      </p>
+    </article>
+  </div>
+  <ch-push-pane heading="Push pane heading" id="push-pane-bottom" position="bottom">
+    <p>Push pane content</p>
+  </ch-push-pane>
+</div>
+<style>
+  .push-pane-overview-bottom {`
+    display: flex;
+    flex-direction: column;
+    height: 550px;
+  }
+
+  .text {
+    flex: 1;
+    overflow: auto;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Actions and footer slots
+
+Elements placed in the `actions` slot will be positioned in the top right of the pane header, while elements placed in the `footer` slot will be positioned at the bottom of the pane. These slots are useful for adding buttons or other interactive elements.
+
+<code-bubble>
+
+```html
+<div class="push-pane-overview-actions">
+  <ch-push-pane heading="Push pane heading" id="push-pane-actions" position="end">
+    <p>Push pane content</p>
+    <ch-button slot="actions" hides="push-pane">
+      <ch-icon class="action-icon" name="more"></ch-icon>
+    </ch-button>
+    <ch-button slot="footer" hides="push-pane-actions">Close</ch-button>
+    <ch-button slot="footer" hides="push-pane-actions">Do something</ch-button>
+  </ch-push-pane>
+  <div>
+    <ch-button toggles="push-pane-actions">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum
+        mi, venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget,
+        ornare ac erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut
+        pellentesque malesuada molestie.
+      </p>
+      <p>
+        Sed congue mauris vel dui viverra maximus. Praesent quis aliquam velit, at scelerisque
+        metus. Nam fringilla placerat velit quis egestas. In magna ligula, dictum id lorem eu,
+        auctor faucibus risus. Praesent lacinia tincidunt maximus. Etiam libero tellus, fermentum
+        eget ligula id, vestibulum pharetra nunc. Curabitur imperdiet nisi non leo iaculis, eu
+        consequat lacus ornare. Praesent consequat laoreet turpis a tincidunt. Sed quam neque,
+        scelerisque quis elit a, egestas suscipit enim.
+      </p>
+    </article>
+  </div>
+</div>
+<style>
+  .push-pane-overview-actions {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Animation
+
+Setting the `--push-pane-transition` CSS property on the element will customize the transition animation.
+
+<code-bubble>
+ 
+```html
+<div class="push-pane-overview-animation">
+  <ch-push-pane heading="Push pane heading" id="push-pane-animation">
+    <p>Push pane content</p>
+  </ch-push-pane>
+  <div>
+    <ch-button toggles="push-pane-animation">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum mi,
+        venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget, ornare ac
+        erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut pellentesque
+        malesuada molestie.
+      </p>
+      <p>
+        Fusce euismod massa at nisi congue, id tempor libero congue. Sed congue elit ac magna
+        efficitur, at placerat libero suscipit. Nunc ullamcorper sed ligula sed rutrum. Lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Mauris ultricies tempor orci sit amet molestie.
+        In venenatis vitae nibh sed ultricies. Curabitur porttitor justo lectus, et hendrerit tortor
+        egestas quis. Suspendisse vel ante ut nisi porta maximus consectetur vitae urna. Suspendisse
+        id nunc scelerisque, porta nunc ut, pulvinar lorem. Curabitur ac nibh ut ex pellentesque
+        lacinia ut et erat. Proin ultricies, justo id vehicula rhoncus, nibh tortor fermentum mauris,
+        vel hendrerit diam mi pulvinar sem. Sed vitae arcu suscipit, cursus diam cursus, fringilla
+        enim. Integer luctus pellentesque leo non rutrum. Nulla a tortor tincidunt libero tincidunt
+        pulvinar. Integer vitae semper neque. Morbi sit amet orci ante.
+      </p>
+      <p>
+        Sed congue mauris vel dui viverra maximus. Praesent quis aliquam velit, at scelerisque metus.
+        Nam fringilla placerat velit quis egestas. In magna ligula, dictum id lorem eu, auctor
+        faucibus risus. Praesent lacinia tincidunt maximus. Etiam libero tellus, fermentum eget ligula
+        id, vestibulum pharetra nunc. Curabitur imperdiet nisi non leo iaculis, eu consequat lacus
+        ornare. Praesent consequat laoreet turpis a tincidunt. Sed quam neque, scelerisque quis elit
+        a, egestas suscipit enim.
+      </p>
+    </article>
+  </div>
+<style>
+  .push-pane-overview-animation {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+    --push-pane-transition: opacity 0.3s, width 400ms;
+   }
+</style>
+</div>
+```
+
+</code-bubble>
+
+## Hide close button
+
+To hide the close button on the header when it's not focused, set the `hide-close-button` property.
+
+<code-bubble>
+
+```html
+<div class="push-pane-overview-hide-close">
+  <ch-push-pane heading="Push pane heading" id="push-pane-hide-close" hide-close-button>
+    <p>Push pane content</p>
+  </ch-push-pane>
+  <div>
+    <ch-button toggles="push-pane-hide-close">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum
+        mi, venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget,
+        ornare ac erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut
+        pellentesque malesuada molestie.
+      </p>
+      <p>
+        Fusce euismod massa at nisi congue, id tempor libero congue. Sed congue elit ac magna
+        efficitur, at placerat libero suscipit. Nunc ullamcorper sed ligula sed rutrum. Lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Mauris ultricies tempor orci sit amet molestie.
+        In venenatis vitae nibh sed ultricies. Curabitur porttitor justo lectus, et hendrerit tortor
+        egestas quis. Suspendisse vel ante ut nisi porta maximus consectetur vitae urna. Suspendisse
+        id nunc scelerisque, porta nunc ut, pulvinar lorem. Curabitur ac nibh ut ex pellentesque
+        lacinia ut et erat. Proin ultricies, justo id vehicula rhoncus, nibh tortor fermentum
+        mauris, vel hendrerit diam mi pulvinar sem. Sed vitae arcu suscipit, cursus diam cursus,
+        fringilla enim. Integer luctus pellentesque leo non rutrum. Nulla a tortor tincidunt libero
+        tincidunt pulvinar. Integer vitae semper neque. Morbi sit amet orci ante.
+      </p>
+      <p>
+        Sed congue mauris vel dui viverra maximus. Praesent quis aliquam velit, at scelerisque
+        metus. Nam fringilla placerat velit quis egestas. In magna ligula, dictum id lorem eu,
+        auctor faucibus risus. Praesent lacinia tincidunt maximus. Etiam libero tellus, fermentum
+        eget ligula id, vestibulum pharetra nunc. Curabitur imperdiet nisi non leo iaculis, eu
+        consequat lacus ornare. Praesent consequat laoreet turpis a tincidunt. Sed quam neque,
+        scelerisque quis elit a, egestas suscipit enim.
+      </p>
+    </article>
+  </div>
+</div>
+<style>
+  .push-pane-overview-hide-close {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+  }
+</style>
+```
+
+</code-bubble>
+
+## No header
+
+Setting the `no-header` attribute will remove the push pane header and default close button.
+<code-bubble>
+
+```html
+<div class="push-pane-overview-n0-header">
+  <ch-push-pane heading="Push pane heading" id="push-pane-no-header" no-header>
+    Push pane content
+  </ch-push-pane>
+  <div>
+    <ch-button toggles="push-pane-no-header">toggle pane</ch-button>
+    <article>
+      <p>
+        Integer nec nulla vitae lacus ultricies euismod. Integer libero nulla, ultricies ut rhoncus
+        vestibulum, pulvinar vitae metus. Ut rhoncus felis id condimentum pretium. Curabitur ipsum
+        mi, venenatis a quam ut, auctor dapibus sem. Proin magna sem, malesuada at lacinia eget,
+        ornare ac erat. Pellentesque nec arcu feugiat, luctus justo sit amet, bibendum sem. Ut
+        pellentesque malesuada molestie.
+      </p>
+      <p>
+        Fusce euismod massa at nisi congue, id tempor libero congue. Sed congue elit ac magna
+        efficitur, at placerat libero suscipit. Nunc ullamcorper sed ligula sed rutrum. Lorem ipsum
+        dolor sit amet, consectetur adipiscing elit. Mauris ultricies tempor orci sit amet molestie.
+        In venenatis vitae nibh sed ultricies. Curabitur porttitor justo lectus, et hendrerit tortor
+        egestas quis. Suspendisse vel ante ut nisi porta maximus consectetur vitae urna. Suspendisse
+        id nunc scelerisque, porta nunc ut, pulvinar lorem. Curabitur ac nibh ut ex pellentesque
+        lacinia ut et erat. Proin ultricies, justo id vehicula rhoncus, nibh tortor fermentum
+        mauris, vel hendrerit diam mi pulvinar sem. Sed vitae arcu suscipit, cursus diam cursus,
+        fringilla enim. Integer luctus pellentesque leo non rutrum. Nulla a tortor tincidunt libero
+        tincidunt pulvinar. Integer vitae semper neque. Morbi sit amet orci ante.
+      </p>
+      <p>
+        Sed congue mauris vel dui viverra maximus. Praesent quis aliquam velit, at scelerisque
+        metus. Nam fringilla placerat velit quis egestas. In magna ligula, dictum id lorem eu,
+        auctor faucibus risus. Praesent lacinia tincidunt maximus. Etiam libero tellus, fermentum
+        eget ligula id, vestibulum pharetra nunc. Curabitur imperdiet nisi non leo iaculis, eu
+        consequat lacus ornare. Praesent consequat laoreet turpis a tincidunt. Sed quam neque,
+        scelerisque quis elit a, egestas suscipit enim.
+      </p>
+    </article>
+  </div>
+</div>
+<style>
+  .push-pane-overview-no-header {
+    display: grid;
+    grid-template-columns: minmax(0, auto) 1fr;
+  }
+</style>
+```
+
+</code-bubble>
+
+## API

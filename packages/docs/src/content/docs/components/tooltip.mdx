@@ -1,0 +1,131 @@
+---
+title: Tooltip
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Use tooltips to expose additional information about an element.
+
+<code-bubble>
+
+```html
+<ch-tooltip content="This is a tooltip!">
+  <ch-button>Hover me</ch-button>
+</ch-tooltip>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Use a tooltip with an info icon to show quick, static information.
+- Keep the content within the tooltip as brief as possible. Including only one phrase or sentence is preferable.
+
+**_Don't_**
+
+- Don't include interactive elements, like links, within a tooltip.
+- Don't show lengthy content within the tooltip.
+
+## Examples
+
+### Setting the placement
+
+You can control the tooltip's default placement using the `placement` attribute.
+
+<code-bubble>
+
+```html
+<ch-tooltip placement="top" content="This is a tooltip on top!">
+  <ch-button>Top</ch-button>
+</ch-tooltip>
+
+<ch-tooltip placement="bottom" content="This is a tooltip on bottom!">
+  <ch-button>Bottom</ch-button>
+</ch-tooltip>
+
+<ch-tooltip placement="start" content="This is a tooltip on start!">
+  <ch-button>Start</ch-button>
+</ch-tooltip>
+
+<ch-tooltip placement="end" content="This is a tooltip on end!">
+  <ch-button>End</ch-button>
+</ch-tooltip>
+```
+
+</code-bubble>
+
+### Using HTML in tooltips
+
+You can use HTML in tooltips by using the `content` slot rather than the attribute, but avoid nesting interactive elements such as links, buttons, etc. because they will not be accessible.
+
+<code-bubble>
+
+```html
+<ch-tooltip>
+  <ch-button>Hover me</ch-button>
+  <span slot="content">
+    I'm not
+    <strong>just</strong>
+    a tooltip, I'm a
+    <em>tooltip</em>
+    with HTML!
+  </span>
+</ch-tooltip>
+```
+
+</code-bubble>
+
+### Breaking out of containers
+
+Tooltips will be clipped if they're inside a container that has `overflow: auto|hidden|scroll`. The `fixed-placement` attribute forces the tooltip to use a fixed positioning strategy, allowing it to break out of the container. In this case, the tooltip will be positioned relative to its containing block, which is usually the viewport unless an ancestor uses a `transform`, `perspective`, or `filter`. [Refer to this page](https://developer.mozilla.org/en-US/docs/Web/CSS/position#fixed) for more details.
+
+<code-bubble>
+
+```html
+<div class="tooltip-outer">
+  <div class="tooltip-inner">
+    <ch-tooltip content="This is a tooltip">
+      <ch-button>Clipped</ch-button>
+    </ch-tooltip>
+
+    <ch-tooltip fixed-placement content="This is a tooltip">
+      <ch-button>Fixed placement</ch-button>
+    </ch-tooltip>
+  </div>
+</div>
+
+<style>
+  .tooltip-inner {
+    position: relative;
+    border: solid 2px black;
+    overflow: hidden;
+    padding: 12px;
+  }
+  .tooltip-outer {
+    contain: layout;
+  }
+</style>
+```
+
+</code-bubble>
+
+### Customizing the delay before showing and hiding
+
+You can control how quickly the tooltip shows and hides using the `--show-delay` and `--hide-delay` custom properties.
+
+<code-bubble>
+
+```html
+<ch-tooltip
+  style="--tooltip-show-delay: 1000ms; --tooltip-hide-delay: 500ms;"
+  content="This one takes longer to show and hide"
+>
+  <ch-button>Longer Delays</ch-button>
+</ch-tooltip>
+```
+
+</code-bubble>
+
+## API

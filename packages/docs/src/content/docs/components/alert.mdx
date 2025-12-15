@@ -1,0 +1,78 @@
+---
+title: Alert
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Communicates important information about the state of the entire application or surface. For example, the status of a page, panel, dialog or card. The information shouldn't require someone to take immediate action, but should persist until the user performs one of the required actions.
+
+## Default alert
+
+<code-bubble>
+
+```html
+<ch-alert open>Message bar content</ch-alert>
+```
+
+</code-bubble>
+
+## Default alert
+
+Use the `dismissible` attribute to add a close button to the alert.
+
+<code-bubble>
+
+```html
+<ch-alert open dismissible>Message bar content</ch-alert>
+```
+
+</code-bubble>
+
+## Animations
+
+Use the `--alert-transition` css property to customize the alert transition of showing and hiding the alert.
+
+<code-bubble>
+
+```html
+<div class="animations">
+  <ch-button class="btn">Toggle alert</ch-button>
+  <ch-alert dismissible>Message bar content</ch-alert>
+</div>
+<script type="module">
+  const component = document.querySelector('.animations [alert]');
+  const button = document.querySelector('.animations .btn');
+  button.addEventListener('click', () => component.toggle());
+</script>
+```
+
+</code-bubble>
+
+## Heading
+
+Use the `heading` attribute or slot to add a heading to the alert.
+<code-bubble>
+
+```html
+<ch-alert open dismissible heading="Heading">Message bar content</ch-alert>
+```
+
+</code-bubble>
+
+## Actions
+
+Use the `action` slot to add controls to the message bar.
+
+<code-bubble>
+
+```html
+<ch-alert open dismissible heading="Heading">
+  Message bar content
+  <ch-button slot="action">Action1</ch-button>
+  <ch-button slot="action">Action2</ch-button>
+</ch-alert>
+```
+
+</code-bubble>
+
+## API

@@ -1,0 +1,60 @@
+---
+title: Badge
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+A badge is a visual element, displaying concise information like notifications or statuses. It can appear as a box or circle near relevant UI elements, offering quick feedback without taking up much space.
+
+## Default
+
+To create a badge, add an element within the opening and closing `<ch-badge>` tags.
+
+<code-bubble>
+
+```html
+<ch-badge>Badge</ch-badge>
+```
+
+</code-bubble>
+
+## Style
+
+Badge has css properties that will help you customize the badge. <br></br>
+
+Customizing the background color, use `--badge-bg-color`.
+
+```css
+ch-badge {
+  --badge-bg-color: blue;
+}
+```
+
+Customizing the border, use `--badge-bg-color`, `--badge-border-radius`, `--badge-border-solid` and `--badge-border-width`.
+
+```css
+ch-badge {
+  --badge-border-color: blue;
+  --badge-border-radius: 6px;
+  --badge-border-style: solid;
+  --badge-border-width: 2px;
+}
+```
+
+Customizing the padding, use `--badge-padding`.
+
+```css
+ch-badge {
+  --badge-padding: 0.5em;
+}
+```
+
+Customizing the size, use `--badge-size`. This is used in relation to the font.
+
+```css
+ch-badge {
+  --badge-size: 32px;
+}
+```
+
+## API

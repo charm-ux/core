@@ -1,0 +1,35 @@
+@media (max-width: 880px) {
+  [data-mobile-menu-expanded] .sidebar-content li {
+    visibility: visible !important;
+  }
+}
+
+@media (min-width: 800px) {
+  .sidebar-content li {
+    visibility: visible !important;
+  }
+}
+
+.sl-markdown-content code-bubble * {
+  margin-top: unset !important;
+}
+
+[data-theme='light'] {
+  a {
+    color: var(--link-visited-fg-color, var(--link-fg-color));
+    text-decoration: var(--link-visited-decoration, var(--link-decoration));
+  }
+  .astro-h4kctesh {
+    [aria-current='page'] {
+      color: white;
+    }
+  }
+
+  .astro-4mxhvrcp {
+    color: white;
+  }
+
+  .sl-link-button.primary {
+    color: white;
+  }
+}

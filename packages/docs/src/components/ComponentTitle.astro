@@ -1,0 +1,21 @@
+---
+import { Badge } from '@astrojs/starlight/components';
+import { componentFromPath } from '../utils/get-component-from-path';
+
+const releaseState = componentFromPath(Astro.url.pathname)?.status?.name;
+const { title } = Astro.locals.starlightRoute.entry.data;
+---
+
+<div class="sl-flex">
+  <h1 id="_top" style="font-size: var(--sl-text-h1); line-height: var(--sl-line-height-headings); font-weight: 600; color: var(--sl-color-white); margin-top: 1rem;">
+    {title}
+    {releaseState && <Badge text={releaseState} variant="note" class="title-badge"/>}
+  </h1>
+</div>
+
+<style>
+  .title-badge {
+    margin-left: 0.5em;
+    vertical-align: middle;
+  }
+</style>

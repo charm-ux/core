@@ -1,0 +1,54 @@
+---
+title: Switch
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+A switch represents a physical switch that allows someone to choose between two mutually exclusive options. For example, "On/Off" and "Show/Hide". Choosing an option should produce an immediate result.
+
+## Checked
+
+By default, switch will display in the unchecked state. To set the switch to the checked state, add the `checked` attribute.
+
+<code-bubble>
+
+```html
+<ch-switch label="This is a switch" checked>
+  <span slot="checked-message">On</span>
+  <span slot="unchecked-message">Off</span>
+</ch-switch>
+```
+
+</code-bubble>
+
+## Disable
+
+Add the `disabled` attribute to the switch component to deactivate the switch.
+
+<code-bubble>
+
+```html
+<ch-switch label="This is a switch" disabled>
+  <span slot="checked-message">On</span>
+  <span slot="unchecked-message">Off</span>
+</ch-switch>
+```
+
+</code-bubble>
+
+## Label
+
+A label can be provided to the Switch by using the `label` attribute. The label can positioned above, before or after the component by using the `label-position` attribute.
+
+<code-bubble>
+
+```html
+<ch-switch label="This is a switch" label-position="top">
+  <span slot="checked-message">On</span>
+  <span slot="unchecked-message">Off</span>
+</ch-switch>
+```
+
+</code-bubble>
+
+## API

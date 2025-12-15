@@ -1,0 +1,50 @@
+---
+title: Overflow
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+The Overflow component enables users to create overflow experiences with any component. Overflow will detect and hide overflowing elements in DOM and manage the overflow state.
+
+## Slots
+
+- Start slot is used for static content before the collapsible content
+- Default slot is used for collapsible content
+- End slot is used for static content after the collapsible content
+
+## Examples
+
+By default, items will be hidden from end to start when collapsing, and shown from start to end when expanding
+
+<code-bubble>
+
+```html
+<ch-overflow>
+  <ch-button>settings</ch-button>
+  ...other elements here
+</ch-overflow>
+```
+
+</code-bubble>
+
+You can reverse this using `overflow-direction="start"`
+
+<code-bubble>
+
+```html
+<ch-overflow overflow-direction="start">...elements here</ch-overflow>
+```
+
+</code-bubble>
+
+You can ensure a minimum number of items are displayed using "min"
+
+<code-bubble>
+
+```html
+<ch-overflow min="3">...elements here</ch-overflow>
+```
+
+</code-bubble>
+
+## API
