@@ -203,6 +203,19 @@ export class CoreOverflowTests<T extends CoreOverflow> extends CharmElementTests
                   expect(menu!.querySelectorAll('[menu-item]').length).to.equal(3);
                 },
               },
+              menuPlacement: {
+                description: 'menuPlacement should be applied to internal menu component',
+                test: async () => {
+                  const overflow = this.component;
+                  const examplePosition = 'bottom-end';
+                  overflow.menuPlacement = examplePosition;
+                  await setViewport({ width: 100, height: 600 });
+                  await elementUpdated(overflow);
+                  await aTimeout(20);
+                  const overflowMenu = overflow.shadowRoot!.querySelector('.overflow-menu');
+                  expect(overflowMenu?.getAttribute('placement')).to.equal(examplePosition);
+                },
+              },
             },
           },
 
