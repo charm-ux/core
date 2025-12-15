@@ -271,6 +271,44 @@ export class CoreOverflowTests<T extends CoreOverflow> extends CharmElementTests
                   expect(subMenuitems[1]?.innerText.trim()).to.equal('Item 2');
                 },
               },
+              overflowMenuSubMenuItemsTooltipNested: {
+                description: 'should create child submenu from menu child in overflow (tooltip-nested)',
+                test: async () => {
+                  const el = this.component;
+                  const button = document.createElement('button');
+                  button.setAttribute('slot', 'trigger');
+                  const childMenu = document.createElement(project.scope.tagName('menu'));
+                  childMenu.appendChild(button);
+                  const tooltip = document.createElement(project.scope.tagName('tooltip'));
+                  tooltip.appendChild(childMenu);
+                  const menuItem1 = document.createElement(project.scope.tagName('menu-item'));
+                  menuItem1.innerText = 'Item 1';
+                  const menuItem2 = document.createElement(project.scope.tagName('menu-item'));
+                  menuItem2.innerText = 'Item 2';
+                  childMenu.appendChild(menuItem1);
+                  childMenu.appendChild(menuItem2);
+                  el.appendChild(tooltip);
+
+                  await elementUpdated(el);
+                  await setViewport({ width: 75, height: 600 });
+                  await aTimeout(50);
+                  const menu = el.shadowRoot!.querySelector('[menu]');
+                  // Show overflow menu
+                  const trigger = this.component.shadowRoot!.querySelector(
+                    '[menu] > [slot="trigger"]'
+                  ) as HTMLButtonElement;
+                  trigger.click();
+                  await elementUpdated(this.component);
+                  await aTimeout(20);
+                  // Find the submenu and check its items
+                  const subMenu = menu!.querySelectorAll('[menu-item][has-submenu]');
+                  expect(subMenu.length).to.equal(1);
+                  const subMenuitems = subMenu[0].querySelectorAll<HTMLElement>('[menu-item]');
+                  expect(subMenuitems.length).to.equal(2);
+                  expect(subMenuitems[0].innerText.trim()).to.equal('Item 1');
+                  expect(subMenuitems[1]?.innerText.trim()).to.equal('Item 2');
+                },
+              },
             },
           },
           // event tests
