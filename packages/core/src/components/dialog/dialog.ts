@@ -337,10 +337,7 @@ export class CoreDialog extends CharmDismissibleElement {
       })}
       part="dialog-base"
       aria-labelledby="header"
-<<<<<<< HEAD
-=======
       tabindex=${this.open ? 0 : -1}
->>>>>>> main
       @pointerup=${this.lightDismiss}
       @transitionend=${this.handleTransitionEnd}
       role=${ifDefined(this.alert ? 'alertdialog' : undefined)}
