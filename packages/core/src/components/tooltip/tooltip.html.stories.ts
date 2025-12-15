@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/web-components';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import '../button/index.js';
 import './index.js';
 import type { CoreTooltip } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-tooltip');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-tooltip');
 
 const meta: Meta<CoreTooltip> = {
   title: 'Core/Tooltip',
@@ -41,7 +41,7 @@ export const InitiallyOpen: Story = {
   },
 };
 
-export const anchor: Story = {
+export const Anchor: Story = {
   render: args => html`
     <ch-button id="button1">Paint</ch-button>
     ${template(args)}
@@ -52,7 +52,7 @@ export const anchor: Story = {
   },
 };
 
-export const delay: Story = {
+export const Delay: Story = {
   render: args => template(args, html` <ch-button>Paint</ch-button> `),
   args: {
     content: 'Paintbrush tool',

@@ -1,17 +1,18 @@
-import { setCustomElementsManifest } from '@storybook/web-components';
-import customElements from '../custom-elements.json';
-import { setWcStorybookHelpersConfig } from 'wc-storybook-helpers';
+import { setCustomElementsManifest } from '@storybook/web-components-vite';
+import { setStorybookHelpersConfig } from '@wc-toolkit/storybook-helpers';
 import { withThemeByClassName } from '@storybook/addon-themes';
-import { withBrandThemes } from './withBrandThemes.decorator';
+import customElements from '../custom-elements.json';
+import './code-bubble-setup.js';
+import '../dist/kitchen-sink.js';
 import '../dist/themes/charm/selector-theme.css';
 import '../dist/themes/charm/reset.css';
 import '../dist/themes/charm/utility-classes.css';
-import { withActions } from '@storybook/addon-actions/decorator';
+import './styles.css';
 
-setWcStorybookHelpersConfig({ typeRef: 'parsedType' });
+setStorybookHelpersConfig({});
 setCustomElementsManifest(customElements);
 
-/** @type { import('@storybook/web-components').Preview } */
+/** @type { import('@storybook/web-components-vite').Preview } */
 const preview = {
   parameters: {
     controls: {
@@ -23,22 +24,15 @@ const preview = {
       },
     },
   },
-  // decorators: [
-  //   withActions,
-  //   withBrandThemes({
-  //     themes: {
-  //       fluent: 'charm-light',
-  //     },
-  //     defaultTheme: 'charm-light',
-  //   }),
-  //   withThemeByClassName({
-  //     themes: {
-  //       'charm-light': 'charm-light',
-  //       'charm-dark': 'charm-dark',
-  //     },
-  //     defaultTheme: 'charm-light',
-  //   }),
-  // ],
+  decorators: [
+    withThemeByClassName({
+      themes: {
+        light: 'charm-light',
+        dark: 'charm-dark',
+      },
+      defaultTheme: 'light',
+    }),
+  ],
 };
 
 export default preview;

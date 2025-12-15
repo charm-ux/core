@@ -1,9 +1,9 @@
-import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreSwitch } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-switch');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-switch');
 
 const meta: Meta<CoreSwitch> = {
   title: 'Core/Switch',
@@ -30,7 +30,7 @@ export const Default: Story = {
   },
 };
 
-export const disabled: Story = {
+export const Disabled: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',
@@ -40,7 +40,7 @@ export const disabled: Story = {
   },
 };
 
-export const required: Story = {
+export const Required: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',
@@ -51,7 +51,7 @@ export const required: Story = {
   },
 };
 
-export const labelPosition: Story = {
+export const LabelPosition: Story = {
   render: args => template(args),
   args: {
     'label-slot': 'My label',

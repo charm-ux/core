@@ -9,6 +9,7 @@ module.exports = {
     'plugin:wc/recommended',
     'plugin:lit/recommended',
     'plugin:require-extensions/recommended',
+    'plugin:storybook/recommended',
   ],
   settings: {
     'mdx/code-blocks': true,

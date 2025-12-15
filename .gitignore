@@ -8,6 +8,7 @@ node_modules
 results
 settings.json
 storybook-static*
+packages/core/public
 packages/demo/custom-elements.json
 packages/docs/custom-elements.json
 packages/theming/demo/themes

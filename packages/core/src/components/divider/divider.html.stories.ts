@@ -1,10 +1,10 @@
-import { StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { StoryObj } from '@storybook/web-components-vite';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import { html } from 'lit';
 import './index.js';
 import type { CoreDivider } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-divider');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-divider');
 
 export default {
   title: 'Core/Divider',

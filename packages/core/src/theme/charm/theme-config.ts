@@ -1,5 +1,4 @@
 import {
-  altColor,
   borderRadius,
   borderWidth,
   color,
@@ -8,6 +7,7 @@ import {
   fontSize,
   fontWeight,
   lineHeight,
+  neutralAltColor,
   neutralColor,
   shadow,
   spacing,
@@ -145,19 +145,19 @@ export const charmThemeConfig: ThemeConfiguration = {
       button: {
         // REST
         bgColor: {
-          light: color('primary', 500),
-          dark: color('primary', 200),
+          light: neutralColor(200),
+          dark: neutralColor(800),
         },
         borderColor: {
-          light: color('primary', 500),
-          dark: color('primary', 200),
+          light: neutralColor(800),
+          dark: neutralColor(800),
         },
         borderSize: borderWidth('thin'),
         borderStyle: 'solid',
         borderRadius: borderRadius('md'),
         fgColor: {
-          light: altColor('primary', 500),
-          dark: altColor('primary', 200),
+          light: neutralAltColor(200),
+          dark: neutralAltColor(800),
         },
         fontWeight: fontWeight('regular'),
         paddingX: spacing('md'),
@@ -166,16 +166,16 @@ export const charmThemeConfig: ThemeConfiguration = {
 
         // ACTIVE
         activeFgColor: {
-          light: altColor('primary', 700),
-          dark: altColor('primary', 400),
+          light: neutralColor(800),
+          dark: neutralColor(800),
         },
         activeBorderColor: {
-          light: color('primary', 700),
-          dark: color('primary', 400),
+          light: neutralColor(800),
+          dark: neutralColor(800),
         },
         activeBgColor: {
-          light: color('primary', 700),
-          dark: color('primary', 400),
+          light: neutralColor(300),
+          dark: neutralColor(700),
         },
         activeShadow: shadow('none'),
 
@@ -196,31 +196,31 @@ export const charmThemeConfig: ThemeConfiguration = {
 
         // FOCUS
         focusBgColor: {
-          light: color('primary', 500),
-          dark: color('primary', 200),
+          light: neutralColor(200),
+          dark: neutralColor(800),
         },
         focusBorderColor: {
-          light: color('primary', 500),
-          dark: color('primary', 200),
+          light: neutralColor(800),
+          dark: neutralColor(800),
         },
         focusFgColor: {
-          light: altColor('primary', 500),
-          dark: altColor('primary', 200),
+          light: neutralAltColor(200),
+          dark: neutralAltColor(800),
         },
         focusShadow: shadow('sm'),
 
         // HOVER
         hoverBgColor: {
-          light: color('primary', 600),
-          dark: color('primary', 300),
+          light: neutralColor(400),
+          dark: neutralColor(700),
         },
         hoverBorderColor: {
-          light: color('primary', 600),
-          dark: color('primary', 300),
+          light: neutralColor(800),
+          dark: neutralColor(800),
         },
         hoverFgColor: {
-          light: altColor('primary', 600),
-          dark: altColor('primary', 300),
+          light: neutralAltColor(200),
+          dark: neutralAltColor(700),
         },
         hoverShadow: shadow('sm'),
       },
@@ -387,7 +387,6 @@ export const charmThemeConfig: ThemeConfiguration = {
         style: 'solid',
       },
 
-      // FLUENT SEMANTIC TOKENS
       extendedTokens: {},
     },
   },

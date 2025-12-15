@@ -159,7 +159,6 @@ export class CoreDialog extends CharmDismissibleElement {
       requestAnimationFrame(() => {
         this.visible = true;
       });
-      // this.focusTrapController.activate();
       this.lockBodyScrolling();
     } else {
       this.visible = false;
@@ -168,7 +167,6 @@ export class CoreDialog extends CharmDismissibleElement {
       if (!this.transition) {
         this.dialog?.close();
       }
-      // this.focusTrapController.deactivate();
     }
     super.onOpenChange(open);
   }
@@ -339,6 +337,10 @@ export class CoreDialog extends CharmDismissibleElement {
       })}
       part="dialog-base"
       aria-labelledby="header"
+<<<<<<< HEAD
+=======
+      tabindex=${this.open ? 0 : -1}
+>>>>>>> main
       @pointerup=${this.lightDismiss}
       @transitionend=${this.handleTransitionEnd}
       role=${ifDefined(this.alert ? 'alertdialog' : undefined)}

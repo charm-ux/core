@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import { html } from 'lit/static-html.js';
 import type { CoreRadio } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-radio');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-radio');
 
 const meta: Meta<CoreRadio> = {
   title: 'Core/Radio',

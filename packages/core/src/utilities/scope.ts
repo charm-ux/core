@@ -44,7 +44,7 @@ export interface ScopeOptions {
  * created, it cannot be destroyed without a page reload because custom elements cannot be unregistered.
  *
  * @example
- * import { theme } from '@fluent/tokens';
+ * import { theme } from '@my-theme/tokens';
  * import { button } from '@charm-ux/core/src/';
  *
  * const scope = createScope({

@@ -2179,9 +2179,7 @@
               }
             }
           ],
-          "modulePath": "src/components/accordion/accordion.ts",
-          "cssParts": [],
-          "cssStates": []
+          "modulePath": "src/components/accordion/accordion.ts"
         }
       ],
       "exports": [
@@ -3101,8 +3099,7 @@
               }
             }
           ],
-          "modulePath": "src/components/avatar/avatar.ts",
-          "cssStates": []
+          "modulePath": "src/components/avatar/avatar.ts"
         }
       ],
       "exports": [
@@ -3276,8 +3273,7 @@
               }
             }
           ],
-          "modulePath": "src/components/badge/badge.ts",
-          "cssStates": []
+          "modulePath": "src/components/badge/badge.ts"
         }
       ],
       "exports": [
@@ -4011,9 +4007,7 @@
               }
             }
           ],
-          "modulePath": "src/components/breadcrumb/breadcrumb.ts",
-          "cssProperties": [],
-          "cssStates": []
+          "modulePath": "src/components/breadcrumb/breadcrumb.ts"
         }
       ],
       "exports": [
@@ -4836,8 +4830,7 @@
               }
             }
           ],
-          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts",
-          "cssStates": []
+          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts"
         }
       ],
       "exports": [
@@ -5234,8 +5227,7 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/button-group/button-group.ts",
-          "cssStates": []
+          "modulePath": "src/components/button-group/button-group.ts"
         }
       ],
       "exports": [
@@ -6415,8 +6407,7 @@
               }
             }
           ],
-          "modulePath": "src/components/card/card.ts",
-          "cssStates": []
+          "modulePath": "src/components/card/card.ts"
         }
       ],
       "exports": [
@@ -8196,13 +8187,6 @@
             },
             {
               "kind": "field",
-              "name": "focusTrapController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new FocusTrapController(this)"
-            },
-            {
-              "kind": "field",
               "name": "handleKeydown",
               "privacy": "protected",
               "description": "Handles the 'keydown' event, specifically for the 'Escape' key.",
@@ -9301,9 +9285,7 @@
               }
             }
           ],
-          "modulePath": "src/components/divider/divider.ts",
-          "cssStates": [],
-          "slots": []
+          "modulePath": "src/components/divider/divider.ts"
         }
       ],
       "exports": [
@@ -9566,10 +9548,7 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/icon/icon.ts",
-          "cssProperties": [],
-          "cssStates": [],
-          "slots": []
+          "modulePath": "src/components/icon/icon.ts"
         }
       ],
       "exports": [
@@ -11513,8 +11492,7 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-group/menu-group.ts",
-          "cssStates": []
+          "modulePath": "src/components/menu-group/menu-group.ts"
         }
       ],
       "exports": [
@@ -12161,8 +12139,7 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-item/menu-item.ts",
-          "cssStates": []
+          "modulePath": "src/components/menu-item/menu-item.ts"
         }
       ],
       "exports": [
@@ -13476,8 +13453,7 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/overflow/overflow.ts",
-          "cssStates": []
+          "modulePath": "src/components/overflow/overflow.ts"
         }
       ],
       "exports": [
@@ -14924,8 +14900,7 @@
               }
             }
           ],
-          "modulePath": "src/components/progress-bar/progress-bar.ts",
-          "cssStates": []
+          "modulePath": "src/components/progress-bar/progress-bar.ts"
         }
       ],
       "exports": [
@@ -17484,8 +17459,7 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/radio/radio.ts",
-          "cssStates": []
+          "modulePath": "src/components/radio/radio.ts"
         }
       ],
       "exports": [
@@ -17796,10 +17770,7 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/scoped-styles/scoped-styles.ts",
-          "cssProperties": [],
-          "cssParts": [],
-          "cssStates": []
+          "modulePath": "src/components/scoped-styles/scoped-styles.ts"
         }
       ],
       "exports": [
@@ -19370,9 +19341,7 @@
               }
             }
           ],
-          "modulePath": "src/components/skeleton/skeleton.ts",
-          "cssStates": [],
-          "slots": []
+          "modulePath": "src/components/skeleton/skeleton.ts"
         }
       ],
       "exports": [
@@ -19634,8 +19603,7 @@
               }
             }
           ],
-          "modulePath": "src/components/spinner/spinner.ts",
-          "cssStates": []
+          "modulePath": "src/components/spinner/spinner.ts"
         }
       ],
       "exports": [
@@ -21325,8 +21293,7 @@
               }
             }
           ],
-          "modulePath": "src/components/tab-panel/tab-panel.ts",
-          "cssStates": []
+          "modulePath": "src/components/tab-panel/tab-panel.ts"
         }
       ],
       "exports": [
@@ -21626,8 +21593,7 @@
               }
             }
           ],
-          "modulePath": "src/components/tab/tab.ts",
-          "cssStates": []
+          "modulePath": "src/components/tab/tab.ts"
         }
       ],
       "exports": [
@@ -22081,8 +22047,7 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/tabs/tabs.ts",
-          "cssStates": []
+          "modulePath": "src/components/tabs/tabs.ts"
         }
       ],
       "exports": [

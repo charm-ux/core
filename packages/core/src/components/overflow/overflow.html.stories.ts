@@ -1,12 +1,12 @@
-import { Meta, StoryObj } from '@storybook/web-components';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import '../button/button.js';
 import '../icon/icon.js';
 import type { CoreOverflow } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-overflow');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-overflow');
 
 const meta: Meta<CoreOverflow> = {
   title: 'Core/Overflow',

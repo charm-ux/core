@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import '../icon/index.js';
 import '../badge/index.js';
 import type { CoreButton } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-button');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-button');
 
 const meta: Meta<CoreButton> = {
   title: 'Core/Button',
@@ -35,7 +35,7 @@ export const IconOnly: Story = {
   render: args => template(args),
   args: {
     'icon-only': true,
-    'default-slot': `<ch-icon label="person" name="person"></ch-icon>`,
+    'default-slot': `<ch-icon name="person" label="person"></ch-icon>`,
   },
 };
 

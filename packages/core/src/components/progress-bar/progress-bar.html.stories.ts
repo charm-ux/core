@@ -1,10 +1,10 @@
 import { html } from 'lit';
-import { StoryObj } from '@storybook/web-components';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { StoryObj } from '@storybook/web-components-vite';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreProgressBar } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-progress-bar');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-progress-bar');
 
 export default {
   title: 'Core/Progress Bar',

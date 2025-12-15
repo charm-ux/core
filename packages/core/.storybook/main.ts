@@ -1,13 +1,28 @@
 /** @type { import('@storybook/web-components-vite').StorybookConfig } */
 const config = {
   stories: ['../src/**/*.mdx', '../src/**/*html.stories.@(js|jsx|ts|tsx)'],
-  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/addon-a11y', 'storybook-addon-rtl'],
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-themes',
+    '@storybook/addon-a11y',
+    {
+      name: '@storybook/addon-docs',
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: {
+            providerImportSource: false,
+          },
+        },
+      },
+    },
+  ],
   framework: {
     name: '@storybook/web-components-vite',
     options: {},
   },
   docs: {},
-  async viteFinal(config) {
+  staticDirs: ['../public'],
+  async viteFinal(config: any) {
     // Merge custom configuration into the default config
     const { mergeConfig } = await import('vite');
 

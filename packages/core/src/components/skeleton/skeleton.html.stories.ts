@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/web-components';
+import { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import { getWcStorybookHelpers } from 'wc-storybook-helpers';
+import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
 import './index.js';
 import type { CoreSkeleton } from './index.js';
 
-const { args, argTypes, events, template } = getWcStorybookHelpers('ch-skeleton');
+const { args, argTypes, events, template } = getStorybookHelpers('ch-skeleton');
 
 const meta: Meta<CoreSkeleton> = {
   title: 'Core/Skeleton',
