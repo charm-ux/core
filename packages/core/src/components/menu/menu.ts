@@ -290,7 +290,7 @@ export class CoreMenu extends CharmDismissibleElement {
   /** Handle focus out event */
   protected handleFocusOut = (e: FocusEvent) => {
     // if focus-out is to the trigger button, update closed state
-    if ((e.relatedTarget as Element).hasAttribute('button')) {
+    if (e.relatedTarget && (e.relatedTarget as Element).hasAttribute('button')) {
       this.open = false;
     }
     if (!this.contains(e.relatedTarget as Element) && this.items?.length) {
