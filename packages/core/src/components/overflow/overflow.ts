@@ -1,7 +1,6 @@
 import { property, query, state } from 'lit/decorators.js';
 import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { when } from 'lit/directives/when.js';
 import { repeat } from 'lit/directives/repeat.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
@@ -473,13 +472,14 @@ export class CoreOverflow extends CharmElement {
             )}> `
         )}
         ${overFlowItem.text}
-        ${when(
-          overFlowItem.end,
-          () => html`
-            <span slot="end" class="overflow-menu-item-end" part="overflow-menu-item-end">${overFlowItem.end}</span>
-          `
-        )}
-        ${when(overFlowItem.subMenuItems.length > 0, () => this.overflowMenuItemListTemplate(overFlowItem.subMenuItems))}
+        ${
+          overFlowItem.end
+            ? html`
+                <span slot="end" class="overflow-menu-item-end" part="overflow-menu-item-end">${overFlowItem.end}</span>
+              `
+            : ''
+        }
+        ${overFlowItem.subMenuItems.length > 0 ? this.overflowMenuItemListTemplate(overFlowItem.subMenuItems) : ''}
       </${this.scope.tag('menu-item')}>
     `;
   }
