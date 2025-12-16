@@ -3,6 +3,7 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
+import { PopupPlacement } from '../popup/popup.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import Button from '../button/button.js';
 import Icon from '../icon/icon.js';
@@ -79,7 +80,7 @@ export class CoreOverflow extends CharmElement {
    * Overflow menu placement (the 'placement' property to pass to the overflow menu).
    */
   @property({ attribute: 'menu-placement' })
-  public menuPlacement?: string;
+  public menuPlacement?: PopupPlacement;
 
   /**
    * Side to start hiding/adding elements when collapsing/expanding.
@@ -310,7 +311,7 @@ export class CoreOverflow extends CharmElement {
   }
 
   protected parseOverflowMenuItem(element: HTMLElement, ignoreEndSlot?: boolean) {
-    const result: OverflowMenuItem = {
+    return {
       hostElement: element,
       tagName: element.tagName,
       text: element.textContent || element.innerText,
@@ -318,20 +319,6 @@ export class CoreOverflow extends CharmElement {
       subMenuItems: [] as OverflowMenuItem[],
       disabled: element.hasAttribute('disabled'),
     };
-
-    const slotEnd = element.querySelector('.slot-end');
-    if (slotEnd) {
-      // store the end content separately
-      result.end = (slotEnd.textContent || '').trim();
-      // clone the trigger, remove the slot-end node and use remaining text
-      const clone = element.cloneNode(true) as HTMLElement;
-      const clonedSlotEnd = clone.querySelector('.slot-end');
-      if (clonedSlotEnd) clonedSlotEnd.remove();
-      result.text = (clone.textContent || '').trim();
-    } else {
-      result.text = (element.textContent || '').trim();
-    }
-    return result;
   }
 
   protected parseMenu(menu: Menu) {
@@ -472,13 +459,6 @@ export class CoreOverflow extends CharmElement {
             )}> `
         )}
         ${overFlowItem.text}
-        ${
-          overFlowItem.end
-            ? html`
-                <span slot="end" class="overflow-menu-item-end" part="overflow-menu-item-end">${overFlowItem.end}</span>
-              `
-            : ''
-        }
         ${overFlowItem.subMenuItems.length > 0 ? this.overflowMenuItemListTemplate(overFlowItem.subMenuItems) : ''}
       </${this.scope.tag('menu-item')}>
     `;
