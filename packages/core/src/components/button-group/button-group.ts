@@ -78,11 +78,18 @@ export class CoreButtonGroup extends CharmElement {
   /** all child button elements, including nested button group children */
   protected get buttons(): CoreButton[] {
     const buttonChildren = BUTTON_CHILDREN.map(tag => this.scope.tagName(tag));
+    const buttonSelector = buttonChildren.join(',');
     return this.slottedElements.reduce((btns, el) => {
-      const button = buttonChildren.includes(el.tagName.toLowerCase())
-        ? (el as CoreButton)
-        : el.querySelector<CoreButton>(buttonChildren.join(','));
-      return btns.concat(button ? [button] : []);
+      if (buttonChildren.includes(el.tagName.toLowerCase())) {
+        return btns.concat(el as CoreButton);
+      }
+      // child button groups manage their own buttons
+      if (el instanceof CoreButtonGroup) {
+        return btns;
+      }
+      // Otherwise (overflow container, etc.), find all buttons within
+      const nestedButtons = Array.from(el.querySelectorAll<CoreButton>(buttonSelector));
+      return btns.concat(nestedButtons);
     }, [] as CoreButton[]);
   }
 
@@ -187,12 +194,20 @@ export class CoreButtonGroup extends CharmElement {
       }
     });
 
-    // Propagate toolbar attribute to child button groups
-    this.slottedElements.forEach(el => {
-      if (el.tagName === this.tagName && this.toolbar) {
-        el.setAttribute('toolbar', '');
-      }
-    });
+    if (this.toolbar) {
+      // Propagate toolbar attribute to child button groups, including nested ones
+      this.slottedElements.forEach(el => {
+        if (el instanceof CoreButtonGroup) {
+          el.setAttribute('toolbar', '');
+        }
+        const allDescendants = el.querySelectorAll('*');
+        allDescendants.forEach(descendant => {
+          if (descendant instanceof CoreButtonGroup) {
+            descendant.setAttribute('toolbar', '');
+          }
+        });
+      });
+    }
   }
 
   protected setTooltipPosition() {

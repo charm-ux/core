@@ -1602,6 +1602,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -2416,6 +2419,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -2779,7 +2785,7 @@
           ],
           "superclass": {
             "name": "CharmDismissibleElement",
-            "module": "/src/base/dismissible-element/charm-dismissible-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-alert",
           "customElement": true,
@@ -3494,6 +3500,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -3743,7 +3752,7 @@
           ],
           "superclass": {
             "name": "CharmFocusableElement",
-            "module": "/src/base/focusable-element/charm-focusable-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-breadcrumb-item",
           "customElement": true,
@@ -6981,6 +6990,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -7756,7 +7768,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-checkbox",
           "customElement": true,
@@ -8075,6 +8087,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -8544,7 +8559,7 @@
           ],
           "superclass": {
             "name": "CharmDismissibleElement",
-            "module": "/src/base/dismissible-element/charm-dismissible-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-dialog",
           "customElement": true,
@@ -10083,6 +10098,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -11165,7 +11183,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-input",
           "customElement": true,
@@ -11289,6 +11307,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -11755,6 +11776,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -12267,6 +12291,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -12791,7 +12818,7 @@
           ],
           "superclass": {
             "name": "CharmDismissibleElement",
-            "module": "/src/base/dismissible-element/charm-dismissible-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-menu",
           "customElement": true,
@@ -15155,6 +15182,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -15570,7 +15600,7 @@
           ],
           "superclass": {
             "name": "CharmDismissibleElement",
-            "module": "/src/base/dismissible-element/charm-dismissible-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-push-pane",
           "customElement": true,
@@ -16067,6 +16097,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -16934,7 +16967,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-radio-group",
           "customElement": true,
@@ -18245,6 +18278,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -19086,7 +19122,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-select",
           "customElement": true,
@@ -20199,6 +20235,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -21014,7 +21053,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-switch",
           "customElement": true,
@@ -22508,6 +22547,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -23416,7 +23458,7 @@
           ],
           "superclass": {
             "name": "CharmFormControlElement",
-            "module": "/src/base/form-control-element/charm-form-control-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-text-area",
           "customElement": true,
@@ -23725,6 +23767,9 @@
             {
               "kind": "field",
               "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
               "privacy": "public",
               "static": true,
               "readonly": true
@@ -24237,7 +24282,7 @@
           ],
           "superclass": {
             "name": "CharmDismissibleElement",
-            "module": "/src/base/dismissible-element/charm-dismissible-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-tooltip",
           "customElement": true,

@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import CharmFormControlElement from '../../base/form-control-element/charm-form-control-element.js';
+import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './checkbox.styles.js';
 
@@ -70,7 +70,7 @@ export class CoreCheckbox extends CharmFormControlElement {
   @query('.input')
   protected override input?: HTMLInputElement;
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

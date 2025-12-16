@@ -124,7 +124,7 @@ export class CoreMenuItem extends CharmElement {
 
   protected readonly hasSlotController = new HasSlotController(this, 'radio-indicator');
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon, CoreMenu, CorePopup];
   }
 
