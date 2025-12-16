@@ -272,6 +272,10 @@ export class CoreTooltip extends CharmDismissibleElement {
       // trigger transition, this.open state will be changed in `handleTransitionEnd` to hide popup after complete
       this.visible = false;
       this.announceContent = '';
+      // fixed placement tooltips sometimes have sticky inner popups or FOUC issues if not closed immediately
+      if (this.popup && this.fixedPlacement) {
+        this.popup.open = false;
+      }
     }
     super.onOpenChange(open);
   }
