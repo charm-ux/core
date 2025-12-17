@@ -8,7 +8,7 @@
   "description": "Core set of accessible headless web components, utilities, and styles for building design systems",
   "repository": {
     "type": "git",
-    "url": "TODO: add url"
+    "url": "https://github.com/charm-ux/core.git"
   },
   "sideEffects": false,
   "license": "MIT",

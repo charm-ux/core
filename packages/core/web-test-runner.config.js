@@ -59,6 +59,9 @@ export default {
       // Suppress Floating UI warnings
       window.process = { env: { NODE_ENV: "development" } };
 
+      // Disable Lit dev mode warning
+      window.litDisableDevModeWarning = true;
+
 			// This is a benign error that seems to be caused by components that use anchored region. We'll suppress it
 			// here and track down the root cause of it one day.
 			window.addEventListener('error', (e) => {
