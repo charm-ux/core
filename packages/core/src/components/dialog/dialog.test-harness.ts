@@ -318,6 +318,151 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   await sendKeys({ press: 'Enter' });
                 },
               },
+              focusTrap: {
+                description: 'should trap focus within dialog on Tab key',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input1 = document.createElement('input');
+                  input1.setAttribute('type', 'text');
+                  input1.setAttribute('placeholder', 'First input');
+                  const input2 = document.createElement('input');
+                  input2.setAttribute('type', 'text');
+                  input2.setAttribute('placeholder', 'Second input');
+                  this.component.appendChild(input1);
+                  this.component.appendChild(input2);
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  // Should focus on first input (close button is first)
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn');
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                  // Tab to first input
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(input1);
+                  // Tab to second input
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(input2);
+                },
+              },
+              focusTrapReverse: {
+                description: 'should trap focus in reverse with Shift+Tab',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input1 = document.createElement('input');
+                  input1.setAttribute('type', 'text');
+                  const input2 = document.createElement('input');
+                  input2.setAttribute('type', 'text');
+                  this.component.appendChild(input1);
+                  this.component.appendChild(input2);
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  // Focus should be on close button
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn');
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                  // Shift+Tab from first focusable element should move to last
+                  input2.focus();
+                  await sendKeys({ press: 'Shift+Tab' });
+                  expect(document.activeElement).to.equal(input1);
+                },
+              },
+              focusTrapWithTabindex: {
+                description: 'should include elements with tabindex in focus trap',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input = document.createElement('input');
+                  input.setAttribute('type', 'text');
+                  const div = document.createElement('div');
+                  div.setAttribute('tabindex', '0');
+                  div.textContent = 'Focusable div';
+                  this.component.appendChild(input);
+                  this.component.appendChild(div);
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn');
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                  // Tab through all focusable elements including tabindex
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(input);
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(div);
+                },
+              },
+              focusTrapIgnoresHiddenElements: {
+                description: 'should ignore hidden/disabled elements in focus trap',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input1 = document.createElement('input');
+                  input1.setAttribute('type', 'text');
+                  const input2 = document.createElement('input');
+                  input2.setAttribute('type', 'text');
+                  input2.setAttribute('disabled', '');
+                  const input3 = document.createElement('input');
+                  input3.setAttribute('type', 'text');
+                  this.component.appendChild(input1);
+                  this.component.appendChild(input2);
+                  this.component.appendChild(input3);
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  // Tab from first should skip disabled input2
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(input1);
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(input3);
+                },
+              },
+              focusTrapRestoresOnClose: {
+                description: 'should restore previous focus when dialog closes',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input = document.createElement('input');
+                  input.setAttribute('type', 'text');
+                  input.setAttribute('placeholder', 'Outside input');
+                  const dialogInput = document.createElement('input');
+                  dialogInput.setAttribute('type', 'text');
+                  dialogInput.setAttribute('placeholder', 'Dialog input');
+                  document.body.appendChild(input);
+                  this.component.appendChild(dialogInput);
+                  await elementUpdated(this.component);
+                  // Focus on outside input
+                  input.focus();
+                  expect(document.activeElement).to.equal(input);
+                  // Open dialog
+                  this.component.show();
+                  await aTimeout(300);
+                  // Focus should be inside dialog
+                  expect(document.activeElement).to.not.equal(input);
+                  // Close dialog
+                  this.component.hide();
+                  await aTimeout(500);
+                  // Focus should be restored to input
+                  expect(document.activeElement).to.equal(input);
+                  input.remove();
+                },
+              },
+              focusTrapWrapAround: {
+                description: 'should wrap focus to first element when tabbing past last focusable element',
+                test: async () => {
+                  if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
+                  const input1 = document.createElement('input');
+                  input1.setAttribute('type', 'text');
+                  const input2 = document.createElement('input');
+                  input2.setAttribute('type', 'text');
+                  this.component.appendChild(input1);
+                  this.component.appendChild(input2);
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  // Focus on last input
+                  input2.focus();
+                  // Tab should wrap to first focusable (close button)
+                  await sendKeys({ press: 'Tab' });
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn');
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                },
+              },
             },
           },
         },

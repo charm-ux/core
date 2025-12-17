@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { startContentEndTemplate } from '../../templates/start-content-end.js';
-import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
+import { CharmElement, CharmFocusableElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './breadcrumb-item.styles.js';
 
@@ -92,7 +92,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   @property()
   public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

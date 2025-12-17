@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
-import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
 import { parseDuration } from '../../internal/animations.js';
 import styles from './tooltip.styles.js';
@@ -84,7 +84,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   protected anchorEl?: HTMLElement | undefined;
   protected hoverTimeout?: number;
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CorePopup];
   }
 

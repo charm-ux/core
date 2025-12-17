@@ -3,7 +3,7 @@ import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import { HasSlotController } from '../../controller/index.js';
 import styles from './push-pane.styles.js';
@@ -105,7 +105,7 @@ export class CorePushPane extends CharmDismissibleElement {
 
   protected readonly hasSlotController = new HasSlotController(this, '[actions], [footer]');
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

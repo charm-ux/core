@@ -3,9 +3,10 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+// import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { CoreIcon } from '../icon/icon.js';
-import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
+import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import styles from './dialog.styles.js';
 
 export type DialogCloseSource = 'close-button' | 'keyboard' | 'overlay' | 'external';
@@ -116,7 +117,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
   protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
 
-  public static override get dependencies() {
+  // protected readonly focusTrapController = new FocusTrapController(this);
+
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

@@ -124,7 +124,7 @@ export class MyTag extends CharmElement {
 
   // Add any other components you use to the dependencies array so that they are properly registered
   // along with your base component
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

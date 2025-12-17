@@ -56,7 +56,7 @@ export class CoreMenuGroup extends CharmElement {
   @state()
   protected focusIndex = 0;
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreMenuItem];
   }
 

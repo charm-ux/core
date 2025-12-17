@@ -2,7 +2,7 @@ import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import CharmFormControlElement from '../../base/form-control-element/charm-form-control-element.js';
+import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { HasSlotController } from '../../controller/slot.js';
 import CoreRadio from '../radio/radio.js';
 import { keys } from '../../utilities/key-map.js';
@@ -52,7 +52,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this.useFocusHandler = false;
   }
 
-  public static override get dependencies() {
+  public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 

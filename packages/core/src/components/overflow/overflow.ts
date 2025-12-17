@@ -217,6 +217,8 @@ export class CoreOverflow extends CharmElement {
       this.hideItem(item);
       return this.slottedElements.length - this.overflowSet.size <= this.min || !this.isOverflowing();
     });
+    // set the lastWidth to the current width here to avoid an infinite back-and-forth in case the trigger is wider than what was just hidden
+    this.lastWidth = this.collapsingContainer.clientWidth;
   }
 
   /**
