@@ -1,8 +1,13 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
+const site = 'https://charm-ux.github.io/core';
+const base = '/core';
+
 // https://astro.build/config
 export default defineConfig({
+  site,
+  base,
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
@@ -34,35 +39,35 @@ export default defineConfig({
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
-            href: '/styles.css',
+            href: `${base}/styles.css`,
           },
         },
         {
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
-            href: '/charm/reset.css',
+            href: `${base}/charm/reset.css`,
           },
         },
         {
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
-            href: '/charm/theme.css',
+            href: `${base}/charm/theme.css`,
           },
         },
         {
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
-            href: '/charm/utility-classes.css',
+            href: `${base}/charm/utility-classes.css`,
           },
         },
         {
           tag: 'script',
           attrs: {
             type: 'module',
-            src: '/charm/kitchen-sink.js',
+            src: `${base}/charm/kitchen-sink.js`,
             defer: true,
           },
         },
@@ -70,7 +75,7 @@ export default defineConfig({
           tag: 'script',
           attrs: {
             type: 'module',
-            src: '/code-bubble.js',
+            src: `${base}/code-bubble.js`,
             defer: true,
           },
         },
