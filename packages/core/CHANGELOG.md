@@ -1,5 +1,5 @@
-# CHARM-UX Changelog
+# CHARM-UX Core Changelog
 
-## 1.0.0
+## 0.0.0
 
 - Initial commit

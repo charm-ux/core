@@ -1,6 +1,6 @@
 {
   "name": "@charm-ux/core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Core set of components, utilities, and styles to facilitate building design systems",
   "main": "index.js",
   "types": "index.d.ts",
@@ -31,6 +31,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "dependencies": {
     "@floating-ui/dom": "^1.6.11",
     "composed-offset-position": "^0.0.6",
