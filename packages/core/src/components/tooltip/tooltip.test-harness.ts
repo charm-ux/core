@@ -1,7 +1,6 @@
 import { aTimeout, elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
-import { CorePopup } from '../popup/index.js';
 import { CoreTooltip } from './index.js';
 
 export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T> {
@@ -26,19 +25,19 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(500);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   expect(body.hidden).to.be.false;
                   expect(getComputedStyle(body).opacity).to.equal('1');
                 },
               },
               notVisibleWhenClosed: {
-                description: '.should not be visible when closed',
+                description: 'should not be visible when closed',
                 test: async () => {
                   const el = this.component;
                   el.open = false;
                   await elementUpdated(el);
                   await aTimeout(500);
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   expect(body.hidden).to.be.true;
                   expect(getComputedStyle(body).opacity).to.equal('0');
                 },
@@ -51,7 +50,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   el.disabled = true;
 
                   await elementUpdated(el);
@@ -85,22 +84,17 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 test: async () => {
                   const el = this.component;
                   // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
-                  el.open = false;
                   await elementUpdated(el);
                   await aTimeout(200);
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   const showHandler = sinon.spy();
                   const afterShowHandler = sinon.spy();
-
                   el.addEventListener('tooltip-show', showHandler);
                   el.addEventListener('tooltip-after-show', afterShowHandler);
                   el.show();
-
                   await waitUntil(() => showHandler.calledOnce);
                   await waitUntil(() => afterShowHandler.calledOnce);
-
                   expect(body.hidden).to.be.false;
                   expect(getComputedStyle(body).opacity).to.equal('1');
                 },
@@ -115,7 +109,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   const showHandler = sinon.spy();
                   const afterShowHandler = sinon.spy();
 
@@ -140,17 +134,15 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   const hideHandler = sinon.spy();
                   const afterHideHandler = sinon.spy();
-
                   el.addEventListener('tooltip-hide', hideHandler);
                   el.addEventListener('tooltip-after-hide', afterHideHandler);
-                  el.hide();
 
+                  el.hide();
                   await waitUntil(() => hideHandler.calledOnce);
                   await waitUntil(() => afterHideHandler.calledOnce);
-
                   expect(body.hidden).to.be.true;
                   expect(getComputedStyle(body).opacity).to.equal('0');
                 },
@@ -165,14 +157,13 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
                   const hideHandler = sinon.spy();
                   const afterHideHandler = sinon.spy();
-
                   el.addEventListener('tooltip-hide', hideHandler);
                   el.addEventListener('tooltip-after-hide', afterHideHandler);
-                  el.hide();
 
+                  el.open = false;
                   await waitUntil(() => hideHandler.calledOnce);
                   await waitUntil(() => afterHideHandler.calledOnce);
 
@@ -195,7 +186,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await waitUntil(() => showHandler.calledOnce);
 
-                  const liveRegion = el.shadowRoot!.querySelector('.visually-hidden');
+                  const liveRegion = el.shadowRoot!.querySelector('[aria-live="polite"]');
                   expect(liveRegion).to.exist;
                   expect(liveRegion!.textContent!.trim()).to.equal('Test tooltip content');
 
@@ -215,38 +206,6 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
           interactions: {
             description: 'interactions',
             tests: {},
-          },
-        },
-      },
-    });
-  }
-}
-
-export class SiblingTooltipTests<T extends CoreTooltip> extends CharmElementTests<T> {
-  public constructor() {
-    super();
-
-    this.updateTests({
-      tooltip: {
-        description: 'tooltip',
-        tests: {
-          // attribute and property tests
-          properties: {
-            description: 'properties',
-            tests: {
-              popoverHasAnchorElement: {
-                description: 'popover should have anchor element found from anchor prop',
-                test: async () => {
-                  const el = this.component;
-                  el.open = true;
-                  await elementUpdated(el);
-                  await aTimeout(200);
-                  const anchor = document.querySelector<HTMLElement>('#tooltip-button');
-                  const popup = el.shadowRoot?.querySelector<CorePopup>('[part="tooltip-base"]');
-                  expect((popup?.anchor as HTMLElement).id).to.equal(anchor?.id);
-                },
-              },
-            },
           },
         },
       },

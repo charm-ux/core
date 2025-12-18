@@ -24,6 +24,7 @@ import { html } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmDismissibleElement } from '../../base/index.js';
+import detectTransitionFromStyles from '../../internal/transition.js';
 import styles from './popup.styles.js';
 
 export type PopupPlacement =
@@ -433,11 +434,47 @@ export class CorePopup extends CharmDismissibleElement {
     }
 
     // All other properties will trigger a reposition when active
-    await this.reposition();
+    // Don't await here to avoid waiting on updateComplete from within the update cycle
+    this.reposition();
   }
 
   protected override firstUpdated() {
     super.firstUpdated();
+
+    // Try to detect the transition property from the popup element itself.
+    // This complements the base-class detection (which reads host CSS vars during connectedCallback)
+    // and works around timing/formatting differences in Firefox when using named slots.
+    try {
+      // Only attempt detection if the base class didn't already find a transition.
+      if (!this.transition || !this.transitionProperty) {
+        const popupEl = this.popup;
+        if (popupEl) {
+          const baseName = (this.constructor as any).baseName;
+          // Prefer the explicit "show" CSS var so we get the transition used when opening.
+          const transitionStyles =
+            getComputedStyle(this).getPropertyValue(`--${baseName}-show-transition`) ||
+            getComputedStyle(popupEl).getPropertyValue('transition') ||
+            getComputedStyle(this).getPropertyValue(`--${baseName}-hide-transition`);
+
+          if (transitionStyles && transitionStyles !== 'none') {
+            detectTransitionFromStyles(popupEl, transitionStyles)
+              .then(info => {
+                if (info.transitionProperty) {
+                  this.transitionProperty = info.transitionProperty;
+                  this.requestUpdate(); // Ensure the component updates with the new transition property
+                }
+                this.transition = info.transition;
+              })
+              .catch(() => {
+                /* swallow errors; fallback behavior will apply */
+              });
+          }
+        }
+      }
+    } catch (e) {
+      // Defensive: don't block startup if anything goes wrong
+    }
+
     this.start();
   }
 
@@ -487,6 +524,11 @@ export class CorePopup extends CharmDismissibleElement {
     return html` <slot name="anchor" @slotchange=${this.handleAnchorChange}></slot> `;
   }
 
+  /* Generates the body template */
+  protected bodyTemplate() {
+    return html`<slot></slot>`;
+  }
+
   /** Generates the popup control template */
   protected popupControlTemplate() {
     return html`
@@ -499,8 +541,7 @@ export class CorePopup extends CharmDismissibleElement {
         @transitionend=${this.handleTransitionEnd}
       >
         <span id="popup-label" class="visually-hidden">${this.label}</span>
-        <slot></slot>
-        ${this.arrowTemplate()}
+        ${this.bodyTemplate()} ${this.arrowTemplate()}
       </dialog>
     `;
   }
@@ -684,9 +725,6 @@ export class CorePopup extends CharmDismissibleElement {
       left: `${x}px`,
       top: `${y}px`,
     });
-    if (!this.open) {
-      this.popup.hidden = true;
-    }
   }
 
   protected setArrowPosition(position: ComputePositionReturn) {

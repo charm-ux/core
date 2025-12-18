@@ -1,5 +1,6 @@
 import { property } from 'lit/decorators.js';
 import CharmElement from '../charm-element/charm-element.js';
+import detectTransitionFromStyles from '../../internal/transition.js';
 
 /**
  * Base class for components that can be shown or hidden. They have `show`, `hide`, and `toggle` methods, an `open`
@@ -52,22 +53,20 @@ export class CharmDismissibleElement extends CharmElement {
       getComputedStyle(this).getPropertyValue(`--${baseName}-show-transition`) ||
       getComputedStyle(this).getPropertyValue(`--${baseName}-hide-transition`);
     this.transition = transitionStyles.length > 0 && transitionStyles !== 'none';
-    // get the transition property that have the longest time of duration so that after-show and after-hide events only get emitted once
+
+    // Basic detection from computed var string
+    this.transition = transitionStyles.length > 0 && transitionStyles !== 'none';
+
+    // If there appears to be a transition, detect the specific property asynchronously
     if (this.transition) {
-      const div = Object.assign(document.createElement('span'), {
-        class: 'transition',
-        style: `transition: ${transitionStyles}`,
-      });
-      this.appendChild(div);
-      setTimeout(() => {
-        const divStyle = getComputedStyle(div);
-        const properties = divStyle.getPropertyValue('transition-property').split(', ');
-        const durations = divStyle.getPropertyValue('transition-duration').split(', ');
-        const maxDuration = Math.max(...durations.map(d => parseFloat(d)));
-        const index = durations.indexOf(maxDuration.toString() + 's');
-        this.transitionProperty = properties[index];
-        this.removeChild(div);
-      });
+      detectTransitionFromStyles(this, transitionStyles)
+        .then(info => {
+          this.transition = info.transition;
+          this.transitionProperty = info.transitionProperty;
+        })
+        .catch(() => {
+          /* swallow errors; fallback behavior will apply */
+        });
     }
   }
 

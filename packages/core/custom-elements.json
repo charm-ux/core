@@ -13696,6 +13696,11 @@
               "default": "'popup'"
             },
             {
+              "kind": "method",
+              "name": "bodyTemplate",
+              "privacy": "protected"
+            },
+            {
               "kind": "field",
               "name": "cleanup",
               "type": {
@@ -23594,6 +23599,70 @@
             {
               "description": "The transition effect when closing the tooltip",
               "name": "--tooltip-show-transition"
+            },
+            {
+              "description": "The color of the arrow.",
+              "name": "--popup-arrow-color",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.",
+              "name": "--popup-arrow-size",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.",
+              "name": "--popup-auto-size-available-height",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.",
+              "name": "--popup-auto-size-available-width",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.",
+              "name": "--popup-drop-shadow",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "animation when the overlay is hidden.",
+              "name": "--popup-hide-transition",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "animation when the overlay is shown.",
+              "name": "--popup-show-transition",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "controls the CSS z-index value for the overlay content.",
+              "name": "--popup-z-index",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             }
           ],
           "cssParts": [
@@ -23602,22 +23671,38 @@
               "name": "body"
             },
             {
-              "description": "The popup's `arrow` part. Use this to target the tooltip's arrow.",
-              "name": "popup-arrow"
+              "description": "Use this to target the tooltip's arrow.",
+              "name": "popup-arrow",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
-              "description": "The popup's `popup` part. Use this to target the tooltip's popup container.",
-              "name": "popup-base"
-            },
-            {
-              "description": "The component's base wrapper, a `<ch-popup>` element.",
-              "name": "tooltip-base"
+              "description": "Use this to target the tooltip's popup container.",
+              "name": "popup-base",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             }
           ],
           "slots": [
             {
-              "description": "The element to anchor the tooltip to.",
-              "name": ""
+              "description": "The popup's content.",
+              "name": "",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "The element the popup will be anchored to.",
+              "name": "anchor",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "description": "The tooltip's content. You can also use the `content` attribute.",
@@ -23625,22 +23710,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "_anchor",
-              "type": {
-                "text": "string | Element | undefined | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
-              "name": "_content",
-              "type": {
-                "text": "string | undefined | undefined"
-              },
-              "privacy": "protected"
-            },
             {
               "kind": "field",
               "name": "_dir",
@@ -23661,14 +23730,6 @@
               },
               "privacy": "protected",
               "default": "false"
-            },
-            {
-              "kind": "field",
-              "name": "_distance",
-              "type": {
-                "text": "number | undefined | undefined"
-              },
-              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -23694,40 +23755,39 @@
             },
             {
               "kind": "field",
-              "name": "_placement",
-              "type": {
-                "text": "PopupPlacement | undefined | undefined"
-              },
-              "privacy": "protected",
-              "parsedType": {
-                "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom' | undefined | undefined"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "_skidding",
-              "type": {
-                "text": "number | undefined | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
               "name": "anchor",
               "type": {
-                "text": "string | Element | undefined"
+                "text": "Element | string | undefined"
               },
               "privacy": "public",
-              "description": "When the anchor element is separate from the popup, provide its ID or a reference to the anchor element.",
-              "attribute": "anchor"
+              "description": "The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide its `id` or a reference to it here. If the anchor lives inside the popup, use the `anchor` slot instead.",
+              "attribute": "anchor",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
               "name": "anchorEl",
               "type": {
-                "text": "HTMLElement | undefined | undefined"
+                "text": "HTMLElement | null | undefined"
               },
-              "privacy": "protected"
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "anchorTemplate",
+              "privacy": "protected",
+              "description": "Generates the anchor template",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
@@ -23747,18 +23807,116 @@
               "kind": "field",
               "name": "arrow",
               "type": {
-                "text": "boolean | undefined"
+                "text": "boolean"
               },
               "privacy": "public",
-              "description": "Attaches an arrow pointing to the tooltip.",
+              "default": "false",
+              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
               "attribute": "arrow",
-              "reflects": true
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "arrowEl",
+              "type": {
+                "text": "HTMLElement"
+              },
+              "privacy": "protected",
+              "description": "A reference to the internal arrow element. Useful for animating and styling the popup with JavaScript.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "arrowPadding",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "public",
+              "default": "10",
+              "description": "The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners.",
+              "attribute": "arrow-padding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "arrowPlacement",
+              "type": {
+                "text": "'start' | 'end' | 'center' | 'anchor' | undefined"
+              },
+              "privacy": "public",
+              "description": "The placement of the arrow.",
+              "attribute": "arrow-placement",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "arrowTemplate",
+              "privacy": "protected",
+              "description": "Generates the arrow template",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
               "name": "attachListeners",
               "privacy": "protected",
               "description": "Adds event listeners for the anchor."
+            },
+            {
+              "kind": "field",
+              "name": "autoSize",
+              "type": {
+                "text": "'horizontal' | 'vertical' | 'both' | undefined"
+              },
+              "privacy": "public",
+              "description": "When set, this will cause the popup to automatically resize itself to prevent it from overflowing.",
+              "attribute": "auto-size",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autoSizeBoundary",
+              "type": {
+                "text": "Element | Element[] | undefined"
+              },
+              "privacy": "public",
+              "description": "The auto-size boundary describes clipping element(s) that overflow will be checked relative to when resizing. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autoSizePadding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "public",
+              "description": "The amount of padding, in pixels, to exceed before the auto-size behavior will occur.",
+              "attribute": "auto-size-padding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
@@ -23775,12 +23933,125 @@
               "default": "'tooltip'"
             },
             {
+              "kind": "method",
+              "name": "bodyTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the tooltip body and contents",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
               "kind": "field",
-              "name": "body",
+              "name": "cleanup",
               "type": {
-                "text": "HTMLElement"
+                "text": "ReturnType<typeof autoUpdate> | undefined"
               },
-              "privacy": "protected"
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureArrow",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "middleware",
+                  "type": {
+                    "text": "Middleware[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureAutoSize",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "middleware",
+                  "type": {
+                    "text": "Middleware[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureFlip",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "middleware",
+                  "type": {
+                    "text": "Middleware[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureMiddleware",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Middleware[]"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureShift",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "middleware",
+                  "type": {
+                    "text": "Middleware[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "configureSyncSize",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "middleware",
+                  "type": {
+                    "text": "Middleware[]"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
@@ -23794,13 +24065,26 @@
             },
             {
               "kind": "field",
-              "name": "dependencies",
+              "name": "contentRole",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "string"
               },
               "privacy": "public",
-              "static": true,
-              "readonly": true
+              "default": "'dialog'",
+              "description": "Sets the role of the overlay content.",
+              "attribute": "content-role",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "contentSlot",
+              "type": {
+                "text": "HTMLSlotElement | undefined"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -23831,11 +24115,16 @@
               "kind": "field",
               "name": "distance",
               "type": {
-                "text": "number | undefined"
+                "text": "number"
               },
               "privacy": "public",
-              "description": "The distance in pixels from which to offset the tooltip away from its target.",
-              "attribute": "distance"
+              "default": "0",
+              "description": "The distance in pixels from which to offset the panel away from its anchor.",
+              "attribute": "distance",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
@@ -23895,6 +24184,130 @@
               "reflects": true
             },
             {
+              "kind": "field",
+              "name": "flip",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "true",
+              "description": "When set, placement of the popup will flip to the opposite site to keep it in view. You can use `flipFallbackPlacements` to further configure how the fallback placement is determined.",
+              "attribute": "flip",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "flipBoundary",
+              "type": {
+                "text": "Element | Element[] | undefined"
+              },
+              "privacy": "public",
+              "description": "The flip boundary describes clipping element(s) that overflow will be checked relative to when flipping. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property.",
+              "attribute": "flipBoundary",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "flipFallbackPlacements",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "''",
+              "description": "If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. \"top bottom left\". If no placement fits, the flip fallback strategy will be used instead.",
+              "attribute": "flip-fallback-placements",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "flipFallbackStrategy",
+              "type": {
+                "text": "'best-fit' | 'initial' | undefined"
+              },
+              "privacy": "public",
+              "description": "When neither the preferred placement nor the fallback placements fit, this value will be used to determine whether the popup should be positioned as it was initially preferred or using the best available fit based on available space.",
+              "attribute": "flip-fallback-strategy",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "flipPadding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "public",
+              "description": "The amount of padding, in pixels, to exceed before the flip behavior will occur.",
+              "attribute": "flip-padding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "floatingUIPlacement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Placement | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "position",
+                  "optional": true,
+                  "type": {
+                    "text": "PopupPlacement"
+                  },
+                  "parsedType": {
+                    "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'"
+                  }
+                }
+              ],
+              "description": "Converts PopupPlacement to Floating UI Placement.\nFloating UI doesn't have \"start\" or \"end\" as its first position (before the -) only \"left\" and \"right\", so convert\ntooltips's start/end at the first position into left/right according to language direction.\nTo avoid confusion, tooltip uses \"top\" and \"bottom\" as the second position when the first is \"start\" or \"end\", so\nchange those to start/end for popup.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "focusTrap",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Provides keyboard focus trapping within the overlay content.",
+              "attribute": "focus-trap",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleAnchorChange",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "handleBlur",
               "privacy": "protected",
@@ -23914,17 +24327,21 @@
             },
             {
               "kind": "method",
-              "name": "handleKeyDown",
+              "name": "handleKeydown",
               "privacy": "protected",
               "parameters": [
                 {
-                  "name": "event",
+                  "name": "e",
                   "type": {
                     "text": "KeyboardEvent"
                   }
                 }
               ],
-              "description": "Handles keydown event on the popup"
+              "description": "Handles key down events to check for dismiss.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
@@ -23940,23 +24357,12 @@
             },
             {
               "kind": "method",
-              "name": "handleOptionsChange",
+              "name": "handleScrollDismiss",
               "privacy": "protected",
-              "description": "Handles popup options changing"
-            },
-            {
-              "kind": "method",
-              "name": "handleSlotChange",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ],
-              "description": "Handles the change of the default slot which contains the anchor of the tooltip."
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
@@ -23967,10 +24373,11 @@
                   "name": "e",
                   "type": {
                     "text": "TransitionEvent"
-                  }
+                  },
+                  "description": "The 'transitionend' event object."
                 }
               ],
-              "description": "Handles the transition end",
+              "description": "Handles the 'transitionend' event for CSS transitions.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -24001,12 +24408,38 @@
               }
             },
             {
+              "kind": "method",
+              "name": "hoverBridgeTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the hover bridge.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "hoverTimeout",
               "type": {
                 "text": "number | undefined"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "default": "'popup'",
+              "description": "The `aria-label` of the popup for assistive technologies.",
+              "attribute": "label",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
@@ -24026,6 +24459,11 @@
                 }
               ],
               "description": "Handles internal logic for when the open attribute changes",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -24053,25 +24491,66 @@
                 "text": "PopupPlacement | undefined"
               },
               "privacy": "public",
-              "description": "The preferred placement of the tooltip. Note that the actual placement may vary as needed to keep the tooltip inside of the viewport.",
+              "default": "'bottom'",
+              "description": "The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport.",
               "attribute": "placement",
+              "reflects": true,
               "parsedType": {
                 "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom' | undefined"
+              },
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
               }
             },
             {
               "kind": "field",
               "name": "popup",
               "type": {
-                "text": "CorePopup"
+                "text": "HTMLElement"
               },
-              "privacy": "protected"
+              "privacy": "protected",
+              "description": "A reference to the internal popup container. Useful for animating and styling the popup with JavaScript.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "popupControlTemplate",
+              "privacy": "protected",
+              "description": "Generates the popup control template",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "popupTemplate",
+              "privacy": "protected",
+              "description": "Generates the popup template",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
               "name": "removeListeners",
               "privacy": "protected",
               "description": "Removes event listeners for the anchor."
+            },
+            {
+              "kind": "method",
+              "name": "reposition",
+              "privacy": "public",
+              "description": "Recalculate and repositions the popup.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
@@ -24083,6 +24562,99 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setAnchorElement",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setArrowPosition",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "position",
+                  "type": {
+                    "text": "ComputePositionReturn"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setPopupPosition",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "x",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "y",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "shift",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "true",
+              "description": "Moves the popup along the axis to keep it in view when clipped.",
+              "attribute": "shift",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "shiftBoundary",
+              "type": {
+                "text": "Element | Element[] | undefined"
+              },
+              "privacy": "public",
+              "description": "The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property.",
+              "attribute": "shiftBoundary",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "shiftPadding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "public",
+              "description": "The amount of padding, in pixels, to exceed before the shift behavior will occur.",
+              "attribute": "shift-padding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
               }
             },
             {
@@ -24099,11 +24671,68 @@
               "kind": "field",
               "name": "skidding",
               "type": {
-                "text": "number | undefined"
+                "text": "number"
               },
               "privacy": "public",
-              "description": "The distance in pixels from which to offset the tooltip along its target.",
-              "attribute": "skidding"
+              "default": "0",
+              "description": "The distance in pixels from which to offset the panel along its anchor.",
+              "attribute": "skidding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "start",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "stop",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "strategy",
+              "type": {
+                "text": "'absolute' | 'fixed' | undefined"
+              },
+              "privacy": "public",
+              "description": "Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is clipped, using a `fixed` position strategy can often workaround it.",
+              "attribute": "strategy",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "sync",
+              "type": {
+                "text": "'width' | 'height' | 'both' | undefined"
+              },
+              "privacy": "public",
+              "description": "Syncs the popup's width or height to that of the anchor element.",
+              "attribute": "sync",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "method",
@@ -24114,18 +24743,6 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "tooltipBodyTemplate",
-              "privacy": "protected",
-              "description": "Generates the template for the tooltip body and contents"
-            },
-            {
-              "kind": "method",
-              "name": "tooltipTemplate",
-              "privacy": "protected",
-              "description": "Generates the template for the tooltip"
             },
             {
               "kind": "field",
@@ -24165,9 +24782,13 @@
             },
             {
               "kind": "method",
-              "name": "updateAnchorElement",
+              "name": "updateHoverBridge",
               "privacy": "protected",
-              "description": "Updates the trigger of the tooltip if the anchor is provided as a string."
+              "description": "Updates the visual of the hover bridge.",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "kind": "field",
@@ -24181,6 +24802,46 @@
             }
           ],
           "events": [
+            {
+              "description": "Emitted after the popup closes and all transitions are complete.",
+              "name": "popup-after-hide",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "Emitted after the popup opens and all transitions are complete.",
+              "name": "popup-after-show",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "Emitted when the popup closes.",
+              "name": "popup-hide",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "PopupRepositionEvent. Emitted when the popup is repositioned. This event can fire a lot, so avoid putting expensive operations in your listener or consider debouncing it.",
+              "name": "popup-reposition",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "description": "Emitted when the popup opens.",
+              "name": "popup-show",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
             {
               "description": "Emitted when the component has completed its initial render.",
               "name": "ready",
@@ -24210,18 +24871,76 @@
             {
               "name": "anchor",
               "type": {
-                "text": "string | Element | undefined"
+                "text": "Element | string | undefined"
               },
-              "description": "When the anchor element is separate from the popup, provide its ID or a reference to the anchor element.",
-              "fieldName": "anchor"
+              "description": "The element the popup will be anchored to. If the anchor lives outside of the popup, you can provide its `id` or a reference to it here. If the anchor lives inside the popup, use the `anchor` slot instead.",
+              "fieldName": "anchor",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "arrow",
               "type": {
-                "text": "boolean | undefined"
+                "text": "boolean"
               },
-              "description": "Attaches an arrow pointing to the tooltip.",
-              "fieldName": "arrow"
+              "default": "false",
+              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "fieldName": "arrow",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "arrow-padding",
+              "type": {
+                "text": "number"
+              },
+              "default": "10",
+              "description": "The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners.",
+              "fieldName": "arrowPadding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "arrow-placement",
+              "type": {
+                "text": "'start' | 'end' | 'center' | 'anchor' | undefined"
+              },
+              "description": "The placement of the arrow.",
+              "fieldName": "arrowPlacement",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "auto-size",
+              "type": {
+                "text": "'horizontal' | 'vertical' | 'both' | undefined"
+              },
+              "description": "When set, this will cause the popup to automatically resize itself to prevent it from overflowing.",
+              "fieldName": "autoSize",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "auto-size-padding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "description": "The amount of padding, in pixels, to exceed before the auto-size behavior will occur.",
+              "fieldName": "autoSizePadding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "content",
@@ -24230,6 +24949,19 @@
               },
               "description": "The content to display inside the tooltip. You can use `content` slot instead if you need text formatting.",
               "fieldName": "content"
+            },
+            {
+              "name": "content-role",
+              "type": {
+                "text": "string"
+              },
+              "default": "'dialog'",
+              "description": "Sets the role of the overlay content.",
+              "fieldName": "contentRole",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "dir",
@@ -24254,10 +24986,15 @@
             {
               "name": "distance",
               "type": {
-                "text": "number | undefined"
+                "text": "number"
               },
-              "description": "The distance in pixels from which to offset the tooltip away from its target.",
-              "fieldName": "distance"
+              "default": "0",
+              "description": "The distance in pixels from which to offset the panel away from its anchor.",
+              "fieldName": "distance",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "fixed-placement",
@@ -24266,6 +25003,94 @@
               },
               "description": "Enable this option to prevent the tooltip from being clipped when the component is placed inside a container with `overflow: auto|hidden|scroll`.",
               "fieldName": "fixedPlacement"
+            },
+            {
+              "name": "flip",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "When set, placement of the popup will flip to the opposite site to keep it in view. You can use `flipFallbackPlacements` to further configure how the fallback placement is determined.",
+              "fieldName": "flip",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "flip-fallback-placements",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. \"top bottom left\". If no placement fits, the flip fallback strategy will be used instead.",
+              "fieldName": "flipFallbackPlacements",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "flip-fallback-strategy",
+              "type": {
+                "text": "'best-fit' | 'initial' | undefined"
+              },
+              "description": "When neither the preferred placement nor the fallback placements fit, this value will be used to determine whether the popup should be positioned as it was initially preferred or using the best available fit based on available space.",
+              "fieldName": "flipFallbackStrategy",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "flip-padding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "description": "The amount of padding, in pixels, to exceed before the flip behavior will occur.",
+              "fieldName": "flipPadding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "flipBoundary",
+              "type": {
+                "text": "Element | Element[] | undefined"
+              },
+              "description": "The flip boundary describes clipping element(s) that overflow will be checked relative to when flipping. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property.",
+              "fieldName": "flipBoundary",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "focus-trap",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Provides keyboard focus trapping within the overlay content.",
+              "fieldName": "focusTrap",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "default": "'popup'",
+              "description": "The `aria-label` of the popup for assistive technologies.",
+              "fieldName": "label",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "open",
@@ -24284,19 +25109,90 @@
               "type": {
                 "text": "PopupPlacement | undefined"
               },
-              "description": "The preferred placement of the tooltip. Note that the actual placement may vary as needed to keep the tooltip inside of the viewport.",
+              "default": "'top'",
+              "description": "The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport.",
               "fieldName": "placement",
               "parsedType": {
                 "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom' | undefined"
+              },
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "shift",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Moves the popup along the axis to keep it in view when clipped.",
+              "fieldName": "shift",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "shift-padding",
+              "type": {
+                "text": "number | undefined"
+              },
+              "description": "The amount of padding, in pixels, to exceed before the shift behavior will occur.",
+              "fieldName": "shiftPadding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "shiftBoundary",
+              "type": {
+                "text": "Element | Element[] | undefined"
+              },
+              "description": "The shift boundary describes clipping element(s) that overflow will be checked relative to when shifting. By default, the boundary includes overflow ancestors that will cause the element to be clipped. If needed, you can change the boundary by passing a reference to one or more elements to this property.",
+              "fieldName": "shiftBoundary",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
               }
             },
             {
               "name": "skidding",
               "type": {
-                "text": "number | undefined"
+                "text": "number"
               },
-              "description": "The distance in pixels from which to offset the tooltip along its target.",
-              "fieldName": "skidding"
+              "default": "0",
+              "description": "The distance in pixels from which to offset the panel along its anchor.",
+              "fieldName": "skidding",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "strategy",
+              "type": {
+                "text": "'absolute' | 'fixed' | undefined"
+              },
+              "description": "Determines how the popup is positioned. The `absolute` strategy works well in most cases, but if overflow is clipped, using a `fixed` position strategy can often workaround it.",
+              "fieldName": "strategy",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
+            },
+            {
+              "name": "sync",
+              "type": {
+                "text": "'width' | 'height' | 'both' | undefined"
+              },
+              "description": "Syncs the popup's width or height to that of the anchor element.",
+              "fieldName": "sync",
+              "inheritedFrom": {
+                "name": "CorePopup",
+                "module": "src/components/popup/popup.ts"
+              }
             },
             {
               "name": "trigger",
@@ -24309,8 +25205,8 @@
             }
           ],
           "superclass": {
-            "name": "CharmDismissibleElement",
-            "module": "/src/base/index.js"
+            "name": "CorePopup",
+            "module": "/src/components/popup/popup.js"
           },
           "tagName": "ch-tooltip",
           "customElement": true,
@@ -24328,7 +25224,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/tooltip/tooltip.ts"
+          "modulePath": "src/components/tooltip/tooltip.ts",
+          "cssStates": []
         }
       ],
       "exports": [

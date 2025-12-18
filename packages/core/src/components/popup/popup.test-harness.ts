@@ -1,4 +1,5 @@
-import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
+import sinon from 'sinon';
 import { type Placement } from '@floating-ui/dom';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CorePopup } from './index.js';
@@ -234,6 +235,102 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.placement = 'bottom';
 
                   await oneEvent(el, 'popup-reposition');
+                },
+              },
+              show: {
+                description: 'should emit popup-show and popup-after-show when calling show()',
+                test: async () => {
+                  const el = this.component;
+                  await elementUpdated(el);
+                  await aTimeout(200);
+                  const popup = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
+
+                  const showHandler = sinon.spy();
+                  const afterShowHandler = sinon.spy();
+                  el.addEventListener('popup-show', showHandler);
+                  el.addEventListener('popup-after-show', afterShowHandler);
+                  el.show();
+
+                  await waitUntil(() => showHandler.calledOnce);
+                  await waitUntil(() => afterShowHandler.calledOnce);
+                  expect(popup.hidden).to.be.false;
+                  expect(getComputedStyle(popup).opacity).to.equal('1');
+                },
+                config: {
+                  style: '--popup-show-transition: opacity 0.2s;',
+                },
+              },
+              showFromAttribute: {
+                description: 'should emit popup-show and popup-after-show when setting open = true',
+                test: async () => {
+                  const el = this.component;
+                  await elementUpdated(el);
+                  await aTimeout(200);
+                  const popup = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
+
+                  const showHandler = sinon.spy();
+                  const afterShowHandler = sinon.spy();
+                  el.addEventListener('popup-show', showHandler);
+                  el.addEventListener('popup-after-show', afterShowHandler);
+                  el.open = true;
+
+                  await waitUntil(() => showHandler.calledOnce);
+                  await waitUntil(() => afterShowHandler.calledOnce);
+                  expect(popup.hidden).to.be.false;
+                  expect(getComputedStyle(popup).opacity).to.equal('1');
+                },
+                config: {
+                  style: '--popup-show-transition: opacity 0.2s;',
+                },
+              },
+              hide: {
+                description: 'should emit popup-hide and popup-after-hide when calling hide()',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+
+                  await elementUpdated(el);
+                  await aTimeout(200);
+                  const popup = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
+
+                  const hideHandler = sinon.spy();
+                  const afterHideHandler = sinon.spy();
+                  el.addEventListener('popup-hide', hideHandler);
+                  el.addEventListener('popup-after-hide', afterHideHandler);
+
+                  el.hide();
+                  await waitUntil(() => hideHandler.calledOnce);
+                  await waitUntil(() => afterHideHandler.calledOnce);
+                  expect(popup.hidden).to.be.true;
+                  expect(getComputedStyle(popup).opacity).to.equal('0');
+                },
+                config: {
+                  style: '--popup-hide-transition: opacity 0.2s;',
+                },
+              },
+              hideFromAttribute: {
+                description: 'should emit popup-hide and popup-after-hide when setting open = false',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+
+                  await elementUpdated(el);
+                  await aTimeout(200);
+                  const popup = el.shadowRoot!.querySelector<HTMLElement>('.popup')!;
+
+                  const hideHandler = sinon.spy();
+                  const afterHideHandler = sinon.spy();
+                  el.addEventListener('popup-hide', hideHandler);
+                  el.addEventListener('popup-after-hide', afterHideHandler);
+
+                  el.open = false;
+                  await waitUntil(() => hideHandler.calledOnce);
+                  await waitUntil(() => afterHideHandler.calledOnce);
+                  expect(popup.hidden).to.be.true;
+                  expect(getComputedStyle(popup).opacity).to.equal('0');
+                },
+                config: {
+                  style: '--popup-hide-transition: opacity 0.2s;',
                 },
               },
             },

@@ -6,7 +6,7 @@ Use tooltips to expose additional information about an element.
 
 ```html
 <ch-tooltip content="This is a tooltip!">
-  <ch-button>Hover me</ch-button>
+  <ch-button slot="anchor">Hover me</ch-button>
 </ch-tooltip>
 ```
 
@@ -34,19 +34,19 @@ You can control the tooltip's default placement using the `placement` attribute.
 
 ```html
 <ch-tooltip placement="top" content="This is a tooltip on top!">
-  <ch-button>Top</ch-button>
+  <ch-button slot="anchor">Top</ch-button>
 </ch-tooltip>
 
 <ch-tooltip placement="bottom" content="This is a tooltip on bottom!">
-  <ch-button>Bottom</ch-button>
+  <ch-button slot="anchor">Bottom</ch-button>
 </ch-tooltip>
 
 <ch-tooltip placement="start" content="This is a tooltip on start!">
-  <ch-button>Start</ch-button>
+  <ch-button slot="anchor">Start</ch-button>
 </ch-tooltip>
 
 <ch-tooltip placement="end" content="This is a tooltip on end!">
-  <ch-button>End</ch-button>
+  <ch-button slot="anchor">End</ch-button>
 </ch-tooltip>
 ```
 
@@ -60,7 +60,7 @@ You can use HTML in tooltips by using the `content` slot rather than the attribu
 
 ```html
 <ch-tooltip>
-  <ch-button>Hover me</ch-button>
+  <ch-button slot="anchor">Hover me</ch-button>
   <span slot="content">
     I'm not
     <strong>just</strong>
@@ -82,11 +82,11 @@ Tooltips will be clipped if they're inside a container that has `overflow: auto|
 ```html
 <div class="tooltip-hoist">
   <ch-tooltip content="This is a tooltip">
-    <ch-button>Clipped</ch-button>
+    <ch-button slot="anchor">Clipped</ch-button>
   </ch-tooltip>
 
   <ch-tooltip fixed-placement content="This is a tooltip">
-    <ch-button>Fixed placement</ch-button>
+    <ch-button slot="anchor">Fixed placement</ch-button>
   </ch-tooltip>
 </div>
 
@@ -113,7 +113,7 @@ You can control how quickly the tooltip shows and hides using the `--show-delay`
   style="--tooltip-show-delay: 1000ms; --tooltip-hide-delay: 500ms;"
   content="This one takes longer to show and hide"
 >
-  <ch-button>Longer Delays</ch-button>
+  <ch-button slot="anchor">Longer Delays</ch-button>
 </ch-tooltip>
 ```
 

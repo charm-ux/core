@@ -18,61 +18,46 @@ export default css`
     --tooltip-show-transition: opacity 150ms ease-in-out;
     --tooltip-hide-transition: opacity 50ms ease-in-out;
 
+    --popup-show-transition: var(--tooltip-show-transition);
+    --popup-hide-transition: var(--tooltip-hide-transition);
+    --popup-arrow-color: var(--tooltip-bg-color);
+    --popup-arrow-size: var(--tooltip-arrow-size);
+
     display: contents;
     position: relative;
   }
 
-  .tooltip {
-    --popup-arrow-color: var(--tooltip-bg-color);
-    --popup-arrow-size: var(--tooltip-arrow-size);
-  }
-
-  .tooltip::part(popup-base) {
+  .popup {
     box-shadow: var(--tooltip-box-shadow);
     border-radius: var(--tooltip-border-radius);
+    transform-origin: top;
     z-index: 1000;
   }
 
-  .tooltip::part(popup-arrow) {
+  .arrow {
     z-index: 1001;
     border: 0px var(--tooltip-border-style) var(--tooltip-border-color);
   }
 
-  .tooltip::part(popup) {
-    transform-origin: top;
-  }
-
-  .tooltip[data-current-placement^='top']::part(popup) {
-    transform-origin: bottom;
-  }
-
-  .tooltip[data-current-placement^='left']::part(popup) {
-    transform-origin: right;
-  }
-
-  .tooltip[data-current-placement^='right']::part(popup) {
-    transform-origin: left;
-  }
-
-  .tooltip[data-current-placement^='top']::part(popup-arrow) {
+  :host[data-current-placement^='top'] .arrow {
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.07);
     border-bottom: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
     border-inline-end: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
   }
 
-  .tooltip[data-current-placement^='bottom']::part(popup-arrow) {
+  :host[data-current-placement^='bottom'] .arrow {
     box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.05);
     border-top: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
     border-inline-start: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
   }
 
-  .tooltip[data-current-placement^='left']::part(popup-arrow) {
+  :host[data-current-placement^='left'] .arrow {
     box-shadow: 2px -2px 2px rgba(0, 0, 0, 0.06);
     border-top: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
     border-inline-end: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
   }
 
-  .tooltip[data-current-placement^='right']::part(popup-arrow) {
+  :host[data-current-placement^='right'] .arrow {
     box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.06);
     border-bottom: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
     border-inline-start: var(--default-border-size) var(--default-border-style) var(--tooltip-arrow-border-color);
@@ -83,22 +68,9 @@ export default css`
     border: var(--tooltip-border-width) var(--tooltip-border-style) var(--tooltip-border-color);
     border-radius: var(--tooltip-border-radius);
     color: var(--tooltip-fg-color);
-    max-width: var(--tooltip-max-width);
+    max-width: var(--popup-auto-size-max-width, var(--tooltip-max-width));
     padding: var(--tooltip-padding, 4px);
     pointer-events: none;
-    opacity: 0;
-    transition: var(--tooltip-hide-transition);
-  }
-
-  .tooltip::part(popup-arrow) {
-    opacity: 0;
-    transition: var(--tooltip-hide-transition);
-  }
-
-  .tooltip--visible .body,
-  .tooltip--visible::part(popup-arrow) {
-    transition: var(--tooltip-show-transition);
-    opacity: 1;
   }
 
   @media (forced-colors: active) {
