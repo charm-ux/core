@@ -1,5 +1,12 @@
 # CHARM-UX Core Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- d50d762: [Menu] Keyboard navigation / focus and state fixes
+- 789e880: [Tooltip] Fix issue with fixed placement popup and tooltip open state falling out of sync
+
 ## 0.2.1
 
 ### Patch Changes
