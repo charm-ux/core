@@ -16,9 +16,25 @@
     "prepare": "npm run build",
     "test": "vitest run"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "design-tokens",
+    "theming",
+    "css-variables",
+    "design-system",
+    "color",
+    "generator"
+  ],
+  "author": "Charm UX Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charm-ux/core.git",
+    "directory": "packages/theming"
+  },
+  "bugs": {
+    "url": "https://github.com/charm-ux/core/issues"
+  },
+  "homepage": "https://github.com/charm-ux/core/packages/theming#readme",
   "publishConfig": {
     "provenance": true,
     "access": "public"

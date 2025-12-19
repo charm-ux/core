@@ -28,9 +28,25 @@
     "package.json",
     "README.md"
   ],
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "web-components",
+    "lit",
+    "design-system",
+    "ui-components",
+    "accessibility",
+    "theming"
+  ],
+  "author": "Charm UX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charm-ux/core.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/charm-ux/core/issues"
+  },
+  "homepage": "https://charm-ux.github.io/core/",
   "publishConfig": {
     "provenance": true,
     "access": "public"
