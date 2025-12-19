@@ -1,5 +1,11 @@
 # CHARM-UX Core Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- fdd4082: Added missing README for core package
+
 ## 0.2.0
 
 ### Minor Changes
