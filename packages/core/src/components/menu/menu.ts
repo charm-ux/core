@@ -201,7 +201,7 @@ export class CoreMenu extends CharmDismissibleElement {
 
       case 'Enter':
       case ' ':
-        if (this.trigger === document.activeElement && !this.open) {
+        if (this.trigger?.matches(':focus') && !this.open) {
           e.preventDefault();
           await this.show();
           await this.updateComplete;
@@ -296,6 +296,10 @@ export class CoreMenu extends CharmDismissibleElement {
 
   /** Handle focus out event */
   protected handleFocusOut = (e: FocusEvent) => {
+    // if focus-out is to the trigger button, update closed state
+    if (e.relatedTarget && (e.relatedTarget as Element).hasAttribute('button')) {
+      this.open = false;
+    }
     if (!this.contains(e.relatedTarget as Element) && this.items?.length) {
       this.items[this.focusIndex].setAttribute('tabindex', '-1');
       this.items[0].setAttribute('tabindex', '0');
