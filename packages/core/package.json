@@ -1,5 +1,5 @@
 {
-  "name": "@charm-ux/charm-ux-core",
+  "name": "charm-ux-core",
   "version": "0.2.1-test",
   "description": "Core set of components, utilities, and styles to facilitate building design systems",
   "main": "index.js",
