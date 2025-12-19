@@ -1,6 +1,6 @@
 {
   "name": "@charm-ux/theming",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "This package is designed to help generate and manage themes for the Charm UI library. It is a part of the Charm UI ecosystem.",
   "main": "index.js",
   "types": "index.d.ts",
