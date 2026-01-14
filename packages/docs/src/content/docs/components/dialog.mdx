@@ -1,0 +1,137 @@
+---
+title: Dialog
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Dialog is a window overlaid above the page that enables interactive communication between the user and the computer system. It is also known as a "modal".
+
+## Default dialog
+
+The core dialog has a default layout with three different sections, a header, a body content and a footer. The `header` slot can be used as the title. The body is the `default` slot and it is optional. The `footer` slot is optional and it is commonly used for action buttons. The component also has a built in close button to dismiss the dialog.
+
+<code-bubble>
+
+```html
+<ch-button shows="default">Open dialog</ch-button>
+<ch-dialog id="default">
+  <h2 slot="header">Dialog title</h2>
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+    repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+  </p>
+  <div slot="footer">
+    <ch-button>Close</ch-button>
+  </div>
+</ch-dialog>
+```
+
+</code-bubble>
+
+## Setting a size
+
+Sizing of dialog can be adjusted by setting the `--dialog-size` CSS property on the element. The default size is `340px`.
+
+<code-bubble>
+
+```html
+<ch-button shows="size-dialog">Open small dialog</ch-button>
+<ch-dialog id="size-dialog" position="start" heading="Drawer header" style="--dialog-size: 940px;">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+```
+
+</code-bubble>
+
+## Positioning
+
+The Drawer gives users a quick entry point to configuration and information. It should be used when retaining context is beneficial to users.
+
+To use the drawer, set the `position` property to `start`, `end`, `top`, `bottom`, or `center`. Dialogs will display center by default.
+
+<code-bubble>
+
+```html
+<ch-button shows="start-dialog">Open Start</ch-button>
+<ch-dialog id="start-dialog" position="start" heading="Start Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+
+<ch-button shows="end-dialog">Open End</ch-button>
+<ch-dialog id="end-dialog" position="end" heading="End Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+
+<ch-button shows="top-dialog">Open Top</ch-button>
+<ch-dialog id="top-dialog" position="top" heading="Top Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+
+<ch-button shows="bottom-dialog">Open Bottom</ch-button>
+<ch-dialog id="bottom-dialog" position="bottom" heading="Bottom Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+
+<ch-button shows="center-dialog">Open Center</ch-button>
+<ch-dialog id="center-dialog" position="center" heading="Center Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+```
+
+</code-bubble>
+
+## Hide close button
+
+To remove the close button from the dialog, set the `hide-close-button` attribute to the element. The button will still be present but visually hidden when it's not focused.
+
+<code-bubble>
+
+```html
+<ch-button shows="hide-close">Open dialog</ch-button>
+<ch-dialog id="hide-close" heading="Hide Close Button" hide-close-button>
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+```
+
+</code-bubble>
+
+## No Header
+
+To remove the header from the dialog, set the `no-header` attribute to the element.
+
+<code-bubble>
+
+```html
+<ch-button shows="hide-header">Open dialog</ch-button>
+<ch-dialog id="hide-header" heading="No Header" no-header>
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+```
+
+</code-bubble>
+
+## Explicit Close
+
+To prevent the dialog from closing by clicking the backdrop, set the `explicit-close` attribute to the element. This will require the user to click the close button or an action button to dismiss the dialog.
+
+<code-bubble>
+
+```html
+<ch-button shows="exp-close">Open dialog</ch-button>
+<ch-dialog id="exp-close" heading="Explicit Close" explicit-close>
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+</ch-dialog>
+```
+
+</code-bubble>
+
+## API

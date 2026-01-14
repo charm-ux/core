@@ -1,0 +1,19 @@
+code-bubble[code-bubble] {
+  margin-bottom: 2rem;
+
+  pre {
+    &[slot] {
+      padding: 2rem;
+      margin: 0;
+    }
+
+    button {
+      display: none;
+    }
+  }
+}
+
+.docblock-source.sb-unstyled {
+  margin: 0;
+  border: 0;
+}

@@ -1,0 +1,52 @@
+{
+  "name": "@charm-ux/theming",
+  "version": "0.2.0",
+  "description": "This package is designed to help generate and manage themes for the Charm UI library. It is a part of the Charm UI ecosystem.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "demo": "tsc && node demo/generators.js",
+    "prepare": "npm run build",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "design-tokens",
+    "theming",
+    "css-variables",
+    "design-system",
+    "color",
+    "generator"
+  ],
+  "author": "Charm UX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charm-ux/core.git",
+    "directory": "packages/theming"
+  },
+  "bugs": {
+    "url": "https://github.com/charm-ux/core/issues"
+  },
+  "homepage": "https://github.com/charm-ux/core/packages/theming#readme",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "dependencies": {
+    "chroma-js": "^2.4.2",
+    "prettier": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/chroma-js": "^2.4.4",
+    "@types/node": "^24.3.0",
+    "lit": "^3.1.2",
+    "vitest": "^1.3.1"
+  }
+}

@@ -1,0 +1,104 @@
+---
+title: Accordion Item
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+The accordion item can be used independently or as a sub-component of the [accordion component](/components/accordion/).
+It is a single selectable item that has a collapsible section of content.
+
+## Default
+
+Heading content can be set using the `heading` attribute. The details content is rendered in the default slot.
+
+<code-bubble>
+
+```html
+<ch-accordion-item heading="Accordion item summary">Accordion item content</ch-accordion-item>
+```
+
+</code-bubble>
+
+## Rich content for heading
+
+Rich content can be added to the accordion item by using the `heading` slot. The details content is rendered in the default slot.
+
+<code-bubble>
+
+```html
+<ch-accordion-item>
+  <span slot="heading">
+    <em>Fancy</em>
+    text in
+    <b>heading</b>
+  </span>
+  Accordion item content
+</ch-accordion-item>
+```
+
+</code-bubble>
+
+## Custom content in heading
+
+To add content before or after the heading content, use the `start` and `end` slots.
+
+<code-bubble>
+
+```html
+<ch-accordion-item heading="Start slot">
+  <span slot="start">🙂</span>
+  Accordion item content
+</ch-accordion-item>
+<br />
+<ch-accordion-item heading="End slot">
+  <span slot="end">🙂</span>
+  Accordion item content
+</ch-accordion-item>
+<br />
+<ch-accordion-item heading="Both slots">
+  <span slot="start">🙂</span>
+  <span slot="end">🙂</span>
+  Accordion item content
+</ch-accordion-item>
+```
+
+</code-bubble>
+
+## Disabled
+
+To disable the accordion item, use the `disabled` attribute within the `<ch-accordion-item>` element.
+
+<code-bubble>
+
+```html
+<ch-accordion-item disabled>
+  <span slot="heading">I am disabled</span>
+  Accordion item content
+</ch-accordion-item>
+```
+
+</code-bubble>
+
+## Accessibility
+
+The toggle can be made a heading using the `heading-level`. This feature doesn't affect the accessibility of the component, but it can be useful for SEO.
+
+Heading levels `1` | `2` | `3` | `4` | `5` | `6`
+
+<code-bubble>
+
+```html
+<ch-accordion-item heading-level="3" heading="H3 tag in here">
+  Accordion item content
+</ch-accordion-item>
+```
+
+</code-bubble>
+
+## Dependencies
+
+The component imports the following dependencies.
+
+- `<ch-icon>`
+
+## API

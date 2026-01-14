@@ -1,0 +1,70 @@
+# Breadcrumb Item
+
+A breadcrumb item is an element within a breadcrumb component to help represent a specific page or category within a website or a web application. Breadcrumb items are used inside the breadcrumb component to represent different links.
+
+## Adding a breadcrumb item label
+
+To add a label to the breadcrumb item you can place any element within the opening and closing tag of the `<ch-breadcrumb-item>` element.
+
+```html
+<ch-breadcrumb-item>breadcrumb item</ch-breadcrumb-item>
+```
+
+## Rendering an active breadcrumb item link
+
+By default breadcrumb item renders an inactive anchor. To render a link, set an `href` attribute within the `<ch-breadcrumb-item>` element.
+
+```html
+<ch-breadcrumb-item href="#">breadcrumb item</ch-breadcrumb-item>
+```
+
+## Custom separator
+
+By default the slot is a `/`. To customize the separator use the `separator` slot.
+
+```html
+<ch-breadcrumb-item>
+  breadcrumb item
+  <span slot="separator">></span>
+</ch-breadcrumb-item>
+```
+
+## Setting a start icon
+
+To prepend an icon use the `start` slot.
+
+```html
+<ch-breadcrumb-item>
+  breadcrumb item
+  <ch-icon slot="start" name="home"></ch-icon>
+</ch-breadcrumb-item>
+```
+
+## Setting an end icon
+
+To append an icon use the `end` slot.
+
+```html
+<ch-breadcrumb-item>
+  breadcrumb item
+  <ch-icon slot="end" name="folder"></ch-icon>
+</ch-breadcrumb-item>
+```
+
+## Setting a target
+
+To tell the browser where to open the link, use the `target` attribute within the `<ch-breadcrumb-item>` element. This is only used when an href is set.<br></br>
+Target types are `blank` | `parent` | `self` | `top`.
+
+```html
+<ch-breadcrumb-item target="_blank">breadcrumb item</ch-breadcrumb-item>
+```
+
+## Setting referrer policy property
+
+To defining which referrer is sent when fetching the resource, use the `referrerpolicy` attribute within the `<ch-breadcrumb-item>` element.<br></br>
+referrer policy types are `no-referrer` | `no-referrer-when-downgrade` | `origin` | `origin-when-cross-origin` | `same-origin` | `strict-origin` | `strict-origin-when-cross-origin` | `unsafe-url`
+
+```html
+<ch-breadcrumb-item referrerpolicy="no-referrer">breadcrumb item</ch-breadcrumb-item>
+```

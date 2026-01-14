@@ -1,0 +1,114 @@
+# Radio Group
+
+A radio group is a set of radio buttons, which can have no more than one button selected at a time. For more than 5 choices, consider using a different component such as Menu.
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Favorite Pet">
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats">Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Disabling options
+
+Add the `disabled` attribute to one or more radio components to disable them.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Favorite Pet">
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats" disabled>Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Required
+
+Set the `required` attribute to make the radio group a required field. An asterisk will automatically be appended to the label, indicating the field is required.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Favorite Pet" required>
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats" disabled>Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Setting a default value
+
+To select a default value, set the item's `value` attribute on the he-radio-group.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Setting a default value" value="maverick">
+  <ch-radio value="ice-man">Ice Man</ch-radio>
+  <ch-radio value="maverick">Maverick</ch-radio>
+  <ch-radio value="viper">Viper</ch-radio>
+  <ch-radio value="jester">Jester</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Setting help text
+
+Use the `help-text` attribute or slot to add additional help text to the form control.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Fruits" name="fruit" help-text="Select your favorite fruit.">
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats">Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Layout: horizontal
+
+The `horizontal` layout places each radio item in a row, with labels after the radio indicator.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Fruits" name="fruit" layout="horizontal">
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats">Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>
+
+## Layout: horizontal-stacked
+
+The `horizontal-stacked` layout places each radio item in a row, with labels below the radio indicator.
+
+<code-bubble>
+
+```html
+<ch-radio-group label="Fruits" name="fruit" layout="horizontal-stacked">
+  <ch-radio value="birds">Birds</ch-radio>
+  <ch-radio value="cats">Cats</ch-radio>
+  <ch-radio value="dogs">Dogs</ch-radio>
+</ch-radio-group>
+```
+
+</code-bubble>

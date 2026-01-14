@@ -1,0 +1,12 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "incremental": false,
+    "isolatedModules": true,                          /* Ensure that each file can be safely transpiled without relying on other imports. */
+    "experimentalDecorators": true,
+    "verbatimModuleSyntax": false,
+    "useDefineForClassFields": false,                  /* Emit ECMAScript-standard-compliant class fields. */
+    "resolveJsonModule": true,                        /* Enable importing .json files. */
+  }
+}

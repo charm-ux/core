@@ -1,0 +1,34 @@
+import { html } from 'lit/static-html.js';
+import CharmElement from '../../base/charm-element/charm-element.js';
+import styles from './{{kebabCase name}}.styles.js';
+
+/**
+ * TODO: change this summary for {{kebabCase name}}
+ *
+ * @tag ch-{{kebabCase name}}
+ * @since 0.0.0
+ *
+ * @slot - TODO: update this default slot documentation
+ *
+ * @csspart {{kebabCase name}}-component - The component base wrapper.
+ *
+ **/
+export class Core{{pascalCase name}} extends CharmElement {
+
+  public static override styles = [...super.styles, styles]
+
+  public static override baseName = '{{kebabCase name}}';
+
+  /** Generate the {{camelCase name}} template. */
+  protected {{camelCase name}}Template() {
+    return html`<todo-replace-this class="base" part="{{kebabCase name}}-base">
+      <slot></slot>
+    </todo-replace-this>`;
+  }
+
+  protected override render() {
+    return this.{{camelCase name}}Template();
+  }
+}
+
+export default Core{{pascalCase name}};

@@ -1,0 +1,260 @@
+---
+title: Input
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Input allows the user to enter and edit text.
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-input></ch-input>
+```
+
+</code-bubble>
+
+## Using Start and End slots
+
+You can add elements, such as an icon within the input. <br></br>
+
+To set the element to the left of the input, use the `start` slot.
+
+<code-bubble>
+
+```html
+<ch-input>
+  <ch-icon slot="start" name="search"></ch-icon>
+</ch-input>
+```
+
+</code-bubble>
+
+To set the element to the right of the input, use the `end` slot.
+
+<code-bubble>
+
+```html
+<ch-input>
+  <ch-icon slot="end" name="search"></ch-icon>
+</ch-input>
+```
+
+</code-bubble>
+
+## Label
+
+To add a label, use the `label` attribute within the `<ch-input>` element. This option will make the label accessible to screen readers.
+
+<code-bubble>
+
+```html
+<ch-input label="Enter your username:"></ch-input>
+```
+
+</code-bubble>
+
+To create an HTML label in the DOM, use the `label` slot. This option will not make the label accessible.
+
+<code-bubble>
+
+```html
+<ch-input>
+  <span slot="label">Enter your username:</span>
+  /ch-input>
+</ch-input>
+```
+
+</code-bubble>
+
+## Help text
+
+To help add more descriptive information to the input, use the `help-text` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input help-text="Provide your username within the input"></ch-input>
+```
+
+</code-bubble>
+
+To create an HTML help text in the DOM, use the `help-text` slot.
+
+<code-bubble>
+
+```html
+<ch-input><span slot="help-text">Provide your username within the input</span></ch-input>
+```
+
+</code-bubble>
+
+## Input Type
+
+To control the type of input to render, use the `type` attribute within the `<ch-input>` element. By default, `text` is the input type. <br></br>
+
+Input types `date` | `datetime-local` | `email` | `number` | `password` | `search` | `tel` | `text` | `time` | `url`
+
+<code-bubble>
+
+```html
+<ch-input type="date"></ch-input>
+```
+
+</code-bubble>
+
+## Autocapitalize
+
+To control how text input is automatically capitalized as it is entered by the user, use the `autocapitalize` attribute within the `<ch-input>` element. By default autocapitalize is set to `off`. <br></br>
+
+Autocapitalize types `off` | `none` | `on` | `sentences` | `words` | `characters`
+
+<code-bubble>
+
+```html
+<ch-input autocapitalize="words"></ch-input>
+```
+
+</code-bubble>
+
+## Autocomplete
+
+To control whether a browser should automatically complete the input value based on the user's past interactions, use the `autocomplete` attribute within the `<ch-input>` element. By default `autocomplete` is set to `off`. <br></br>
+
+Autocomplete types `off` | `on`
+
+<code-bubble>
+
+```html
+<ch-input autocomplete="on"></ch-input>
+```
+
+</code-bubble>
+
+## Autocorrect
+
+To specify whether the input field should correct the spelling of the text entered, use the `autocorrect` attribute within the `<ch-input>` element. By default `autocorrect` is set to `off`. <br></br>
+
+Autocorrect types `off` | `on`
+
+<code-bubble>
+
+```html
+<ch-input autocorrect="on"></ch-input>
+```
+
+</code-bubble>
+
+## Enterkeyhint
+
+To provide what kind of action is expected after pressing the 'Enter' key, use the `enterkeyhint` attribute within the `<ch-input>` element. <br></br>
+
+Enterkeyhint types `enter` | `done` | `go` | `next` | `previous` | `search` | `send`
+
+<code-bubble>
+
+```html
+<ch-input enterkeyhint="search"></ch-input>
+```
+
+</code-bubble>
+
+## Inputmode
+
+To observe the type of data that might be entered by the user and specify the type of virtual keyboard that should be displayed on touch devices when a user interacts with an input field, use the `inputmode` attribute within the `<ch-input>` element.
+
+Inputmode types `none` | `text` | `decimal` | `numeric` | `tel` | `search` | `email` | `url`
+
+<code-bubble>
+
+```html
+<ch-input inputmode="numeric"></ch-input>
+```
+
+</code-bubble>
+
+## Min and Max
+
+To specify the minimum value that can be entered into the input field, use the `min` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input type="number" max="10"></ch-input>
+```
+
+</code-bubble>
+
+To specify the maximum value that can be entered into the input field, use the `max` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input type="number" max="100"></ch-input>
+```
+
+</code-bubble>
+
+## Minlength and Maxlength
+
+To specify the minimum amount of characters entered into the input field, use the `minlength` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input minlength="4"></ch-input>
+```
+
+</code-bubble>
+
+To specify the maximum amount of characters entered into the input field, use the `maxlength` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input maxlength="20"></ch-input>
+```
+
+</code-bubble>
+
+## Spellcheck
+
+To control the spell-checking feature, use the `spellcheck` attribute within the `<ch-input>` element. By default `spellcheck` is set to `true`.
+
+Spellcheck types `true` | `false`
+
+<code-bubble>
+
+```html
+<ch-input spellcheck></ch-input>
+```
+
+</code-bubble>
+
+## Step
+
+The `step` attribute is used in conjunction with `type` of the `<ch-input>` element. To use, set the `step` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input type="number" step="2"></ch-input>
+```
+
+</code-bubble>
+
+## Pattern
+
+If you want to specify a regular expression to match the value of the input, use the `pattern` attribute within the `<ch-input>` element.
+
+<code-bubble>
+
+```html
+<ch-input pattern="\(\d{3}\) \d{3}-\d{4}"></ch-input>
+```
+
+</code-bubble>
+
+## API

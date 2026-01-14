@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+      "target": "ES2020",
+      "experimentalDecorators": true,
+      "useDefineForClassFields": false,
+      "module": "ESNext",
+      "lib": ["ES2020", "DOM", "DOM.Iterable"],
+      "skipLibCheck": true,
+      "types": ["mocha"],
+      "outDir": "dist",
+      /* Bundler mode */
+      "moduleResolution": "node",
+      "allowImportingTsExtensions": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "emitDeclarationOnly": true,
+      "declaration": true,
+      "esModuleInterop": true,
+      "erasableSyntaxOnly": true,
+  
+      /* Linting */
+      "strict": true,
+      "forceConsistentCasingInFileNames": true,
+      "noImplicitAny": true,
+      "noImplicitReturns": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true
+    },
+    "include": ["packages/tier-one", "packages/core", "sandbox"]
+  }
+  

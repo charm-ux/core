@@ -1,0 +1,57 @@
+name: Changeset Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  changeset-check:
+    name: Check for Changeset
+    runs-on: ubuntu-latest
+
+    # Skip this check if the PR has the "no-changeset" label
+    if: |
+      !contains(github.event.pull_request.labels.*.name, 'no-changeset') &&
+      !contains(github.event.pull_request.labels.*.name, 'dependencies')
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+          run_install: false
+
+      - name: Check for changeset
+        run: |
+          # Check if any changesets exist (excluding README.md and config.json)
+          CHANGESET_COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l)
+
+          if [ "$CHANGESET_COUNT" -eq 0 ]; then
+            echo "❌ No changeset found!"
+            echo ""
+            echo "This PR requires a changeset to document the changes."
+            echo ""
+            echo "To create a changeset, run:"
+            echo "  pnpm changeset"
+            echo ""
+            echo "If this PR doesn't require a changeset (e.g., documentation only),"
+            echo "add the 'no-changeset' label to this PR."
+            exit 1
+          else
+            echo "✅ Changeset found!"
+            echo ""
+            echo "Found $CHANGESET_COUNT changeset(s):"
+            find .changeset -name "*.md" ! -name "README.md" -exec basename {} \;
+          fi

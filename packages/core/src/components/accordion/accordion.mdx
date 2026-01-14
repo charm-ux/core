@@ -1,0 +1,36 @@
+# Accordion
+
+An accordion is a vertically stacked set of interactive headings representing sections of content. The headings function as controls that enable users to reveal or hide their associated sections of content.
+
+## Default
+
+Use [accordion items](/components/accordion-item/) to create individual sections or panels within the opening and closing of the `<ch-accordion>` element.
+
+<code-bubble>
+
+```html
+<ch-accordion>
+  <ch-accordion-item heading="Panel One">Section Content One</ch-accordion-item>
+  <ch-accordion-item heading="Panel Two">Section Content Two</ch-accordion-item>
+  <ch-accordion-item heading="Panel Three">Section Content Three</ch-accordion-item>
+  <ch-accordion></ch-accordion>
+</ch-accordion>
+```
+
+</code-bubble>
+
+## Single Expand Mode
+
+By default, the accordion has its `open-single` set to `false`. To ensure that only one accordion item opens at a time, add the `open-single` attribute.
+
+<code-bubble>
+
+```html
+<ch-accordion open-single>
+  <ch-accordion-item heading="Panel One">Section Content One</ch-accordion-item>
+  <ch-accordion-item heading="Panel Two">Section Content Two</ch-accordion-item>
+  <ch-accordion-item heading="Panel Three">Section Content Three</ch-accordion-item>
+</ch-accordion>
+```
+
+</code-bubble>

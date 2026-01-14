@@ -1,0 +1,99 @@
+---
+title: Menu Item
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Menu items are used to compose menus and are intended to be used with the menu component.
+
+:::info
+This is a subcomponent of [Menu](/components/menu)
+:::
+
+## Default
+
+To create a menu item, add an element within the opening and closing `<ch-menu-item>` tags.
+
+<code-bubble>
+  ```html
+  <ch-menu-item>menu item</ch-menu-item>
+  ```
+</code-bubble>
+
+## Menu Item with Start content
+
+A menu item can include any element at the beginning using the `start` slot. This is useful for adding visual indicators, icons, or other content at the start of the menu item.
+
+<code-bubble>
+
+```html
+<ch-menu-item>
+  Menu Item with start slot
+  <ch-icon slot="start" name="person"></ch-icon>
+</ch-menu-item>
+```
+
+</code-bubble>
+
+## Menu Item with End content
+
+A menu item can include any element at the end using the `end` slot. This is useful for adding visual indicators, icons, or other content at the end of the menu item.
+
+<code-bubble>
+
+```html
+<ch-menu-item>
+  Menu Item with end slot
+  <ch-icon slot="end" name="warning-shield"></ch-icon>
+</ch-menu-item>
+```
+
+</code-bubble>
+
+## Disabled Menu Item
+
+Menu items can be disabled to indicate they are not currently available for interaction.
+
+<code-bubble>
+
+```html
+<ch-menu-item disabled>Disabled Menu Item</ch-menu-item>
+```
+
+</code-bubble>
+
+## Menu Item as Link
+
+Menu items can be rendered as links by providing an `href` attribute. This allows them to function as navigation elements.
+
+<code-bubble>
+
+```html
+<ch-menu-item href="https://example.com" target="_blank">Menu Item as Link</ch-menu-item>
+```
+
+</code-bubble>
+
+## Submenu
+
+To create a submenu, simply nest one or more `<ch-menu-item>` elements inside another `<ch-menu-item>`.
+
+<code-bubble>
+
+```html
+<ch-menu-item>
+  menu item
+  <ch-menu-item>submenu item 1</ch-menu-item>
+  <ch-menu-item>submenu item 2</ch-menu-item>
+</ch-menu-item>
+```
+
+</code-bubble>
+
+## Dependencies
+
+The component imports the following dependencies.
+
+- `<ch-icon>`
+
+## API

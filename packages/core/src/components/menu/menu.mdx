@@ -1,0 +1,137 @@
+# Menu
+
+Menu is a component that allows showing content dropped down from a trigger element when it is activated. Commonly used to display a list of menu item actions.
+
+## Default
+
+Menu has a trigger slot for the interactive element that triggers the menu, and a default slot for the menu content.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">menu</ch-button>
+  <ch-menu-item>menu item 1</ch-menu-item>
+  <ch-menu-item>menu item 2</ch-menu-item>
+  <ch-menu-item>menu item 3</ch-menu-item>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Open
+
+The `open` attribute can be used to programmatically set the open/closed state of the menu. It is set to `false` by default.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;" open>
+  <ch-button slot="trigger">menu</ch-button>
+  <ch-menu-item>menu item 1</ch-menu-item>
+  <ch-menu-item>menu item 2</ch-menu-item>
+  <ch-menu-item>menu item 3</ch-menu-item>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Anchor Menu Items
+
+Menu items can be used as links by adding `href` and `target` attributes.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">click me</ch-button>
+  <ch-menu-item href="https://bing.com" target="_blank">Item 1</ch-menu-item>
+  <ch-menu-item href="https://bing.com" target="_blank">Item 2</ch-menu-item>
+  <ch-menu-item href="https://bing.com" target="_blank">Item 3</ch-menu-item>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Submenu
+
+Menu items can contain nested menu items to create submenus.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">click me</ch-button>
+  <ch-menu-item>Item 1</ch-menu-item>
+  <ch-menu-item>Item 2</ch-menu-item>
+  <ch-menu-item>
+    Item 3
+    <ch-menu-item>Submenu item 1</ch-menu-item>
+    <ch-menu-item>Submenu item 2</ch-menu-item>
+    <ch-menu-item>Submenu item 3</ch-menu-item>
+  </ch-menu-item>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Menu Groups
+
+Menu items can be organized into groups with headings.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">click me</ch-button>
+  <ch-menu-group heading="Group heading">
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu-group>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Checkbox Menu Items
+
+Menu groups can be configured for multiple selection using checkboxes.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">click me</ch-button>
+  <ch-menu-group select="multiple">
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu-group>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Radio Menu Items
+
+Menu groups can be configured for single selection using radio buttons.
+
+<code-bubble>
+
+```html
+<ch-menu style="--popup-z-index: 1;">
+  <ch-button slot="trigger">click me</ch-button>
+  <ch-menu-group select="single">
+    <ch-menu-item>Item 1</ch-menu-item>
+    <ch-menu-item>Item 2</ch-menu-item>
+    <ch-menu-item>Item 3</ch-menu-item>
+  </ch-menu-group>
+</ch-menu>
+```
+
+</code-bubble>
+
+## Accessibility
+
+Keyboard functionality is designed to work seamlessly with the `<ch-menu>` and `<ch-menu-item>` elements. If you want to create a custom menu, you can still get appropriate keyboard functionality by using the `role="menu-item"` in your custom menu items. Currently, keyboard events may not appropriately set focus to elements within a `<ch-menu>` if they aren't part of a menu pattern.

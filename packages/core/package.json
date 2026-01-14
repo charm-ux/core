@@ -1,0 +1,98 @@
+{
+  "name": "@charm-ux/core",
+  "version": "0.2.1",
+  "description": "Core set of components, utilities, and styles to facilitate building design systems",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "type": "module",
+  "scripts": {
+    "analyze": "cem analyze",
+    "analyze:dev": "cem analyze --watch",
+    "build": "pnpm analyze && pnpm generate:kitchen-sink && tsc && pnpm generate:theme && vite build && pnpm copy-assets",
+    "copy-assets": "node ./scripts/copy-assets.js",
+    "dev": "run-p analyze:dev storybook:dev",
+    "generate:kitchen-sink": "node --disable-warning=ExperimentalWarning ./scripts/make-kitchen-sink.js",
+    "generate:theme": "pnpx tsx ./scripts/make-themes.ts",
+    "prepare": "pnpx playwright install-deps",
+    "storybook:dev": "storybook dev -p 6006",
+    "storybook:build": "cem analyze && storybook build -c .storybook",
+    "test": "pnpm generate:theme && web-test-runner",
+    "test:watch": "web-test-runner --watch",
+    "test:performance": "web-test-runner --config ./web-test-runner.performance.config.js"
+  },
+  "files": [
+    "dist",
+    "index.d.ts",
+    "index.js",
+    "custom-elements.json",
+    "package.json",
+    "README.md"
+  ],
+  "keywords": [
+    "web-components",
+    "lit",
+    "design-system",
+    "ui-components",
+    "accessibility",
+    "theming"
+  ],
+  "author": "Charm UX Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charm-ux/core.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/charm-ux/core/issues"
+  },
+  "homepage": "https://charm-ux.github.io/core/",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "dependencies": {
+    "@floating-ui/dom": "^1.6.11",
+    "composed-offset-position": "^0.0.6",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@charm-ux/theming": "workspace:*",
+    "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@microsoft/applicationinsights-core-js": "^3.3.3",
+    "@open-wc/lit-helpers": "^0.7.0",
+    "@open-wc/testing": "^4.0.0",
+    "@storybook/addon-a11y": "^10.1.5",
+    "@storybook/addon-docs": "^10.1.5",
+    "@storybook/addon-links": "^10.1.5",
+    "@storybook/addon-themes": "^10.1.5",
+    "@storybook/web-components-vite": "^10.1.5",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^24.3.0",
+    "@types/sinon": "^17.0.4",
+    "@wc-toolkit/cem-inheritance": "^1.2.2",
+    "@wc-toolkit/cem-sorter": "^1.0.1",
+    "@wc-toolkit/jsdoc-tags": "^1.1.0",
+    "@wc-toolkit/storybook-helpers": "^10.0.0",
+    "@wc-toolkit/type-parser": "^1.2.0",
+    "@web/dev-server-esbuild": "^1.0.2",
+    "@web/test-runner": "^0.19.0",
+    "@web/test-runner-commands": "^0.9.0",
+    "@web/test-runner-junit-reporter": "^0.7.2",
+    "@web/test-runner-playwright": "^0.11.0",
+    "code-bubble": "^1.3.3",
+    "eslint-plugin-storybook": "10.1.5",
+    "globby": "^13.1.1",
+    "npm-run-all": "^4.1.5",
+    "playwright": "^1.48.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sinon": "^17.0.0",
+    "storybook": "^10.1.5",
+    "storybook-addon-rtl": "^1.0.1",
+    "typescript": "^5.9.3",
+    "vite": "^5.3.4",
+    "web-test-runner-performance": "^0.1.6"
+  },
+  "customElements": "custom-elements.json"
+}

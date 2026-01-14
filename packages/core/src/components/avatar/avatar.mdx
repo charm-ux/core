@@ -1,0 +1,76 @@
+# Avatar
+
+An avatar is a visual representation that can be an image, icon, or initials, used to represent a user, team, or entity. Avatars can be customized in various sizes and shapes.
+
+## Default
+
+To create a default avatar, add an icon element between the avatar tag. The element is set on the default slot.
+
+<code-bubble>
+
+```html
+<ch-avatar><ch-icon name="person"></ch-icon></ch-avatar>
+```
+
+</code-bubble>
+
+## Initials
+
+Use the `initials` property to render the user's initials on the avatar.
+
+<code-bubble>
+
+```html
+<ch-avatar initials="CM"></ch-avatar>
+```
+
+</code-bubble>
+
+## Image
+
+To render an image, use the `image` attribute within the `<ch-avatar>` element.
+
+<code-bubble>
+
+```html
+<ch-avatar image="path/to/image.png"></ch-avatar>
+```
+
+</code-bubble>
+
+## Status Indicator
+
+To render a badge to indicate the current status of the user, add a badge or icon element with the `status-indicator` slot set.
+
+<code-bubble>
+
+```html
+<ch-avatar>
+  <ch-icon name="person"></ch-icon>
+  <ch-icon slot="status-indicator" name="checkmark-circle"></ch-icon>
+</ch-avatar>
+```
+
+</code-bubble>
+
+## Accessibility
+
+To add an 'alt' text for the avatar, use the `label` attribute within the `<ch-avatar>` element. The `label` property will override the `name` property if both properties are set.
+
+<code-bubble>
+
+```html
+<ch-avatar label="Carl Myers profile"></ch-avatar>
+```
+
+</code-bubble>
+
+To help give the current status of the user, for example, notifying if the user is offline or online, use the `status` attribute within the `<ch-avatar>` element.
+
+<code-bubble>
+
+```html
+<ch-avatar status="online"></ch-avatar>
+```
+
+</code-bubble>

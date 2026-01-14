@@ -1,0 +1,82 @@
+---
+title: Menu Group
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+The Menu Group component allows you to group related menu items together with an optional heading. It supports both single and multiple selection modes, making it perfect for creating radio button or checkbox-style menu groups.
+
+## Default
+
+A basic menu group with a heading and three menu items:
+
+<code-bubble>
+
+```html
+<div role="menu">
+  <ch-menu-group heading="Group heading">
+    <ch-menu-item>Menu Item 1</ch-menu-item>
+    <ch-menu-item>Menu Item 2</ch-menu-item>
+    <ch-menu-item>Menu Item 3</ch-menu-item>
+  </ch-menu-group>
+</div>
+```
+
+</code-bubble>
+
+## Custom Heading
+
+You can provide a custom heading using the `heading` slot:
+
+<code-bubble>
+
+```html
+<div role="menu">
+  <ch-menu-group>
+    <div slot="heading">Slotted heading</div>
+    <ch-menu-item>Menu Item 1</ch-menu-item>
+    <ch-menu-item>Menu Item 2</ch-menu-item>
+    <ch-menu-item>Menu Item 3</ch-menu-item>
+  </ch-menu-group>
+</div>
+```
+
+</code-bubble>
+
+## Single Selection
+
+Use the `select="single"` attribute to create a radio button-style menu group where only one item can be selected at a time:
+
+<code-bubble>
+
+```html
+<div role="menu">
+  <ch-menu-group heading="Select One" select="single">
+    <ch-menu-item>Menu Item 1</ch-menu-item>
+    <ch-menu-item>Menu Item 2</ch-menu-item>
+    <ch-menu-item>Menu Item 3</ch-menu-item>
+  </ch-menu-group>
+</div>
+```
+
+</code-bubble>
+
+## Multiple Selection
+
+Use the `select="multiple"` attribute to create a checkbox-style menu group where multiple items can be selected:
+
+<code-bubble>
+
+```html
+<div role="menu">
+  <ch-menu-group heading="Select Multiple" select="multiple">
+    <ch-menu-item>Menu Item 1</ch-menu-item>
+    <ch-menu-item>Menu Item 2</ch-menu-item>
+    <ch-menu-item>Menu Item 3</ch-menu-item>
+  </ch-menu-group>
+</div>
+```
+
+</code-bubble>
+
+## API

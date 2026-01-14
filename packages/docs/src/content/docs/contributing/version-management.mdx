@@ -1,0 +1,48 @@
+---
+title: Version Management
+---
+
+Charm uses [Changesets](https://github.com/changesets/changesets) to assist with versioning and change management. Engineers will use Changesets to generate a changeset with each PR. At release time, Changesets will generate a changelog from all changesets since the last release.
+
+## Usage
+
+- Complete your work on a branch.
+- Stage and commit your changes.
+- Run `pnpm changeset`. Changesets will prompt you to select which packages have changed.
+- For each package that contains changes, follow the prompts to generate an appropriate changeset:
+  - **Change type** - select the correct [Semantic Versioning](https://semver.org/) change type:
+    - `Patch` - backwards-compatible bug fixes
+    - `Minor` - backwards-compatible added functionality
+    - `Major` - incompatible API (aka "breaking") changes
+  - **Describe changes**
+    - Craft a human-readable message following our guidance in [Describing changes](#describing-changes).
+- Changesets will create a markdown file in `.changeset/` with a randomly generated name.
+- Review and edit the changeset file if needed to improve the description.
+- Stage and commit the changeset file.
+- Create your PR, which now includes a changeset file.
+
+## Describing changes
+
+Writing a good changelog is essential to keeping our users informed and up-to-date with the latest changes in our packages.
+
+A well-crafted changelog can make a big difference in user experience, so it’s important to get it right. Here are some tips on how to write a good changelog comment:
+
+- A change should be brief and to the point, no more than one line long.
+- If changes were made to a component, prefix your change comment with `[ComponentName]`.
+- Use consistent phrasing:
+  - `Added` for new features.
+  - `Changed` for changes in existing functionality.
+  - `Deprecated` for soon-to-be removed features.
+  - `Removed` for now removed features.
+  - `Fixed` for any bug fixes.
+  - `Bumped <package> from x.x.x to x.x.x` for dependency updates.
+
+Remember: changelogs are for _humans_, not machines.
+
+For more detail, see [How do I make a good changelog?](https://keepachangelog.com/en/1.0.0/#how) and [Why keep a changelog?](https://keepachangelog.com/en/1.0.0/#why)
+
+### Examples
+
+- [Dialog] Fixed open animation not show up when dialog is in shadowroot
+- [Dialog, Push Pane] Added `hide-close-button` attribute
+- Bumped `@charm/theming` from `0.0.1-alpha.1` to `0.0.1-alpha.2`

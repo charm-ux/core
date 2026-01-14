@@ -1,0 +1,63 @@
+---
+title: Icon
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Icons are symbols that can be used to represent various options within an application.
+
+## Selecting the Icon
+
+Icons are selected based on the value passed to the `name` attribute.
+
+<code-bubble>
+
+```html
+<ch-icon name="warning"></ch-icon>
+```
+
+</code-bubble>
+
+## Providing a Label
+
+Icons are hidden for assistive technologies like screen readers by default. If an icon is the only piece of content in something like a button or needs a label for any other reason, labels can be applied using the `label` attribute.
+
+<code-bubble>
+
+```html
+<ch-button>
+  <ch-icon name="dismiss" label="close the dialog"></ch-icon>
+</ch-button>
+```
+
+</code-bubble>
+
+## Using an External Icon
+
+Sometimes you may need to access external icons that are self-hosted or from a CDN. Use the `url` property without the `name` attribute. If the `name` attribute is used, it will be used instead of the `url`.
+
+<code-bubble>
+
+```html
+<ch-icon url="https://api.iconify.design/fluent:chat-12-filled.svg"></ch-icon>
+```
+
+</code-bubble>
+
+## Fallback Icon
+
+If an icon is not not found because the `name` does not match one of the defined icons or the `url` fetch fails, the component can use a fallback icon. By default it will use the "question" icon, but can be overridden using the `defaultIcon` property. This is expecting an SVG string, so you will need to provide it with a custom SVG or reference one of the existing icons (ie - `this.defaultIcon = this.icons['question']`).
+
+## Styling Icons
+
+Icons should inherit most of their styles including size and color and can be customized using standard CSS.
+
+<code-bubble>
+
+```html
+<ch-icon name="warning" style="color: red; font-size: 5rem; rotate: 90deg;"></ch-icon>
+```
+
+</code-bubble>
+
+## API

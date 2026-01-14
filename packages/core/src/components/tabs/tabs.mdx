@@ -1,0 +1,311 @@
+# Tabs
+
+_Tabs_ are a set of layered sections of content that display one panel of content at a time. Each tab panel has an associated tab element, that when activated, displays the panel. The list of tab elements is arranged along one edge of the currently displayed panel. Also known as _pivots_.
+
+<code-bubble>
+
+```html preview
+<ch-tabs>
+  <ch-tab>Overview</ch-tab>
+  <ch-tab>Details</ch-tab>
+  <ch-tab>Resources</ch-tab>
+  <ch-tab-panel>
+    <p>
+      The component library provides a comprehensive set of accessible, reusable UI components
+      designed to help developers build beautiful interfaces quickly and consistently.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Each component is built with accessibility in mind, follows WAI-ARIA guidelines, and undergoes
+      rigorous testing to ensure cross-browser compatibility and responsive design.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Explore our extensive documentation, tutorials, and code examples to learn how to integrate
+      these components efficiently into your project workflow.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_do_**
+
+- Use on content-heavy pages that require a significant amount of scrolling to access the various sections.
+- Be concise on the navigation labels, ideally one or two words rather than a phrase.
+
+**_don't_**
+
+- Don't use on pages which don't scroll.
+- Don't use a tab to link to a new page.
+- Don't use a tab to link to hidden content.
+
+### Setting active tab
+
+The active tab can be set by adding the `selected` attribute. If no default selected tab is found the first tab will be the selected item.
+
+<code-bubble>
+
+```html preview
+<ch-tabs>
+  <ch-tab>Getting Started</ch-tab>
+  <ch-tab selected>Components</ch-tab>
+  <ch-tab>Theming</ch-tab>
+  <ch-tab-panel>
+    <p>
+      Begin your journey by installing our library via npm or yarn. Then import the components you
+      need and start building immediately with our sensible defaults.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Browse our extensive collection of UI components, each designed with accessibility and
+      customization in mind. From simple buttons to complex data tables, we have everything you
+      need.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Customize the look and feel of components using our theming system. Define colors, typography,
+      spacing, and other design tokens to match your brand identity.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+### Using active-id
+
+The `active-id` attribute allows you to programmatically control which tab is selected by specifying the ID of the tab you want to activate.
+
+<code-bubble>
+
+```html preview
+<ch-tabs active-id="tab-2">
+  <ch-tab id="tab-1">Design</ch-tab>
+  <ch-tab id="tab-2">Development</ch-tab>
+  <ch-tab id="tab-3">Deployment</ch-tab>
+  <ch-tab-panel>
+    <p>
+      Start with a solid design foundation. Create wireframes and mockups that capture your vision,
+      considering user experience and accessibility from the beginning.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Build your application using modern frameworks and tools. Implement best practices for code
+      organization and testing to ensure maintainability and scalability.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Deploy your application to production using CI/CD pipelines. Monitor performance and user
+      feedback to continuously improve your product over time.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+## Listen for events
+
+A `tabs-change` event is emitted every time there is a new selection.
+
+<code-bubble>
+
+```html preview
+<ch-tabs id="event-demo">
+  <ch-tab>Features</ch-tab>
+  <ch-tab>Usage</ch-tab>
+  <ch-tab>Support</ch-tab>
+  <ch-tab-panel>
+    <p>
+      Our product includes a comprehensive set of features designed to enhance your workflow. From
+      automated tasks to customizable interfaces, we've thought of everything you need to succeed.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Getting started is easy. Simply install the package using your preferred package manager,
+      import the components you need, and follow our detailed documentation for implementation
+      examples.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Need help? Our support team is available 24/7 to assist with any questions or issues. Visit
+      our support portal or join our community forums for immediate assistance.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+
+<script type="module">
+  const tabs = document.querySelector('#event-demo');
+  tabs.addEventListener('tabs-change', e => {
+    console.log('Selected tab:', e.detail.activeTab);
+  });
+</script>
+```
+
+</code-bubble>
+
+## Disabled Tabs
+
+Tabs can be disabled by adding the `disabled` attribute. Disabled tabs cannot be selected.
+
+<code-bubble>
+
+```html preview
+<ch-tabs>
+  <ch-tab>Available</ch-tab>
+  <ch-tab disabled>Restricted</ch-tab>
+  <ch-tab>Options</ch-tab>
+  <ch-tab-panel>
+    <p>
+      This content is freely available to all users. You can interact with all features and
+      functionality in this section without any restrictions.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      This section requires additional permissions. Please contact your administrator to request
+      access to these features.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Configure your preferences and settings here. Changes will be automatically saved and applied
+      to your account profile.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+## Layout
+
+Tabs can be rendered in a `vertical` and `horizontal` layout.
+
+<code-bubble>
+
+```html preview
+<ch-tabs layout="vertical">
+  <ch-tab>Products</ch-tab>
+  <ch-tab>Services</ch-tab>
+  <ch-tab>Solutions</ch-tab>
+  <ch-tab-panel>
+    <p>
+      Our product lineup includes both hardware and software offerings designed to meet the needs of
+      businesses of all sizes. From entry-level to enterprise-grade, we have options for every
+      requirement.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      We provide professional services including consultation, implementation, training, and ongoing
+      support. Our certified experts will guide you through every step of your journey.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Our integrated solutions combine our products and services to address specific industry
+      challenges. Each solution is tailored to optimize workflows and improve outcomes.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+### Using icons
+
+Icons can be slotted in the `start` slot of `<ch-tab>`.
+
+<code-bubble>
+
+```html preview
+<ch-tabs>
+  <ch-tab>
+    <ch-icon slot="start" url="https://api.iconify.design/material-symbols:person.svg"></ch-icon>
+    Profile
+  </ch-tab>
+  <ch-tab>
+    <ch-icon slot="start" url="https://api.iconify.design/material-symbols:settings.svg"></ch-icon>
+    Settings
+  </ch-tab>
+  <ch-tab>
+    <ch-icon slot="start" url="https://api.iconify.design/material-symbols:help.svg"></ch-icon>
+    Help
+  </ch-tab>
+
+  <ch-tab-panel>
+    <p>
+      Manage your personal information, update your photo, and control your privacy settings. Keep
+      your contact details current to ensure you receive important notifications.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Customize your experience by adjusting application preferences. Control notifications, display
+      options, and connectivity settings to optimize for your workflow.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Find answers to common questions, access tutorials, and learn about advanced features. If you
+      need additional assistance, our support team is just a click away.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>
+
+## Accessibility
+
+The tabs can be focused by pressing `Tab` on your keyboard and navigating to the desired tab. Arrow keys navigate between tabs. By default, navigating to a tab with arrow keys will select that tab automatically.
+
+With the `manual-activation` attribute, users need to explicitly press `Enter` or `Space` to select a tab after navigating to it with arrow keys. This behavior may be preferred for complex tab interfaces.
+
+## Manual Activation
+
+By default, tabs are automatically activated when navigated to using arrow keys. If you want to require explicit user activation with Space or Enter keys, add the `manual-activation` attribute.
+
+<code-bubble>
+
+```html preview
+<ch-tabs manual-activation>
+  <ch-tab>Security</ch-tab>
+  <ch-tab>Performance</ch-tab>
+  <ch-tab>Accessibility</ch-tab>
+  <ch-tab-panel>
+    <p>
+      Our security protocols include end-to-end encryption, regular security audits, and compliance
+      with industry standards. We prioritize data protection at every level of our infrastructure.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      Performance optimizations ensure fast load times and responsive interactions. Our code is
+      lightweight and efficiently bundled to deliver the best possible user experience.
+    </p>
+  </ch-tab-panel>
+  <ch-tab-panel>
+    <p>
+      We follow WCAG 2.1 guidelines to ensure our components are accessible to all users. Each
+      element supports keyboard navigation, screen readers, and includes appropriate ARIA
+      attributes.
+    </p>
+  </ch-tab-panel>
+</ch-tabs>
+```
+
+</code-bubble>

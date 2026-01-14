@@ -1,0 +1,5 @@
+import { html } from '@open-wc/testing';
+import './index.js';
+import { Core{{pascalCase name}}Tests } from './{{kebabCase name}}.test-harness.js';
+
+new Core{{pascalCase name}}Tests().runTests(config => html`<ch-{{kebabCase name}} ${config}></ch-{{kebabCase name}}>`);

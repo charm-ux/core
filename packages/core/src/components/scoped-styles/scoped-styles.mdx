@@ -1,0 +1,95 @@
+# Scoped Styles
+
+The Scoped Styles component scopes CSS styles to itself and its children. It allows you to set custom styles for the components within the theme.
+
+You can set variables that are used throughout the library, or you can target specific components, and it will only apply to children of the Theme component.
+
+If you are using the `css` property and only want to set variables, you can supply just the variables alone.
+
+```css
+--button-bg-color: teal;
+--button-fg-color: white;
+```
+
+If you have a whole stylesheet, you can use the `&` or `:root` selector to target the host theme itself for root variables, or you can target specific components.
+
+```css
+:root {
+  --button-bg-color: magenta;
+  --button-border-color: black;
+}
+
+.my-button {
+  --button-bg-color: teal;
+  --button-fg-color: white;
+}
+```
+
+## Setting the `css` property
+
+Set the `css` property to apply custom styles to the theme.
+
+<code-bubble>
+
+```html
+<ch-scoped-styles id="css-prop">
+  <ch-button>Custom themed button</ch-button>
+</ch-scoped-styles>
+
+<script type="module">
+  const theme = document.getElementById('css-prop');
+  theme.css = `
+    --button-bg-color: teal;
+    --button-fg-color: white;
+  `;
+</script>
+```
+
+</code-bubble>
+
+## Using bundlers
+
+If you are using a bundler you can import the CSS file directly, but you may need to use a loader to handle the CSS file or require other bundler-specific configurations.
+
+### Webpack
+
+Webpack requires a loader to handle CSS files. You can use the `css-loader` with `exportType` option set to "string" to get the raw content of the file. You can then pass the raw content to the `css` prop of the element.
+
+```js
+/* eslint import/no-webpack-loader-syntax: off */
+import css from '!!css-loader?{"sourceMap":false,"exportType":"string"}!./sample-stylesheet.css';
+```
+
+### Vite
+
+Vite does not need a loader, but you need to specify the `?inline` query parameter:
+
+```js
+import css from './sample-stylesheet.css?inline';
+```
+
+## Using the `stylesheets` slot
+
+Slot `<link>` elements into `stylesheets` slot to apply custom styles to the theme.
+
+:::note
+Set the `disabled` attribute on `<link>` elements to make sure they are not loaded until the component is connected.
+:::
+
+```css title="sample-stylesheet.css"
+:root {
+  --button-bg-color: magenta;
+  --button-border-color: black;
+}
+```
+
+<code-bubble>
+
+```html
+<ch-scoped-styles>
+  <ch-button>Custom themed button</ch-button>
+  <link disabled slot="stylesheets" rel="stylesheet" href="sample-stylesheet.css" />
+</ch-scoped-styles>
+```
+
+</code-bubble>

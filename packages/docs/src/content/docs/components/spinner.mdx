@@ -1,0 +1,55 @@
+---
+title: Spinner
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Spinners are used to visualize a known percentage value or to represent an unspecified, indeterminate wait time.
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-spinner></ch-spinner>
+```
+
+</code-bubble>
+
+## Setting the label
+
+A label must be provided to ensure that assistive devices announce the progress ring properly. Use the label attribute or slot to provide a label under the progress ring. Use the default slot to add additional text.
+
+<code-bubble>
+
+```html
+<ch-spinner label="Loading">
+  <strong>Additional text slotted in</strong>
+</ch-spinner>
+```
+
+</code-bubble>
+
+## Label Position
+
+You may set the label's position by using the `label-position` attribute.
+
+<code-bubble>
+
+```html
+<ch-spinner label="After Position" label-position="after"></ch-spinner>
+```
+
+</code-bubble>
+
+## Setting a custom size
+
+Use CSS property `--spinner-ring-size` to set a custom width and height.
+
+<code-bubble>
+
+```html
+<ch-spinner label="Loading" style="--spinner-ring-size: 16px;"></ch-spinner>
+```
+
+</code-bubble>

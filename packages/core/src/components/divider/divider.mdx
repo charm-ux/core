@@ -1,0 +1,85 @@
+# Divider
+
+A divider is a thin line to visually help separate or group elements.
+
+## Default
+
+By default the divider is horizontal with a solid line and a height of 1px.
+
+<code-bubble>
+
+```html
+<ch-divider></ch-divider>
+```
+
+</code-bubble>
+
+## Adding content
+
+To render a content add an element within the opening and closing of the `<ch-divider>` tag. By default the content is in the center of the divider. <br></br>
+The default margin between the content and the divider is `0.25em`. To change the margin you will need to change the value of the `--divider-margin` token.
+
+<code-bubble>
+
+```html
+<ch-divider>Content</ch-divider>
+```
+
+</code-bubble>
+
+## Aligning the content with the divider
+
+To set the content before the divider, use the `align-content` attribute within the `<ch-divider>` element and set the value to `start`.
+
+<code-bubble>
+
+```html
+<ch-divider align-content="start">Content</ch-divider>
+```
+
+</code-bubble>
+
+To set the content after the divider use the `align-content` attribute within the `<ch-divider>` element and set the value to `end`.
+
+<code-bubble>
+
+```html
+<ch-divider align-content="end">Content</ch-divider>
+```
+
+</code-bubble>
+
+## Adding padding
+
+To create a padding before and after the divider, add the `inset` attribute within the `<ch-divider>` element. <br></br>
+Since the padding is defaulted to `0px`, you will need set the value of the `--divider-inset` token to the desired length.
+
+```html
+<ch-divider inset>Content</ch-divider>
+```
+
+## Orientation
+
+The orientation of the divider is defaulted to horizontal. To render the divider vertically, use the `orientation` attribute within the `<ch-divider>` element and set the value to `vertical`. <br></br>
+
+In addition, you can adjust the height of the divider by setting the value of the `--divider-vertical-min-heigh` token.
+
+<code-bubble>
+
+```html
+<ch-divider orientation="vertical">Content</ch-divider>
+```
+
+</code-bubble>
+
+## Accessibility
+
+By default the divider has a `role` set to `separator`. You can change the the `role` to presentation by adding the `presentation` attribute within the `<ch-divider>` element.
+
+<code-bubble>
+
+```html
+<ch-divider presentation>Content</ch-divider>
+```
+
+</code-bubble>

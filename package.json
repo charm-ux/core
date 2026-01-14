@@ -1,0 +1,83 @@
+{
+  "name": "charm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "author": "charm-ux",
+  "customElements": "custom-elements.json",
+  "description": "Core set of accessible headless web components, utilities, and styles for building design systems",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charm-ux/core.git"
+  },
+  "sideEffects": false,
+  "license": "MIT",
+  "scripts": {
+    "analyze": "pnpm -r --filter=\"./packages/*\" analyze",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "build": "wctools validate && npm run build:theming && npm run build:core && npm run build:demo && npm run build:docs",
+    "build:core": "pnpm --filter=\"./packages/core\" run build",
+    "build:demo": "pnpm --filter=\"./packages/demo\" run build",
+    "build:docs": "pnpm --filter=\"./packages/docs\" run build",
+    "build:theming": "pnpm --filter=\"./packages/theming\" run build",
+    "build:fresh": "pnpm clean && pnpm i && pnpm build",
+    "clean": "git clean -fqdx",
+    "dev": "pnpm -r run dev",
+    "dev:core": "pnpm --filter @charm-ux/core run dev",
+    "dev:demo": "pnpm --filter demo run dev",
+    "dev:react": "pnpm --filter demo run dev:react",
+    "dev:docs": "pnpm --filter docs run dev",
+    "generate": "plop",
+    "generate:readmes": "pnpm --filter @charm-ux/core generate:readmes",
+    "lint:fix": "eslint . --max-warnings 0 --fix",
+    "lint": "eslint . --max-warnings 0",
+    "plop": "plop",
+    "prepare": "husky",
+    "prettier:check": "prettier --log-level warn --ignore-unknown --check .",
+    "prettier": "prettier --log-level warn --write .",
+    "spellcheck": "cspell **/*.{js,ts,md}",
+    "storybook:build": "pnpm -r run storybook:build",
+    "test:core": "pnpm --filter @charm-ux/core run test",
+    "test:core-single": "pnpm --filter @charm-ux/core run test -- --group",
+    "test:core-performance": "pnpm --filter @charm-ux/core run test:performance",
+    "test:demo": "pnpm --filter @charm-ux/core run build && pnpm --filter demo run test",
+    "test:demo-single": "pnpm --filter @charm-ux/core run build && pnpm --filter demo run test -- --group",
+    "test:demo-performance": "pnpm --filter @charm-ux/core run build && pnpm --filter demo run test:performance",
+    "test:watch": "pnpm --filter @charm-ux/core test:watch",
+    "test": "pnpm -r run test",
+    "verify": "pnpm lint && pnpm prettier:check"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@open-wc/eslint-config"
+    ]
+  },
+  "dependencies": {
+    "tslib": "^2.6.1"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.7",
+    "@open-wc/eslint-config": "^12.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
+    "@wc-toolkit/wctools": "^0.0.8",
+    "cspell": "^6.31.2",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-lit": "^1.9.1",
+    "eslint-plugin-markdown": "^3.0.0",
+    "eslint-plugin-mdx": "^3.1.5",
+    "eslint-plugin-require-extensions": "^0.1.3",
+    "eslint-plugin-wc": "^1.5.0",
+    "husky": "^9.1.7",
+    "ignore": "^5.2.4",
+    "lint-staged": "^12.3.7",
+    "path": "^0.12.7",
+    "plop": "^3.1.2",
+    "prettier": "^3.0.0"
+  }
+}

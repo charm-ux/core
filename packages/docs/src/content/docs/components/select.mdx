@@ -1,0 +1,103 @@
+---
+title: Select
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+A select lets people choose a single option from a list of at least four options.
+Selects use browser native styling for the listed options.
+They are ideal for data submission in forms and ease of use on mobile platforms.
+
+## Adding options
+
+<code-bubble>
+
+```html
+<ch-select label="Options" id="option-id">
+  <option value="1">Option One</option>
+  <option value="2">Option Two</option>
+  <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Providing a selected option
+
+<code-bubble>
+
+```html
+<ch-select label="Options" id="option-id">
+  <option value="1">Option One</option>
+  <option value="2">Option Two</option>
+  <option value="3" selected>Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Providing a Label
+
+Labels can be applied using the `label` attribute and the id which provides the `for` attribute on the label and the `id` for the `select`.
+
+<code-bubble>
+
+```html
+<ch-select label="Options" id="option-id">
+  <option value="1">Option One</option>
+  <option value="2">Option Two</option>
+  <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Making it multiple
+
+Native select allows for multiple selection and all the options to show at once.
+
+<code-bubble>
+
+```html
+<ch-select label="Options" id="option-id" multiple>
+  <option value="1">Option One</option>
+  <option value="2">Option Two</option>
+  <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Changing the size
+
+Native select allows for the amount of options shown to the user via changing the size attribute.
+
+<code-bubble>
+
+```html
+<ch-select label="Options" id="option-id" size="2">
+  <option value="1">Option One</option>
+  <option value="2">Option Two</option>
+  <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Disabling options
+
+A Select can include disabled options by setting the disabled attribute on any nested option element.
+
+<code-bubble>
+
+```html
+<ch-select label="Disabled option">
+  <option value="1">Option One</option>
+  <option value="2" disabled>Disabled Option</option>
+  <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## API

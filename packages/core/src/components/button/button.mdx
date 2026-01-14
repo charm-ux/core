@@ -1,0 +1,235 @@
+# Button
+
+Button is designed to perform an action when clicked or pressed.
+
+## Default
+
+By default, the `<ch-button>` is rendered as a button element.
+
+<code-bubble>
+
+```html
+<ch-button>Button</ch-button>
+```
+
+</code-bubble>
+
+## Autofocus
+
+To set autofocus on page load, use the `autofocus` attribute within the `<ch-button>` element.
+
+<code-bubble>
+
+```html
+<ch-button autofocus>Button</ch-button>
+```
+
+</code-bubble>
+
+## Disabled
+
+To disable on page load, use the `disabled` attribute within the `<ch-button>` element.
+
+<code-bubble>
+
+```html
+<ch-button disabled>Button</ch-button>
+```
+
+</code-bubble>
+
+## Icon only
+
+To create an icon-only button, you can use the `icon-only` attribute or leave the button text blank and put the icon in the default slot. Remember to add a label for the icon to keep it accessible to screen readers and other assistive technologies.
+
+<code-bubble>
+
+```html
+<ch-button icon-only>
+  <ch-icon name="success" label="success"></ch-icon>
+</ch-button>
+```
+
+</code-bubble>
+
+## Name
+
+Use the `name` attribute within the `<ch-button>` element if you are using the button component in a form. This is only used for a button and not an anchor.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-button name="submitButton">Submit Form</ch-button>
+</form>
+```
+
+</code-bubble>
+
+## Toggle
+
+To allow a toggling behavior on the button that emits the `change` event when it is not disabled, use the `toggle` attribute. The current toggle state can be accessed via `e.target.pressed` in the event handler.
+
+<code-bubble>
+
+```html
+<ch-button toggle>Button</ch-button>
+<style>
+  [button] {
+    --button-pressed-bg-color: darkgrey;
+    --button-pressed-hover-bg-color: grey;
+    --button-pressed-active-bg-color: white;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Type
+
+An optional attribute but can be crucial in forms, use the `type` attribute within the `<ch-button>` element. By default the `type` is set to `button`. <br></br>
+
+Type options `button` | `submit` | `reset`
+
+<code-bubble>
+
+```html
+<form>
+  <ch-button type="submit">Send</ch-button>
+</form>
+```
+
+</code-bubble>
+
+## Value
+
+To specify the initial value or the data that will be sent to the server when the button is clicked within a form, use the `value` attribute within the `<ch-button>` element.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-button type="submit" value="Submit">Send</ch-button>
+</form>
+```
+
+</code-bubble>
+
+## Allow wrap
+
+By default, button text does not wrap. To allow text wrapping for longer button text, use the `allow-wrap` attribute within the `<ch-button>` element.
+
+<code-bubble>
+
+```html
+<ch-button allow-wrap>
+  This is a button with a longer text that will wrap instead of being truncated
+</ch-button>
+```
+
+</code-bubble>
+
+## Href
+
+To render the button as an anchor, set the `href` attribute within the `<ch-button>` element.
+
+```html
+<ch-button href="#">Button</ch-button>
+```
+
+## Download
+
+To download link files, use the `download` attribute within the `<ch-button>` element. Only use if the `href` is set.
+
+```html
+<ch-button href="#" download>Button</ch-button>
+```
+
+## Referrer policy
+
+To defining which referrer is sent when fetching the resource, use the `referrerpolicy` attribute within the `<ch-button>` element. By default `referrerpolicy` is set to `strict-origin-when-cross-origin`. Only use if the `href` is set. <br></br>
+
+referrer policy types `no-referrer` | `no-referrer-when-downgrade` | `origin` | `origin-when-cross-origin` | `same-origin` | `strict-origin` | `strict-origin-when-cross-origin` | `unsafe-url`
+
+<code-bubble>
+
+```html
+<ch-button href="#" referrerpolicy="no-referrer">Button</ch-button>
+```
+
+</code-bubble>
+
+## Target
+
+To tell the browser where to open the link, use the `target` attribute within the `<ch-button>` element. Only use if the `href` is set.
+
+Target types `blank` | `parent` | `self` | `top`
+
+<code-bubble>
+
+```html
+<ch-button href="#" target="_blank">Button</ch-button>
+```
+
+</code-bubble>
+
+# Accessibility
+
+## Current
+
+Use the `current` attribute within the `<ch-button>` element to set `aria-current` on the internal button or anchor. <br></br>
+
+Current types `page` | `step` | `location` | `date` | `time` | `true` | `false` | `null`
+
+<code-bubble>
+
+```html
+<ch-button current="page">Button</ch-button>
+```
+
+</code-bubble>
+
+## Expanded
+
+Use the `expanded` attribute within the `<ch-button>` element to set `aria-expanded` on the internal button or anchor. By default `expanded` is set to `false`.
+
+<code-bubble>
+
+```html
+<ch-button expanded>Button</ch-button>
+```
+
+</code-bubble>
+
+## Pressed
+
+Use the `pressed` attribute within the `<ch-button>` element to set `aria-pressed` on the internal button or anchor. By default `pressed` is set to `false`.
+
+<code-bubble>
+
+```html
+<ch-button pressed>Button</ch-button>
+```
+
+</code-bubble>
+
+## Invokers
+
+There are three "invokers" that can be used with the button component - these are `shows`, `hides`, and `toggles`. These can be used with components that have `show()`, `hide()`, or `toggle()` methods such as the `Dialog` and `PushPane` components.
+
+These work by setting the `id` of the component that will be triggered when the button is clicked to the corresponding action.
+
+When the button is `shows` is called, the `expanded` attribute will be set to "true" as well as the underlying the `aria-expanded` attribute on the internal button. When the button is `hides` is called, the `expanded` attribute will be set to "false". When the button is `toggles` is called, the `expanded` attribute will be toggled based on the `open` state of the triggered element.
+
+<code-bubble>
+
+```html
+<ch-button shows="my-dialog">Open Dialog</ch-button>
+<ch-dialog id="my-dialog" heading="Dialog">
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+  <ch-button hides="dialog" slot="footer">Close Dialog</ch-button>
+</ch-dialog>
+```
+
+</code-bubble>
