@@ -1,6 +1,6 @@
 {
   "name": "@charm-ux/core",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Core set of components, utilities, and styles to facilitate building design systems",
   "main": "index.js",
   "types": "index.d.ts",
