@@ -45,6 +45,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected radios: CoreRadio[] = [];
   protected readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
+  private previouslyDisabledRadios: Set<CoreRadio> = new Set();
 
   public constructor() {
     super();
@@ -124,9 +125,23 @@ export class CoreRadioGroup extends CharmFormControlElement {
     }
     if (changedProperties.has('disabled')) {
       if (this.disabled) {
+        // Store which radios were already disabled before we disable the group
+        this.previouslyDisabledRadios.clear();
         this.getAllRadios().forEach(radio => {
-          radio.disabled = true;
+          if (radio.disabled) {
+            this.previouslyDisabledRadios.add(radio);
+          } else {
+            radio.disabled = true;
+          }
         });
+      } else {
+        // Re-enable only the radios that weren't already disabled
+        this.getAllRadios().forEach(radio => {
+          if (!this.previouslyDisabledRadios.has(radio)) {
+            radio.disabled = false;
+          }
+        });
+        this.previouslyDisabledRadios.clear();
       }
     }
     if (changedProperties.has('autofocus')) {
