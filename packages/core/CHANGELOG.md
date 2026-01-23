@@ -1,5 +1,11 @@
 # CHARM-UX Core Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- c93e169: [RadioGroup] Support removal of disabled prop without losing which individual radios were previously disabled
+
 ## 0.3.0
 
 ### Minor Changes
