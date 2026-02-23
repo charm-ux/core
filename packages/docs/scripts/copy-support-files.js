@@ -17,6 +17,14 @@ function copyTheme() {
   fs.copyFileSync(path.resolve('../core/dist/themes/charm/reset.css'), path.resolve('public/charm/reset.css'));
   fs.copyFileSync(path.resolve('../core/dist/themes/charm/theme.css'), path.resolve('public/charm/theme.css'));
   fs.copyFileSync(
+    path.resolve('../core/dist/themes/charm/dark-theme.css'),
+    path.resolve('public/charm/dark-theme.css')
+  );
+  fs.copyFileSync(
+    path.resolve('../core/dist/themes/charm/selector-theme.css'),
+    path.resolve('public/charm/selector-theme.css')
+  );
+  fs.copyFileSync(
     path.resolve('../core/dist/themes/charm/utility-classes.css'),
     path.resolve('public/charm/utility-classes.css')
   );

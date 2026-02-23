@@ -60,6 +60,13 @@ export default defineConfig({
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
+            href: `${base}/charm/dark-theme.css`,
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
             href: `${base}/charm/utility-classes.css`,
           },
         },
