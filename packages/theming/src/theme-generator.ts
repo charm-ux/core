@@ -95,12 +95,10 @@ export function getThemeFileContents(config: ThemeConfiguration = {}): ThemeFile
       ? `
 /* THIS FILE IS AUTO-GENERATED. DO NOT EDIT. CONTENTS CAN BE CHANGED IN YOUR THEME CONFIG. */
 
-@media (prefers-color-scheme: dark) {
-  :is(:root, :host) {
+[data-theme="dark"]:is(:root, :host) {
     ${darkTheme.trim()};
     ${getExtendedContent(userConfig?.extendedDarkTokens)}
-  }
-}`
+  }`
       : '';
   }
 

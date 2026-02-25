@@ -115,7 +115,7 @@ export default css`
   }
 
   :host(:not([disabled])) .control:active {
-    background-color: var(--button-active-bg-color, revert);
+    background-color: var(--button-disabled-bg-color, revert);
     border-color: var(--button-active-border-color, var(--default-border-color));
     color: var(--button-active-fg-color);
     box-shadow: var(--button-active-shadow);
@@ -127,7 +127,7 @@ export default css`
   }
 
   :host([disabled]) .control {
-    background-color: var(--button-disabled-bg-color, revert);
+    background-color: var(--button-disabled-bg-color);
     border-color: var(--button-disabled-border-color, var(--default-border-color));
     color: var(--button-disabled-fg-color);
     box-shadow: var(--button-disabled-shadow);

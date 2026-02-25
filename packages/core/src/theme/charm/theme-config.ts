@@ -418,6 +418,61 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: color('primary', 500),
           },
         },
+
+        alert: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        avatar: {
+          bgColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        checkbox: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          borderColor: {
+            light: neutralColor(800),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+          fgColorChecked: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        divider: {
+          bgColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        spinner: {
+          labelColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
       },
     },
   },

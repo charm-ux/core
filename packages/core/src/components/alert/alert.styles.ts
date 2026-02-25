@@ -69,6 +69,8 @@ export default css`
     margin: var(--alert-message-margin);
     display: flex;
     min-width: 0px;
+    background-color: var(--alert-bg-color);
+    color: var(--alert-fg-color);
   }
 
   .alert-message-container {
