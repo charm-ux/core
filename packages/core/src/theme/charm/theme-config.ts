@@ -390,7 +390,7 @@ export const charmThemeConfig: ThemeConfiguration = {
       extendedTokens: {
         nav: {
           bgColor: {
-            light: neutralColor(0),
+            light: neutralColor(200),
             dark: neutralColor(900),
           },
         },
@@ -471,6 +471,24 @@ export const charmThemeConfig: ThemeConfiguration = {
           labelColor: {
             light: neutralColor(1000),
             dark: neutralColor(0),
+          },
+        },
+        search: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          borderColor: {
+            light: neutralColor(800),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+          placeholderColor: {
+            light: neutralColor(500),
+            dark: neutralColor(500),
           },
         },
       },

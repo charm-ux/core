@@ -50,15 +50,28 @@ code-bubble {
   --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
   --code-bubble-copy-button-hover-border-color: var(--color-neutral-500);
 }
+.site-title a,
+.site-title a:visited {
+  color: var(--color-primary-500) !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
 
 .site-title:hover {
   text-decoration: none;
 }
-/* Target only the search button hover (it has both data-open-modal and aria-label="Search") */
+/* Search button default state */
+button[data-open-modal][aria-label='Search'] {
+  background-color: var(--search-bg-color) !important;
+  color: var(--search-fg-color) !important;
+  border: 1px solid var(--search-border-color) !important;
+}
+
+/* Search button hover state */
 button[data-open-modal][aria-label='Search']:hover {
-  background-color: var(--button-bg-color) !important;
-  color: var(--button-fg-color) !important;
-  border: 1px solid var(--color-neutral-700) !important;
+  background-color: var(--search-bg-color) !important;
+  color: var(--search-fg-color) !important;
+  border: 1px solid var(--search-border-color) !important;
   transform: none;
   opacity: 1;
 }
@@ -87,33 +100,39 @@ starlight-theme-select .caret {
 starlight-theme-select select {
   padding-left: 1.7rem;
 }
-.social-icons::after {
-  border-inline-end: 1px solid var(--color-neutral-700) !important; /* Change line color */
-}
 
+.sl-link-button.primary {
+  background-color: var(--button-accent-bg-color);
+  color: var(--button-accent-fg-color);
+}
+.sl-link-button.primary:hover {
+  background-color: var(--button-accent-hover-bg-color);
+  text-decoration: none;
+}
 [data-theme='light'] {
   /* mapping starlight variables to charm variables for docs */
   --sl-color-bg-nav: var(--nav-bg-color);
   --sl-card-bg: var(--body-bg-color);
-  a {
-    color: var(--link-visited-fg-color, var(--link-fg-color));
-    text-decoration: var(--link-visited-decoration, var(--link-decoration));
-  }
-  .astro-h4kctesh {
-    [aria-current='page'] {
-      color: white;
-    }
-  }
 
-  .astro-4mxhvrcp {
-    color: white;
+  .astro-52wgxlot a[aria-current='page'] {
+    color: var(--color-primary-500);
+    font-weight: 600;
+    background-color: var(--color-primary-100); /* optional: add background color to highlight the active link */
   }
-
-  .sl-link-button.primary {
-    color: white;
+  .astro-52wgxlot a:hover {
+    color: var(--color-primary-500); /* or whatever color you want */
+    font-weight: 500;
+    background-color: var(--color-primary-50);
+    text-decoration: none; /* optional: remove underline on hover */
+  }
+  .social-icons::after {
+    border-inline-end: 1px solid var(--color-neutral-400) !important; /* Change line color */
   }
 }
 [data-theme='dark'] {
+  .social-icons::after {
+    border-inline-end: 1px solid var(--color-neutral-700) !important; /* Change line color */
+  }
   /* mapping starlight variables to charm variables for docs */
   --sl-color-bg-nav: var(--nav-bg-color);
   --sl-card-bg: var(--card-bg-color);
@@ -121,22 +140,24 @@ starlight-theme-select select {
     background-color: var(--card-bg-color);
     border: 1px solid var(--card-border-color);
   }
-  /* .astro-h4kctesh {
-    [aria-current='page'] {
-      color: var(--color-primary-800);
-    }
+  .astro-52wgxlot a[aria-current='page'] {
+    color: var(--color-primary-500); /* or whatever color you want */
+    font-weight: 600;
+    background-color: var(--color-primary-100); /* optional: add background color to highlight the active link */
   }
 
-  .astro-4mxhvrcp {
-    color: var(--color-primary-800);
-  } */
-
-  .sl-link-button.primary {
-    background-color: var(--button-accent-bg-color);
-    color: var(--button-accent-fg-color);
+  .astro-52wgxlot a {
+    color: var(--color-primary-100); /* or whatever color you want */
   }
-  .sl-link-button.primary:hover {
-    background-color: var(--button-accent-hover-bg-color);
-    text-decoration: none;
+  .astro-52wgxlot a[aria-current='page'] {
+    color: var(--color-primary-500); /* or whatever color you want */
+    font-weight: 600;
+    background-color: var(--color-primary-100); /* optional: add background color to highlight the active link */
+  }
+  .astro-52wgxlot a:hover {
+    color: var(--color-primary-500); /* or whatever color you want */
+    font-weight: 500;
+    background-color: var(--color-primary-50);
+    text-decoration: none; /* optional: remove underline on hover */
   }
 }
