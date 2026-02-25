@@ -126,7 +126,7 @@ export const charmThemeConfig: ThemeConfiguration = {
       body: {
         bgColor: {
           light: neutralColor(0),
-          dark: neutralColor(800),
+          dark: neutralColor(900),
         },
         fgColor: {
           light: neutralColor(1000),
@@ -387,7 +387,38 @@ export const charmThemeConfig: ThemeConfiguration = {
         style: 'solid',
       },
 
-      extendedTokens: {},
+      extendedTokens: {
+        nav: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(900),
+          },
+        },
+        card: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(900),
+          },
+          borderColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+        },
+        buttonAccent: {
+          bgColor: {
+            light: color('primary', 500),
+            dark: color('primary', 600),
+          },
+          fgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(0),
+          },
+          hoverBgColor: {
+            light: color('primary', 600),
+            dark: color('primary', 500),
+          },
+        },
+      },
     },
   },
   extendedResetStyles: `

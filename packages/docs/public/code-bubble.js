@@ -32,13 +32,14 @@ new CodeBubble({
             'libs/kitchen-sink.js': await fetchLibData('/charm/kitchen-sink.js'),
             'libs/reset.css': await fetchLibData('/charm/reset.css'),
             'libs/theme.css': await fetchLibData('/charm/theme.css'),
+            'libs/dark-theme.css': await fetchLibData('/charm/dark-theme.css'),
             'libs/utility-classes.css': await fetchLibData('/charm/utility-classes.css'),
           },
         },
         exampleTemplate: {
           fileName: 'index.html',
           template: `<!DOCTYPE html>
-  <html lang="en" dir="ltr" class="charm-light">
+  <html lang="en" dir="ltr">
     <head>
       <meta charset="utf-8" />
       <title>Harmony - JavaScript</title>
@@ -48,6 +49,7 @@ new CodeBubble({
       <link rel="icon" type="image/x-icon" href="favicon.ico" />
       <link rel="stylesheet" href="libs/reset.css">
       <link rel="stylesheet" href="libs/theme.css">
+      <link rel="stylesheet" href="libs/dark-theme.css">
       <link rel="stylesheet" href="libs/utility-classes.css">
       ${createScript('/libs/kitchen-sink.js')}
     </head>

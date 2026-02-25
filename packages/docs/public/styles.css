@@ -14,7 +14,87 @@
   margin-top: unset !important;
 }
 
+/* Code bubble theming */
+code-bubble {
+  --code-bubble-bg-color: var(--body-bg-color);
+  --code-bubble-border-color: var(--color-neutral-700);
+  --code-bubble-preview-bg-color: var(--body-bg-color);
+  --code-bubble-button-bg-color: var(--button-bg-color);
+  --code-bubble-button-fg-color: var(--button-fg-color);
+  --code-bubble-button-border-color: var(--color-neutral-700);
+  --code-bubble-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-button-hover-fg-color: var(--button-hover-fg-color);
+  --code-bubble-button-hover-border-color: var(--color-neutral-600);
+  --code-bubble-copy-button-bg-color: var(--button-bg-color);
+  --code-bubble-copy-button-fg-color: var(--button-fg-color);
+  --code-bubble-copy-button-border-color: var(--color-neutral-700);
+  --code-bubble-copy-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
+  --code-bubble-copy-button-hover-border-color: var(--color-neutral-600);
+}
+
+[data-theme='dark'] code-bubble {
+  --code-bubble-bg-color: var(--body-bg-color);
+  --code-bubble-border-color: var(--color-neutral-600);
+  --code-bubble-preview-bg-color: var(--body-bg-color);
+  --code-bubble-button-bg-color: var(--button-bg-color);
+  --code-bubble-button-fg-color: var(--button-fg-color);
+  --code-bubble-button-border-color: var(--color-neutral-600);
+  --code-bubble-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-button-hover-fg-color: var(--button-hover-fg-color);
+  --code-bubble-button-hover-border-color: var(--color-neutral-500);
+  --code-bubble-copy-button-bg-color: var(--button-bg-color);
+  --code-bubble-copy-button-fg-color: var(--button-fg-color);
+  --code-bubble-copy-button-border-color: var(--color-neutral-600);
+  --code-bubble-copy-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
+  --code-bubble-copy-button-hover-border-color: var(--color-neutral-500);
+}
+
+.site-title:hover {
+  text-decoration: none;
+}
+/* Target only the search button hover (it has both data-open-modal and aria-label="Search") */
+button[data-open-modal][aria-label='Search']:hover {
+  background-color: var(--button-bg-color) !important;
+  color: var(--button-fg-color) !important;
+  border: 1px solid var(--color-neutral-700) !important;
+  transform: none;
+  opacity: 1;
+}
+/* Add transparent border to default state to prevent size change on hover */
+starlight-theme-select {
+  border: 1px solid transparent !important;
+  border-radius: 0.375rem !important;
+}
+starlight-theme-select:hover {
+  background-color: var(--button-bg-color) !important;
+  color: var(--button-fg-color) !important;
+  border: 1px solid var(--color-neutral-700) !important;
+  border-radius: 0.375rem !important;
+  transform: none;
+  opacity: 1;
+}
+/* Position icon away from left edge */
+starlight-theme-select .label-icon {
+  left: 0.5rem;
+}
+/* Position caret away from right edge */
+starlight-theme-select .caret {
+  right: 0.5rem;
+}
+/* Add spacing in theme select between icon and text */
+starlight-theme-select select {
+  padding-left: 1.7rem;
+}
+.social-icons::after {
+  border-inline-end: 1px solid var(--color-neutral-700) !important; /* Change line color */
+}
+
 [data-theme='light'] {
+  /* mapping starlight variables to charm variables for docs */
+  --sl-color-bg-nav: var(--nav-bg-color);
+  --sl-card-bg: var(--body-bg-color);
   a {
     color: var(--link-visited-fg-color, var(--link-fg-color));
     text-decoration: var(--link-visited-decoration, var(--link-decoration));
@@ -31,5 +111,32 @@
 
   .sl-link-button.primary {
     color: white;
+  }
+}
+[data-theme='dark'] {
+  /* mapping starlight variables to charm variables for docs */
+  --sl-color-bg-nav: var(--nav-bg-color);
+  --sl-card-bg: var(--card-bg-color);
+  .card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--card-border-color);
+  }
+  /* .astro-h4kctesh {
+    [aria-current='page'] {
+      color: var(--color-primary-800);
+    }
+  }
+
+  .astro-4mxhvrcp {
+    color: var(--color-primary-800);
+  } */
+
+  .sl-link-button.primary {
+    background-color: var(--button-accent-bg-color);
+    color: var(--button-accent-fg-color);
+  }
+  .sl-link-button.primary:hover {
+    background-color: var(--button-accent-hover-bg-color);
+    text-decoration: none;
   }
 }
