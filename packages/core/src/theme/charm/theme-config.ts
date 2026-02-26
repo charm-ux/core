@@ -491,6 +491,12 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: neutralColor(500),
           },
         },
+        siteTitle: {
+          fgColor: {
+            light: color('primary', 800),
+            dark: color('primary', 200),
+          },
+        },
       },
     },
   },

@@ -50,9 +50,9 @@ code-bubble {
   --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
   --code-bubble-copy-button-hover-border-color: var(--color-neutral-500);
 }
-.site-title a,
-.site-title a:visited {
-  color: var(--color-primary-500) !important;
+
+a.site-title:visited {
+  color: var(--site-title-fg-color) !important;
   font-size: 1.5rem;
   font-weight: 600;
 }
