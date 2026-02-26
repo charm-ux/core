@@ -418,7 +418,6 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: color('primary', 500),
           },
         },
-
         alert: {
           bgColor: {
             light: neutralColor(0),
@@ -479,7 +478,7 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: neutralColor(800),
           },
           borderColor: {
-            light: neutralColor(800),
+            light: neutralColor(100),
             dark: neutralColor(800),
           },
           fgColor: {
@@ -495,6 +494,82 @@ export const charmThemeConfig: ThemeConfiguration = {
           fgColor: {
             light: color('primary', 800),
             dark: color('primary', 200),
+          },
+        },
+        themeSelect: {
+          bgColor: {
+            light: neutralColor(100),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(800),
+            dark: neutralColor(200),
+          },
+          hoverBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(200),
+          },
+          borderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(600),
+          },
+        },
+        headerDivider: {
+          color: {
+            light: neutralColor(600),
+            dark: neutralColor(700),
+          },
+        },
+        sidebar: {
+          textColor: {
+            light: neutralColor(800),
+            dark: neutralColor(200),
+          },
+          bgColor: {
+            light: color('primary', 50),
+            dark: color('primary', 900),
+          },
+          fgColor: {
+            light: color('primary', 700),
+            dark: color('primary', 500),
+          },
+          selectedBgColor: {
+            light: color('primary', 100),
+            dark: color('primary', 50),
+          },
+          selectedFgColor: {
+            light: color('primary', 800),
+            dark: color('primary', 800),
+          },
+          hoverBgColor: {
+            light: color('primary', 50),
+            dark: color('primary', 100),
+          },
+          hoverFgColor: {
+            light: color('primary', 700),
+            dark: color('primary', 700),
+          },
+        },
+        codeBubble: {
+          borderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          buttonBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          buttonHoverBorderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(500),
+          },
+          copyButtonBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          copyButtonHoverBorderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(500),
           },
         },
       },
