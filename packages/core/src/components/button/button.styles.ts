@@ -127,7 +127,7 @@ export default css`
   }
 
   :host([disabled]) .control {
-    background-color: var(--button-disabled-bg-color);
+    background-color: var(--button-disabled-bg-color, revert);
     border-color: var(--button-disabled-border-color, var(--default-border-color));
     color: var(--button-disabled-fg-color);
     box-shadow: var(--button-disabled-shadow);
