@@ -64,7 +64,7 @@ describe('getThemeFileContents', () => {
     expect(baseTheme.includes(':is(:root, :host)')).toBe(true);
     expect(baseTheme.includes('--body-bg-color: white;')).toBe(true);
     expect(darkTheme.includes('--body-bg-color: black;')).toBe(true);
-    expect(darkTheme.includes('@media (prefers-color-scheme: dark)')).toBe(true);
+    expect(darkTheme.includes('[data-theme="dark"]')).toBe(true);
     expect(selectorTheme).toBe('');
   });
 
@@ -78,7 +78,7 @@ describe('getThemeFileContents', () => {
     const { baseTheme, darkTheme, selectorTheme } = getThemeFileContents(options);
 
     expect(baseTheme.includes(':is(:root, :host)')).toBe(true);
-    expect(darkTheme.includes('@media (prefers-color-scheme: dark)')).toBe(true);
+    expect(darkTheme.includes('[data-theme="dark"]')).toBe(true);
     expect(selectorTheme?.includes('.light-theme') && selectorTheme?.includes('.dark-theme')).toBe(true);
   });
 
