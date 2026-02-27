@@ -21,20 +21,15 @@
 /* Code bubble styling */
 code-bubble {
   --code-bubble-bg-color: var(--body-bg-color);
-  --code-bubble-border-color: var(--code-bubble-border-color);
   --code-bubble-preview-bg-color: var(--body-bg-color);
   --code-bubble-button-bg-color: var(--button-bg-color);
   --code-bubble-button-fg-color: var(--button-fg-color);
-  --code-bubble-button-border-color: var(--code-bubble-button-border-color);
   --code-bubble-button-hover-bg-color: var(--button-hover-bg-color);
   --code-bubble-button-hover-fg-color: var(--button-hover-fg-color);
-  --code-bubble-button-hover-border-color: var(--code-bubble-button-hover-border-color);
   --code-bubble-copy-button-bg-color: var(--button-bg-color);
   --code-bubble-copy-button-fg-color: var(--button-fg-color);
-  --code-bubble-copy-button-border-color: var(--code-bubble-copy-button-border-color);
   --code-bubble-copy-button-hover-bg-color: var(--button-hover-bg-color);
   --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
-  --code-bubble-copy-button-hover-border-color: var(--code-bubble-copy-button-hover-border-color);
 }
 
 .card {
