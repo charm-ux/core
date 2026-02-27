@@ -14,6 +14,8 @@ export default css`
   }
 
   .form-control-input {
+    height: auto;
+    background: transparent;
     border: none;
     display: flex;
     gap: var(--radio-group-radio-gap, ${fallbackStyles.gap});
