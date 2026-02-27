@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "npm run charm-setup && astro dev",
-    "dev:theme": "cd ../core && pnpm generate:theme && cd ../docs && pnpm run charm-setup && astro dev",
+    "dev:theme": "pnpm -C ../core generate:theme && pnpm -C ../docs run charm-setup && astro dev",
     "start": "npm run charm-setup && astro dev",
     "copy-files": "node ./scripts/copy-support-files.js",
     "build": "npm run charm-setup && astro build",
