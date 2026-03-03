@@ -44,11 +44,17 @@ code-bubble {
 }
 
 /* Site title + nav styling */
+a.site-title {
+  color: var(--site-title-fg-color) !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
 a.site-title:visited {
   color: var(--site-title-fg-color) !important;
   font-size: 1.5rem;
   font-weight: 600;
 }
+
 .site-title:hover {
   text-decoration: none;
 }
