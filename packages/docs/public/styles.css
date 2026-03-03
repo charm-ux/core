@@ -17,6 +17,13 @@
 .sl-markdown-content code-bubble * {
   margin-top: unset !important;
 }
+/* Override default styles for the "Skip to content" button */
+a[href='#_top'].astro-6l4pnzvx {
+  /* your styles here */
+  background-color: var(--skip-to-content-bg-color) !important;
+  color: var(--skip-to-content-fg-color) !important;
+  border: 1px solid var(--skip-to-content-border-color) !important;
+}
 
 /* Code bubble styling */
 code-bubble {
