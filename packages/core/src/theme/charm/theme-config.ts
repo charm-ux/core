@@ -572,6 +572,24 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: neutralColor(500),
           },
         },
+        skipToContent: {
+          bgColor: {
+            light: neutralColor(700),
+            dark: neutralColor(200),
+          },
+          fgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(1000),
+          },
+          hoverBgColor: {
+            light: neutralColor(600),
+            dark: neutralColor(300),
+          },
+          hoverFgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(1000),
+          },
+        },
       },
     },
   },
