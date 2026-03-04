@@ -106,11 +106,18 @@ export default defineConfig({
                 document.documentElement.classList.add('charm-light');
               }
             }
-            syncTheme();
-            new MutationObserver(syncTheme).observe(document.documentElement, {
-              attributes: true,
-              attributeFilter: ['data-theme'],
-            });
+            function initTheme() {
+                syncTheme();
+                new MutationObserver(syncTheme).observe(document.documentElement, {
+                  attributes: true,
+                  attributeFilter: ['data-theme'],
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTheme);
+            } else {
+                initTheme();
+            }
           `,
         },
       ],
