@@ -13,7 +13,7 @@ export default css`
     --divider-text-offset: inherit;
     --divider-vertical-min-height: inherit;
     align-items: center;
-    color: black;
+    color: inherit;
     display: flex;
     flex-direction: row;
     line-height: 1;
@@ -30,6 +30,7 @@ export default css`
 
   .text {
     margin: 0 var(--divider-text-gap, ${fallbackStyles.dividerTextGap});
+    color: var(--divider-fg-color);
   }
 
   :host([orientation='vertical']) {

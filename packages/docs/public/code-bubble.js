@@ -38,7 +38,7 @@ new CodeBubble({
         exampleTemplate: {
           fileName: 'index.html',
           template: `<!DOCTYPE html>
-  <html lang="en" dir="ltr" class="charm-light">
+  <html lang="en" dir="ltr">
     <head>
       <meta charset="utf-8" />
       <title>Harmony - JavaScript</title>

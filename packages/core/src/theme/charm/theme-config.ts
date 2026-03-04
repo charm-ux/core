@@ -126,7 +126,7 @@ export const charmThemeConfig: ThemeConfiguration = {
       body: {
         bgColor: {
           light: neutralColor(0),
-          dark: neutralColor(800),
+          dark: neutralColor(900),
         },
         fgColor: {
           light: neutralColor(1000),
@@ -387,7 +387,210 @@ export const charmThemeConfig: ThemeConfiguration = {
         style: 'solid',
       },
 
-      extendedTokens: {},
+      extendedTokens: {
+        nav: {
+          bgColor: {
+            light: neutralColor(200),
+            dark: neutralColor(900),
+          },
+        },
+        card: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(900),
+          },
+          borderColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+        },
+        buttonAccent: {
+          bgColor: {
+            light: color('primary', 500),
+            dark: color('primary', 600),
+          },
+          fgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(0),
+          },
+          hoverBgColor: {
+            light: color('primary', 600),
+            dark: color('primary', 500),
+          },
+        },
+        alert: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        avatar: {
+          bgColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        checkbox: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          borderColor: {
+            light: neutralColor(800),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+          fgColorChecked: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        divider: {
+          bgColor: {
+            light: neutralColor(300),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        spinner: {
+          labelColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+        },
+        search: {
+          bgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(800),
+          },
+          borderColor: {
+            light: neutralColor(100),
+            dark: neutralColor(800),
+          },
+          fgColor: {
+            light: neutralColor(1000),
+            dark: neutralColor(0),
+          },
+          placeholderColor: {
+            light: neutralColor(500),
+            dark: neutralColor(500),
+          },
+        },
+        siteTitle: {
+          fgColor: {
+            light: color('primary', 800),
+            dark: color('primary', 200),
+          },
+        },
+        themeSelect: {
+          bgColor: {
+            light: neutralColor(100),
+            dark: neutralColor(700),
+          },
+          fgColor: {
+            light: neutralColor(800),
+            dark: neutralColor(200),
+          },
+          hoverBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(200),
+          },
+          borderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(600),
+          },
+        },
+        headerDivider: {
+          color: {
+            light: neutralColor(600),
+            dark: neutralColor(700),
+          },
+        },
+        sidebar: {
+          textColor: {
+            light: neutralColor(800),
+            dark: neutralColor(200),
+          },
+          bgColor: {
+            light: color('primary', 50),
+            dark: color('primary', 900),
+          },
+          fgColor: {
+            light: color('primary', 700),
+            dark: color('primary', 500),
+          },
+          selectedBgColor: {
+            light: color('primary', 100),
+            dark: color('primary', 50),
+          },
+          selectedFgColor: {
+            light: color('primary', 800),
+            dark: color('primary', 800),
+          },
+          hoverBgColor: {
+            light: color('primary', 50),
+            dark: color('primary', 100),
+          },
+          hoverFgColor: {
+            light: color('primary', 700),
+            dark: color('primary', 700),
+          },
+        },
+        codeBubble: {
+          borderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          buttonBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          buttonHoverBorderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(500),
+          },
+          copyButtonBorderColor: {
+            light: neutralColor(700),
+            dark: neutralColor(600),
+          },
+          copyButtonHoverBorderColor: {
+            light: neutralColor(600),
+            dark: neutralColor(500),
+          },
+        },
+        skipToContent: {
+          bgColor: {
+            light: neutralColor(700),
+            dark: neutralColor(200),
+          },
+          fgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(1000),
+          },
+          hoverBgColor: {
+            light: neutralColor(600),
+            dark: neutralColor(300),
+          },
+          hoverFgColor: {
+            light: neutralColor(0),
+            dark: neutralColor(1000),
+          },
+        },
+      },
     },
   },
   extendedResetStyles: `

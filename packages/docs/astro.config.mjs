@@ -60,6 +60,20 @@ export default defineConfig({
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
+            href: `${base}/charm/dark-theme.css`,
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: `${base}/charm/selector-theme.css`,
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
             href: `${base}/charm/utility-classes.css`,
           },
         },
@@ -78,6 +92,33 @@ export default defineConfig({
             src: `${base}/code-bubble.js`,
             defer: true,
           },
+        },
+        {
+          tag: 'script',
+          content: `
+            function syncTheme() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'dark') {
+                document.documentElement.classList.add('charm-dark');
+                document.documentElement.classList.remove('charm-light');
+              } else {
+                document.documentElement.classList.remove('charm-dark');
+                document.documentElement.classList.add('charm-light');
+              }
+            }
+            function initTheme() {
+                syncTheme();
+                new MutationObserver(syncTheme).observe(document.documentElement, {
+                  attributes: true,
+                  attributeFilter: ['data-theme'],
+                });
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTheme);
+            } else {
+                initTheme();
+            }
+          `,
         },
       ],
       sidebar: [

@@ -9,27 +9,132 @@
     visibility: visible !important;
   }
 }
+:root {
+  --sl-color-bg-nav: var(--nav-bg-color);
+  --sl-card-bg: var(--card-bg-color);
+}
 
 .sl-markdown-content code-bubble * {
   margin-top: unset !important;
 }
+/* Override default styles for the "Skip to content" button */
+a[href='#_top'].astro-6l4pnzvx {
+  background-color: var(--skip-to-content-bg-color) !important;
+  color: var(--skip-to-content-fg-color) !important;
+}
 
-[data-theme='light'] {
-  a {
-    color: var(--link-visited-fg-color, var(--link-fg-color));
-    text-decoration: var(--link-visited-decoration, var(--link-decoration));
-  }
-  .astro-h4kctesh {
-    [aria-current='page'] {
-      color: white;
-    }
-  }
+/* Code bubble styling */
+code-bubble {
+  --code-bubble-bg-color: var(--body-bg-color);
+  --code-bubble-preview-bg-color: var(--body-bg-color);
+  --code-bubble-button-bg-color: var(--button-bg-color);
+  --code-bubble-button-fg-color: var(--button-fg-color);
+  --code-bubble-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-button-hover-fg-color: var(--button-hover-fg-color);
+  --code-bubble-copy-button-bg-color: var(--button-bg-color);
+  --code-bubble-copy-button-fg-color: var(--button-fg-color);
+  --code-bubble-copy-button-hover-bg-color: var(--button-hover-bg-color);
+  --code-bubble-copy-button-hover-fg-color: var(--button-hover-fg-color);
+}
 
-  .astro-4mxhvrcp {
-    color: white;
-  }
+.card {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--card-border-color);
+}
 
-  .sl-link-button.primary {
-    color: white;
-  }
+/* Site title + nav styling */
+a.site-title {
+  color: var(--site-title-fg-color) !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+a.site-title:visited {
+  color: var(--site-title-fg-color) !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.site-title:hover {
+  text-decoration: none;
+}
+.social-icons::after {
+  border-inline-end: 1px solid var(--header-divider-color) !important;
+}
+
+/* Search button default state */
+button[data-open-modal][aria-label='Search'] {
+  box-shadow: none !important;
+  background-color: var(--search-bg-color) !important;
+  color: var(--search-fg-color) !important;
+  border: 1px solid var(--search-border-color) !important;
+}
+
+/* Search button hover state */
+button[data-open-modal][aria-label='Search']:hover {
+  background-color: var(--search-bg-color) !important;
+  color: var(--search-fg-color) !important;
+  border: 1px solid var(--search-border-color) !important;
+  transform: none;
+  opacity: 1;
+}
+
+/* Theme selector styling */
+starlight-theme-select {
+  background-color: var(--theme-select-bg-color) !important;
+  border: 1px solid var(--theme-select-border-color) !important;
+  border-radius: 0.375rem !important;
+  box-sizing: border-box !important; /* Add this */
+  transform: none !important;
+}
+starlight-theme-select select {
+  background-color: transparent !important;
+}
+
+starlight-theme-select:hover {
+  border: 1px solid var(--theme-select-hover-border-color) !important;
+  border-radius: 0.375rem !important;
+  transform: none !important;
+}
+starlight-theme-select .label-icon {
+  left: 0.5rem;
+}
+starlight-theme-select .caret {
+  right: 0.5rem;
+}
+starlight-theme-select select {
+  padding-left: 1.7rem;
+}
+
+.sl-link-button.primary {
+  background-color: var(--button-accent-bg-color);
+  color: var(--button-accent-fg-color);
+}
+.sl-link-button.primary:hover {
+  background-color: var(--button-accent-hover-bg-color);
+  text-decoration: none;
+}
+
+/* Side bar styling */
+
+/* 1. Default unselected links */
+.sidebar-content .astro-52wgxlot a {
+  color: var(--sidebar-text-color);
+  font-weight: 400;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+/* 2. Selected/current page */
+.sidebar-content li .astro-52wgxlot a[aria-current='page'] {
+  color: var(--sidebar-selected-fg-color) !important;
+  font-weight: 600;
+  background-color: var(--sidebar-selected-bg-color);
+  text-decoration: none;
+}
+/* 3. Hover state */
+.sidebar-content .astro-52wgxlot a:hover {
+  color: var(--sidebar-hover-fg-color);
+  font-weight: 500;
+  background-color: var(--sidebar-hover-bg-color);
+  text-decoration: none;
 }
