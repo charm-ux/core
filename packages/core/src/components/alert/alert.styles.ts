@@ -71,9 +71,6 @@ export default css`
     min-width: 0px;
     background-color: var(--alert-bg-color);
     color: var(--alert-fg-color);
-  }
-
-  .alert-message-container {
     overflow: hidden;
     align-self: center;
   }
