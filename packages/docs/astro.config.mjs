@@ -36,6 +36,26 @@ export default defineConfig({
       // Proper minimal i18n configuration to avoid errors
       head: [
         {
+          tag: 'script',
+          content: `
+            function syncTheme() {
+              var theme = document.documentElement.getAttribute('data-theme');
+              if (theme === 'dark') {
+                document.documentElement.classList.add('charm-dark');
+                document.documentElement.classList.remove('charm-light');
+              } else {
+                document.documentElement.classList.remove('charm-dark');
+                document.documentElement.classList.add('charm-light');
+              }
+            }
+            syncTheme();
+            new MutationObserver(syncTheme).observe(document.documentElement, {
+              attributes: true,
+              attributeFilter: ['data-theme'],
+            });
+          `,
+        },
+        {
           tag: 'link',
           attrs: {
             rel: 'stylesheet',
@@ -92,33 +112,6 @@ export default defineConfig({
             src: `${base}/code-bubble.js`,
             defer: true,
           },
-        },
-        {
-          tag: 'script',
-          content: `
-            function syncTheme() {
-              var theme = document.documentElement.getAttribute('data-theme');
-              if (theme === 'dark') {
-                document.documentElement.classList.add('charm-dark');
-                document.documentElement.classList.remove('charm-light');
-              } else {
-                document.documentElement.classList.remove('charm-dark');
-                document.documentElement.classList.add('charm-light');
-              }
-            }
-            function initTheme() {
-                syncTheme();
-                new MutationObserver(syncTheme).observe(document.documentElement, {
-                  attributes: true,
-                  attributeFilter: ['data-theme'],
-                });
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initTheme);
-            } else {
-                initTheme();
-            }
-          `,
         },
       ],
       sidebar: [
