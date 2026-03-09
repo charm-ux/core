@@ -117,7 +117,13 @@ starlight-theme-select select {
 /* Side bar styling */
 
 /* 1. Default unselected links */
-.sidebar-content .astro-52wgxlot a {
+.sidebar-content a {
+  color: var(--sidebar-text-color);
+  font-weight: 400;
+  background-color: transparent;
+  text-decoration: none;
+}
+.sidebar-content a:visited {
   color: var(--sidebar-text-color);
   font-weight: 400;
   background-color: transparent;
@@ -125,16 +131,28 @@ starlight-theme-select select {
 }
 
 /* 2. Selected/current page */
-.sidebar-content li .astro-52wgxlot a[aria-current='page'] {
+.sidebar-content li a[aria-current='page'] {
   color: var(--sidebar-selected-fg-color) !important;
   font-weight: 600;
   background-color: var(--sidebar-selected-bg-color);
   text-decoration: none;
 }
 /* 3. Hover state */
-.sidebar-content .astro-52wgxlot a:hover {
+.sidebar-content a:hover {
   color: var(--sidebar-hover-fg-color);
   font-weight: 500;
   background-color: var(--sidebar-hover-bg-color);
   text-decoration: none;
+}
+
+starlight-toc > nav li > a {
+  color: var(--toc-link-color) !important;
+  text-decoration: none;
+}
+starlight-toc > nav li > a:visited {
+  color: var(--toc-link-color) !important;
+  text-decoration: none;
+}
+starlight-toc > nav li > a[aria-current='true'] {
+  text-decoration: underline;
 }
