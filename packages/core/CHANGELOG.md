@@ -1,5 +1,16 @@
 # CHARM-UX Core Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- ffaebc5: Fix dark mode styling for alert, divider, and radio group components
+  - Add --alert-bg-color and --alert-fg-color token support to alert component
+  - Replace hardcoded black color with inherit and add --divider-fg-color token to divider component
+  - Override inherited form-control background and height in radio group to prevent light gray background in dark mode
+
+- f6fa462: Updated script for theming (applying dark theme css class)
+
 ## 0.4.0
 
 ### Minor Changes
