@@ -590,6 +590,12 @@ export const charmThemeConfig: ThemeConfiguration = {
             dark: neutralColor(1000),
           },
         },
+        toc: {
+          linkColor: {
+            light: neutralColor(800),
+            dark: neutralColor(300),
+          },
+        },
       },
     },
   },
