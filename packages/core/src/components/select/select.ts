@@ -7,6 +7,8 @@ import { endTemplate, startTemplate } from '../../templates/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './select.styles.js';
 
+type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
+
 /**
  * A select lets people choose a single option from a list of at least four options. Selects use browser native styling for the listed options. They are ideal for data submission in forms and ease of use on mobile platforms. Classified as a form control.
  *
@@ -54,6 +56,9 @@ export class CoreSelect extends CharmFormControlElement {
   @state()
   protected options?: Array<HTMLOptionElement> = [];
 
+  @state()
+  protected optionNodes?: Array<SelectChildElement> = [];
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -66,6 +71,13 @@ export class CoreSelect extends CharmFormControlElement {
   /** Gets all the options for the select. */
   protected getOptions() {
     return Array.from(this.querySelectorAll<HTMLOptionElement>('option'));
+  }
+
+  /** Gets the direct option and optgroup children for the select. */
+  protected getOptionNodes() {
+    return Array.from(this.children).filter(
+      (child): child is SelectChildElement => child instanceof HTMLOptionElement || child instanceof HTMLOptGroupElement
+    );
   }
 
   /** Handles the change of the select. */
@@ -90,6 +102,7 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Handles the change of the options in the default slot */
   protected handleSlotChange() {
+    this.optionNodes = this.getOptionNodes();
     this.options = this.getOptions();
     if (this.value) {
       this.options.forEach(o => {
@@ -176,11 +189,27 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Generates the select options template */
   protected optionsTemplate() {
-    return (
-      this.options?.map(
-        o => html`<option .value=${o.value} ?selected=${o.selected} ?disabled=${o.disabled}>${o.textContent}</option>`
-      ) || ''
-    );
+    return this.optionNodes?.map(node => this.renderOptionNode(node)) || '';
+  }
+
+  protected renderOptionNode(node: SelectChildElement) {
+    if (node instanceof HTMLOptGroupElement) {
+      return html`
+        <optgroup label=${node.label} ?disabled=${node.disabled}>
+          ${Array.from(node.children)
+            .filter((child): child is HTMLOptionElement => child instanceof HTMLOptionElement)
+            .map(option => this.renderOption(option))}
+        </optgroup>
+      `;
+    }
+
+    return this.renderOption(node);
+  }
+
+  protected renderOption(option: HTMLOptionElement) {
+    return html`<option .value=${option.value} ?selected=${option.selected} ?disabled=${option.disabled}>
+      ${option.textContent}
+    </option>`;
   }
 
   /** Generates the end slot template */
