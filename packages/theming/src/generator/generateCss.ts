@@ -1,0 +1,410 @@
+// src/generator/generateCss.ts
+import { cssVarName, toKebabCase } from '../helpers/cssVar.js';
+import { expandColors, isLightDarkValue, PALETTE_STEPS } from './colorPalette.js';
+import type { GeneratorConfig } from '../types/config.js';
+import type {
+  TokenDefinition,
+  ResolvedTokenDefinition,
+  PrimitiveTokens,
+  SemanticTokens,
+  TokenMap,
+  LightDarkValue,
+  ShadowValue,
+  ShadowTokenValue,
+  CubicBezierValue,
+} from '../types/tokens.js';
+
+type CssConfig = Pick<
+  GeneratorConfig,
+  'prefix' | 'useLightDarkFunction' | 'useDataAttributes' | 'useLayers' | 'selector'
+>;
+
+/**
+ * Format a token value to a CSS-compatible string.
+ */
+function formatValue(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number') return String(value);
+  return String(value);
+}
+
+/**
+ * Format a shadow value to CSS box-shadow syntax.
+ */
+function formatShadow(shadow: ShadowValue): string {
+  const parts: string[] = [];
+  if (shadow.inset) parts.push('inset');
+  parts.push(shadow.offsetX, shadow.offsetY, shadow.blur, shadow.spread);
+
+  // Handle light/dark colors
+  const color = isLightDarkValue(shadow.color) ? (shadow.color as LightDarkValue).light : (shadow.color as string);
+  parts.push(color);
+
+  return parts.join(' ');
+}
+
+/**
+ * Format shadow token to CSS value.
+ */
+function formatShadowValue(value: ShadowTokenValue): string {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    return value.map(formatShadow).join(', ');
+  }
+  return formatShadow(value);
+}
+
+/**
+ * Format a cubic bezier timing function to CSS.
+ */
+function formatTimingFunction(value: CubicBezierValue): string {
+  return `cubic-bezier(${value.join(', ')})`;
+}
+
+/**
+ * Check if a value is a cubic bezier array.
+ */
+function isCubicBezier(value: unknown): value is CubicBezierValue {
+  return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
+}
+
+/**
+ * Generate CSS custom properties for primitive tokens.
+ */
+function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string): string[] {
+  const lines: string[] = [];
+
+  // Colors
+  if (primitives.color) {
+    const expandedColors = expandColors(primitives.color);
+    for (const [colorName, colorValue] of Object.entries(expandedColors)) {
+      if (isLightDarkValue(colorValue)) {
+        // Single light/dark value (no palette)
+        lines.push(`  ${cssVarName(prefix, 'color', colorName)}: ${colorValue.light};`);
+      } else if (typeof colorValue === 'object' && colorValue !== null) {
+        // Palette or nested object
+        for (const [step, stepValue] of Object.entries(colorValue)) {
+          if (isLightDarkValue(stepValue)) {
+            lines.push(`  ${cssVarName(prefix, 'color', colorName, step)}: ${(stepValue as LightDarkValue).light};`);
+          } else {
+            lines.push(`  ${cssVarName(prefix, 'color', colorName, step)}: ${stepValue};`);
+          }
+        }
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'color', colorName)}: ${colorValue};`);
+      }
+    }
+  }
+
+  // Spacing
+  if (primitives.spacing) {
+    for (const [name, value] of Object.entries(primitives.spacing)) {
+      if (typeof value === 'object' && value !== null && 'value' in value) {
+        lines.push(`  ${cssVarName(prefix, 'spacing', name)}: ${formatValue((value as { value: unknown }).value)};`);
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'spacing', name)}: ${formatValue(value)};`);
+      }
+    }
+  }
+
+  // Border radius
+  if (primitives.borderRadius) {
+    for (const [name, value] of Object.entries(primitives.borderRadius)) {
+      if (typeof value === 'object' && value !== null && 'value' in value) {
+        lines.push(
+          `  ${cssVarName(prefix, 'border-radius', name)}: ${formatValue((value as { value: unknown }).value)};`
+        );
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'border-radius', name)}: ${formatValue(value)};`);
+      }
+    }
+  }
+
+  // Border width
+  if (primitives.borderWidth) {
+    for (const [name, value] of Object.entries(primitives.borderWidth)) {
+      if (typeof value === 'object' && value !== null && 'value' in value) {
+        lines.push(
+          `  ${cssVarName(prefix, 'border-width', name)}: ${formatValue((value as { value: unknown }).value)};`
+        );
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'border-width', name)}: ${formatValue(value)};`);
+      }
+    }
+  }
+
+  // Shadows
+  if (primitives.shadow) {
+    for (const [name, rawValue] of Object.entries(primitives.shadow)) {
+      const value =
+        typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue
+          ? (rawValue as { value: ShadowTokenValue }).value
+          : rawValue;
+      lines.push(`  ${cssVarName(prefix, 'shadow', name)}: ${formatShadowValue(value)};`);
+    }
+  }
+
+  // Duration
+  if (primitives.duration) {
+    for (const [name, value] of Object.entries(primitives.duration)) {
+      if (typeof value === 'object' && value !== null && 'value' in value) {
+        lines.push(`  ${cssVarName(prefix, 'duration', name)}: ${formatValue((value as { value: unknown }).value)};`);
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'duration', name)}: ${formatValue(value)};`);
+      }
+    }
+  }
+
+  // Timing functions
+  if (primitives.timingFunction) {
+    for (const [name, rawValue] of Object.entries(primitives.timingFunction)) {
+      const value =
+        typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue
+          ? (rawValue as { value: CubicBezierValue }).value
+          : rawValue;
+      if (isCubicBezier(value)) {
+        lines.push(`  ${cssVarName(prefix, 'timing-function', name)}: ${formatTimingFunction(value)};`);
+      }
+    }
+  }
+
+  // Z-index
+  if (primitives.zIndex) {
+    for (const [name, value] of Object.entries(primitives.zIndex)) {
+      if (typeof value === 'object' && value !== null && 'value' in value) {
+        lines.push(`  ${cssVarName(prefix, 'z-index', name)}: ${formatValue((value as { value: unknown }).value)};`);
+      } else {
+        lines.push(`  ${cssVarName(prefix, 'z-index', name)}: ${formatValue(value)};`);
+      }
+    }
+  }
+
+  // Typography
+  if (primitives.typography) {
+    const typoCategories: [string, TokenMap | undefined][] = [
+      ['font-family', primitives.typography.fontFamily],
+      ['font-size', primitives.typography.fontSize],
+      ['font-weight', primitives.typography.fontWeight],
+      ['line-height', primitives.typography.lineHeight],
+      ['letter-spacing', primitives.typography.letterSpacing],
+    ];
+
+    for (const [category, tokenMap] of typoCategories) {
+      if (tokenMap) {
+        for (const [name, value] of Object.entries(tokenMap)) {
+          if (typeof value === 'object' && value !== null && 'value' in value) {
+            lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue((value as { value: unknown }).value)};`);
+          } else {
+            lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue(value)};`);
+          }
+        }
+      }
+    }
+  }
+
+  return lines;
+}
+
+/**
+ * Generate CSS custom properties for semantic/component tokens.
+ */
+function generateSemanticVariables(
+  semantics: SemanticTokens,
+  prefix: string,
+  config: CssConfig
+): { base: string[]; light: string[]; dark: string[] } {
+  const base: string[] = [];
+  const light: string[] = [];
+  const dark: string[] = [];
+
+  function processValue(path: string[], value: unknown): void {
+    const varName = cssVarName(prefix, ...path);
+
+    if (isLightDarkValue(value)) {
+      const ldValue = value as LightDarkValue;
+      if (config.useLightDarkFunction) {
+        base.push(`  ${varName}: light-dark(${ldValue.light}, ${ldValue.dark});`);
+      } else {
+        light.push(`  ${varName}: ${ldValue.light};`);
+        dark.push(`  ${varName}: ${ldValue.dark};`);
+      }
+    } else if (typeof value === 'object' && value !== null) {
+      // Check if it's a metadata wrapper
+      if ('value' in value && !('light' in value) && !('dark' in value)) {
+        processValue(path, (value as { value: unknown }).value);
+      } else {
+        // Nested object
+        for (const [key, nested] of Object.entries(value)) {
+          processValue([...path, toKebabCase(key)], nested);
+        }
+      }
+    } else if (value !== undefined) {
+      base.push(`  ${varName}: ${formatValue(value)};`);
+    }
+  }
+
+  for (const [component, tokens] of Object.entries(semantics)) {
+    processValue([toKebabCase(component)], tokens);
+  }
+
+  return { base, light, dark };
+}
+
+/**
+ * Options for CSS generation.
+ */
+export type CssGenerationOptions = Partial<CssConfig>;
+
+/**
+ * Generate CSS custom properties from a token definition.
+ *
+ * @param definition - The token definition to generate CSS from
+ * @param config - Generation configuration options
+ * @returns CSS string with custom property declarations
+ *
+ * @example
+ * ```ts
+ * const css = generateCss(myDefinition, { prefix: 'charm' });
+ * // :root {
+ * //   color-scheme: light dark;
+ * //   --charm-color-primary-500: #3b82f6;
+ * //   ...
+ * // }
+ * ```
+ */
+export function generateCss(
+  definition: TokenDefinition | ResolvedTokenDefinition,
+  config: Partial<CssConfig> = {}
+): string {
+  const prefix = config.prefix ?? definition.prefix ?? 'charm';
+  const useLightDarkFunction = config.useLightDarkFunction ?? true;
+  const selector = config.selector ?? ':root';
+
+  const lines: string[] = ['/* Generated by @charm-ux/theming - DO NOT EDIT */', ''];
+
+  // Generate primitive variables
+  const primitiveVars = generatePrimitiveVariables(definition.primitives, prefix);
+
+  // Generate semantic variables
+  let semanticVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
+  if (definition.semantics) {
+    // Check if semantics is a factory function or already resolved
+    const resolved =
+      typeof definition.semantics === 'function'
+        ? (() => {
+            const ref = (...segments: (string | number)[]) =>
+              `var(${cssVarName(prefix, ...segments.map(s => (typeof s === 'string' ? toKebabCase(s) : s)))})`;
+            return definition.semantics({ ref } as unknown as Parameters<typeof definition.semantics>[0]);
+          })()
+        : definition.semantics;
+    semanticVars = generateSemanticVariables(resolved, prefix, {
+      ...config,
+      prefix,
+      useLightDarkFunction,
+    });
+  }
+
+  // Generate component variables
+  let componentVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
+  if (definition.components) {
+    // Check if components is a factory function or already resolved
+    const resolved =
+      typeof definition.components === 'function'
+        ? (() => {
+            const ref = (...segments: (string | number)[]) =>
+              `var(${cssVarName(prefix, ...segments.map(s => (typeof s === 'string' ? toKebabCase(s) : s)))})`;
+            return definition.components({ ref } as unknown as Parameters<typeof definition.components>[0]);
+          })()
+        : definition.components;
+    componentVars = generateSemanticVariables(resolved, prefix, {
+      ...config,
+      prefix,
+      useLightDarkFunction,
+    });
+  }
+
+  // Build CSS output
+  if (useLightDarkFunction) {
+    lines.push(`${selector} {`);
+    lines.push('  color-scheme: light dark;');
+    lines.push(...primitiveVars);
+    lines.push(...semanticVars.base);
+    lines.push(...componentVars.base);
+    lines.push('}');
+  } else {
+    // Without light-dark(), we need separate selectors for light/dark modes
+    lines.push(`${selector} {`);
+    lines.push(...primitiveVars);
+    lines.push(...semanticVars.base);
+    lines.push(...componentVars.base);
+    lines.push(...semanticVars.light);
+    lines.push(...componentVars.light);
+    lines.push('}');
+
+    if (semanticVars.dark.length > 0 || componentVars.dark.length > 0) {
+      lines.push('');
+      if (config.useDataAttributes) {
+        lines.push('[data-theme="dark"] {');
+        lines.push(...semanticVars.dark);
+        lines.push(...componentVars.dark);
+        lines.push('}');
+      } else {
+        lines.push('@media (prefers-color-scheme: dark) {');
+        lines.push(`  ${selector} {`);
+        lines.push(...semanticVars.dark.map(l => '  ' + l));
+        lines.push(...componentVars.dark.map(l => '  ' + l));
+        lines.push('  }');
+        lines.push('}');
+      }
+    }
+  }
+
+  return lines.join('\n');
+}
+
+/**
+ * Generate CSS custom properties as an object (for programmatic use).
+ *
+ * @param definition - The token definition
+ * @param config - Generation configuration
+ * @returns Object with variable names as keys and values
+ */
+export function generateCssVariables(
+  definition: TokenDefinition,
+  config: Partial<CssConfig> = {}
+): Record<string, string> {
+  const prefix = config.prefix ?? definition.prefix ?? 'charm';
+  const variables: Record<string, string> = {};
+
+  // Extract from primitives
+  if (definition.primitives.color) {
+    const expandedColors = expandColors(definition.primitives.color);
+    for (const [colorName, colorValue] of Object.entries(expandedColors)) {
+      if (isLightDarkValue(colorValue)) {
+        variables[cssVarName(prefix, 'color', colorName)] = colorValue.light;
+      } else if (typeof colorValue === 'object' && colorValue !== null) {
+        for (const [step, stepValue] of Object.entries(colorValue)) {
+          if (isLightDarkValue(stepValue)) {
+            variables[cssVarName(prefix, 'color', colorName, step)] = (stepValue as LightDarkValue).light;
+          } else {
+            variables[cssVarName(prefix, 'color', colorName, step)] = stepValue as string;
+          }
+        }
+      }
+    }
+  }
+
+  return variables;
+}
+
+/**
+ * Generate a CSS block string from variables object.
+ *
+ * @param variables - Object with CSS variable names and values
+ * @param selector - CSS selector to wrap variables in
+ * @returns CSS block string
+ */
+export function generateCssBlock(variables: Record<string, string>, selector: string = ':root'): string {
+  const lines = Object.entries(variables).map(([name, value]) => `  ${name}: ${value};`);
+  return `${selector} {\n${lines.join('\n')}\n}`;
+}

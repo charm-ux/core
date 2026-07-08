@@ -1,46 +1,7 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  border: css`1px solid #000`,
-  background: css`#fff`,
-  height: css`1em`,
-  color: css`#000`,
-  borderRadius: css`2px`,
-};
+import { component, semantic } from '../../theme/tokens.js';
 
 export default css`
-  :host {
-    /** Rest */
-    --checkbox-bg-color-checked: inherit;
-    --checkbox-bg-color-unchecked: inherit;
-    --checkbox-border-color-checked: inherit;
-    --checkbox-border-radius: inherit;
-    --checkbox-fg-color-checked: inherit;
-    --checkbox-fg-color: inherit;
-    --checkbox-icon-size: inherit;
-    --checkbox-size: inherit;
-
-    /** Active */
-    --checkbox-active-bg-color-checked: inherit;
-    --checkbox-active-bg-color-unchecked: inherit;
-    --checkbox-active-border-color-unchecked: inherit;
-    --checkbox-active-border-color-checked: inherit;
-    --checkbox-active-fg-color: inherit;
-
-    /** Hover */
-    --checkbox-hover-bg-color-checked: inherit;
-    --checkbox-hover-bg-color-unchecked: inherit;
-    --checkbox-hover-border-color-unchecked: inherit;
-    --checkbox-hover-border-color-checked: inherit;
-    --checkbox-hover-fg-color: inherit;
-
-    /** Disabled */
-    --checkbox-disabled-bg-color-checked: inherit;
-    --checkbox-disabled-bg-color-unchecked: inherit;
-    --checkbox-disabled-border-color: inherit;
-    --checkbox-disabled-fg-color: inherit;
-  }
-
   .checkbox {
     margin: 0;
   }
@@ -51,11 +12,12 @@ export default css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--checkbox-size, 16px);
-    height: var(--checkbox-size, 16px);
-    border: var(--form-control-border, ${fallbackStyles.border});
-    border-radius: var(--checkbox-border-radius, ${fallbackStyles.borderRadius});
-    background-color: var(--checkbox-bg-color-unchecked, ${fallbackStyles.background});
+    width: ${component('checkbox', 'size')};
+    height: ${component('checkbox', 'size')};
+    border: ${semantic('formControl', 'borderWidth')} ${semantic('formControl', 'borderStyle')}
+      ${component('checkbox', 'borderColor')};
+    border-radius: ${component('checkbox', 'borderRadius')};
+    background-color: ${component('checkbox', 'bgColor')};
     color: white;
   }
 
@@ -64,12 +26,12 @@ export default css`
     flex-direction: row;
     align-items: flex-start;
     position: relative;
-    gap: var(--form-control-label-gap);
+    gap: ${semantic('formControl', 'label', 'gap')};
   }
 
   .icon {
-    width: var(--checkbox-icon-size, 12px);
-    height: var(--checkbox-icon-size, 12px);
+    width: ${component('checkbox', 'iconSize')};
+    height: ${component('checkbox', 'iconSize')};
     visibility: hidden;
   }
 
@@ -88,51 +50,52 @@ export default css`
   }
 
   .label {
-    line-height: var(--checkbox-size, 16px);
+    line-height: ${component('checkbox', 'size')};
   }
 
   :host(:not([checked])) .label {
-    background-color: var(--checkbox-bg-color-unchecked);
-    color: var(--checkbox-fg-color);
+    background-color: ${component('checkbox', 'bgColor')};
+    color: ${component('checkbox', 'fgColor')};
   }
 
   :host(:not([checked])) .control-label-wrapper:hover .label {
-    color: var(--checkbox-hover-fg-color);
+    color: ${component('checkbox', 'hover', 'fgColor')};
   }
 
   :host(:not([checked])) .control-label-wrapper:active .label {
-    color: var(--checkbox-active-fg-color);
+    color: ${component('checkbox', 'active', 'fgColor')};
   }
 
   :host([checked]) .control-label-wrapper:active .label {
-    color: var(--checkbox-active-fg-color);
+    color: ${component('checkbox', 'active', 'fgColor')};
   }
 
   :host(:not([checked])) .control-label-wrapper:hover .control {
-    border-color: var(--checkbox-hover-border-color-unchecked, ${fallbackStyles.color});
+    border-color: ${component('checkbox', 'hover', 'borderColor')};
   }
 
   :host([checked]) .control-label-wrapper:hover .control {
-    background-color: var(--checkbox-hover-bg-color-checked, ${fallbackStyles.color});
-    border-color: var(--checkbox-hover-border-color-checked, ${fallbackStyles.color});
+    background-color: ${component('checkbox', 'checked', 'hover', 'bgColor')};
+    border-color: ${component('checkbox', 'checked', 'hover', 'borderColor')};
   }
 
   :host(:not([checked])) .control-label-wrapper:active .control {
-    border-color: var(--checkbox-active-border-color-unchecked, ${fallbackStyles.color});
+    border-color: ${component('checkbox', 'active', 'borderColor')};
   }
 
   :host([checked]) .control-label-wrapper:active .control {
-    background-color: var(--checkbox-active-bg-color-checked, ${fallbackStyles.color});
-    border-color: var(--checkbox-active-border-color-checked, ${fallbackStyles.color});
+    background-color: ${component('checkbox', 'checked', 'active', 'bgColor')};
+    border-color: ${component('checkbox', 'checked', 'active', 'borderColor')};
   }
+
   :host([disabled]) .control-label-wrapper .control {
-    background-color: var(--checkbox-disabled-bg-color-unchecked);
-    border-color: var(--checkbox-disabled-border-color);
-    color: var(--checkbox-disabled-fg-color);
+    background-color: ${component('checkbox', 'disabled', 'bgColor')};
+    border-color: ${component('checkbox', 'disabled', 'borderColor')};
+    color: ${component('checkbox', 'disabled', 'fgColor')};
   }
 
   :host([disabled]) .control-label-wrapper .label {
-    color: var(--checkbox-disabled-fg-color);
+    color: ${component('checkbox', 'disabled', 'fgColor')};
   }
 
   :host([label-position='before']) .control-label-wrapper {
@@ -140,22 +103,22 @@ export default css`
   }
 
   :host([checked]) .input:checked {
-    background-color: var(--checkbox-bg-color, ${fallbackStyles.color});
+    background-color: ${component('checkbox', 'checked', 'bgColor')};
   }
 
   :host([indeterminate]) .control {
-    color: var(--checkbox-bg-color-checked, ${fallbackStyles.color});
-    border-color: var(--checkbox-border-color-checked, ${fallbackStyles.color});
+    color: ${component('checkbox', 'checked', 'bgColor')};
+    border-color: ${component('checkbox', 'checked', 'borderColor')};
   }
 
   :host([indeterminate]) .control-label-wrapper:hover .control {
-    color: var(--checkbox-hover-bg-color-checked, ${fallbackStyles.color});
-    border-color: var(--checkbox-hover-border-color-checked, ${fallbackStyles.color});
+    color: ${component('checkbox', 'checked', 'hover', 'bgColor')};
+    border-color: ${component('checkbox', 'checked', 'hover', 'borderColor')};
   }
 
   :host([checked]) .control {
-    background-color: var(--checkbox-bg-color-checked, ${fallbackStyles.color});
-    border-color: var(--checkbox-border-color-checked, ${fallbackStyles.color});
+    background-color: ${component('checkbox', 'checked', 'bgColor')};
+    border-color: ${component('checkbox', 'checked', 'borderColor')};
   }
 
   :host([disabled]) .checkbox {
@@ -165,21 +128,22 @@ export default css`
 
   :host([checked]) .control,
   :host([indeterminate]) .control {
-    border-color: var(--checkbox-border-color-checked, ${fallbackStyles.color});
+    border-color: ${component('checkbox', 'checked', 'borderColor')};
   }
 
   :host([indeterminate]) .label,
   :host([checked]) .label {
-    color: var(--checkbox-fg-color-checked, ${fallbackStyles.color});
+    color: ${component('checkbox', 'checked', 'fgColor')};
   }
 
   :host([checked][disabled]) .control-label-wrapper:hover .control {
-    background-color: var(--checkbox-disabled-bg-color-checked);
+    background-color: ${component('checkbox', 'disabled', 'bgColor')};
   }
 
   /* Focus */
   :host(:not([disabled])) .input:focus-visible ~ .control-label-wrapper {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')}
+      ${semantic('focusOutline', 'color')};
+    outline-offset: ${semantic('focusOutline', 'offset')};
   }
 `;

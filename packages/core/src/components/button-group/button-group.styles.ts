@@ -1,9 +1,9 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
     display: inline-block;
-    --button-group-gap: inherit;
     width: 100%;
   }
 
@@ -12,26 +12,26 @@ export default css`
     display: inline-flex;
     flex-direction: row;
     width: 100%;
-    gap: var(--button-group-gap, 1px);
+    gap: ${component('button', 'group', 'gap')};
   }
 
   :host([split]) .button-group {
-    background-color: var(--button-bg-color, revert);
-    border: var(--button-border-size, var(--default-border-size))
-      var(--button-border-style, var(--default-border-style)) var(--button-border-color, var(--default-border-color));
-    border-radius: var(--button-border-radius);
+    background-color: ${component('button', 'bgColor')};
+    border: ${component('button', 'borderWidth')} ${component('button', 'borderStyle')}
+      ${component('button', 'borderColor')};
+    border-radius: ${component('button', 'borderRadius')};
   }
 
   :host([split]) .button-group:focus {
-    border-color: var(--button-focus-border-color);
+    border-color: ${component('button', 'focus', 'borderColor')};
   }
 
   :host([split]) .button-group:hover {
-    border-color: var(--button-hover-border-color, var(--default-border-color));
+    border-color: ${component('button', 'hover', 'borderColor')};
   }
 
   :host([split]) .button-group:disabled {
-    border-color: var(--button-disabled-border-color, var(--default-border-color));
+    border-color: ${component('button', 'disabled', 'borderColor')};
   }
 
   :host([split]) {
@@ -68,9 +68,9 @@ export default css`
     top: 50%;
     left: -0.5px;
     transform: translateY(-50%);
-    height: var(--button-group-divider-height, 100%);
+    height: ${component('button', 'group', 'dividerHeight')};
     width: 1px;
-    background-color: var(--button-group-divider-color, var(--button-fg-color));
+    background-color: ${component('button', 'group', 'dividerColor')};
     z-index: 2;
   }
 
@@ -80,9 +80,9 @@ export default css`
     top: -0.5px;
     right: 50%;
     transform: translateX(50%);
-    width: var(--button-group-divider-width, 100%);
+    width: ${component('button', 'group', 'dividerWidth')};
     height: 1px;
-    background-color: var(--button-group-divider-color, var(--button-fg-color));
+    background-color: ${component('button', 'group', 'dividerColor')};
     z-index: 2;
   }
 `;

@@ -1,19 +1,13 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --popup-arrow-color: inherit;
-    --popup-arrow-size: 6px;
-    --popup-drop-shadow: inherit;
-    --popup-hide-transition: inherit;
-    --popup-show-transition: inherit;
-    --popup-z-index: inherit;
-
     /*
      * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
      */
-    --popup-arrow-size-diagonal: calc(var(--popup-arrow-size) * 0.7071);
-    --popup-arrow-padding-offset: calc(var(--popup-arrow-size-diagonal) - var(--popup-arrow-size));
+    --popup-arrow-size-diagonal: calc(${component('popup', 'arrowSize')} * 0.7071);
+    --popup-arrow-padding-offset: calc(var(--popup-arrow-size-diagonal) - ${component('popup', 'arrowSize')});
 
     display: contents;
   }
@@ -24,8 +18,8 @@ export default css`
     isolation: isolate;
     max-width: var(--popup-auto-size-available-width, none);
     max-height: var(--popup-auto-size-available-height, none);
-    z-index: var(--popup-z-index);
-    transition: var(--popup-show-transition);
+    z-index: ${component('popup', 'zIndex')};
+    transition: ${component('popup', 'showTransition')};
     padding: 0;
     border: transparent;
     margin: 0;
@@ -37,7 +31,7 @@ export default css`
 
   :host(:not([open])) .popup {
     opacity: 0;
-    transition: var(--popup-hide-transition);
+    transition: ${component('popup', 'hideTransition')};
   }
 
   .arrow {
@@ -45,12 +39,12 @@ export default css`
     width: calc(var(--popup-arrow-size-diagonal) * 2);
     height: calc(var(--popup-arrow-size-diagonal) * 2);
     transform: rotate(45deg);
-    background: var(--popup-arrow-color);
+    background: ${component('popup', 'arrowColor')};
     z-index: -1;
   }
 
   :host([open] .popup) {
-    filter: var(--popup-drop-shadow);
+    filter: ${component('popup', 'dropShadow')};
   }
 
   .popup-hover-bridge {
@@ -60,7 +54,7 @@ export default css`
   :host([open]) .popup-hover-bridge {
     display: block;
     position: fixed;
-    z-index: calc(var(--popup-z-index) - 1);
+    z-index: calc(${component('popup', 'zIndex')} - 1);
     inset: 0;
     clip-path: polygon(
       var(--hover-bridge-top-left-x, 0) var(--hover-bridge-top-left-y, 0),

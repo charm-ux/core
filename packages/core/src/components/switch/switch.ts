@@ -44,7 +44,6 @@ import styles from './switch.styles.js';
  * @cssproperty --switch-control-hover-bg-color - The background color of the switch control when hovered.
  * @cssproperty --switch-control-hover-border-color - The border color of the switch control when hovered.
  * @cssproperty --switch-control-transition - The transition effect of the switch control.
- * @cssproperty --switch-focused-outline - The outline style of the switch wrapper when the switch is focused.
  * @cssproperty --switch-height - The height of the switch.
  * @cssproperty --switch-thumb-active-bg-color - The background color of the switch thumb when active.
  * @cssproperty --switch-thumb-bg-color - The background color of the switch thumb.

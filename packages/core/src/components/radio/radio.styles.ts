@@ -1,41 +1,9 @@
 import { css } from 'lit';
 import { SystemColors } from '../../theme/index.js';
-
-const fallbackStyles = {
-  color: css`black`,
-  controlSize: css`1rem`,
-  indicatorSize: css`8px`,
-};
+import { component, semantic } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --radio-control-size: inherit;
-    --radio-indicator-size: inherit;
-
-    /** Rest */
-    --radio-bg-color: inherit;
-    --radio-border-color: inherit;
-    --radio-checked-border-color: inherit;
-    --radio-label-checked-fg-color: inherit;
-
-    /** Hover */
-    --radio-hover-bg-color: inherit;
-    --radio-hover-border-color-checked: inherit;
-    --radio-hover-border-color-unchecked: inherit;
-    --radio-label-unchecked-hover-fg-color: inherit;
-    --radio-label-checked-hover-fg-color: inherit;
-
-    /** Active */
-    --radio-active-bg-color: inherit;
-    --radio-active-border-color-checked: inherit;
-    --radio-active-border-color-unchecked: inherit;
-    --radio-label-active-fg-color: inherit;
-
-    /** Disabled */
-    --radio-disabled-bg-color: inherit;
-    --radio-disabled-border-color: inherit;
-    --radio-label-disabled-color: inherit;
-
     display: block;
     width: fit-content;
   }
@@ -46,7 +14,7 @@ export default css`
 
   .radio {
     display: inline-flex;
-    gap: var(--form-control-label-gap);
+    gap: ${semantic('formControl', 'label', 'gap')};
     align-items: center;
     cursor: pointer;
   }
@@ -67,10 +35,10 @@ export default css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--radio-control-size, ${fallbackStyles.controlSize});
-    height: var(--radio-control-size, ${fallbackStyles.controlSize});
+    width: ${component('radio', 'controlSize')};
+    height: ${component('radio', 'controlSize')};
     aspect-ratio: 1 / 1;
-    border: solid var(--default-border-size) var(--radio-border-color, ${fallbackStyles.color});
+    border: solid ${semantic('defaultBorder', 'width')} var(--radio-border-color, ${component('radio', 'borderColor')});
     border-radius: 50%;
     color: transparent;
     padding: 0;
@@ -81,7 +49,7 @@ export default css`
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--form-control-label-gap);
+    gap: ${semantic('formControl', 'label', 'gap')};
   }
 
   ::slotted(*:not(:first-child)) {
@@ -90,53 +58,53 @@ export default css`
 
   /* Checked */
   :host([checked]:not([disabled])) {
-    --form-control-label-fg-color: var(--radio-label-checked-fg-color);
-    --radio-border-color: var(--radio-checked-border-color);
+    --form-control-label-fg-color: ${component('radio', 'label', 'checkedFgColor')};
+    --radio-border-color: ${component('radio', 'checked', 'borderColor')};
   }
 
   .radio-check {
     aspect-ratio: 1 / 1;
     position: absolute;
-    width: var(--radio-indicator-size, ${fallbackStyles.indicatorSize});
+    width: ${component('radio', 'indicatorSize')};
     border-radius: 50%;
-    background-color: var(--radio-bg-color, ${fallbackStyles.color});
+    background-color: var(--radio-bg-color, ${component('radio', 'bgColor')});
   }
 
   /* Checked + Hover */
   :host([checked]:not([disabled])) .radio:hover {
-    --form-control-label-fg-color: var(--radio-label-checked-hover-fg-color);
-    --radio-bg-color: var(--radio-hover-bg-color);
-    --radio-border-color: var(--radio-hover-border-color-checked);
+    --form-control-label-fg-color: ${component('radio', 'label', 'checkedHoverFgColor')};
+    --radio-bg-color: ${component('radio', 'hover', 'bgColor')};
+    --radio-border-color: ${component('radio', 'hover', 'borderColorChecked')};
   }
 
   /* UnChecked + Hover */
   :host(:not([checked]):not([disabled])) .radio:hover {
-    --form-control-label-fg-color: var(--radio-label-unchecked-hover-fg-color);
-    --radio-border-color: var(--radio-hover-border-color-unchecked);
+    --form-control-label-fg-color: ${component('radio', 'label', 'uncheckedHoverFgColor')};
+    --radio-border-color: ${component('radio', 'hover', 'borderColorUnchecked')};
   }
 
   /* Active */
   :host(:focus-visible) .radio {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')} ${semantic('focusOutline', 'color')};
+    outline-offset: ${semantic('focusOutline', 'offset')};
   }
 
   .radio:active {
-    --form-control-label-fg-color: var(--radio-label-active-fg-color);
-    --radio-bg-color: var(--radio-active-bg-color);
-    --radio-border-color: var(--radio-active-border-color-unchecked);
+    --form-control-label-fg-color: ${component('radio', 'label', 'activeFgColor')};
+    --radio-bg-color: ${component('radio', 'active', 'bgColor')};
+    --radio-border-color: ${component('radio', 'active', 'borderColorUnchecked')};
   }
 
   :host([checked]) .radio:active {
-    --radio-border-color: var(--radio-active-border-color-checked);
+    --radio-border-color: ${component('radio', 'active', 'borderColorChecked')};
   }
 
   /* Disabled */
   :host([disabled]) .radio {
     cursor: not-allowed;
-    --form-control-label-fg-color: var(--radio-label-disabled-color);
-    --radio-bg-color: var(--radio-disabled-bg-color);
-    --radio-checked-disabled-bg-color: var(--radio-disabled-border-color);
+    --form-control-label-fg-color: ${component('radio', 'label', 'disabledColor')};
+    --radio-bg-color: ${component('radio', 'disabled', 'bgColor')};
+    --radio-checked-disabled-bg-color: ${component('radio', 'disabled', 'borderColor')};
   }
 
     /* High contrast */

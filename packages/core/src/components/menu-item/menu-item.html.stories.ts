@@ -7,7 +7,7 @@ import '../icon/index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-menu-item');
 
 export default {
-  title: 'Core/MenuItem',
+  title: 'Core/Menu Item',
   component: 'ch-menu-item',
   args,
   argTypes,

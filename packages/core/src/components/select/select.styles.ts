@@ -1,13 +1,8 @@
 import { css } from 'lit';
+import { component, semantic } from '../../theme/tokens.js';
 import { SystemColors } from '../../theme/index.js';
 
 export default css`
-  :host {
-    --select-icon-size: inherit;
-    --select-option-bg-color: inherit;
-    --select-option-fg-color: inherit;
-  }
-
   :host([multiple]) .chevron {
     display: none;
   }
@@ -23,35 +18,34 @@ export default css`
   }
 
   .end-icons {
-    inset-inline-end: var(--select-icon-inset);
     position: absolute;
     pointer-events: none;
-    inset-inline-end: var(--form-control-padding-x);
+    inset-inline-end: ${semantic('formControl', 'paddingX')};
   }
 
   .start {
-    inset-inline-start: var(--form-control-padding-x);
+    inset-inline-start: ${semantic('formControl', 'paddingX')};
     pointer-events: none;
     position: absolute;
   }
 
   .chevron {
-    height: var(--select-icon-size, 18px);
-    width: var(--select-icon-size, 18px);
+    height: ${component('select', 'iconSize')};
+    width: ${component('select', 'iconSize')};
   }
 
   option {
-    color: var(--select-option-fg-color);
-    background-color: var(--select-option-bg-color);
+    color: ${component('select', 'optionFgColor')};
+    background-color: ${component('select', 'optionBgColor')};
   }
 
   @media screen and (forced-colors: active) {
     :host {
-      --form-control-fg-color: ${SystemColors.ButtonText};
+      --charm-form-control-fg-color: ${SystemColors.ButtonText};
     }
 
     :host([disabled]) {
-      --form-control-fg-color: ${SystemColors.GrayText};
+      --charm-form-control-fg-color: ${SystemColors.GrayText};
     }
   }
 `;

@@ -1,14 +1,8 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --skeleton-animation: inherit;
-    --skeleton-bg-color: inherit;
-    --skeleton-bg-size: inherit;
-    --skeleton-border-radius: inherit;
-    --skeleton-min-height: inherit;
-    --skeleton-sheen-color: inherit;
-    --skeleton-Width: inherit;
     display: block;
     overflow: hidden;
     position: relative;
@@ -21,17 +15,17 @@ export default css`
     border: 1px solid transparent;
     display: flex;
     height: 100%;
-    min-height: var(--skeleton-min-height, 1rem);
-    width: var(--skeleton-width, 100%);
+    min-height: ${component('skeleton', 'minHeight')};
+    width: ${component('skeleton', 'width')};
   }
 
   :host([animation='pulse']) .skeleton,
   :host([animation='wave']) .skeleton {
-    background-size: var(--skeleton-bg-size, 300% 100%);
+    background-size: ${component('skeleton', 'bgSize')};
     background-image: linear-gradient(
       to right,
       var(--skeleton-bg-color, hsl(40 4.6% 87.3%)) 0%,
-      var(--skeleton-sheen-color, #fafafa) 50%,
+      ${component('skeleton', 'sheenColor')} 50%,
       var(--skeleton-bg-color, hsl(40 4.6% 87.3%)) 100%
     );
   }

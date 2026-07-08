@@ -89,7 +89,7 @@ To use the theme, you must include the theme stylesheet:
 <link rel="stylesheet" href="./node_modules/@charm-ux/core/dist/themes/charm/theme.css" />
 ```
 
-Review [full theme documentation](/theming) for more details on customizing the theme, as well as additional stylesheets you may want to include like a reset and dark mode.
+Review the [theming documentation](/theming/) for more details on customizing the theme, as well as additional stylesheets you may want to include like a reset and dark mode.
 
 Depending on your build process and any bundler you may be using, you may need to copy the CSS file to a location that your build process can access. For example, you may need to copy the CSS file to a public directory and update the href path in the link tag.
 

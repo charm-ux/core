@@ -1,16 +1,9 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  gap: css`0px`,
-};
+import { component } from '../../theme/tokens.js';
 
 export default css`
-  :host {
-    --radio-group-radio-gap: inherit;
-  }
-
   ::slotted(.he-radio:not(:last-of-type)) {
-    margin-bottom: var(--radio-group-radio-gap, ${fallbackStyles.gap});
+    margin-bottom: ${component('radio', 'groupRadioGap')};
   }
 
   .form-control-input {
@@ -18,7 +11,7 @@ export default css`
     background: transparent;
     border: none;
     display: flex;
-    gap: var(--radio-group-radio-gap, ${fallbackStyles.gap});
+    gap: ${component('radio', 'groupRadioGap')};
     align-items: flex-start;
     justify-content: start;
   }

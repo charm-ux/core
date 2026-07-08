@@ -1,14 +1,10 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
-  :host {
-    --overflow-item-gap: inherit;
-    --overflow-collapsing-container-display: inherit;
-  }
-
   :host,
   .collapsing-container {
-    display: var(--overflow-collapsing-container-display, inline-block);
+    display: ${component('overflow', 'collapsingContainerDisplay')};
     width: 100%;
   }
 
@@ -16,7 +12,7 @@ export default css`
     display: inline-flex;
     flex-wrap: nowrap;
     align-items: center;
-    gap: var(--overflow-item-gap);
+    gap: ${component('overflow', 'itemGap')};
     width: max-content;
   }
 `;

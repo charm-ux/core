@@ -1,17 +1,8 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  dividerTextGap: css`0.25em`,
-  dividerInset: css`12px`,
-};
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --divider-border: inherit;
-    --divider-inset: inherit;
-    --divider-text-gap: inherit;
-    --divider-text-offset: inherit;
-    --divider-vertical-min-height: inherit;
     align-items: center;
     color: inherit;
     display: flex;
@@ -25,43 +16,43 @@ export default css`
   .line {
     width: 100%;
     height: 0;
-    border-top: var(--divider-border, var(--default-border));
+    border-top: ${component('divider', 'border')};
   }
 
   .text {
-    margin: 0 var(--divider-text-gap, ${fallbackStyles.dividerTextGap});
-    color: var(--divider-fg-color);
+    margin: 0 ${component('divider', 'textGap')};
+    color: ${component('divider', 'fgColor')};
   }
 
   :host([orientation='vertical']) {
-    min-height: var(--divider-vertical-min-height, 84px);
+    min-height: ${component('divider', 'verticalMinHeight')};
     flex-direction: column;
   }
 
   :host([orientation='vertical']) .line {
-    border-inline-start: var(--divider-border, var(--default-border));
+    border-inline-start: ${component('divider', 'border')};
     flex-grow: 1;
     height: 100%;
     width: 0;
   }
 
   :host([orientation='vertical']) .text {
-    margin: var(--divider-text-gap, ${fallbackStyles.dividerTextGap}) 0;
+    margin: ${component('divider', 'textGap')} 0;
   }
 
   :host([align-content='start']) .start,
   :host([align-content='end']) .end,
   :host([orientation='vertical'][align-content='end']) .end,
   :host([orientation='vertical'][align-content='start']) .start {
-    max-width: var(--divider-text-offset, 0);
-    max-height: var(--divider-text-offset, 0);
+    max-width: ${component('divider', 'textOffset')};
+    max-height: ${component('divider', 'textOffset')};
   }
 
   :host([inset]) {
-    padding-inline: var(--divider-inset, ${fallbackStyles.dividerInset});
+    padding-inline: ${component('divider', 'inset')};
   }
 
   :host([orientation='vertical'][inset]) {
-    padding-block: var(--divider-inset, ${fallbackStyles.dividerInset});
+    padding-block: ${component('divider', 'inset')};
   }
 `;

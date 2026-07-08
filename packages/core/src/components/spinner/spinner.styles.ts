@@ -1,37 +1,11 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
 
-const fallbackStyles = {
-  gap: css`8px`,
-  imageAnimation: css`spin-image 3s linear infinite`,
-  indicatorAnimation: css`spin-infinite 1.5s linear infinite`,
-  indicatorColor: css`black`,
-  labelColor: css`black`,
-  labelFontSize: css`12px`,
-  labelFontWeight: css`400`,
-  size: css`32px`,
-  trackColor: css`grey`,
-  trackWidth: css`3px`,
-};
-
 export default css`
-  :host {
-    --spinner-gap: inherit;
-    --spinner-indicator-color: inherit;
-    --spinner-label-color: inherit;
-    --spinner-label-font-size: inherit;
-    --spinner-label-font-weight: inherit;
-    --spinner-label-line-height: inherit;
-    --spinner-ring-size: inherit;
-    --spinner-track-color: inherit;
-    --spinner-track-width: inherit;
-    --spinner-image-animation: inherit;
-    --spinner-indicator-animation: inherit;
-  }
-
   .spinner {
     display: inline-flex;
-    gap: var(--spinner-gap, 8px);
+    gap: ${component('spinner', 'gap')};
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -56,27 +30,27 @@ export default css`
     height: 100%;
     text-align: center;
     user-select: none;
-    line-height: var(--spinner-label-line-height);
-    color: var(--spinner-label-color, ${fallbackStyles.labelColor});
-    font-size: var(--spinner-label-font-size, ${fallbackStyles.labelFontSize});
-    font-weight: var(--spinner-label-font-weight, ${fallbackStyles.labelFontWeight});
+    line-height: ${component('spinner', 'labelLineHeight')};
+    color: ${component('spinner', 'labelColor')};
+    font-size: ${component('spinner', 'labelFontSize')};
+    font-weight: ${component('spinner', 'labelFontWeight')};
   }
 
   .spinner-image {
-    width: var(--spinner-ring-size, ${fallbackStyles.size});
-    height: var(--spinner-ring-size, ${fallbackStyles.size});
+    width: ${component('spinner', 'ringSize')};
+    height: ${component('spinner', 'ringSize')};
     transform: rotate(-90deg);
   }
 
   .spinner-track {
-    stroke: var(--spinner-track-color, ${fallbackStyles.trackColor});
+    stroke: ${component('spinner', 'trackColor')};
     transform-origin: 0px 0px;
   }
 
   .spinner-indicator {
     --circumference: calc(var(--radius) * 2 * 3.141592654);
     --indeterminate-chunk: calc(var(--radius) * 1.5);
-    stroke: var(--spinner-indicator-color, ${fallbackStyles.indicatorColor});
+    stroke: ${component('spinner', 'indicatorColor')};
     stroke-dasharray: var(--circumference) var(--circumference);
     stroke-dashoffset: calc(var(--circumference) - var(--percentage) * var(--circumference));
   }
@@ -85,20 +59,17 @@ export default css`
     transform-origin: 50% 50%;
     transform: rotate(-90deg);
     stroke-linecap: round;
-    animation: var(--spinner-indicator-animation, ${fallbackStyles.indicatorAnimation});
+    animation: ${component('spinner', 'indicatorAnimation')};
   }
 
   .spinner-image {
-    animation: var(--spinner-image-animation, ${fallbackStyles.imageAnimation});
+    animation: ${component('spinner', 'imageAnimation')};
   }
 
   .spinner-indicator,
   .spinner-track {
-    --radius: calc(
-      var(--spinner-ring-size, ${fallbackStyles.size}) / 2 - var(--spinner-track-width, ${fallbackStyles.trackWidth}) *
-        0.5
-    );
-    stroke-width: var(--spinner-track-width, ${fallbackStyles.trackWidth});
+    --radius: calc(${component('spinner', 'ringSize')} / 2 - ${component('spinner', 'trackWidth')} * 0.5);
+    stroke-width: ${component('spinner', 'trackWidth')};
     r: var(--radius);
     fill: none;
     cy: 50%;

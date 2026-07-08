@@ -51,18 +51,18 @@ export interface PushPaneRequestCloseEvent {
  * @cssproperty --push-pane-body-padding-y - sets inline padding for pane body.
  * @cssproperty --push-pane-close-button-active-bg-color - sets close button active background color.
  * @cssproperty --push-pane-close-button-active-border-color - sets close button active border color.
- * @cssproperty --push-pane-close-button-active-fg-color -  sets close button active foreground (text) color.
+ * @cssproperty --push-pane-close-button-active-border-width - sets close button active border width.
  * @cssproperty --push-pane-close-button-bg-color - sets close button background color.
  * @cssproperty --push-pane-close-button-border-color - sets close button border color.
  * @cssproperty --push-pane-close-button-border-radius - sets close button border radius.
  * @cssproperty --push-pane-close-button-border-width - sets close button border width.
  * @cssproperty --push-pane-close-button-fg-color - sets close button foreground (text) color.
  * @cssproperty --push-pane-close-button-focus-bg-color - sets close button focus background color.
- * @cssproperty --push-pane-close-button-focus-fg-color - sets close button focus foreground (text) color.
  * @cssproperty --push-pane-close-button-focus-border-color - sets close button focus border color.
+ * @cssproperty --push-pane-close-button-focus-border-width - sets close button focus border width.
  * @cssproperty --push-pane-close-button-hover-bg-color - sets close button hover background color.
  * @cssproperty --push-pane-close-button-hover-border-color - sets close button hover border color.
- * @cssproperty --push-pane-close-button-hover-fg-color -  sets close button hover foreground (text) color.
+ * @cssproperty --push-pane-close-button-hover-border-width - sets close button hover border width.
  * @cssproperty --push-pane-close-button-padding - sets close button padding.
  * @cssproperty --push-pane-divider-color - sets the color of the divider.
  * @cssproperty --push-pane-fg-color - The foreground color of the push pane.

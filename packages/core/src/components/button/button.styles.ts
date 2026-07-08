@@ -1,60 +1,8 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --button-border-radius: inherit;
-    --button-border-size: inherit;
-    --button-border-style: inherit;
-    --button-content-alignment: inherit;
-    --button-content-gap: inherit;
-    --button-font-weight: inherit;
-    --button-icon-padding-x: inherit;
-    --button-icon-padding-y: inherit;
-    --button-padding-x: inherit;
-    --button-padding-y: inherit;
-    --button-icon-size: inherit;
-
-    /** Rest */
-    --button-bg-color: inherit;
-    --button-border-color: inherit;
-    --button-fg-color: inherit;
-    --button-shadow: inherit;
-
-    /* Toggle Button  */
-    --button-pressed-bg-color: inherit;
-    --button-pressed-border: inherit;
-    --button-pressed-fg-color: inherit;
-
-    /** Disabled */
-    --button-disabled-bg-color: inherit;
-    --button-disabled-border-color: inherit;
-    --button-disabled-fg-color: inherit;
-    --button-disabled-shadow: inherit;
-
-    /** Hover */
-    --button-hover-bg-color: inherit;
-    --button-hover-border-color: inherit;
-    --button-hover-fg-color: inherit;
-    --button-hover-shadow: inherit;
-
-    /** Focus */
-    --button-focus-bg-color: inherit;
-    --button-focus-border-color: inherit;
-    --button-focus-fg-color: inherit;
-    --button-focus-shadow: inherit;
-
-    /** Active */
-    --button-active-bg-color: inherit;
-    --button-active-border-color: inherit;
-    --button-active-fg-color: inherit;
-    --button-active-shadow: inherit;
-
-    /** Button group */
-    --button-group-divider-color: inherit;
-    --button-group-divider-height: inherit;
-    --button-group-divider-width: inherit;
-    --button-group-gap: inherit;
-
     cursor: pointer;
     display: inline-block;
     font-size: inherit;
@@ -67,27 +15,28 @@ export default css`
 
   .control {
     line-height: 1;
-    align-items: var(--button-content-alignment, center);
+    align-items: center;
     width: 100%;
-    background-color: var(--button-bg-color, revert);
-    border-radius: var(--button-border-radius);
-    border: var(--button-border-size, var(--default-border-size))
-      var(--button-border-style, var(--default-border-style)) var(--button-border-color, var(--default-border-color));
-    color: var(--button-fg-color);
+    background-color: ${component('button', 'bgColor')};
+    border-radius: ${component('button', 'borderRadius')};
+    border: ${component('button', 'borderWidth')} ${component('button', 'borderStyle')}
+      ${component('button', 'borderColor')};
+    color: ${component('button', 'fgColor')};
     cursor: pointer;
     display: flex;
     fill: currentColor;
-    font-weight: var(--button-font-weight, normal);
+    font-weight: ${component('button', 'fontWeight')};
     justify-content: space-between;
-    padding: var(--button-padding-y, 4px) var(--button-padding-x, 12px);
+    padding: ${component('button', 'paddingY')} ${component('button', 'paddingX')};
     text-align: center;
+    box-shadow: ${component('button', 'shadow')};
   }
 
   .control:focus {
-    background-color: var(--button-focus-bg-color, revert);
-    border-color: var(--button-focus-border-color);
-    color: var(--button-focus-fg-color);
-    box-shadow: var(--button-focus-shadow);
+    background-color: ${component('button', 'focus', 'bgColor')};
+    border-color: ${component('button', 'focus', 'borderColor')};
+    color: ${component('button', 'focus', 'fgColor')};
+    box-shadow: ${component('button', 'focus', 'shadow')};
     position: relative;
     z-index: 1;
   }
@@ -102,36 +51,35 @@ export default css`
 
   /* Toggle button */
   .control[aria-pressed='true'] {
-    background-color: var(--button-pressed-bg-color, var(--button-bg-color));
-    border: var(--button-pressed-border, var(--default-border));
-    color: var(--button-pressed-fg-color, var(--button-fg-color));
+    background-color: ${component('button', 'pressed', 'bgColor')};
+    border-color: ${component('button', 'pressed', 'borderColor')};
+    color: ${component('button', 'pressed', 'fgColor')};
   }
 
   .control:hover {
-    background-color: var(--button-hover-bg-color, revert);
-    border-color: var(--button-hover-border-color, var(--default-border-color));
-    color: var(--button-hover-fg-color);
-    box-shadow: var(--button-hover-shadow);
+    background-color: ${component('button', 'hover', 'bgColor')};
+    border-color: ${component('button', 'hover', 'borderColor')};
+    color: ${component('button', 'hover', 'fgColor')};
+    box-shadow: ${component('button', 'hover', 'shadow')};
   }
 
   :host(:not([disabled])) .control:active {
-    background-color: var(--button-active-bg-color, revert);
-    border-color: var(--button-active-border-color, var(--default-border-color));
-    color: var(--button-active-fg-color);
-    box-shadow: var(--button-active-shadow);
+    background-color: ${component('button', 'active', 'bgColor')};
+    border-color: ${component('button', 'active', 'borderColor')};
+    color: ${component('button', 'active', 'fgColor')};
+    box-shadow: ${component('button', 'active', 'shadow')};
   }
 
   :host([icon-only]) .control {
-    --button-padding-x: var(--button-icon-padding-x, 4px);
-    --button-padding-y: var(--button-icon-padding-y, 4px);
+    padding: ${component('button', 'iconPaddingY')} ${component('button', 'iconPaddingX')};
   }
 
   :host([disabled]) .control {
-    background-color: var(--button-disabled-bg-color, revert);
-    border-color: var(--button-disabled-border-color, var(--default-border-color));
-    color: var(--button-disabled-fg-color);
-    box-shadow: var(--button-disabled-shadow);
-    cursor: not-allowed;
+    background-color: ${component('button', 'disabled', 'bgColor')};
+    border-color: ${component('button', 'disabled', 'borderColor')};
+    color: ${component('button', 'disabled', 'fgColor')};
+    box-shadow: ${component('button', 'disabled', 'shadow')};
+    cursor: ${component('button', 'disabled', 'cursor')};
   }
 
   .content {
@@ -144,11 +92,11 @@ export default css`
   }
 
   slot[name='start']::slotted(*) {
-    margin-inline-end: var(--button-content-gap, 4px);
+    margin-inline-end: ${component('button', 'contentGap')};
   }
 
   slot[name='end']::slotted(*) {
-    margin-inline-start: var(--button-content-gap, 4px);
+    margin-inline-start: ${component('button', 'contentGap')};
   }
 
   .content {
@@ -194,7 +142,7 @@ export default css`
   ::slotted([icon]),
   ::slotted(svg) {
     display: flex;
-    width: var(--button-icon-size, 1em);
-    height: var(--button-icon-size, 1em);
+    width: ${component('button', 'iconSize')};
+    height: ${component('button', 'iconSize')};
   }
 `;

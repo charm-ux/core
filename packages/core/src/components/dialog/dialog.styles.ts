@@ -1,66 +1,19 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  maxHeight: css`calc(100vh - 40px)`,
-  maxWidth: css`100vw`,
-  size: css`320px`,
-};
+import { component } from '../../theme/tokens.js';
 
 export default css`
-  :host {
-    --dialog-close-button-bg-color: inherit;
-    --dialog-close-button-border-color: inherit;
-    --dialog-close-button-border-radius: inherit;
-    --dialog-close-button-border-width: inherit;
-    --dialog-close-button-fg-color: inherit;
-    --dialog-close-button-padding: inherit;
-
-    /** close button hover */
-    --dialog-close-button-hover-bg-color: inherit;
-    --dialog-close-button-hover-border-color: inherit;
-    --dialog-close-button-hover-fg-color: inherit;
-
-    /** close button active */
-    --dialog-close-button-active-bg-color: inherit;
-    --dialog-close-button-active-border-color: inherit;
-    --dialog-close-button-active-fg-color: inherit;
-
-    /** close button focus */
-    --dialog-close-button-focus-bg-color: inherit;
-    --dialog-close-button-focus-border-color: inherit;
-    --dialog-close-button-focus-fg-color: inherit;
-
-    --dialog-backdrop-color: inherit;
-    --dialog-border-color: inherit;
-    --dialog-border-radius: none;
-    --dialog-border-width: inherit;
-    --dialog-footer-button-gap: inherit;
-    --dialog-max-height: inherit;
-    --dialog-max-width: inherit;
-    --dialog-padding-x: inherit;
-    --dialog-padding-y: inherit;
-    --dialog-shadow: none;
-    --dialog-size: inherit;
-    --dialog-toolbar-button-gap: inherit;
-    --dialog-transition: inherit;
-    --dialog-bg-color: inherit;
-    --dialog-fg-color: inherit;
-    --dialog-header-toolbar-gap: inherit;
-    --dialog-margin-top: inherit;
-  }
-
   dialog {
     display: none;
     position: fixed;
-    inset: var(--dialog-inset, 0);
-    width: var(--dialog-size, ${fallbackStyles.size});
-    max-width: var(--dialog-max-width, ${fallbackStyles.maxWidth});
-    max-height: var(--dialog-max-height, ${fallbackStyles.maxHeight});
+    inset: ${component('dialog', 'inset')};
+    width: ${component('dialog', 'size')};
+    max-width: ${component('dialog', 'maxWidth')};
+    max-height: ${component('dialog', 'maxHeight')};
     background: none;
-    border: var(--dialog-border, none);
+    border: ${component('dialog', 'border')};
     overflow: hidden;
     opacity: 0;
-    transition: var(--dialog-transition);
+    transition: ${component('dialog', 'transition')};
   }
 
   dialog[open] {
@@ -69,21 +22,21 @@ export default css`
 
   :host([open]) dialog {
     opacity: 1;
-    transition: var(--dialog-transition);
+    transition: ${component('dialog', 'transition')};
   }
 
   .dialog-wrapper {
     display: flex;
-    background: var(--dialog-bg-color, Canvas);
-    color: var(--dialog-fg-color, CanvasText);
-    border: var(--dialog-border-width, 1px) solid var(--dialog-border-color, black);
-    border-radius: var(--dialog-border-radius);
-    box-shadow: var(--dialog-shadow);
+    background: ${component('dialog', 'bgColor')};
+    color: ${component('dialog', 'fgColor')};
+    border: ${component('dialog', 'borderWidth')} solid ${component('dialog', 'borderColor')};
+    border-radius: ${component('dialog', 'borderRadius')};
+    box-shadow: ${component('dialog', 'shadow')};
     flex-direction: column;
     justify-content: center;
     pointer-events: none;
-    padding-inline: var(--dialog-padding-x, 16px);
-    padding-block: var(--dialog-padding-y, 16px);
+    padding-inline: ${component('dialog', 'paddingX')};
+    padding-block: ${component('dialog', 'paddingY')};
   }
 
   .dialog-body {
@@ -92,15 +45,16 @@ export default css`
   }
 
   .close-btn {
-    border: var(--dialog-close-button-border-width) solid var(--dialog-close-button-border-color);
-    background: var(--dialog-close-button-bg-color);
-    color: var(--dialog-close-button-fg-color);
+    border: ${component('dialog', 'closeButton', 'borderWidth')} solid
+      ${component('dialog', 'closeButton', 'borderColor')};
+    background: ${component('dialog', 'closeButton', 'bgColor')};
+    color: ${component('dialog', 'closeButton', 'fgColor')};
     cursor: pointer;
     line-height: 0;
-    padding: var(--dialog-close-button-padding, 4px);
-    height: var(--dialog-close-button-size, inherit);
-    width: var(--dialog-close-button-size, inherit);
-    border-radius: var(--dialog-close-button-border-radius);
+    padding: ${component('dialog', 'closeButton', 'padding')};
+    height: ${component('dialog', 'closeButton', 'size')};
+    width: ${component('dialog', 'closeButton', 'size')};
+    border-radius: ${component('dialog', 'closeButton', 'borderRadius')};
   }
 
   /* Position the close button properly when there is no header */
@@ -115,21 +69,24 @@ export default css`
   }
 
   .close-btn:hover {
-    border: var(--dialog-close-button-hover-border-width) solid var(--dialog-close-button-hover-border-color);
-    background: var(--dialog-close-button-hover-bg-color);
-    color: var(--dialog-close-button-hover-fg-color);
+    border: ${component('dialog', 'closeButton', 'hover', 'borderWidth')} solid
+      ${component('dialog', 'closeButton', 'hover', 'borderColor')};
+    background: ${component('dialog', 'closeButton', 'hover', 'bgColor')};
+    color: ${component('dialog', 'closeButton', 'hover', 'fgColor')};
   }
 
   .close-btn:active {
-    border: var(--dialog-close-button-active-border-width) solid var(--dialog-close-button-active-border-color);
-    background: var(--dialog-close-button-active-bg-color);
-    color: var(--dialog-close-button-active-fg-color);
+    border: ${component('dialog', 'closeButton', 'active', 'borderWidth')} solid
+      ${component('dialog', 'closeButton', 'active', 'borderColor')};
+    background: ${component('dialog', 'closeButton', 'active', 'bgColor')};
+    color: ${component('dialog', 'closeButton', 'active', 'fgColor')};
   }
 
   .close-btn:focus {
-    border: var(--dialog-close-button-focus-border-width) solid var(--dialog-close-button-focus-border-color);
-    background: var(--dialog-close-button-focus-bg-color);
-    color: var(--dialog-close-button-focus-fg-color);
+    border: ${component('dialog', 'closeButton', 'focus', 'borderWidth')} solid
+      ${component('dialog', 'closeButton', 'focus', 'borderColor')};
+    background: ${component('dialog', 'closeButton', 'focus', 'bgColor')};
+    color: ${component('dialog', 'closeButton', 'focus', 'fgColor')};
   }
 
   .close-btn svg {
@@ -145,7 +102,7 @@ export default css`
     justify-content: space-between;
     width: 100%;
     align-items: center;
-    gap: var(--dialog-header-toolbar-gap, inherit);
+    gap: ${component('dialog', 'headerToolbarGap')};
   }
 
   .dialog-title {
@@ -156,7 +113,7 @@ export default css`
   .toolbar {
     display: flex;
     align-self: end;
-    gap: var(--dialog-toolbar-button-gap, 8px);
+    gap: ${component('dialog', 'toolbarButtonGap')};
   }
 
   .header-base {
@@ -181,34 +138,34 @@ export default css`
 
   dialog::backdrop {
     opacity: 0;
-    background: var(--dialog-backdrop-color, hsl(0deg 0% 0% / 70%));
-    transition: var(--dialog-transition);
+    background: ${component('dialog', 'backdropColor')};
+    transition: ${component('dialog', 'transition')};
   }
 
   :host([open]) dialog::backdrop {
     pointer-events: inherit;
-    transition: var(--dialog-transition);
+    transition: ${component('dialog', 'transition')};
   }
 
   .dialog-footer {
     display: flex;
     align-self: flex-end;
-    gap: var(--dialog-footer-button-gap, 8px);
+    gap: ${component('dialog', 'footerButtonGap')};
   }
 
   .dialog-body--has-header {
-    margin-top: var(--dialog-margin-top, 8px);
+    margin-top: ${component('dialog', 'marginTop')};
   }
 
   .dialog-footer--has-footer {
-    margin-top: var(--dialog-margin-top, 8px);
+    margin-top: ${component('dialog', 'marginTop')};
   }
 
   /* Styles for drawer */
   :host([position]) {
     --dialog-position-transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
     /* Override dialog-transition only for positioned dialogs */
-    --dialog-transition: var(--dialog-position-transition);
+    --dialog-transition: ${component('dialog', 'positionTransition')};
   }
 
   :host([position='start']) dialog {
@@ -241,7 +198,7 @@ export default css`
   :host([position='top']) dialog,
   :host([position='bottom']) dialog {
     width: 100%;
-    height: var(--dialog-size, ${fallbackStyles.size});
+    height: ${component('dialog', 'size')};
   }
 
   :host([position='start']) .dialog-wrapper,

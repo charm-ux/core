@@ -1,52 +1,10 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --push-pane-bg-color: inherit;
-    --push-pane-fg-color: inherit;
-    --push-pane-size: inherit;
-    --push-pane-transition: inherit;
-    --push-pane-divider-color: inherit;
-
-    --push-pane-padding-x: inherit;
-    --push-pane-padding-y: inherit;
-    --push-pane-body-padding-x: inherit;
-    --push-pane-body-padding-y: inherit;
-    --push-pane-body-margin-top: inherit;
-    --push-pane-body-margin-bottom: inherit;
-    --push-pane-body-margin-inline: inherit;
-    --push-pane-header-padding-x: inherit;
-    --push-pane-header-padding-y: inherit;
-    --push-pane-footer-padding-x: inherit;
-    --push-pane-footer-padding-y: inherit;
-
-    --push-pane-close-button-bg-color: inherit;
-    --push-pane-close-button-fg-color: inherit;
-    --push-pane-close-button-border-color: inherit;
-    --push-pane-close-button-border-width: inherit;
-    --push-pane-close-button-border-radius: inherit;
-    --push-pane-close-button-padding: inherit;
-
-    --push-pane-toolbar-button-gap: inherit;
-    --push-pane-footer-button-gap: inherit;
-
-    /** close button hover */
-    --push-pane-close-button-hover-bg-color: inherit;
-    --push-pane-close-button-hover-border-color: inherit;
-    --push-pane-close-button-hover-fg-color: inherit;
-
-    /** close button active */
-    --push-pane-close-button-active-bg-color: inherit;
-    --push-pane-close-button-active-border-color: inherit;
-    --push-pane-close-button-active-fg-color: inherit;
-
-    /** close button focus */
-    --push-pane-close-button-focus-bg-color: inherit;
-    --push-pane-close-button-focus-border-color: inherit;
-    --push-pane-close-button-focus-fg-color: inherit;
-
-    padding-inline: var(--push-pane-padding-x);
-    padding-block: var(--push-pane-padding-y);
+    padding-inline: ${component('pushPane', 'paddingX')};
+    padding-block: ${component('pushPane', 'paddingY')};
     overflow: hidden;
   }
 
@@ -63,25 +21,25 @@ export default css`
     flex-direction: column;
     float: left;
     overflow: hidden;
-    transition: var(--push-pane-transition);
-    border-inline-end: 1px solid var(--push-pane-divider-color);
+    transition: ${component('pushPane', 'transition')};
+    border-inline-end: 1px solid ${component('pushPane', 'dividerColor')};
     border-inline-start: none;
     padding-block: 0;
     padding-inline: 0;
-    background-color: var(--push-pane-bg-color);
+    background-color: ${component('pushPane', 'bgColor')};
     margin-inline-start: 0;
     margin-inline-end: 0;
-    color: var(--push-pane-fg-color);
+    color: ${component('pushPane', 'fgColor')};
   }
 
   :host([open]) .base {
-    width: var(--push-pane-size, 340px);
-    margin-inline-end: var(--push-pane-body-margin-inline, 1em);
+    width: ${component('pushPane', 'size')};
+    margin-inline-end: ${component('pushPane', 'bodyMarginInline')};
     opacity: 1;
     overflow: auto;
-    padding-block: var(--push-pane-body-padding-y, 1em);
-    padding-inline: var(--push-pane-body-padding-x, 1em);
-    transition: var(--push-pane-transition);
+    padding-block: ${component('pushPane', 'bodyPaddingY')};
+    padding-inline: ${component('pushPane', 'bodyPaddingX')};
+    transition: ${component('pushPane', 'transition')};
   }
 
   :host([position='end']) .base {
@@ -89,24 +47,24 @@ export default css`
   }
 
   :host([open][position='end']) .base {
-    border-inline-start: 1px solid var(--push-pane-divider-color);
-    margin-inline-start: var(--push-pane-body-margin-inline, 1em);
+    border-inline-start: 1px solid ${component('pushPane', 'dividerColor')};
+    margin-inline-start: ${component('pushPane', 'bodyMarginInline')};
     margin-inline-end: 0;
   }
 
   :host([open][position='bottom']) .base {
-    border-top: 1px solid var(--push-pane-divider-color);
+    border-top: 1px solid ${component('pushPane', 'dividerColor')};
     margin-inline-start: 0;
     margin-inline-end: 0;
     width: 100%;
-    height: var(--push-pane-size, 340px);
+    height: ${component('pushPane', 'size')};
   }
 
   header {
     display: flex;
     justify-content: space-between;
-    padding-block: var(--push-pane-header-padding-y);
-    padding-inline: var(--push-pane-header-padding-x);
+    padding-block: ${component('pushPane', 'headerPaddingY')};
+    padding-inline: ${component('pushPane', 'headerPaddingX')};
   }
 
   header h2 {
@@ -114,36 +72,40 @@ export default css`
   }
 
   footer {
-    padding-block: var(--push-pane-footer-padding-y);
-    padding-inline: var(--push-pane-footer-padding-x);
+    padding-block: ${component('pushPane', 'footerPaddingY')};
+    padding-inline: ${component('pushPane', 'footerPaddingX')};
     display: flex;
-    gap: var(--push-pane-footer-button-gap, 8px);
+    gap: ${component('pushPane', 'footerButtonGap')};
     justify-content: flex-end;
   }
 
   .close-button {
-    border: var(--push-pane-close-button-border-width) solid var(--push-pane-close-button-border-color);
-    background: var(--push-pane-close-button-bg-color);
-    border-radius: var(--push-pane-close-button-border-radius);
-    color: var(--push-pane-close-button-fg-color);
+    border: ${component('pushPane', 'closeButton', 'borderWidth')} solid
+      ${component('pushPane', 'closeButton', 'borderColor')};
+    background: ${component('pushPane', 'closeButton', 'bgColor')};
+    border-radius: ${component('pushPane', 'closeButton', 'borderRadius')};
+    color: ${component('pushPane', 'closeButton', 'fgColor')};
     cursor: pointer;
     line-height: 0;
-    padding: var(--push-pane-close-button-padding, 4px);
+    padding: ${component('pushPane', 'closeButton', 'padding')};
   }
 
   .close-button:hover {
-    border: var(--push-pane-close-button-hover-border-width) solid var(--push-pane-close-button-hover-border-color);
-    background: var(--push-pane-close-button-hover-bg-color);
+    border: ${component('pushPane', 'closeButton', 'hover', 'borderWidth')} solid
+      ${component('pushPane', 'closeButton', 'hover', 'borderColor')};
+    background: ${component('pushPane', 'closeButton', 'hover', 'bgColor')};
   }
 
   .close-button:active {
-    border: var(--push-pane-close-button-active-border-width) solid var(--push-pane-close-button-active-border-color);
-    background: var(--push-pane-close-button-active-bg-color);
+    border: ${component('pushPane', 'closeButton', 'active', 'borderWidth')} solid
+      ${component('pushPane', 'closeButton', 'active', 'borderColor')};
+    background: ${component('pushPane', 'closeButton', 'active', 'bgColor')};
   }
 
   .close-button:focus {
-    border: var(--push-pane-close-button-focus-border-width) solid var(--push-pane-close-button-focus-border-color);
-    background: var(--push-pane-close-button-focus-bg-color);
+    border: ${component('pushPane', 'closeButton', 'focus', 'borderWidth')} solid
+      ${component('pushPane', 'closeButton', 'focus', 'borderColor')};
+    background: ${component('pushPane', 'closeButton', 'focus', 'bgColor')};
   }
 
   .close-button svg {
@@ -159,11 +121,11 @@ export default css`
   }
 
   .body--has-footer {
-    margin-bottom: var(--push-pane-body-margin-bottom);
+    margin-bottom: ${component('pushPane', 'bodyMarginBottom')};
   }
 
   .body--has-actions {
-    margin-top: var(--push-pane-body-margin-top);
+    margin-top: ${component('pushPane', 'bodyMarginTop')};
   }
 
   .header-base {
@@ -177,7 +139,7 @@ export default css`
   .toolbar {
     display: flex;
     align-self: end;
-    gap: var(--push-pane-toolbar-button-gap);
+    gap: ${component('pushPane', 'toolbarButtonGap')};
   }
 
   .push-pane-actions {

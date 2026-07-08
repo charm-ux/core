@@ -7,7 +7,7 @@ import type { CoreRadioGroup } from './index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-radio-group');
 
 const meta: Meta<CoreRadioGroup> = {
-  title: 'Core/RadioGroup',
+  title: 'Core/Radio Group',
   component: 'ch-radio-group',
   args,
   argTypes,

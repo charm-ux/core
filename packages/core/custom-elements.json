@@ -2179,7 +2179,9 @@
               }
             }
           ],
-          "modulePath": "src/components/accordion/accordion.ts"
+          "modulePath": "src/components/accordion/accordion.ts",
+          "cssParts": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -3099,7 +3101,8 @@
               }
             }
           ],
-          "modulePath": "src/components/avatar/avatar.ts"
+          "modulePath": "src/components/avatar/avatar.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -3273,7 +3276,8 @@
               }
             }
           ],
-          "modulePath": "src/components/badge/badge.ts"
+          "modulePath": "src/components/badge/badge.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -4007,7 +4011,9 @@
               }
             }
           ],
-          "modulePath": "src/components/breadcrumb/breadcrumb.ts"
+          "modulePath": "src/components/breadcrumb/breadcrumb.ts",
+          "cssProperties": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -4830,7 +4836,8 @@
               }
             }
           ],
-          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts"
+          "modulePath": "src/components/button-group-overflow/button-group-overflow.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -5227,7 +5234,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/button-group/button-group.ts"
+          "modulePath": "src/components/button-group/button-group.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -5287,12 +5295,16 @@
               "name": "--button-border-radius"
             },
             {
-              "description": "Sets the border width of the button.",
-              "name": "--button-border-size"
-            },
-            {
               "description": "Sets the border style of the button.",
               "name": "--button-border-style"
+            },
+            {
+              "description": "Sets the border width of the button.",
+              "name": "--button-border-width"
+            },
+            {
+              "description": "Sets the alignment of the button content.",
+              "name": "--button-content-alignment"
             },
             {
               "description": "Determines the spacing between the slots.",
@@ -5305,6 +5317,10 @@
             {
               "description": "Sets the border color of the button when disabled.",
               "name": "--button-disabled-border-color"
+            },
+            {
+              "description": "Sets the cursor style when disabled.",
+              "name": "--button-disabled-cursor"
             },
             {
               "description": "Sets button's text color when disabled.",
@@ -5335,6 +5351,10 @@
               "name": "--button-focus-shadow"
             },
             {
+              "description": "Sets the font weight of the button.",
+              "name": "--button-font-weight"
+            },
+            {
               "description": "Sets the background color of the button when hovered.",
               "name": "--button-hover-bg-color"
             },
@@ -5351,6 +5371,14 @@
               "name": "--button-hover-shadow"
             },
             {
+              "description": "Sets the horizontal padding for icon-only buttons.",
+              "name": "--button-icon-padding-x"
+            },
+            {
+              "description": "Sets the vertical padding for icon-only buttons.",
+              "name": "--button-icon-padding-y"
+            },
+            {
               "description": "Sets the height and width of the slotted icon and svg.",
               "name": "--button-icon-size"
             },
@@ -5363,20 +5391,20 @@
               "name": "--button-padding-y"
             },
             {
-              "description": "Sets button's box-shadow.",
-              "name": "--button-shadow"
-            },
-            {
               "description": "Sets the background color of the button when toggled.",
               "name": "--button-pressed-bg-color"
             },
             {
-              "description": "Sets the border of the button when toggled.",
-              "name": "--button-pressed-border"
+              "description": "Sets the border color of the button when toggled.",
+              "name": "--button-pressed-border-color"
             },
             {
               "description": "Sets button's text color when toggled.",
               "name": "--button-pressed-fg-color"
+            },
+            {
+              "description": "Sets button's box-shadow.",
+              "name": "--button-shadow"
             }
           ],
           "cssParts": [
@@ -6407,7 +6435,8 @@
               }
             }
           ],
-          "modulePath": "src/components/card/card.ts"
+          "modulePath": "src/components/card/card.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -9285,7 +9314,9 @@
               }
             }
           ],
-          "modulePath": "src/components/divider/divider.ts"
+          "modulePath": "src/components/divider/divider.ts",
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -9548,7 +9579,10 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/icon/icon.ts"
+          "modulePath": "src/components/icon/icon.ts",
+          "cssProperties": [],
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -11492,7 +11526,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-group/menu-group.ts"
+          "modulePath": "src/components/menu-group/menu-group.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -11524,82 +11559,6 @@
           "name": "CoreMenuItem",
           "cssProperties": [
             {
-              "description": "Determines the border radius of the menu item.",
-              "name": "--menu-item-border-radius"
-            },
-            {
-              "description": "Determines list item's inline padding.",
-              "name": "--menu-item-padding-x"
-            },
-            {
-              "description": "Determines list item's block padding.",
-              "name": "--menu-item-padding-y"
-            },
-            {
-              "description": "Determines the size of the submenu icon.",
-              "name": "--menu-item-submenu-item-icon-size"
-            },
-            {
-              "description": "Determines the rotation of the submenu icon on expanded.",
-              "name": "--menu-item-submenu-item-icon-rotation"
-            },
-            {
-              "description": "Determines the inline margin of the menu item.",
-              "name": "--menu-item-margin-x"
-            },
-            {
-              "description": "Determines the width of the input container.",
-              "name": "--menu-item-input-container-width"
-            },
-            {
-              "description": "Determines the background color of the radio indicator.",
-              "name": "--menu-item-radio-bg-color"
-            },
-            {
-              "description": "Determines the border color of the radio indicator.",
-              "name": "--menu-item-radio-border-color"
-            },
-            {
-              "description": "Determines the background color of the radio indicator when hovered.",
-              "name": "--menu-item-radio-hover-bg-color"
-            },
-            {
-              "description": "Determines the border color of the radio indicator when hovered.",
-              "name": "--menu-item-radio-hover-border-color"
-            },
-            {
-              "description": "Determines the background color of the radio indicator when active.",
-              "name": "--menu-item-radio-active"
-            },
-            {
-              "description": "Determines the border color of the radio indicator when active.",
-              "name": "--menu-item-radio-active-border-color"
-            },
-            {
-              "description": "Determines the background color.",
-              "name": "--menu-item-bg-color"
-            },
-            {
-              "description": "-Determines the border color.",
-              "name": "--menu-item-border-color"
-            },
-            {
-              "description": "Determines the foreground color.",
-              "name": "--menu-item-fg-color"
-            },
-            {
-              "description": "Determines the background color when hovered.",
-              "name": "--menu-item-hover-bg-color"
-            },
-            {
-              "description": "Determines the border color when hovered.",
-              "name": "--menu-item-hover-border-color"
-            },
-            {
-              "description": "Determines the foreground color when hovered.",
-              "name": "--menu-item-hover-fg-color"
-            },
-            {
               "description": "Determines the background color when active.",
               "name": "--menu-item-active-bg-color"
             },
@@ -11610,6 +11569,18 @@
             {
               "description": "Determines the foreground color when active.",
               "name": "--menu-item-active-fg-color"
+            },
+            {
+              "description": "Determines the background color.",
+              "name": "--menu-item-bg-color"
+            },
+            {
+              "description": "Determines the border color.",
+              "name": "--menu-item-border-color"
+            },
+            {
+              "description": "Determines the border radius of the menu item.",
+              "name": "--menu-item-border-radius"
             },
             {
               "description": "Determines the background color when disabled.",
@@ -11624,6 +11595,10 @@
               "name": "--menu-item-disabled-fg-color"
             },
             {
+              "description": "Determines the foreground color.",
+              "name": "--menu-item-fg-color"
+            },
+            {
               "description": "Determines the outline color when focused.",
               "name": "--menu-item-focus-outline-color"
             },
@@ -11632,16 +11607,60 @@
               "name": "--menu-item-focus-outline-offset"
             },
             {
-              "description": "Determines the size of the checkbox icon.",
-              "name": "--menu-item-checkbox-icon-size"
+              "description": "Determines the background color when hovered.",
+              "name": "--menu-item-hover-bg-color"
+            },
+            {
+              "description": "Determines the border color when hovered.",
+              "name": "--menu-item-hover-border-color"
+            },
+            {
+              "description": "Determines the foreground color when hovered.",
+              "name": "--menu-item-hover-fg-color"
+            },
+            {
+              "description": "Determines the width of the input container.",
+              "name": "--menu-item-input-container-width"
+            },
+            {
+              "description": "Determines the background color of the input container when hovered.",
+              "name": "--menu-item-input-hover-bg-color"
             },
             {
               "description": "Determines the size of the input (checkbox or radio).",
               "name": "--menu-item-input-size"
             },
             {
-              "description": "Determines the background color of the input container when hovered.",
-              "name": "--menu-item-input-hover-bg-color"
+              "description": "Determines the inline margin of the menu item.",
+              "name": "--menu-item-margin-x"
+            },
+            {
+              "description": "Determines list item's inline padding.",
+              "name": "--menu-item-padding-x"
+            },
+            {
+              "description": "Determines list item's block padding.",
+              "name": "--menu-item-padding-y"
+            },
+            {
+              "description": "Determines the background color of the radio indicator when active.",
+              "name": "--menu-item-radio-active-bg-color"
+            },
+            {
+              "description": "Determines the background color of the radio indicator.",
+              "name": "--menu-item-radio-bg-color"
+            },
+            {
+              "description": "Determines the border color of the radio indicator when hovered.",
+              "name": "--menu-item-radio-hover-border-color"
+            },
+            {
+              "description": "Determines the rotation of the submenu icon on expanded.",
+              "name": "--menu-item-submenu-item-icon-rotation"
+            },
+            {
+              "description": "Determines the size of the submenu icon.",
+              "name": "--menu-item-submenu-item-icon-size"
             }
           ],
           "cssParts": [
@@ -12139,7 +12158,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/menu-item/menu-item.ts"
+          "modulePath": "src/components/menu-item/menu-item.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -13453,7 +13473,8 @@
               "description": ""
             }
           ],
-          "modulePath": "src/components/overflow/overflow.ts"
+          "modulePath": "src/components/overflow/overflow.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -14900,7 +14921,8 @@
               }
             }
           ],
-          "modulePath": "src/components/progress-bar/progress-bar.ts"
+          "modulePath": "src/components/progress-bar/progress-bar.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -14964,8 +14986,8 @@
               "name": "--push-pane-close-button-active-border-color"
             },
             {
-              "description": " sets close button active foreground (text) color.",
-              "name": "--push-pane-close-button-active-fg-color"
+              "description": "sets close button active border width.",
+              "name": "--push-pane-close-button-active-border-width"
             },
             {
               "description": "sets close button background color.",
@@ -14992,12 +15014,12 @@
               "name": "--push-pane-close-button-focus-bg-color"
             },
             {
-              "description": "sets close button focus foreground (text) color.",
-              "name": "--push-pane-close-button-focus-fg-color"
-            },
-            {
               "description": "sets close button focus border color.",
               "name": "--push-pane-close-button-focus-border-color"
+            },
+            {
+              "description": "sets close button focus border width.",
+              "name": "--push-pane-close-button-focus-border-width"
             },
             {
               "description": "sets close button hover background color.",
@@ -15008,8 +15030,8 @@
               "name": "--push-pane-close-button-hover-border-color"
             },
             {
-              "description": " sets close button hover foreground (text) color.",
-              "name": "--push-pane-close-button-hover-fg-color"
+              "description": "sets close button hover border width.",
+              "name": "--push-pane-close-button-hover-border-width"
             },
             {
               "description": "sets close button padding.",
@@ -17468,7 +17490,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/radio/radio.ts"
+          "modulePath": "src/components/radio/radio.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -17779,7 +17802,10 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/scoped-styles/scoped-styles.ts"
+          "modulePath": "src/components/scoped-styles/scoped-styles.ts",
+          "cssProperties": [],
+          "cssParts": [],
+          "cssStates": []
         }
       ],
       "exports": [
@@ -19350,7 +19376,9 @@
               }
             }
           ],
-          "modulePath": "src/components/skeleton/skeleton.ts"
+          "modulePath": "src/components/skeleton/skeleton.ts",
+          "cssStates": [],
+          "slots": []
         }
       ],
       "exports": [
@@ -19612,7 +19640,8 @@
               }
             }
           ],
-          "modulePath": "src/components/spinner/spinner.ts"
+          "modulePath": "src/components/spinner/spinner.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -19694,10 +19723,6 @@
             {
               "description": "The transition effect of the switch control.",
               "name": "--switch-control-transition"
-            },
-            {
-              "description": "The outline style of the switch wrapper when the switch is focused.",
-              "name": "--switch-focused-outline"
             },
             {
               "description": "The height of the switch.",
@@ -21302,7 +21327,8 @@
               }
             }
           ],
-          "modulePath": "src/components/tab-panel/tab-panel.ts"
+          "modulePath": "src/components/tab-panel/tab-panel.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -21380,10 +21406,6 @@
             {
               "description": "The foreground color of the tab when disabled.",
               "name": "--tab-disabled-fg-color"
-            },
-            {
-              "description": "The opacity of the tab when disabled.",
-              "name": "--tab-disabled-opacity"
             },
             {
               "description": "The foreground color of the tab.",
@@ -21602,7 +21624,8 @@
               }
             }
           ],
-          "modulePath": "src/components/tab/tab.ts"
+          "modulePath": "src/components/tab/tab.ts",
+          "cssStates": []
         }
       ],
       "exports": [
@@ -22056,7 +22079,8 @@
             "name": "beta",
             "description": ""
           },
-          "modulePath": "src/components/tabs/tabs.ts"
+          "modulePath": "src/components/tabs/tabs.ts",
+          "cssStates": []
         }
       ],
       "exports": [

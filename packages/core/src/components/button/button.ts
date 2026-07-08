@@ -35,11 +35,13 @@ import styles from './button.styles.js';
  * @cssproperty --button-bg-color - Sets the background color of the button.
  * @cssproperty --button-border-color - Sets the border color of the button.
  * @cssproperty --button-border-radius - Sets button's border-radius.
- * @cssproperty --button-border-size - Sets the border width of the button.
  * @cssproperty --button-border-style - Sets the border style of the button.
+ * @cssproperty --button-border-width - Sets the border width of the button.
+ * @cssproperty --button-content-alignment - Sets the alignment of the button content.
  * @cssproperty --button-content-gap - Determines the spacing between the slots.
  * @cssproperty --button-disabled-bg-color - Sets the background color of the button when disabled.
  * @cssproperty --button-disabled-border-color - Sets the border color of the button when disabled.
+ * @cssproperty --button-disabled-cursor - Sets the cursor style when disabled.
  * @cssproperty --button-disabled-fg-color - Sets button's text color when disabled.
  * @cssproperty --button-disabled-shadow - Sets button's box-shadow when disabled.
  * @cssproperty --button-fg-color - Sets button's text color.
@@ -47,17 +49,20 @@ import styles from './button.styles.js';
  * @cssproperty --button-focus-border-color - Sets the border color of the button when focused.
  * @cssproperty --button-focus-fg-color - Sets button's text color when focused.
  * @cssproperty --button-focus-shadow - Sets button's box-shadow when focused.
+ * @cssproperty --button-font-weight - Sets the font weight of the button.
  * @cssproperty --button-hover-bg-color - Sets the background color of the button when hovered.
  * @cssproperty --button-hover-border-color - Sets the border color of the button when hovered.
  * @cssproperty --button-hover-fg-color - Sets button's text color when hovered.
  * @cssproperty --button-hover-shadow - Sets button's box-shadow when hovered.
+ * @cssproperty --button-icon-padding-x - Sets the horizontal padding for icon-only buttons.
+ * @cssproperty --button-icon-padding-y - Sets the vertical padding for icon-only buttons.
  * @cssproperty --button-icon-size - Sets the height and width of the slotted icon and svg.
  * @cssproperty --button-padding-x - Determines left and right padding.
  * @cssproperty --button-padding-y - Determines top and bottom padding.
- * @cssproperty --button-shadow - Sets button's box-shadow.
  * @cssproperty --button-pressed-bg-color - Sets the background color of the button when toggled.
- * @cssproperty --button-pressed-border - Sets the border of the button when toggled.
+ * @cssproperty --button-pressed-border-color - Sets the border color of the button when toggled.
  * @cssproperty --button-pressed-fg-color - Sets button's text color when toggled.
+ * @cssproperty --button-shadow - Sets button's box-shadow.
  **/
 export class CoreButton extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];

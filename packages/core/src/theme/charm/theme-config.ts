@@ -12,14 +12,24 @@ import {
   shadow,
   spacing,
 } from './token-helpers.js';
-import type { ThemeConfiguration } from '@charm-ux/theming';
-
-export const charmThemeConfig: ThemeConfiguration = {
+/**
+ * @deprecated This object uses the old `ThemeConfiguration` shape consumed by
+ * the pre-0.5.0 `generateTheme(config)` API from `@charm-ux/theming`. That
+ * type has been removed from the package - `@charm-ux/theming` now exposes a
+ * `defineTokens()`-based API (`defineTokens({ primitives, semantics,
+ * components })` + `generateTheme(definition, options)`). `scripts/make-themes.ts`
+ * no longer consumes this config directly - it now uses the pre-built
+ * `charmTokens` export from `@charm-ux/theming/themes`. This file is kept
+ * around (with its type annotation dropped, since `ThemeConfiguration` no
+ * longer exists) because other code may still reference these token values.
+ * It should be migrated to `defineTokens()` and then removed.
+ */
+export const charmThemeConfig = {
   outDir: 'dist/themes/charm',
   helpersOutDir: 'src/theme/charm',
   uniquePalettes: ['brand', 'neutral'],
-  lightThemeSelector: '.charm-light',
-  darkThemeSelector: '.charm-dark',
+  lightThemeSelector: '[data-theme="light"]',
+  darkThemeSelector: '[data-theme="dark"]',
   neutralColor: 'neutral',
   tokens: {
     primitives: {

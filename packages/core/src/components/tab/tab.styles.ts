@@ -1,99 +1,57 @@
 import { css } from 'lit';
+import { component } from '../../theme/tokens.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
-
-const fallbackStyles = {
-  paddingX: css`12px`,
-  paddingY: css`8px`,
-};
 
 export default css`
   :host {
-    --tab-padding-x: inherit;
-    --tab-padding-y: inherit;
-    --tab-gap: inherit;
-    --tab-font-size: inherit;
-    --tab-font-weight: inherit;
-    --tab-border-width: inherit;
-    --tab-border-radius: inherit;
-    --tab-transition: inherit;
-    --tab-icon-size: inherit;
-    --tab-icon-gap: inherit;
-
-    /** Rest */
-    --tab-bg-color: inherit;
-    --tab-border-color: inherit;
-    --tab-fg-color: inherit;
-
-    /** Disabled */
-    --tab-disabled-bg-color: inherit;
-    --tab-disabled-border-color: inherit;
-    --tab-disabled-fg-color: inherit;
-    --tab-disabled-opacity: inherit;
-
-    /** Hover */
-    --tab-hover-bg-color: inherit;
-    --tab-hover-border-color: inherit;
-    --tab-hover-fg-color: inherit;
-
-    /** Focus */
-    --tab-focus-bg-color: inherit;
-    --tab-focus-border-color: inherit;
-    --tab-focus-fg-color: inherit;
-
-    /** Active */
-    --tab-active-bg-color: inherit;
-    --tab-active-border-color: inherit;
-    --tab-active-fg-color: inherit;
-    --tab-active-font-weight: inherit;
-
     align-items: center;
     cursor: pointer;
     display: inline-flex;
     justify-content: center;
-    padding-inline: var(--tab-padding-x, ${fallbackStyles.paddingX});
-    padding-block: var(--tab-padding-y, ${fallbackStyles.paddingY});
-    gap: var(--tab-gap, 0.5rem);
+    padding-inline: ${component('tab', 'paddingX')};
+    padding-block: ${component('tab', 'paddingY')};
+    gap: ${component('tab', 'gap')};
     user-select: none;
-    background-color: var(--tab-bg-color);
-    border: var(--tab-border-width, 0px) var(--tab-border-style, solid) var(--tab-border-color, transparent);
-    color: var(--tab-fg-color);
-    border-radius: var(--tab-border-radius);
+    background-color: ${component('tab', 'bgColor')};
+    border: ${component('tab', 'borderWidth')} ${component('tab', 'borderStyle')} ${component('tab', 'borderColor')};
+    color: ${component('tab', 'fgColor')};
+    border-radius: ${component('tab', 'borderRadius')};
     line-height: 1;
-    font-size: var(--tab-font-size);
-    font-weight: var(--tab-font-weight);
-    transition: var(--tab-transition, all 0.2s ease);
+    font-size: ${component('tab', 'fontSize')};
+    font-weight: ${component('tab', 'fontWeight')};
+    transition: ${component('tab', 'transition')};
   }
 
   :host([selected]) {
-    background-color: var(--tab-active-bg-color);
-    border-color: var(--tab-active-border-color);
-    color: var(--tab-active-fg-color);
-    font-weight: var(--tab-active-font-weight);
+    background-color: ${component('tab', 'active', 'bgColor')};
+    border-color: ${component('tab', 'active', 'borderColor')};
+    color: ${component('tab', 'active', 'fgColor')};
+    font-weight: ${component('tab', 'active', 'fontWeight')};
   }
 
   :host([disabled]) {
     cursor: not-allowed;
-    background-color: var(--tab-disabled-bg-color);
-    border-color: var(--tab-disabled-border-color);
-    color: var(--tab-disabled-fg-color);
+    background-color: ${component('tab', 'disabled', 'bgColor')};
+    border-color: ${component('tab', 'disabled', 'borderColor')};
+    color: ${component('tab', 'disabled', 'fgColor')};
   }
 
   :host(:hover:not([disabled])) {
-    background-color: var(--tab-hover-bg-color);
-    border-color: var(--tab-hover-border-color);
-    color: var(--tab-hover-fg-color);
+    background-color: ${component('tab', 'hover', 'bgColor')};
+    border-color: ${component('tab', 'hover', 'borderColor')};
+    color: ${component('tab', 'hover', 'fgColor')};
   }
 
   :host(:focus:not([disabled])) {
-    background-color: var(--tab-focus-bg-color);
-    border-color: var(--tab-focus-border-color);
-    color: var(--tab-focus-fg-color);
+    background-color: ${component('tab', 'focus', 'bgColor')};
+    border-color: ${component('tab', 'focus', 'borderColor')};
+    color: ${component('tab', 'focus', 'fgColor')};
   }
 
   :host(:active:not([disabled])) {
-    background-color: var(--tab-active-bg-color);
-    border-color: var(--tab-active-border-color);
-    color: var(--tab-active-fg-color);
+    background-color: ${component('tab', 'active', 'bgColor')};
+    border-color: ${component('tab', 'active', 'borderColor')};
+    color: ${component('tab', 'active', 'fgColor')};
   }
 
   @media screen and (forced-colors: active) {
@@ -107,12 +65,12 @@ export default css`
   }
 
   ::slotted([slot='start']) {
-    font-size: var(--tab-icon-size);
-    margin-inline-end: var(--tab-icon-gap, 0.25rem);
+    font-size: ${component('tab', 'iconSize')};
+    margin-inline-end: ${component('tab', 'iconGap')};
   }
 
   ::slotted([slot='end']) {
-    font-size: var(--tab-icon-size);
-    margin-inline-start: var(--tab-icon-gap, 0.25rem);
+    font-size: ${component('tab', 'iconSize')};
+    margin-inline-start: ${component('tab', 'iconGap')};
   }
 `;

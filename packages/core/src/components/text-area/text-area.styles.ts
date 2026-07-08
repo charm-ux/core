@@ -1,18 +1,7 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  minHeight: css`2rem`,
-  minWidth: css`4rem`,
-  width: css`fit-content`,
-};
+import { component, semantic } from '../../theme/tokens.js';
 
 export default css`
-  :host {
-    --textarea-control-input-min-height: inherit;
-    --textarea-control-input-min-width: inherit;
-    --textarea-control-input-line-height: inherit;
-  }
-
   .form-control-input {
     padding: unset;
     line-height: inherit;
@@ -20,14 +9,14 @@ export default css`
   }
 
   .form-control-base-input {
-    padding: var(--form-control-padding-y, 5px) var(--form-control-padding-x, 5px);
+    padding: ${semantic('formControl', 'paddingY')} ${semantic('formControl', 'paddingX')};
     vertical-align: top;
-    line-height: var(--textarea-control-input-line-height);
+    line-height: ${component('textareaControl', 'inputLineHeight')};
     width: 100%;
-    min-width: var(--textarea-control-input-min-width, ${fallbackStyles.minWidth});
+    min-width: ${component('textareaControl', 'inputMinWidth')};
     max-width: 100%;
     height: 100%;
-    min-height: var(--textarea-control-input-min-height, ${fallbackStyles.minHeight});
+    min-height: ${component('textareaControl', 'inputMinHeight')};
     max-height: 100%;
     resize: none;
   }

@@ -30,7 +30,6 @@ import type { CoreTabPanel } from '../tab-panel/tab-panel.js';
  * @cssproperty --tab-disabled-bg-color - The background color of the tab when disabled.
  * @cssproperty --tab-disabled-border-color - The border color of the tab when disabled.
  * @cssproperty --tab-disabled-fg-color - The foreground color of the tab when disabled.
- * @cssproperty --tab-disabled-opacity - The opacity of the tab when disabled.
  * @cssproperty --tab-fg-color - The foreground color of the tab.
  * @cssproperty --tab-focus-bg-color - The background color of the tab when focused.
  * @cssproperty --tab-focus-border-color - The border color of the tab when focused.

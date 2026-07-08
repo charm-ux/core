@@ -1,70 +1,26 @@
 import { css } from 'lit';
 import { SystemColors } from '../../theme/index.js';
-
-const fallbackStyles = {
-  indicatorColor: css`black`,
-};
+import { component } from '../../theme/tokens.js';
 
 export default css`
   :host {
-    --menu-item-border-radius: inherit;
-    --menu-item-padding-x: inherit;
-    --menu-item-padding-y: inherit;
-    --menu-item-margin-x: inherit;
-    --menu-item-input-container-width: inherit;
-    --menu-item-checkbox-icon-size: inherit;
-
-    --menu-item-submenu-item-icon-size: inherit;
-    --menu-item-submenu-item-icon-rotation: inherit;
-
-    --menu-item-radio-bg-color: inherit;
-    --menu-item-radio-border-color: inherit;
-    --menu-item-radio-hover-bg-color: inherit;
-    --menu-item-radio-hover-border-color: inherit;
-    --menu-item-radio-active-bg-color: inherit;
-    --menu-item-radio-active-border-color: inherit;
-
-    /** Rest */
-    --menu-item-bg-color: inherit;
-    --menu-item-border-color: inherit;
-    --menu-item-fg-color: inherit;
-
-    /** Hover */
-    --menu-item-hover-bg-color: inherit;
-    --menu-item-hover-border-color: inherit;
-    --menu-item-hover-fg-color: inherit;
-
-    /** Active */
-    --menu-item-active-bg-color: inherit;
-    --menu-item-active-border-color: inherit;
-    --menu-item-active-fg-color: inherit;
-
-    /** Disabled */
-    --menu-item-disabled-bg-color: inherit;
-    --menu-item-disabled-border-color: inherit;
-    --menu-item-disabled-fg-color: inherit;
-
-    /** Focus */
-    --menu-item-focus-outline-color: inherit;
-    --menu-item-focus-outline-offset: inherit;
-
     display: block;
     position: relative;
   }
 
   .base {
     align-items: center;
-    background-color: var(--menu-item-bg-color);
-    border: var(--default-border-size) solid var(--menu-item-border-color, transparent);
-    border-radius: var(--menu-item-border-radius);
-    color: var(--menu-item-fg-color);
+    background-color: ${component('menu', 'item', 'bgColor')};
+    border: var(--default-border-size) solid ${component('menu', 'item', 'borderColor')};
+    border-radius: ${component('menu', 'item', 'borderRadius')};
+    color: ${component('menu', 'item', 'fgColor')};
     cursor: default;
     display: flex;
     justify-content: start;
     list-style: none;
     min-width: max-content;
-    padding-inline: var(--menu-item-padding-x, 8px);
-    padding-block: var(--menu-item-padding-y, 8px);
+    padding-inline: ${component('menu', 'item', 'paddingX')};
+    padding-block: ${component('menu', 'item', 'paddingY')};
     pointer-events: auto;
     position: relative;
     width: 100%;
@@ -77,15 +33,15 @@ export default css`
 
   .base:hover,
   :host([aria-haspopup='true']) .base:hover {
-    background-color: var(--menu-item-hover-bg-color);
-    border-color: var(--menu-item-hover-border-color, transparent);
-    color: var(--menu-item-hover-fg-color);
+    background-color: ${component('menu', 'item', 'hover', 'bgColor')};
+    border-color: ${component('menu', 'item', 'hover', 'borderColor')};
+    color: ${component('menu', 'item', 'hover', 'fgColor')};
   }
 
   .base:active {
-    background-color: var(--menu-item-active-bg-color);
-    border-color: var(--menu-item-active-border-color, transparent);
-    color: var(--menu-item-active-fg-color);
+    background-color: ${component('menu', 'item', 'active', 'bgColor')};
+    border-color: ${component('menu', 'item', 'active', 'borderColor')};
+    color: ${component('menu', 'item', 'active', 'fgColor')};
   }
 
   :host(:focus-visible) {
@@ -93,15 +49,15 @@ export default css`
   }
 
   :host(:focus-visible) .base {
-    outline: var(--focus-outline-size) var(--focus-outline-style) var(--menu-item-focus-outline-color);
-    outline-offset: var(--menu-item-focus-outline-offset);
+    outline: var(--focus-outline-size) var(--focus-outline-style) ${component('menu', 'item', 'focus', 'outlineColor')};
+    outline-offset: ${component('menu', 'item', 'focus', 'outlineOffset')};
   }
 
   :host([disabled]) .base {
     cursor: not-allowed;
-    background-color: var(--menu-item-disabled-bg-color);
-    border-color: var(--menu-item-disabled-border-color, transparent);
-    color: var(--menu-item-disabled-fg-color);
+    background-color: ${component('menu', 'item', 'disabled', 'bgColor')};
+    border-color: ${component('menu', 'item', 'disabled', 'borderColor')};
+    color: var(--menu-item-disabled-fg-color, ${component('menu', 'item', 'disabled', 'fgColor')});
   }
 
   :host([has-submenu]) .base {
@@ -115,19 +71,19 @@ export default css`
 
   .submenu-item-icon,
   .submenu-item-icon-expanded {
-    font-size: var(--menu-item-submenu-item-icon-size, 20px);
+    font-size: ${component('menu', 'item', 'submenuItemIconSize')};
     margin-inline-start: auto;
-    color: var(--menu-item-fg-color);
+    color: ${component('menu', 'item', 'fgColor')};
     transform: rotate(-90deg);
   }
 
   .submenu-item-icon-expanded {
-    transform: rotate(var(--menu-item-submenu-item-icon-rotation, -90deg));
+    transform: rotate(${component('menu', 'item', 'submenuItemIconRotation')});
   }
 
   .input-container {
     position: relative;
-    width: var(--menu-item-input-container-width, 22px);
+    width: ${component('menu', 'item', 'inputContainerWidth')};
   }
 
   .checkbox,
@@ -136,8 +92,8 @@ export default css`
     align-items: center;
     justify-content: center;
     position: relative;
-    width: var(--menu-item-input-size, 1rem);
-    height: var(--menu-item-input-size, 1rem);
+    width: ${component('menu', 'item', 'inputSize')};
+    height: ${component('menu', 'item', 'inputSize')};
     box-sizing: border-box;
     outline: none;
   }
@@ -145,14 +101,14 @@ export default css`
   .radio {
     display: flex;
     aspect-ratio: 1 / 1;
-    background-color: var(--menu-item-radio-bg-color);
+    background-color: ${component('menu', 'item', 'radio', 'bgColor')};
     border: var(--default-border);
     border-radius: 50%;
     position: relative;
   }
 
   :host(:hover) .radio {
-    border-color: var(--menu-item-radio-hover-border-color);
+    border-color: ${component('menu', 'item', 'radio', 'hoverBorderColor')};
   }
 
   :host(:active) .radio {
@@ -166,16 +122,16 @@ export default css`
     height: 8px;
     border-radius: 50%;
     display: inline-block;
-    background: var(--menu-item-radio-bg-color, ${fallbackStyles.indicatorColor});
+    background: ${component('menu', 'item', 'radio', 'bgColor')};
     pointer-events: none;
   }
 
   :host([aria-checked='true']:hover) .radio-indicator {
-    background: var(--menu-item-input-hover-bg-color, ${fallbackStyles.indicatorColor});
+    background: ${component('menu', 'item', 'inputHoverBgColor')};
   }
 
   :host([aria-checked='true']:active) .radio-indicator {
-    background-color: var(--menu-item-radio-active-bg-color);
+    background-color: ${component('menu', 'item', 'radio', 'activeBgColor')};
   }
 
   ::slotted([slot='radio-indicator']) {
@@ -192,11 +148,11 @@ export default css`
   }
 
   ::slotted([slot='start']) {
-    margin-inline-end: var(--menu-item-margin-x, 8px);
+    margin-inline-end: ${component('menu', 'item', 'marginX')};
   }
 
   ::slotted([slot='end']) {
-    margin-inline-start: var(--menu-item-margin-x, 8px);
+    margin-inline-start: ${component('menu', 'item', 'marginX')};
   }
 
   @media screen and (forced-colors: active) {

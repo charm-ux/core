@@ -1,45 +1,9 @@
 import { css } from 'lit';
+import { component, semantic, primitive } from '../../theme/tokens.js';
 import { SystemColors } from '../../theme/index.js';
-
-const fallbackStyles = {
-  controlBackgroundColor: css`var(--body-bg-color)`,
-  thumbBackgroundColor: css`black`,
-};
 
 export default css`
   :host {
-    --switch-control-transition: inherit;
-    --switch-focus-outline: inherit;
-    --switch-height: inherit;
-    --switch-thumb-size: inherit;
-    --switch-thumb-transform: inherit;
-    --switch-thumb-transition: inherit;
-    --switch-width: inherit;
-
-    /* Rest */
-    --switch-control-bg-color: inherit;
-    --switch-control-border-color: inherit;
-    --switch-control-checked-bg-color: inherit;
-    --switch-control-checked-border-color: inherit;
-    --switch-thumb-bg-color: inherit;
-    --switch-thumb-checked-bg-color: inherit;
-
-    /* Hover */
-    --switch-control-hover-bg-color: inherit;
-    --switch-control-hover-border-color: inherit;
-    --switch-control-checked-hover-bg-color: inherit;
-    --switch-control-checked-hover-border-color: inherit;
-    --switch-thumb-hover-bg-color: inherit;
-    --switch-thumb-checked-hover-bg-color: inherit;
-
-    /* Active */
-    --switch-control-active-bg-color: inherit;
-    --switch-control-active-border-color: inherit;
-    --switch-control-checked-active-bg-color: inherit;
-    --switch-control-checked-active-border-color: inherit;
-    --switch-thumb-active-bg-color: inherit;
-    --switch-thumb-checked-active-bg-color: inherit;
-
     display: grid;
   }
 
@@ -51,7 +15,7 @@ export default css`
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--form-control-label-gap, 4px);
+    gap: ${semantic('formControl', 'label', 'gap')};
     width: fit-content;
   }
 
@@ -78,21 +42,22 @@ export default css`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--switch-width, 40px);
-    height: var(--switch-height, 16px);
-    background-color: var(--switch-control-bg-color, ${fallbackStyles.controlBackgroundColor});
-    border: var(--default-border-size) var(--default-border-style) var(--switch-control-border-color, black);
-    border-radius: var(--border-radius-circular, 16px);
-    transition: var(--switch-control-transition);
+    width: ${component('switch', 'width')};
+    height: ${component('switch', 'height')};
+    background-color: ${component('switch', 'control', 'bgColor')};
+    border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${component('switch', 'control', 'borderColor')};
+    border-radius: ${primitive('borderRadius', 'full')};
+    transition: ${component('switch', 'control', 'transition')};
   }
 
   .switch-thumb {
-    width: var(--switch-thumb-size, 12px);
-    height: var(--switch-thumb-size, 12px);
-    background-color: var(--switch-thumb-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    width: ${component('switch', 'thumb', 'size')};
+    height: ${component('switch', 'thumb', 'size')};
+    background-color: ${component('switch', 'thumb', 'bgColor')};
     border-radius: 50%;
-    transform: translateX(calc(var(--switch-thumb-transform, 10px) * (-1)));
-    transition: var(--switch-thumb-transition,);
+    transform: translateX(calc(${component('switch', 'thumb', 'transform')} * (-1)));
+    transition: ${component('switch', 'thumb', 'transition')};
   }
 
   .switch-input {
@@ -114,77 +79,78 @@ export default css`
   .switch-checked-message,
   .switch-unchecked-message {
     user-select: none;
-    margin-inline-start: var(--form-control-label-gap, 4px);
+    margin-inline-start: ${semantic('formControl', 'label', 'gap')};
   }
 
   /* Unchecked + hover for switch control*/
   :host(:not([disabled]):not([checked])) .switch:hover .switch-control {
-    border-color: var(--switch-control-hover-border-color);
-    background-color: var(--switch-control-hover-bg-color);
+    border-color: ${component('switch', 'control', 'hover', 'borderColor')};
+    background-color: ${component('switch', 'control', 'hover', 'bgColor')};
   }
 
   /* Checked for switch control*/
   :host([checked]) .switch-control {
-    border-color: var(--switch-control-checked-border-color);
-    background-color: var(--switch-control-checked-bg-color);
+    border-color: ${component('switch', 'control', 'checked', 'borderColor')};
+    background-color: ${component('switch', 'control', 'checked', 'bgColor')};
   }
 
   /* Checked + hover for switch control*/
   :host([checked]:not([disabled])) .switch:hover .switch-control {
-    border-color: var(--switch-control-checked-hover-border-color);
-    background-color: var(--switch-control-checked-hover-bg-color);
+    border-color: ${component('switch', 'control', 'checked', 'hover', 'borderColor')};
+    background-color: ${component('switch', 'control', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + hover for switch thumb*/
   :host(:not([disabled]):not([checked])) .switch:hover .switch-thumb {
-    background-color: var(--switch-thumb-hover-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    background-color: ${component('switch', 'thumb', 'hover', 'bgColor')};
   }
 
   /* Checked for switch thumb*/
   :host([checked]) .switch-thumb {
-    transform: translateX(var(--switch-thumb-transform, 10px));
-    background-color: var(--switch-thumb-checked-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    transform: translateX(${component('switch', 'thumb', 'transform')});
+    background-color: ${component('switch', 'thumb', 'checked', 'bgColor')};
   }
 
   /* Checked + hover for switch thumb*/
   :host([checked]:not([disabled])) .switch:hover .switch-thumb {
-    background-color: var(--switch-thumb-checked-hover-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    background-color: ${component('switch', 'thumb', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + active for switch control*/
   :host(:not([disabled]):not([checked])) .switch:active .switch-thumb {
-    background-color: var(--switch-control-active-bg-color);
+    background-color: ${component('switch', 'control', 'active', 'bgColor')};
   }
 
   :host(:not([disabled]):not([checked])) .switch:active .switch-control {
-    border-color: var(--switch-control-active-border-color);
+    border-color: ${component('switch', 'control', 'active', 'borderColor')};
   }
 
   /* Checked + active for switch control*/
   :host([checked]:not([disabled])) .switch:active .switch-control {
-    border-color: var(--switch-control-checked-active-border-color);
-    background-color: var(--switch-control-checked-active-bg-color);
+    border-color: ${component('switch', 'control', 'checked', 'active', 'borderColor')};
+    background-color: ${component('switch', 'control', 'checked', 'active', 'bgColor')};
   }
 
   /* Unchecked + active for switch thumb*/
   :host(:not([disabled]):not([checked])) .switch:active .switch-thumb {
-    background-color: var(--switch-thumb-active-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    background-color: ${component('switch', 'thumb', 'active', 'bgColor')};
   }
 
   /* Checked + active for switch thumb*/
   :host([checked]:not([disabled])) .switch:active .switch-thumb {
-    background-color: var(--switch-thumb-checked-active-bg-color, ${fallbackStyles.thumbBackgroundColor});
+    background-color: ${component('switch', 'thumb', 'checked', 'active', 'bgColor')};
   }
 
   /* Focus */
   .switch:has(.switch-input:focus-visible) {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')}
+      ${semantic('focusOutline', 'color')};
+    outline-offset: ${semantic('focusOutline', 'offset')};
   }
 
   /* Disabled */
   :host([disabled]) .switch {
-    opacity: var(--form-control-disabled-opacity, 40%);
+    opacity: ${semantic('formControl', 'disabled', 'opacity')};
     cursor: not-allowed;
   }
 
