@@ -92,7 +92,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                 description: 'should close when the invoker is clicked',
                 test: async () => {
                   const closeButton = document.createElement(project.scope.tagName('button'));
+                  const afterHideSpy = sinon.spy();
                   closeButton.setAttribute('hides', 'dialog-1');
+                  this.component.addEventListener('dialog-after-hide', afterHideSpy);
                   this.component.appendChild(closeButton);
                   await elementUpdated(this.component);
                   this.component.open = true;
@@ -101,9 +103,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   closeButton.click();
                   await elementUpdated(this.component);
                   expect(this.component.open).to.be.false;
-                  await aTimeout(250);
+                  await waitUntil(() => afterHideSpy.called);
                   const dialogElement = this.component.shadowRoot?.querySelector('dialog');
-                  expect(dialogElement?.getAttribute('open')).to.equal(null);
+                  expect(dialogElement?.hasAttribute('open')).to.be.false;
                 },
                 config: {
                   id: 'dialog-1',
