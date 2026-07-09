@@ -150,6 +150,41 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
                   expect(options[1].textContent?.trim()).to.equal('Disabled');
                 },
               },
+              optgroup: {
+                description: 'preserves optgroup wrappers in the internal select',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = `
+                    <optgroup label="Add numbers">
+                      <option value="upload">Upload order</option>
+                      <option value="transfer">Transfer order</option>
+                    </optgroup>
+                    <optgroup label="Update numbers">
+                      <option value="update">Update order</option>
+                      <option value="capability">Capabilities order</option>
+                    </optgroup>
+                    <optgroup label="Delete numbers">
+                      <option value="release">Release order</option>
+                    </optgroup>
+                  `;
+                  await elementUpdated(el);
+
+                  const select = el.shadowRoot?.querySelector('select');
+                  if (!(select instanceof HTMLSelectElement)) {
+                    throw new Error('Select element not found or is not an HTMLSelectElement');
+                  }
+
+                  const optgroups = Array.from(select.querySelectorAll('optgroup'));
+                  const groupLabels = optgroups.map(group => group.label);
+                  const groupedValues = optgroups.map(group =>
+                    Array.from(group.querySelectorAll('option')).map(option => option.value)
+                  );
+
+                  expect(optgroups).to.have.length(3);
+                  expect(groupLabels).to.deep.equal(['Add numbers', 'Update numbers', 'Delete numbers']);
+                  expect(groupedValues).to.deep.equal([['upload', 'transfer'], ['update', 'capability'], ['release']]);
+                },
+              },
             },
           },
 
