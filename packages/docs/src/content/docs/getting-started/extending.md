@@ -8,7 +8,7 @@ Charm provides unstyled, accessible base components designed to be extended and 
 
 ### Setting Up Your Project
 
-Configure your project with a custom prefix and theme before registering components:
+Configure your project with a custom prefix and theme before registering components. Keep this configuration in its own module — see [Import Order Matters](#import-order-matters) below for why:
 
 ```typescript
 // project-config.ts
@@ -54,6 +54,18 @@ The `theme` option in `project.updateProject()` accepts:
 | `definition`  | Token definition from `defineTokens()` or extended from `charmTokens` |
 | `tokenPrefix` | CSS variable prefix (e.g., `'vel'` → `--vel-button-bgColor`)          |
 
+### Import Order Matters
+
+Component style files read `project.theme` once, when the style module first evaluates. If a component is imported before `project.updateProject()` runs, that component's styles are locked to the default `charm` prefix regardless of any configuration that happens afterward — so your app's entry point must import `project-config.ts` **before** anything that imports a component:
+
+```typescript
+// main.ts
+import './project-config.js'; // configures the theme first
+import '@charm-ux/core/dist/components/button/index.js'; // components now pick up the configured theme
+```
+
+This is why `project-config.ts` lives in its own module: a single file's own code always runs _after_ all of that file's imports resolve, so writing `project.updateProject()` above a component import in the same file doesn't help — the component import still evaluates first.
+
 ## Styling with Custom Properties
 
 Every Charm component exposes CSS custom properties (CSS variables) that allow you to customize its appearance without writing complex CSS overrides. These properties control colors, spacing, typography, and other visual aspects of the components, and are detailed in individual component API documentation.
@@ -69,7 +81,7 @@ You can override these properties at different levels:
 
 ### Extending the Charm Design System
 
-First, configure your project with a unique prefix and theme:
+First, configure your project with a unique prefix and theme, in its own module (see [Import Order Matters](#import-order-matters) above):
 
 ```typescript
 // project-config.ts
@@ -87,7 +99,7 @@ For instance, to create a button with a nested icon and variant attribute:
 ```typescript
 // shaped-button.ts
 import { property } from 'lit/decorators.js';
-import { CoreButton, project } from '@charm-ux/core';
+import { CoreButton } from '@charm-ux/core/dist/components/button/button.js';
 import styles from './shaped-button.styles.js';
 
 export class ShapedButton extends CoreButton {
@@ -176,7 +188,8 @@ Provide a comprehensive [JSDoc](https://jsdoc.app/) header above your component 
 // tag.ts
 import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
-import { CharmElement, CoreIcon, project } from '@charm-ux/core';
+import { CharmElement } from '@charm-ux/core';
+import { CoreIcon } from '@charm-ux/core/dist/components/icon/icon.js';
 import styles from './tag.styles.js';
 
 /**
