@@ -1,28 +1,69 @@
 ---
 '@charm-ux/core': major
+'@charm-ux/theming': minor
 ---
 
-Upgrade theming system to use type-safe token helpers
+Upgrade theming system with configurable project themes and token extension API
 
-**Breaking Change:** Component styles now use the new `component()` token helper from `@charm-ux/theming` instead of manually declared CSS custom properties.
+### Breaking Changes
 
-### What changed
+**Component styles now use project-configured theme:**
 
-- Removed verbose CSS custom property declarations (e.g., `--button-bg-color: inherit`) from component `:host` blocks
-- Replaced inline `var(--component-property)` references with `component('componentName', 'property')` helper calls
-- Updated all component styles to use the new centralized token system
+Component styles import token helpers from `project.theme` instead of a static tokens file. This enables extending projects to configure their own themes.
 
-### Migration
+**Migration:** If you were importing from `@charm-ux/core/theme/tokens`, update to use the project:
 
-If you were overriding component styles via CSS custom properties, you'll need to update your approach:
+```typescript
+// Before
+import { component } from '@charm-ux/core/theme/tokens';
 
-**Before:**
-
-```css
-:root {
-  --button-bg-color: blue;
-}
+// After
+import { project } from '@charm-ux/core';
+const { component } = project.theme;
 ```
 
-**After:**
-Use the theming package's token definition system to customize component tokens at the theme level.
+### New Features
+
+**Theme extension API** (`@charm-ux/theming`):
+
+- `.extendPrimitives()` - Override primitive token values
+- `.extendSemantics()` - Override/extend semantic tokens
+- `.extendComponents()` - Override/extend component tokens
+
+```typescript
+import { charmTokens } from '@charm-ux/theming';
+
+const myTokens = charmTokens
+  .extendPrimitives({ color: { brand: '#ff6600' } })
+  .extendSemantics((ref, base) => ({ ...base /* ... */ }))
+  .extendComponents((ref, base) => ({ ...base /* ... */ }));
+```
+
+**Project theme configuration** (`@charm-ux/core`):
+
+Configure custom themes via `project.updateProject()`:
+
+```typescript
+import { project } from '@charm-ux/core';
+
+project.updateProject({
+  prefix: 'myapp',
+  theme: {
+    definition: myTokens.definition,
+    tokenPrefix: 'myapp',
+  },
+});
+
+// Access theme helpers
+const { component, semantic, primitive } = project.theme;
+
+// Generate CSS
+const { css, cssReset, cssUtilities } = project.generateTheme();
+```
+
+**New exports:**
+
+- `demoTokens` - Demo theme that extends charmTokens
+- `project.theme` - Token helpers (primitive, semantic, component)
+- `project.generateTheme()` - Generate theme CSS
+- `project.css`, `project.cssReset`, `project.cssUtilities` - Quick access to generated CSS

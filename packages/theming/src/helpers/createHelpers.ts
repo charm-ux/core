@@ -13,27 +13,52 @@ import type {
   TypedRefFn,
 } from '../types/index.js';
 
+/**
+ * Type-safe helper functions for referencing primitive tokens as CSS variable strings.
+ * Used for non-Lit contexts where plain strings are needed instead of CSSResult.
+ *
+ * @template P - The primitive tokens type for type-safe key inference
+ */
 export type TokenHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
+  /** Reference a color token, optionally with a palette step */
   color: (name: ColorKeys<P>, step?: string | number) => string;
+  /** Reference a spacing token */
   spacing: (name: SpacingKeys<P>) => string;
+  /** Reference a border radius token */
   borderRadius: (name: BorderRadiusKeys<P>) => string;
+  /** Reference a border width token */
   borderWidth: (name: BorderWidthKeys<P>) => string;
+  /** Reference a shadow token */
   shadow: (name: ShadowKeys<P>) => string;
+  /** Reference a font family token */
   fontFamily: (name: TypographySubKeys<P, 'fontFamily'>) => string;
+  /** Reference a font size token */
   fontSize: (name: TypographySubKeys<P, 'fontSize'>) => string;
+  /** Reference a font weight token */
   fontWeight: (name: TypographySubKeys<P, 'fontWeight'>) => string;
+  /** Reference a line height token */
   lineHeight: (name: TypographySubKeys<P, 'lineHeight'>) => string;
+  /** Reference a letter spacing token */
   letterSpacing: (name: TypographySubKeys<P, 'letterSpacing'>) => string;
+  /** Reference a duration token */
   duration: (name: DurationKeys<P>) => string;
+  /** Reference a timing function (easing) token */
   timingFunction: (name: TimingFunctionKeys<P>) => string;
+  /** Reference a z-index token */
   zIndex: (name: ZIndexKeys<P>) => string;
+  /** Generic ref function for arbitrary token paths */
   ref: TypedRefFn<P>;
 };
 
+/** Options for creating token helpers */
 export type CreateHelpersOptions = CssVarOptions;
 
 /**
- * Create runtime helper functions from primitive tokens
+ * Create runtime helper functions from primitive tokens.
+ *
+ * @param _primitives - The primitive tokens object (used for type inference)
+ * @param options - Configuration options including prefix
+ * @returns Helper functions for referencing tokens as CSS variables
  */
 export function createHelpers<P extends PrimitiveTokens>(
   _primitives: P,

@@ -1,7 +1,7 @@
 import { defineTokens } from '../defineTokens.js';
 import { generateThemeSync } from '../generator/generateTheme.js';
 
-export const { definition: charmDefinition, helpers: charmHelpers } = defineTokens(
+const charmTokensBase = defineTokens(
   {
     primitives: {
       color: {
@@ -1006,11 +1006,39 @@ export const { definition: charmDefinition, helpers: charmHelpers } = defineToke
   { prefix: 'charm' }
 );
 
+/** The resolved token definition for the charm theme */
+export const charmDefinition = charmTokensBase.definition;
+/** Token helpers for the charm theme */
+export const charmHelpers = charmTokensBase.helpers;
+
+/** Pre-generated CSS theme for the charm tokens */
 export const charmTheme = generateThemeSync(charmDefinition, { prefix: 'charm' });
 
-export const charmTokens = {
-  definition: charmDefinition,
-  helpers: charmHelpers,
+/**
+ * Complete charm theme tokens with extension methods.
+ *
+ * Use `.extendPrimitives()`, `.extendSemantics()`, and `.extendComponents()` to create
+ * derived themes:
+ *
+ * @example
+ * ```ts
+ * import { charmTokens } from '@charm-ux/theming/themes';
+ *
+ * // Extend with custom brand colors
+ * const customTokens = charmTokens
+ *   .extendPrimitives({
+ *     color: { brand: '#ff6600' },
+ *   })
+ *   .extendSemantics((ref, base) => ({
+ *     ...base,
+ *     surface: {
+ *       ...base?.surface,
+ *       brand: { light: ref('color', 'brand', 100), dark: ref('color', 'brand', 900) },
+ *     },
+ *   }));
+ * ```
+ */
+export const charmTokens = Object.assign(charmTokensBase, {
   theme: charmTheme,
   css: charmTheme.css,
   cssReset: charmTheme.cssReset,
@@ -1020,4 +1048,4 @@ export const charmTokens = {
   tokensLightJson: charmTheme.tokensLightJson,
   tokensDarkJson: charmTheme.tokensDarkJson,
   tokensMarkdown: charmTheme.tokensMarkdown,
-};
+});

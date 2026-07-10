@@ -1,5 +1,5 @@
 // Core API
-export { defineTokens, type DefineTokensInput, type DefineTokensResult } from './defineTokens.js';
+export { defineTokens, type DefineTokensInput, type DefineTokensResult, type DefinedTokens } from './defineTokens.js';
 
 // Types
 export * from './types/index.js';
@@ -49,7 +49,16 @@ export type {
 } from './generator/index.js';
 
 // Pre-built themes
-export { charmTokens, charmDefinition, charmHelpers, charmTheme } from './themes/index.js';
+export {
+  charmTokens,
+  charmDefinition,
+  charmHelpers,
+  charmTheme,
+  demoTokens,
+  demoDefinition,
+  demoHelpers,
+  demoTheme,
+} from './themes/index.js';
 
 // Lit CSS helpers (requires lit peer dependency)
 export { createCssHelpers, type CssHelpers } from './lit/index.js';

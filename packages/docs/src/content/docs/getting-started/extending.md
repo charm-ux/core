@@ -4,7 +4,57 @@ title: Extending Charm
 
 Charm provides unstyled, accessible base components designed to be extended and customized for your project's needs.
 
-## Styling with custom properties
+## Project Configuration
+
+### Setting Up Your Project
+
+Configure your project with a custom prefix and theme before registering components:
+
+```typescript
+// project-config.ts
+import { project } from '@charm-ux/core';
+import { charmTokens } from '@charm-ux/theming';
+
+// Create your custom theme by extending charm
+const myTokens = charmTokens
+  .extendPrimitives({
+    color: {
+      brand: '#ff6600',
+      accent: '#9333ea',
+    },
+  })
+  .extendSemantics((ref, base) => ({
+    ...base,
+    action: {
+      ...base?.action,
+      primary: ref('color', 'brand', 500),
+    },
+  }));
+
+// Configure the project
+project.updateProject({
+  prefix: 'vel', // Components will be <vel-button>, <vel-card>, etc.
+  theme: {
+    definition: myTokens.definition,
+    tokenPrefix: 'vel', // CSS variables will be --vel-*
+  },
+});
+
+// Access generated CSS directly from project
+const { css, cssReset, cssUtilities } = project.generateTheme();
+// Or use the convenience getters: project.css, project.cssReset, project.cssUtilities
+```
+
+### Theme Configuration Options
+
+The `theme` option in `project.updateProject()` accepts:
+
+| Option        | Description                                                           |
+| ------------- | --------------------------------------------------------------------- |
+| `definition`  | Token definition from `defineTokens()` or extended from `charmTokens` |
+| `tokenPrefix` | CSS variable prefix (e.g., `'vel'` → `--vel-button-bgColor`)          |
+
+## Styling with Custom Properties
 
 Every Charm component exposes CSS custom properties (CSS variables) that allow you to customize its appearance without writing complex CSS overrides. These properties control colors, spacing, typography, and other visual aspects of the components, and are detailed in individual component API documentation.
 
@@ -15,11 +65,11 @@ You can override these properties at different levels:
 - Via theme classes - Create reusable style variations
 - Through the [scoped-styles component](/components/scoped-styles/)
 
-## Extending Charm
+## Extending Components
 
-### Extending the Charm design system
+### Extending the Charm Design System
 
-First, you need to extend the `project` class to give your components a unique prefix. For instance, for components such as `vel-button`, and `vel-card`:
+First, configure your project with a unique prefix and theme:
 
 ```typescript
 // project-config.ts
@@ -30,14 +80,14 @@ project.updateProject({
 });
 ```
 
-To extend a component, you will extend the base charm class and provide additional styling/functionality.
+To extend a component, extend the base Charm class and provide additional styling/functionality.
 
-For instance, to create a button with a nested icon and variant attribute and styling, you first extend the base button class with a new source file:
+For instance, to create a button with a nested icon and variant attribute:
 
 ```typescript
 // shaped-button.ts
 import { property } from 'lit/decorators.js';
-import { CoreButton } from '@charm-ux/core';
+import { CoreButton, project } from '@charm-ux/core';
 import styles from './shaped-button.styles.js';
 
 export class ShapedButton extends CoreButton {
@@ -51,24 +101,27 @@ export class ShapedButton extends CoreButton {
 export default ShapedButton;
 ```
 
-Then create the necessary styles:
+Create the component styles using project theme tokens:
 
 ```typescript
-// shaped-button-styles.ts
+// shaped-button.styles.ts
 import { css } from 'lit';
+import { project } from '@charm-ux/core';
 
-export default styles = css`
-  :host([shape='square']) {
-    --button-border-radius: var(--border-radius-none);
+const { component } = project.theme;
+
+export default css`
+  :host([shape='square']) .control {
+    border-radius: 0;
   }
 
-  :host([shape='circular']) {
-    --button-border-radius: var(--border-radius-circular);
+  :host([shape='circular']) .control {
+    border-radius: ${component('button', 'borderRadius')};
   }
 `;
 ```
 
-Finally, register your new component using the `project` object in the `index.ts` file:
+Register your component using the project scope:
 
 ```typescript
 // index.ts
@@ -80,9 +133,35 @@ export * from './shaped-button.js';
 project.scope.registerComponent(button);
 ```
 
-### Creating a new component
+### Using Theme Tokens in Styles
 
-To create a new component, you'll need to extend either `CharmElement` or for dismissible elements (popoups, menus, etc.) that need `show/hide` and associated events, `CharmDismissibleElement`.
+Access theme token helpers via `project.theme`:
+
+```typescript
+import { css } from 'lit';
+import { project } from '@charm-ux/core';
+
+const { primitive, semantic, component } = project.theme;
+
+export default css`
+  .base {
+    /* Primitive tokens */
+    padding: ${primitive('spacing', 'md')};
+    border-radius: ${primitive('borderRadius', 'sm')};
+
+    /* Semantic tokens */
+    background: ${semantic('surface', 'primary')};
+    color: ${semantic('text', 'primary')};
+
+    /* Component tokens */
+    border: ${component('button', 'borderWidth')} solid ${component('button', 'borderColor')};
+  }
+`;
+```
+
+## Creating New Components
+
+To create a new component, extend either `CharmElement` or for dismissible elements (popups, menus, etc.) that need `show/hide` and associated events, `CharmDismissibleElement`.
 
 Provide a comprehensive [JSDoc](https://jsdoc.app/) header above your component class. This documentation is parsed to generate the `custom-elements.json` manifest file, which powers IDE autocompletion, documentation sites, and other tooling.
 
@@ -94,46 +173,37 @@ Provide a comprehensive [JSDoc](https://jsdoc.app/) header above your component 
 - `@cssproperty` tags for all CSS custom properties
 
 ```typescript
-//tag.ts
+// tag.ts
 import { html } from 'lit/static-html.js';
-import { CharmElement } from '@charm-ux/core';
-import { CoreIcon } from '@charm-ux/core';
+import { property } from 'lit/decorators.js';
+import { CharmElement, CoreIcon, project } from '@charm-ux/core';
 import styles from './tag.styles.js';
 
 /**
- * A tag is a small component typically used in user interfaces to convey additional information or status in a compact visual form.
+ * A tag is a small component typically used to convey additional information or status.
  *
  * @slot - The content of the tag.
  *
  * @csspart tag-base - The component's base wrapper.
  *
- * @cssproperty --tag-bg-color - determines the background color of the tag.
- * @cssproperty --tag-border-color - determines the border color.
- * @cssproperty --tag-border-radius - determines the border radius.
- * @cssproperty --tag-border-style - determines the border style.
- * @cssproperty --tag-border-width - determines the border.
- * @cssproperty --tag-fg-color - determines the color of the text.
- * @cssproperty --tag-gap - determines the spacing between tag icon and content.
- * @cssproperty --tag-padding - determines the padding.
- **/
-
+ * @cssproperty --tag-bg-color - Background color of the tag.
+ * @cssproperty --tag-border-color - Border color.
+ * @cssproperty --tag-border-radius - Border radius.
+ * @cssproperty --tag-fg-color - Text color.
+ * @cssproperty --tag-gap - Spacing between icon and content.
+ * @cssproperty --tag-padding - Padding.
+ */
 export class MyTag extends CharmElement {
   public static override styles = [...super.styles, styles];
-  // The baseName sets the tag name of the component
   public static override baseName = 'tag';
 
-  // Add any other components you use to the dependencies array so that they are properly registered
-  // along with your base component
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
-  /** Tag icon name */
   @property({ reflect: true })
   public iconName?: string = 'person';
 
-  // prefer protected template methods for component layout to make extending the component easier
-  /** Generates the HTML template for tag. */
   protected tagTemplate() {
     return html`
       <div class="base" part="tag-base">
@@ -147,39 +217,74 @@ export class MyTag extends CharmElement {
     return this.tagTemplate();
   }
 }
+
 export default MyTag;
 ```
 
-Create the component's styles in a separate file:
+Create styles using theme tokens:
 
 ```typescript
-// tag.styles.js
+// tag.styles.ts
 import { css } from 'lit';
+import { project } from '@charm-ux/core';
+
+const { primitive, semantic } = project.theme;
 
 export default css`
   .base {
     display: inline-flex;
     align-items: center;
-    gap: var(--tag-gap, 0.5rem);
-    padding: var(--tag-padding, 0.25rem 0.75rem);
-    background: var(--tag-bg-color, var(--color-neutral-100));
-    color: var(--tag-fg-color, var(--color-neutral-900));
-    border: var(--tag-border-width, 1px) var(--tag-border-style, solid)
-      var(--tag-border-color, var(--color-neutral-300));
-    border-radius: var(--tag-border-radius, var(--border-radius-medium));
-    font-size: var(--tag-font-size, 0.875rem);
+    gap: var(--tag-gap, ${primitive('spacing', 'sm')});
+    padding: var(--tag-padding, ${primitive('spacing', 'xs')} ${primitive('spacing', 'md')});
+    background: var(--tag-bg-color, ${semantic('surface', 'secondary')});
+    color: var(--tag-fg-color, ${semantic('text', 'primary')});
+    border: ${primitive('borderWidth', 'thin')} solid
+      var(--tag-border-color, ${semantic('border', 'primary')});
+    border-radius: var(--tag-border-radius, ${primitive('borderRadius', 'md')});
   }
 `;
 ```
 
-Finally, register your new component in `index.ts`:
+Register your component:
 
 ```typescript
-//index.ts
+// index.ts
 import { project } from '@charm-ux/core';
 import tag from './tag.js';
 
 export * from './tag.js';
 
 project.scope.registerComponent(tag);
+```
+
+## Adding Custom Tokens
+
+When extending the theme, you can add new component tokens:
+
+```typescript
+const myTokens = charmTokens.extendComponents((ref, base) => ({
+  ...base,
+  // Add tokens for your new component
+  tag: {
+    bgColor: ref('surface', 'secondary'),
+    fgColor: ref('text', 'primary'),
+    borderColor: ref('border', 'primary'),
+    borderRadius: ref('borderRadius', 'md'),
+    padding: ref('spacing', 'sm'),
+    gap: ref('spacing', 'xs'),
+  },
+}));
+```
+
+Then access them in your styles:
+
+```typescript
+const { component } = project.theme;
+
+css`
+  .base {
+    background: ${component('tag', 'bgColor')};
+    color: ${component('tag', 'fgColor')};
+  }
+`;
 ```
