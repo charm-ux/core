@@ -1,18 +1,24 @@
 // src/generator/generateTokensMarkdown.ts
 import { cssVar, cssVarName } from '../helpers/cssVar.js';
-import { expandColors, isLightDarkValue, getContrastColor, getColorScheme } from './colorPalette.js';
+import {
+  expandColors,
+  getColorScheme,
+  getContrastColor,
+  isLightDarkValue,
+  walkExpandedColors,
+} from './colorPalette.js';
+import { formatShadowValue } from './formatShadow.js';
 import type {
-  PrimitiveTokens,
-  SemanticTokens,
   ComponentTokens,
-  TokenDefinition,
-  ResolvedTokenDefinition,
-  RefHelper,
-  LightDarkValue,
-  TokenMap,
-  ShadowTokenValue,
-  ShadowValue,
   CubicBezierValue,
+  LightDarkValue,
+  PrimitiveTokens,
+  RefHelper,
+  ResolvedTokenDefinition,
+  SemanticTokens,
+  ShadowTokenValue,
+  TokenDefinition,
+  TokenMap,
 } from '../types/tokens.js';
 
 /**
@@ -126,18 +132,6 @@ function firstEntry<T>(obj: Record<string, T> | undefined): [string, T] | undefi
 // ---------------------------------------------------------------------------
 // Primitives
 // ---------------------------------------------------------------------------
-
-function formatShadowLayer(shadow: ShadowValue): string {
-  const color = isLightDarkValue(shadow.color) ? shadow.color.light : shadow.color;
-  const parts = [shadow.inset ? 'inset' : undefined, shadow.offsetX, shadow.offsetY, shadow.blur, shadow.spread, color];
-  return parts.filter(Boolean).join(' ');
-}
-
-function formatShadowValue(value: ShadowTokenValue): string {
-  if (typeof value === 'string') return value;
-  if (Array.isArray(value)) return value.map(formatShadowLayer).join(', ');
-  return formatShadowLayer(value);
-}
 
 function isCubicBezier(value: unknown): value is CubicBezierValue {
   return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
@@ -516,25 +510,21 @@ function buildDesignMdColors(
   resolutionMap: Map<string, string>
 ): Record<string, string | Record<string, string>> {
   if (!colors) return {};
-  const expanded = expandColors(colors);
   const result: Record<string, string | Record<string, string>> = {};
 
-  for (const [name, value] of Object.entries(expanded)) {
-    if (isLightDarkValue(value)) {
-      result[name] = value.light;
-      resolutionMap.set(cssVarName(prefix, 'color', name), `{primitive.colors.${name}}`);
-    } else if (typeof value === 'object' && value !== null) {
-      const family: Record<string, string> = {};
-      for (const [step, stepValue] of Object.entries(value)) {
-        family[step] = isLightDarkValue(stepValue) ? stepValue.light : String(stepValue);
-        resolutionMap.set(cssVarName(prefix, 'color', name, step), `{primitive.colors.${name}.${step}}`);
-      }
-      result[name] = family;
+  walkExpandedColors(colors, ({ name, step, value }) => {
+    const rendered = isLightDarkValue(value) ? value.light : String(value);
+    const varName = cssVarName(prefix, 'color', name, ...(step !== undefined ? [step] : []));
+    const yamlPath = step !== undefined ? `{primitive.colors.${name}.${step}}` : `{primitive.colors.${name}}`;
+    resolutionMap.set(varName, yamlPath);
+
+    if (step !== undefined) {
+      (result[name] as Record<string, string>) ??= {};
+      (result[name] as Record<string, string>)[step] = rendered;
     } else {
-      result[name] = String(value);
-      resolutionMap.set(cssVarName(prefix, 'color', name), `{primitive.colors.${name}}`);
+      result[name] = rendered;
     }
-  }
+  });
 
   return result;
 }
@@ -553,22 +543,20 @@ function buildDesignMdAutoColorLiterals(
   resolutionMap: Map<string, string>
 ): void {
   if (!colors) return;
-  const expanded = expandColors(colors);
 
-  for (const [name, value] of Object.entries(expanded)) {
-    if (AUTO_COLOR_DOC_SKIP_LIST.has(name)) continue;
-    if (isLightDarkValue(value) || typeof value !== 'object' || value === null) {
-      const sample = isLightDarkValue(value) ? value.light : String(value);
-      resolutionMap.set(cssVarName(prefix, 'color', 'on', name), getContrastColor(sample));
-      resolutionMap.set(cssVarName(prefix, 'color', 'scheme', name), getColorScheme(sample));
-    } else {
-      for (const [step, stepValue] of Object.entries(value)) {
-        const sample = isLightDarkValue(stepValue) ? stepValue.light : String(stepValue);
-        resolutionMap.set(cssVarName(prefix, 'color', 'on', name, step), getContrastColor(sample));
-        resolutionMap.set(cssVarName(prefix, 'color', 'scheme', name, step), getColorScheme(sample));
-      }
-    }
-  }
+  walkExpandedColors(colors, ({ name, step, value }) => {
+    if (AUTO_COLOR_DOC_SKIP_LIST.has(name)) return;
+
+    const sample = isLightDarkValue(value) ? value.light : String(value);
+    resolutionMap.set(
+      cssVarName(prefix, 'color', 'on', name, ...(step !== undefined ? [step] : [])),
+      getContrastColor(sample)
+    );
+    resolutionMap.set(
+      cssVarName(prefix, 'color', 'scheme', name, ...(step !== undefined ? [step] : [])),
+      getColorScheme(sample)
+    );
+  });
 }
 
 const DESIGN_MD_TYPOGRAPHY_PROPERTIES: Record<string, { property: string; category: string }> = {

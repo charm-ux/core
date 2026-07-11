@@ -194,7 +194,7 @@ function generateBorderUtilities(primitives: PrimitiveTokens, prefix: string, cl
     for (const name of Object.keys(primitives.borderRadius)) {
       const escapedName = escapeClassName(name);
       const varRef = `var(${cssVarName(prefix, 'border-radius', name)})`;
-      lines.push(`.${classPrefix}rounded-${escapedName} { border-radius: ${varRef}; }`);
+      lines.push(`.${classPrefix}rad-${escapedName} { border-radius: ${varRef}; }`);
     }
   }
 

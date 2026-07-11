@@ -1,7 +1,10 @@
 // src/generator/colorPalette.ts
-import { parse, oklch, formatHex, wcagContrast, displayable, clampChroma } from 'culori';
+import { clampChroma, displayable, formatHex, oklch, parse, wcagContrast } from 'culori';
+import { isLightDarkValue } from './lightDark.js';
 import type { Oklch } from 'culori';
 import type { ColorDefinitions, LightDarkValue } from '../types/tokens.js';
+
+export { isLightDarkValue } from './lightDark.js';
 
 /**
  * Options for palette generation.
@@ -43,13 +46,6 @@ export type ColorPalette = Record<PaletteStep, string>;
 export function isAutoExpandColor(value: unknown): value is string {
   if (typeof value !== 'string') return false;
   return parse(value) !== undefined;
-}
-
-/**
- * Check if a value is a light/dark pair.
- */
-export function isLightDarkValue(value: unknown): value is LightDarkValue {
-  return typeof value === 'object' && value !== null && 'light' in value && 'dark' in value;
 }
 
 /**
@@ -274,4 +270,39 @@ export function expandColors(colors: ColorDefinitions): ColorDefinitions {
   }
 
   return result;
+}
+
+/**
+ * A single resolved leaf in an expanded color tree - either a base color
+ * (`step` undefined) or one step of a palette.
+ */
+export type ColorLeaf = {
+  name: string;
+  step?: string;
+  value: string | LightDarkValue;
+};
+
+/**
+ * Walk `colors` (after {@link expandColors}) and visit every leaf value -
+ * a base color, a light/dark pair, or one step of a palette. This is the one
+ * light/dark-vs-palette-vs-plain branch every generator that touches
+ * `primitives.color` needs; callers that only care about each leaf's CSS var
+ * name/value (as opposed to producing name-grouped output, e.g. markdown
+ * section headers per color family) should use this instead of
+ * re-implementing the branch.
+ */
+export function walkExpandedColors(colors: ColorDefinitions, visit: (leaf: ColorLeaf) => void): void {
+  const expanded = expandColors(colors);
+
+  for (const [name, colorValue] of Object.entries(expanded)) {
+    if (isLightDarkValue(colorValue)) {
+      visit({ name, value: colorValue });
+    } else if (typeof colorValue === 'object' && colorValue !== null) {
+      for (const [step, stepValue] of Object.entries(colorValue)) {
+        visit({ name, step, value: isLightDarkValue(stepValue) ? stepValue : (stepValue as string) });
+      }
+    } else {
+      visit({ name, value: colorValue as string });
+    }
+  }
 }

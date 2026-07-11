@@ -1,24 +1,23 @@
 // src/generator/generateCss.ts
 import { cssVarName, toKebabCase } from '../helpers/cssVar.js';
 import {
-  expandColors,
-  isLightDarkValue,
   getColorForMode,
-  getContrastColor,
   getColorScheme,
-  PALETTE_STEPS,
+  getContrastColor,
+  isLightDarkValue,
+  walkExpandedColors,
 } from './colorPalette.js';
+import { formatShadowValue } from './formatShadow.js';
 import type { GeneratorConfig } from '../types/config.js';
 import type {
-  TokenDefinition,
-  ResolvedTokenDefinition,
-  PrimitiveTokens,
-  SemanticTokens,
-  TokenMap,
-  LightDarkValue,
-  ShadowValue,
-  ShadowTokenValue,
   CubicBezierValue,
+  LightDarkValue,
+  PrimitiveTokens,
+  ResolvedTokenDefinition,
+  SemanticTokens,
+  ShadowTokenValue,
+  TokenDefinition,
+  TokenMap,
 } from '../types/tokens.js';
 
 type CssConfig = Pick<
@@ -36,32 +35,6 @@ function formatValue(value: unknown): string {
 }
 
 /**
- * Format a shadow value to CSS box-shadow syntax.
- */
-function formatShadow(shadow: ShadowValue): string {
-  const parts: string[] = [];
-  if (shadow.inset) parts.push('inset');
-  parts.push(shadow.offsetX, shadow.offsetY, shadow.blur, shadow.spread);
-
-  // Handle light/dark colors
-  const color = isLightDarkValue(shadow.color) ? (shadow.color as LightDarkValue).light : (shadow.color as string);
-  parts.push(color);
-
-  return parts.join(' ');
-}
-
-/**
- * Format shadow token to CSS value.
- */
-function formatShadowValue(value: ShadowTokenValue): string {
-  if (typeof value === 'string') return value;
-  if (Array.isArray(value)) {
-    return value.map(formatShadow).join(', ');
-  }
-  return formatShadow(value);
-}
-
-/**
  * Format a cubic bezier timing function to CSS.
  */
 function formatTimingFunction(value: CubicBezierValue): string {
@@ -76,6 +49,27 @@ function isCubicBezier(value: unknown): value is CubicBezierValue {
 }
 
 /**
+ * Emit one `--{prefix}-{category}-{name}: {value};` line per entry in a flat
+ * token map, unwrapping a `TokenWithMetadata` wrapper first if present.
+ * Shared by every flat primitive scale (spacing, border-radius, border-width,
+ * duration, z-index, and each typography sub-category) - they all have the
+ * same shape and only differ in which category name they emit under.
+ */
+function pushFlatTokenVariables(
+  lines: string[],
+  tokenMap: TokenMap | undefined,
+  category: string,
+  prefix: string
+): void {
+  if (!tokenMap) return;
+  for (const [name, value] of Object.entries(tokenMap)) {
+    const resolved =
+      typeof value === 'object' && value !== null && 'value' in value ? (value as { value: unknown }).value : value;
+    lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue(resolved)};`);
+  }
+}
+
+/**
  * Generate CSS custom properties for primitive tokens.
  */
 function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string): string[] {
@@ -83,62 +77,21 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
 
   // Colors
   if (primitives.color) {
-    const expandedColors = expandColors(primitives.color);
-    for (const [colorName, colorValue] of Object.entries(expandedColors)) {
-      if (isLightDarkValue(colorValue)) {
-        // Single light/dark value (no palette)
-        lines.push(`  ${cssVarName(prefix, 'color', colorName)}: ${colorValue.light};`);
-      } else if (typeof colorValue === 'object' && colorValue !== null) {
-        // Palette or nested object
-        for (const [step, stepValue] of Object.entries(colorValue)) {
-          if (isLightDarkValue(stepValue)) {
-            lines.push(`  ${cssVarName(prefix, 'color', colorName, step)}: ${(stepValue as LightDarkValue).light};`);
-          } else {
-            lines.push(`  ${cssVarName(prefix, 'color', colorName, step)}: ${stepValue};`);
-          }
-        }
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'color', colorName)}: ${colorValue};`);
-      }
-    }
+    walkExpandedColors(primitives.color, ({ name, step, value }) => {
+      const color = isLightDarkValue(value) ? value.light : value;
+      const varName = cssVarName(prefix, 'color', name, ...(step !== undefined ? [step] : []));
+      lines.push(`  ${varName}: ${color};`);
+    });
   }
 
   // Spacing
-  if (primitives.spacing) {
-    for (const [name, value] of Object.entries(primitives.spacing)) {
-      if (typeof value === 'object' && value !== null && 'value' in value) {
-        lines.push(`  ${cssVarName(prefix, 'spacing', name)}: ${formatValue((value as { value: unknown }).value)};`);
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'spacing', name)}: ${formatValue(value)};`);
-      }
-    }
-  }
+  pushFlatTokenVariables(lines, primitives.spacing, 'spacing', prefix);
 
   // Border radius
-  if (primitives.borderRadius) {
-    for (const [name, value] of Object.entries(primitives.borderRadius)) {
-      if (typeof value === 'object' && value !== null && 'value' in value) {
-        lines.push(
-          `  ${cssVarName(prefix, 'border-radius', name)}: ${formatValue((value as { value: unknown }).value)};`
-        );
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'border-radius', name)}: ${formatValue(value)};`);
-      }
-    }
-  }
+  pushFlatTokenVariables(lines, primitives.borderRadius, 'border-radius', prefix);
 
   // Border width
-  if (primitives.borderWidth) {
-    for (const [name, value] of Object.entries(primitives.borderWidth)) {
-      if (typeof value === 'object' && value !== null && 'value' in value) {
-        lines.push(
-          `  ${cssVarName(prefix, 'border-width', name)}: ${formatValue((value as { value: unknown }).value)};`
-        );
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'border-width', name)}: ${formatValue(value)};`);
-      }
-    }
-  }
+  pushFlatTokenVariables(lines, primitives.borderWidth, 'border-width', prefix);
 
   // Shadows
   if (primitives.shadow) {
@@ -152,15 +105,7 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
   }
 
   // Duration
-  if (primitives.duration) {
-    for (const [name, value] of Object.entries(primitives.duration)) {
-      if (typeof value === 'object' && value !== null && 'value' in value) {
-        lines.push(`  ${cssVarName(prefix, 'duration', name)}: ${formatValue((value as { value: unknown }).value)};`);
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'duration', name)}: ${formatValue(value)};`);
-      }
-    }
-  }
+  pushFlatTokenVariables(lines, primitives.duration, 'duration', prefix);
 
   // Timing functions
   if (primitives.timingFunction) {
@@ -176,15 +121,7 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
   }
 
   // Z-index
-  if (primitives.zIndex) {
-    for (const [name, value] of Object.entries(primitives.zIndex)) {
-      if (typeof value === 'object' && value !== null && 'value' in value) {
-        lines.push(`  ${cssVarName(prefix, 'z-index', name)}: ${formatValue((value as { value: unknown }).value)};`);
-      } else {
-        lines.push(`  ${cssVarName(prefix, 'z-index', name)}: ${formatValue(value)};`);
-      }
-    }
-  }
+  pushFlatTokenVariables(lines, primitives.zIndex, 'z-index', prefix);
 
   // Typography
   if (primitives.typography) {
@@ -197,15 +134,7 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
     ];
 
     for (const [category, tokenMap] of typoCategories) {
-      if (tokenMap) {
-        for (const [name, value] of Object.entries(tokenMap)) {
-          if (typeof value === 'object' && value !== null && 'value' in value) {
-            lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue((value as { value: unknown }).value)};`);
-          } else {
-            lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue(value)};`);
-          }
-        }
-      }
+      pushFlatTokenVariables(lines, tokenMap, category, prefix);
     }
   }
 
@@ -249,30 +178,19 @@ function generateColorOnVars(
     }
   }
 
-  const colors = expandColors(primitives.color);
-  for (const [colorName, colorValue] of Object.entries(colors)) {
-    if (AUTO_COLOR_VAR_SKIP_LIST.has(colorName)) continue;
+  walkExpandedColors(primitives.color, ({ name, step, value }) => {
+    if (AUTO_COLOR_VAR_SKIP_LIST.has(name)) return;
 
-    if (isLightDarkValue(colorValue)) {
-      pushOn(cssVarName(prefix, 'color', 'on', colorName), {
-        light: getContrastColor(getColorForMode(colorValue, 'light')),
-        dark: getContrastColor(getColorForMode(colorValue, 'dark')),
+    const varName = cssVarName(prefix, 'color', 'on', name, ...(step !== undefined ? [step] : []));
+    if (isLightDarkValue(value)) {
+      pushOn(varName, {
+        light: getContrastColor(getColorForMode(value, 'light')),
+        dark: getContrastColor(getColorForMode(value, 'dark')),
       });
-    } else if (typeof colorValue === 'object' && colorValue !== null) {
-      for (const [step, stepValue] of Object.entries(colorValue)) {
-        if (isLightDarkValue(stepValue)) {
-          pushOn(cssVarName(prefix, 'color', 'on', colorName, step), {
-            light: getContrastColor(getColorForMode(stepValue, 'light')),
-            dark: getContrastColor(getColorForMode(stepValue, 'dark')),
-          });
-        } else {
-          pushOn(cssVarName(prefix, 'color', 'on', colorName, step), getContrastColor(stepValue as string));
-        }
-      }
     } else {
-      pushOn(cssVarName(prefix, 'color', 'on', colorName), getContrastColor(colorValue as string));
+      pushOn(varName, getContrastColor(value));
     }
-  }
+  });
 
   return { base, light, dark };
 }
@@ -308,30 +226,19 @@ function generateColorSchemeVars(primitives: PrimitiveTokens, prefix: string): {
     }
   }
 
-  const colors = expandColors(primitives.color);
-  for (const [colorName, colorValue] of Object.entries(colors)) {
-    if (AUTO_COLOR_VAR_SKIP_LIST.has(colorName)) continue;
+  walkExpandedColors(primitives.color, ({ name, step, value }) => {
+    if (AUTO_COLOR_VAR_SKIP_LIST.has(name)) return;
 
-    if (isLightDarkValue(colorValue)) {
-      pushScheme(cssVarName(prefix, 'color', 'scheme', colorName), {
-        light: getColorScheme(getColorForMode(colorValue, 'light')),
-        dark: getColorScheme(getColorForMode(colorValue, 'dark')),
+    const varName = cssVarName(prefix, 'color', 'scheme', name, ...(step !== undefined ? [step] : []));
+    if (isLightDarkValue(value)) {
+      pushScheme(varName, {
+        light: getColorScheme(getColorForMode(value, 'light')),
+        dark: getColorScheme(getColorForMode(value, 'dark')),
       });
-    } else if (typeof colorValue === 'object' && colorValue !== null) {
-      for (const [step, stepValue] of Object.entries(colorValue)) {
-        if (isLightDarkValue(stepValue)) {
-          pushScheme(cssVarName(prefix, 'color', 'scheme', colorName, step), {
-            light: getColorScheme(getColorForMode(stepValue, 'light')),
-            dark: getColorScheme(getColorForMode(stepValue, 'dark')),
-          });
-        } else {
-          pushScheme(cssVarName(prefix, 'color', 'scheme', colorName, step), getColorScheme(stepValue as string));
-        }
-      }
     } else {
-      pushScheme(cssVarName(prefix, 'color', 'scheme', colorName), getColorScheme(colorValue as string));
+      pushScheme(varName, getColorScheme(value));
     }
-  }
+  });
 
   return { light, dark };
 }
@@ -545,20 +452,10 @@ export function generateCssVariables(
 
   // Extract from primitives
   if (definition.primitives.color) {
-    const expandedColors = expandColors(definition.primitives.color);
-    for (const [colorName, colorValue] of Object.entries(expandedColors)) {
-      if (isLightDarkValue(colorValue)) {
-        variables[cssVarName(prefix, 'color', colorName)] = colorValue.light;
-      } else if (typeof colorValue === 'object' && colorValue !== null) {
-        for (const [step, stepValue] of Object.entries(colorValue)) {
-          if (isLightDarkValue(stepValue)) {
-            variables[cssVarName(prefix, 'color', colorName, step)] = (stepValue as LightDarkValue).light;
-          } else {
-            variables[cssVarName(prefix, 'color', colorName, step)] = stepValue as string;
-          }
-        }
-      }
-    }
+    walkExpandedColors(definition.primitives.color, ({ name, step, value }) => {
+      const varName = cssVarName(prefix, 'color', name, ...(step !== undefined ? [step] : []));
+      variables[varName] = isLightDarkValue(value) ? value.light : value;
+    });
   }
 
   return variables;

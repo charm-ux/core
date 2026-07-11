@@ -1,17 +1,17 @@
 // src/generator/generateTokensJson.ts
-import { parse as parseCssColor, oklch, formatHex } from 'culori';
+import { formatHex, oklch, parse as parseCssColor } from 'culori';
 import { cssVarName } from '../helpers/cssVar.js';
-import { expandColors, isAutoExpandColor } from './colorPalette.js';
+import { isAutoExpandColor, walkExpandedColors } from './colorPalette.js';
 import { isLightDarkValue, resolveToMode } from './lightDark.js';
 import type {
-  PrimitiveTokens,
-  SemanticTokens,
   ComponentTokens,
-  TokenDefinition,
-  ResolvedTokenDefinition,
-  RefHelper,
-  ShadowValue,
   CubicBezierValue,
+  PrimitiveTokens,
+  RefHelper,
+  ResolvedTokenDefinition,
+  SemanticTokens,
+  ShadowValue,
+  TokenDefinition,
 } from '../types/tokens.js';
 
 /**
@@ -290,25 +290,18 @@ function colorGroupToDtcg(
   colors: NonNullable<PrimitiveTokens['color']>,
   mode?: 'light' | 'dark'
 ): Record<string, unknown> {
-  const expanded = expandColors(colors);
   const result: Record<string, unknown> = {};
   const pick = (value: { light: string; dark: string }) => (mode ? value[mode] : value.light);
 
-  for (const [name, value] of Object.entries(expanded)) {
-    if (isLightDarkValue(value)) {
-      result[name] = toColorDtcgValue(pick(value));
-    } else if (typeof value === 'object' && value !== null) {
-      const steps: Record<string, unknown> = {};
-      for (const [step, stepValue] of Object.entries(value)) {
-        steps[step] = isLightDarkValue(stepValue)
-          ? toColorDtcgValue(pick(stepValue))
-          : toColorDtcgValue(stepValue as string);
-      }
-      result[name] = steps;
+  walkExpandedColors(colors, ({ name, step, value }) => {
+    const dtcg = toColorDtcgValue(isLightDarkValue(value) ? pick(value) : value);
+    if (step !== undefined) {
+      (result[name] as Record<string, unknown>) ??= {};
+      (result[name] as Record<string, unknown>)[step] = dtcg;
     } else {
-      result[name] = toColorDtcgValue(value as string);
+      result[name] = dtcg;
     }
-  }
+  });
 
   return result;
 }
@@ -426,16 +419,11 @@ function collectPrimitiveAliases(primitives: PrimitiveTokens, prefix: string, ma
     }
 
     if (category === 'color') {
-      const expanded = expandColors(rawGroup as NonNullable<PrimitiveTokens['color']>);
-      for (const [name, value] of Object.entries(expanded)) {
-        if (isLightDarkValue(value) || typeof value !== 'object' || value === null) {
-          map.set(cssVarName(prefix, 'color', name), `primitives.color.${name}`);
-        } else {
-          for (const step of Object.keys(value)) {
-            map.set(cssVarName(prefix, 'color', name, step), `primitives.color.${name}.${step}`);
-          }
-        }
-      }
+      walkExpandedColors(rawGroup as NonNullable<PrimitiveTokens['color']>, ({ name, step }) => {
+        const varName = cssVarName(prefix, 'color', name, ...(step !== undefined ? [step] : []));
+        const jsonPath = step !== undefined ? `primitives.color.${name}.${step}` : `primitives.color.${name}`;
+        map.set(varName, jsonPath);
+      });
       continue;
     }
 
