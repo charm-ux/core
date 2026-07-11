@@ -1,4 +1,4 @@
-import { cssVar, toKebabCase, type CssVarOptions } from './cssVar.js';
+import { cssVar, type CssVarOptions, toKebabCase } from './cssVar.js';
 
 /**
  * Semantic token helpers - provides generic accessor for any semantic token path.

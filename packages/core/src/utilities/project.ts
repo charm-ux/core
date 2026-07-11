@@ -1,10 +1,10 @@
 import {
-  createCssHelpers,
   charmDefinition,
-  generateThemeSync,
+  createCssHelpers,
   type CssHelpers,
-  type ResolvedTokenDefinition,
   type GenerateThemeResult,
+  generateThemeSync,
+  type ResolvedTokenDefinition,
 } from '@charm-ux/theming';
 import defaultIcons from '../components/icon/default-icons.js';
 import { createScope, setProjectConfig } from './scope.js';
@@ -49,48 +49,48 @@ export default class CharmProject {
   private _themeHelpers: CssHelpers;
   private _themeCache: GenerateThemeResult | null = null;
 
-  constructor() {
+  public constructor() {
     this._themeHelpers = createCssHelpers(this._themeDefinition, this._themePrefix);
   }
 
   /** Theme token helpers for component styles */
-  get theme(): CssHelpers {
+  public get theme(): CssHelpers {
     return this._themeHelpers;
   }
 
   /** Current theme definition */
-  get themeDefinition(): ResolvedTokenDefinition {
+  public get themeDefinition(): ResolvedTokenDefinition {
     return this._themeDefinition;
   }
 
   /** Current theme prefix */
-  get themePrefix(): string {
+  public get themePrefix(): string {
     return this._themePrefix;
+  }
+
+  /** Get the theme CSS string */
+  public get css(): string {
+    return this.generateTheme().css ?? '';
+  }
+
+  /** Get the CSS reset string */
+  public get cssReset(): string {
+    return this.generateTheme().cssReset ?? '';
+  }
+
+  /** Get the CSS utilities string */
+  public get cssUtilities(): string {
+    return this.generateTheme().cssUtilities ?? '';
   }
 
   /**
    * Generate the theme CSS. Cached until theme is reconfigured.
    */
-  generateTheme(): GenerateThemeResult {
+  public generateTheme(): GenerateThemeResult {
     if (!this._themeCache) {
       this._themeCache = generateThemeSync(this._themeDefinition, { prefix: this._themePrefix });
     }
     return this._themeCache;
-  }
-
-  /** Get the theme CSS string */
-  get css(): string {
-    return this.generateTheme().css ?? '';
-  }
-
-  /** Get the CSS reset string */
-  get cssReset(): string {
-    return this.generateTheme().cssReset ?? '';
-  }
-
-  /** Get the CSS utilities string */
-  get cssUtilities(): string {
-    return this.generateTheme().cssUtilities ?? '';
   }
 
   /**

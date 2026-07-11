@@ -1,4 +1,4 @@
-import { cssVar, toKebabCase, type CssVarOptions } from './cssVar.js';
+import { cssVar, type CssVarOptions, toKebabCase } from './cssVar.js';
 
 /**
  * Component token helpers - provides generic accessor for any component token path.

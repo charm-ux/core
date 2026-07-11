@@ -1,6 +1,7 @@
 import { css } from 'lit';
 import { SystemColors } from '../../theme/index.js';
 import { project } from '../../utilities/project.js';
+
 const { component } = project.theme;
 
 export default css`

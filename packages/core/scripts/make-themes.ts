@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { charmTokens, charmDefinition, generateCss } from '@charm-ux/theming';
+import { charmDefinition, charmTokens, generateCss } from '@charm-ux/theming';
 
 const outDir = 'dist/themes/charm';
 

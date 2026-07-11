@@ -1,5 +1,5 @@
-import { defineTokens, generateTheme, charmTokens } from '../dist/index.js';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { charmTokens, defineTokens, generateTheme } from '../dist/index.js';
 
 // Helper to write all theme outputs
 function writeThemeAssets(name, theme) {

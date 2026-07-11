@@ -1,18 +1,18 @@
 // src/generator/generateTheme.ts
+import { DEFAULT_CONFIG } from '../types/config.js';
 import { generateReset } from './generateReset.js';
 import { generateCss } from './generateCss.js';
 import { generateUtilities } from './generateUtilities.js';
 import { generateTokensMarkdown } from './generateTokensMarkdown.js';
 import { generateTokensJson, generateTokensJsonForMode } from './generateTokensJson.js';
 import { definitionHasLightDarkTokens } from './lightDark.js';
-import { DEFAULT_CONFIG } from '../types/config.js';
 import type { GeneratorConfig } from '../types/config.js';
 import type {
-  PrimitiveTokens,
-  SemanticTokens,
   ComponentTokens,
-  TokenDefinition,
+  PrimitiveTokens,
   ResolvedTokenDefinition,
+  SemanticTokens,
+  TokenDefinition,
 } from '../types/tokens.js';
 
 // Lazy-loaded Node.js modules for file operations (browser-safe)
@@ -249,8 +249,14 @@ function writeThemeArtifacts(
  * returning file paths (not content) for a non-dry-run, `outDir`-backed call.
  */
 function toFileResult(result: GenerateThemeResult): GenerateThemeResult {
-  const { css, cssReset, cssUtilities, tokensJson, tokensLightJson, tokensDarkJson, tokensMarkdown, ...fileResult } =
-    result;
+  const fileResult = { ...result };
+  delete fileResult.css;
+  delete fileResult.cssReset;
+  delete fileResult.cssUtilities;
+  delete fileResult.tokensJson;
+  delete fileResult.tokensLightJson;
+  delete fileResult.tokensDarkJson;
+  delete fileResult.tokensMarkdown;
   return fileResult;
 }
 

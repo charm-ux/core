@@ -1,5 +1,5 @@
-import { charmTokens } from './charm.js';
 import { generateThemeSync } from '../generator/generateTheme.js';
+import { charmTokens } from './charm.js';
 
 /**
  * Demo theme that extends the charm base theme with vibrant colors

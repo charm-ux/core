@@ -1,5 +1,5 @@
 // src/generator/lightDark.ts
-import type { PrimitiveTokens, TokenDefinition, ResolvedTokenDefinition } from '../types/tokens.js';
+import type { PrimitiveTokens, ResolvedTokenDefinition, TokenDefinition } from '../types/tokens.js';
 
 /**
  * Check if a value is a LightDarkValue object (`{ light: string; dark: string }`).

@@ -24,23 +24,23 @@
  * @packageDocumentation
  */
 
-import { unsafeCSS, type CSSResult } from 'lit';
+import { type CSSResult, unsafeCSS } from 'lit';
 import { cssVarName } from '../helpers/cssVar.js';
 import type {
-  PrimitiveTokens,
-  SemanticTokens,
-  ComponentTokens,
-  ResolvedTokenDefinition,
-  ColorKeys,
-  SpacingKeys,
   BorderRadiusKeys,
   BorderWidthKeys,
-  ShadowKeys,
+  ColorKeys,
+  ComponentTokens,
   DurationKeys,
-  TimingFunctionKeys,
-  ZIndexKeys,
-  TypographySubKeys,
   PaletteStep,
+  PrimitiveTokens,
+  ResolvedTokenDefinition,
+  SemanticTokens,
+  ShadowKeys,
+  SpacingKeys,
+  TimingFunctionKeys,
+  TypographySubKeys,
+  ZIndexKeys,
 } from '../types/index.js';
 
 /**

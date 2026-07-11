@@ -60,7 +60,6 @@ function generateColorUtilities(primitives: PrimitiveTokens, prefix: string, cla
       // Palette with steps
       for (const step of PALETTE_STEPS) {
         if (step in colorValue) {
-          const className = `${classPrefix}${kebabName}-${step}`;
           const varRef = `var(${cssVarName(prefix, 'color', colorName, step)})`;
 
           // Text color
@@ -94,7 +93,7 @@ function generateSpacingUtilities(spacing: TokenMap | undefined, prefix: string,
 
   if (!spacing) return lines;
 
-  for (const [name, value] of Object.entries(spacing)) {
+  for (const name of Object.keys(spacing)) {
     const escapedName = escapeClassName(name);
     const varRef = `var(${cssVarName(prefix, 'spacing', name)})`;
 

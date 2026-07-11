@@ -1,16 +1,16 @@
 import { cssVar, type CssVarOptions } from './cssVar.js';
 import type {
-  PrimitiveTokens,
-  ColorKeys,
-  SpacingKeys,
   BorderRadiusKeys,
   BorderWidthKeys,
-  ShadowKeys,
+  ColorKeys,
   DurationKeys,
+  PrimitiveTokens,
+  ShadowKeys,
+  SpacingKeys,
   TimingFunctionKeys,
-  ZIndexKeys,
-  TypographySubKeys,
   TypedRefFn,
+  TypographySubKeys,
+  ZIndexKeys,
 } from '../types/index.js';
 
 /**

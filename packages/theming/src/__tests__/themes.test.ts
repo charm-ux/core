@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { charmTokens, charmTheme, demoTokens, demoTheme } from '../themes/index.js';
+import { describe, expect, it } from 'vitest';
+import { charmTheme, charmTokens, demoTheme, demoTokens } from '../themes/index.js';
 
 describe('charmTokens', () => {
   it('has primitives defined', () => {
