@@ -8,6 +8,7 @@ import {
   PALETTE_STEPS,
 } from '../generator/colorPalette.js';
 import { generateThemeSync } from '../generator/generateTheme.js';
+import { generateTokensJson, generateTokensJsonForMode } from '../generator/generateTokensJson.js';
 import { defineTokens } from '../defineTokens.js';
 
 describe('colorPalette', () => {
@@ -281,5 +282,103 @@ describe('generateThemeSync', () => {
     const parsed = JSON.parse(theme.tokensJson);
     expect(parsed).toHaveProperty('primitives');
     expect(parsed.primitives).toHaveProperty('color');
+  });
+});
+
+describe('generateTokensJson (DTCG format)', () => {
+  it('wraps every leaf in $value/$type per the DTCG spec', () => {
+    const tokens = defineTokens({
+      primitives: {
+        color: { brand: '#3b82f6' },
+        spacing: { sm: '0.5rem' },
+      },
+    });
+
+    const doc = JSON.parse(generateTokensJson(tokens.definition, 'app'));
+
+    expect(doc.$schema).toBe('https://www.designtokens.org/schemas/2025.10/format.json');
+    expect(doc.primitives.color.brand['500'].$value).toHaveProperty('colorSpace', 'oklch');
+    expect(doc.primitives.color.brand['500'].$type).toBe('color');
+    expect(doc.primitives.spacing.sm).toEqual({ $value: { value: 0.5, unit: 'rem' }, $type: 'dimension' });
+  });
+
+  it('rewrites var() references into {alias} syntax using the actual definition, not a fixed group registry', () => {
+    const tokens = defineTokens(
+      {
+        primitives: {
+          color: { brand: '#3b82f6' },
+        },
+        semantics: ref => ({
+          surface: { primary: ref('color', 'brand', 500) },
+        }),
+        components: ref => ({
+          // Arbitrary, non-registered component/group name - not in any
+          // fixed SEMANTIC_GROUPS/COMPONENT_GROUPS-style list.
+          totallyCustomWidget: { bgColor: ref('surface', 'primary') },
+        }),
+      },
+      { prefix: 'app' }
+    );
+
+    const doc = JSON.parse(generateTokensJson(tokens.definition, 'app'));
+
+    expect(doc.semantics.surface.primary.$value).toBe('{primitives.color.brand.500}');
+    expect(doc.components.totallyCustomWidget.bgColor.$value).toBe('{semantics.surface.primary}');
+  });
+
+  it('does not throw on values that fall outside the strict W3C primitive types, and passes them through as-is', () => {
+    const tokens = defineTokens(
+      {
+        primitives: {
+          color: { brand: '#3b82f6' },
+        },
+        components: ref => ({
+          widget: {
+            cursor: 'not-allowed',
+            transition: 'opacity 0.3s ease',
+            border: `1px solid ${ref('color', 'brand', 500)}`,
+          },
+        }),
+      },
+      { prefix: 'app' }
+    );
+
+    expect(() => generateTokensJson(tokens.definition, 'app')).not.toThrow();
+
+    const doc = JSON.parse(generateTokensJson(tokens.definition, 'app'));
+    expect(doc.components.widget.cursor.$value).toBe('not-allowed');
+    expect(doc.components.widget.transition.$value).toBe('opacity 0.3s ease');
+    expect(doc.components.widget.border.$value).toBe('1px solid {primitives.color.brand.500}');
+  });
+
+  it('converts cubic-bezier arrays and resolves light/dark tokens per-mode', () => {
+    const tokens = defineTokens({
+      primitives: {
+        color: { surface: { light: '#ffffff', dark: '#000000' } },
+        timingFunction: { easeOut: [0, 0, 0.2, 1] },
+      },
+    });
+
+    const light = JSON.parse(generateTokensJsonForMode(tokens.definition, 'app', 'light'));
+    const dark = JSON.parse(generateTokensJsonForMode(tokens.definition, 'app', 'dark'));
+
+    expect(light.primitives.timingFunction.easeOut).toEqual({ $value: [0, 0, 0.2, 1], $type: 'cubicBezier' });
+    expect(light.primitives.color.surface.$type).toBe('color');
+    expect(light.primitives.color.surface.$value.hex).toBe('#ffffff');
+    expect(dark.primitives.color.surface.$value.hex).toBe('#000000');
+  });
+
+  it('walks arbitrary/custom primitive categories the same as known ones', () => {
+    const tokens = defineTokens({
+      primitives: {
+        color: { brand: '#3b82f6' },
+        // Not part of the fixed PrimitiveTokens category list.
+        opacity: { subtle: '0.5' },
+      } as never,
+    });
+
+    const doc = JSON.parse(generateTokensJson(tokens.definition, 'app'));
+
+    expect(doc.primitives.opacity.subtle.$value).toBe(0.5);
   });
 });

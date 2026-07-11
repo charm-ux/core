@@ -1,6 +1,13 @@
 // src/generator/generateCss.ts
 import { cssVarName, toKebabCase } from '../helpers/cssVar.js';
-import { expandColors, isLightDarkValue, PALETTE_STEPS } from './colorPalette.js';
+import {
+  expandColors,
+  isLightDarkValue,
+  getColorForMode,
+  getContrastColor,
+  getColorScheme,
+  PALETTE_STEPS,
+} from './colorPalette.js';
 import type { GeneratorConfig } from '../types/config.js';
 import type {
   TokenDefinition,
@@ -206,6 +213,130 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
 }
 
 /**
+ * Colors with no meaningful visible value - contrast/scheme calculation
+ * against these is meaningless, so they're skipped.
+ */
+const AUTO_COLOR_VAR_SKIP_LIST = new Set(['transparent']);
+
+/**
+ * Generate CSS custom properties for auto-computed accessible text colors.
+ *
+ * Produces `--{prefix}-color-on-{name}[-{step}]` variables that resolve to
+ * black or white (whichever has better contrast) based on the paired
+ * color's luminance, for use as text/icon color on top of that background.
+ */
+function generateColorOnVars(
+  primitives: PrimitiveTokens,
+  prefix: string,
+  useLightDarkFunction: boolean
+): { base: string[]; light: string[]; dark: string[] } {
+  const base: string[] = [];
+  const light: string[] = [];
+  const dark: string[] = [];
+
+  if (!primitives.color) {
+    return { base, light, dark };
+  }
+
+  function pushOn(name: string, value: string | LightDarkValue): void {
+    if (typeof value === 'string') {
+      base.push(`  ${name}: ${value};`);
+    } else if (useLightDarkFunction) {
+      base.push(`  ${name}: light-dark(${value.light}, ${value.dark});`);
+    } else {
+      light.push(`  ${name}: ${value.light};`);
+      dark.push(`  ${name}: ${value.dark};`);
+    }
+  }
+
+  const colors = expandColors(primitives.color);
+  for (const [colorName, colorValue] of Object.entries(colors)) {
+    if (AUTO_COLOR_VAR_SKIP_LIST.has(colorName)) continue;
+
+    if (isLightDarkValue(colorValue)) {
+      pushOn(cssVarName(prefix, 'color', 'on', colorName), {
+        light: getContrastColor(getColorForMode(colorValue, 'light')),
+        dark: getContrastColor(getColorForMode(colorValue, 'dark')),
+      });
+    } else if (typeof colorValue === 'object' && colorValue !== null) {
+      for (const [step, stepValue] of Object.entries(colorValue)) {
+        if (isLightDarkValue(stepValue)) {
+          pushOn(cssVarName(prefix, 'color', 'on', colorName, step), {
+            light: getContrastColor(getColorForMode(stepValue, 'light')),
+            dark: getContrastColor(getColorForMode(stepValue, 'dark')),
+          });
+        } else {
+          pushOn(cssVarName(prefix, 'color', 'on', colorName, step), getContrastColor(stepValue as string));
+        }
+      }
+    } else {
+      pushOn(cssVarName(prefix, 'color', 'on', colorName), getContrastColor(colorValue as string));
+    }
+  }
+
+  return { base, light, dark };
+}
+
+/**
+ * Generate CSS custom properties for auto-computed color schemes.
+ *
+ * Produces `--{prefix}-color-scheme-{name}[-{step}]` variables set to the
+ * literal keyword `light` or `dark` based on the paired color's luminance,
+ * for use with the CSS `color-scheme` property (e.g. to hint native form
+ * control rendering on a colored surface).
+ *
+ * Unlike other mode-dependent variables, these hold keyword values rather
+ * than `<color>`s, so they can't be wrapped in the `light-dark()` CSS
+ * function (which only resolves `<color>` values) - they're always split
+ * into light/dark blocks regardless of `useLightDarkFunction`.
+ */
+function generateColorSchemeVars(primitives: PrimitiveTokens, prefix: string): { light: string[]; dark: string[] } {
+  const light: string[] = [];
+  const dark: string[] = [];
+
+  if (!primitives.color) {
+    return { light, dark };
+  }
+
+  function pushScheme(name: string, value: string | LightDarkValue): void {
+    if (typeof value === 'string') {
+      light.push(`  ${name}: ${value};`);
+      dark.push(`  ${name}: ${value};`);
+    } else {
+      light.push(`  ${name}: ${value.light};`);
+      dark.push(`  ${name}: ${value.dark};`);
+    }
+  }
+
+  const colors = expandColors(primitives.color);
+  for (const [colorName, colorValue] of Object.entries(colors)) {
+    if (AUTO_COLOR_VAR_SKIP_LIST.has(colorName)) continue;
+
+    if (isLightDarkValue(colorValue)) {
+      pushScheme(cssVarName(prefix, 'color', 'scheme', colorName), {
+        light: getColorScheme(getColorForMode(colorValue, 'light')),
+        dark: getColorScheme(getColorForMode(colorValue, 'dark')),
+      });
+    } else if (typeof colorValue === 'object' && colorValue !== null) {
+      for (const [step, stepValue] of Object.entries(colorValue)) {
+        if (isLightDarkValue(stepValue)) {
+          pushScheme(cssVarName(prefix, 'color', 'scheme', colorName, step), {
+            light: getColorScheme(getColorForMode(stepValue, 'light')),
+            dark: getColorScheme(getColorForMode(stepValue, 'dark')),
+          });
+        } else {
+          pushScheme(cssVarName(prefix, 'color', 'scheme', colorName, step), getColorScheme(stepValue as string));
+        }
+      }
+    } else {
+      pushScheme(cssVarName(prefix, 'color', 'scheme', colorName), getColorScheme(colorValue as string));
+    }
+  }
+
+  return { light, dark };
+}
+
+/**
  * Generate CSS custom properties for semantic/component tokens.
  */
 function generateSemanticVariables(
@@ -323,6 +454,11 @@ export function generateCss(
     });
   }
 
+  // Auto-generate --{prefix}-color-on-* (accessible text color) and
+  // --{prefix}-color-scheme-* (light/dark keyword) variables from primitives.
+  const colorOnVars = generateColorOnVars(definition.primitives, prefix, useLightDarkFunction);
+  const colorSchemeVars = generateColorSchemeVars(definition.primitives, prefix);
+
   // Build CSS output
   if (useLightDarkFunction) {
     lines.push(`${selector} {`);
@@ -330,29 +466,60 @@ export function generateCss(
     lines.push(...primitiveVars);
     lines.push(...semanticVars.base);
     lines.push(...componentVars.base);
+    lines.push(...colorOnVars.base);
+    lines.push(...colorSchemeVars.light);
     lines.push('}');
+
+    // color-scheme vars hold keyword values, not colors, so they can't use
+    // light-dark() - they always need an explicit dark-mode override block.
+    if (colorSchemeVars.dark.length > 0) {
+      lines.push('');
+      if (config.useDataAttributes) {
+        lines.push('[data-theme="dark"] {');
+        lines.push(...colorSchemeVars.dark);
+        lines.push('}');
+      } else {
+        lines.push('@media (prefers-color-scheme: dark) {');
+        lines.push(`  ${selector} {`);
+        lines.push(...colorSchemeVars.dark.map(l => '  ' + l));
+        lines.push('  }');
+        lines.push('}');
+      }
+    }
   } else {
     // Without light-dark(), we need separate selectors for light/dark modes
     lines.push(`${selector} {`);
     lines.push(...primitiveVars);
     lines.push(...semanticVars.base);
     lines.push(...componentVars.base);
+    lines.push(...colorOnVars.base);
     lines.push(...semanticVars.light);
     lines.push(...componentVars.light);
+    lines.push(...colorOnVars.light);
+    lines.push(...colorSchemeVars.light);
     lines.push('}');
 
-    if (semanticVars.dark.length > 0 || componentVars.dark.length > 0) {
+    if (
+      semanticVars.dark.length > 0 ||
+      componentVars.dark.length > 0 ||
+      colorOnVars.dark.length > 0 ||
+      colorSchemeVars.dark.length > 0
+    ) {
       lines.push('');
       if (config.useDataAttributes) {
         lines.push('[data-theme="dark"] {');
         lines.push(...semanticVars.dark);
         lines.push(...componentVars.dark);
+        lines.push(...colorOnVars.dark);
+        lines.push(...colorSchemeVars.dark);
         lines.push('}');
       } else {
         lines.push('@media (prefers-color-scheme: dark) {');
         lines.push(`  ${selector} {`);
         lines.push(...semanticVars.dark.map(l => '  ' + l));
         lines.push(...componentVars.dark.map(l => '  ' + l));
+        lines.push(...colorOnVars.dark.map(l => '  ' + l));
+        lines.push(...colorSchemeVars.dark.map(l => '  ' + l));
         lines.push('  }');
         lines.push('}');
       }

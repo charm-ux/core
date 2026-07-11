@@ -46,6 +46,17 @@ export type TokenHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
   timingFunction: (name: TimingFunctionKeys<P>) => string;
   /** Reference a z-index token */
   zIndex: (name: ZIndexKeys<P>) => string;
+  /**
+   * Reference the auto-computed accessible text color for a color token
+   * (`--{prefix}-color-on-{name}[-{step}]`). Resolves to black or white
+   * depending on the background color's luminance.
+   */
+  colorOn: (name: ColorKeys<P>, step?: string | number) => string;
+  /**
+   * Reference the auto-computed color scheme ('light' | 'dark') for a color
+   * token (`--{prefix}-color-scheme-{name}[-{step}]`), based on its luminance.
+   */
+  colorScheme: (name: ColorKeys<P>, step?: string | number) => string;
   /** Generic ref function for arbitrary token paths */
   ref: TypedRefFn<P>;
 };
@@ -92,6 +103,11 @@ export function createHelpers<P extends PrimitiveTokens>(
     timingFunction: name => makeVar('timing-function', name),
 
     zIndex: name => makeVar('z-index', name),
+
+    colorOn: (name, step) => (step !== undefined ? makeVar('color', 'on', name, step) : makeVar('color', 'on', name)),
+
+    colorScheme: (name, step) =>
+      step !== undefined ? makeVar('color', 'scheme', name, step) : makeVar('color', 'scheme', name),
 
     ref: ((...segments: (string | number)[]) => {
       return makeVar(...segments);

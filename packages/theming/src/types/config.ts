@@ -12,7 +12,6 @@ export type GeneratorConfig = {
   // File names
   themeFileName?: string;
   resetFileName?: string;
-  typesFileName?: string;
   utilitiesFileName?: string;
   tokensJsonFileName?: string;
   tokensMarkdownFileName?: string;
@@ -20,7 +19,6 @@ export type GeneratorConfig = {
   // Feature flags
   skipReset?: boolean;
   skipUtilities?: boolean;
-  skipTypes?: boolean;
   skipTokensJson?: boolean;
   skipTokensMarkdown?: boolean;
 
@@ -42,7 +40,6 @@ export const DEFAULT_CONFIG: Required<
     | 'selector'
     | 'themeFileName'
     | 'resetFileName'
-    | 'typesFileName'
     | 'utilitiesFileName'
     | 'tokensJsonFileName'
     | 'tokensMarkdownFileName'
@@ -54,7 +51,6 @@ export const DEFAULT_CONFIG: Required<
   selector: ':root',
   themeFileName: 'theme.css',
   resetFileName: 'reset.css',
-  typesFileName: 'tokens.d.ts',
   utilitiesFileName: 'utilities.css',
   tokensJsonFileName: 'tokens.json',
   tokensMarkdownFileName: 'TOKENS.md',

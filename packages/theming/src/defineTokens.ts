@@ -1,5 +1,13 @@
 // src/defineTokens.ts
-import { createHelpers, deepMerge, type TokenHelpers, type CreateHelpersOptions } from './helpers/index.js';
+import {
+  createHelpers,
+  createSemanticHelpers,
+  createComponentHelpers,
+  deepMerge,
+  type TokenHelpers,
+  type CreateHelpersOptions,
+} from './helpers/index.js';
+import type { TypedGet } from './helpers/typedGet.js';
 import type {
   PrimitiveTokens,
   SemanticTokens,
@@ -8,6 +16,36 @@ import type {
   ResolvedTokenDefinition,
   RefHelper,
 } from './types/index.js';
+
+/**
+ * Semantic token namespace with a typed `get()` accessor - provides
+ * autocomplete for valid token paths based on the theme's actual semantic
+ * definition, rather than a fixed schema.
+ *
+ * @example
+ * ```ts
+ * tokens.semantic.get('surface', 'primary')                  // -> autocompletes
+ * tokens.semantic.get('formControl', 'focus', 'borderColor') // -> autocompletes
+ * ```
+ */
+export type SemanticNamespace<S extends SemanticTokens = SemanticTokens> = {
+  get: TypedGet<S>;
+};
+
+/**
+ * Component token namespace with a typed `get()` accessor - provides
+ * autocomplete for valid token paths based on the theme's actual component
+ * definitions, rather than a fixed schema.
+ *
+ * @example
+ * ```ts
+ * tokens.component.get('button', 'bgColor')
+ * tokens.component.get('checkbox', 'hover', 'borderColor')
+ * ```
+ */
+export type ComponentNamespace<C extends ComponentTokens = ComponentTokens> = {
+  get: TypedGet<C>;
+};
 
 /**
  * Return value of {@link defineTokens} - the resolved token definition plus
@@ -22,6 +60,10 @@ export type DefinedTokens<
   definition: ResolvedTokenDefinition<P, S, C>;
   /** Type-safe helpers for referencing tokens as CSS variables */
   helpers: TokenHelpers<P>;
+  /** Generic, typed accessor for any semantic token path */
+  semantic: SemanticNamespace<S>;
+  /** Generic, typed accessor for any component token path */
+  component: ComponentNamespace<C>;
 
   /**
    * Extend this theme with primitive overrides, returning a new theme.
@@ -143,6 +185,8 @@ export function defineTokens<
   };
 
   const helpers = createHelpers(input.primitives, resolvedOptions);
+  const semanticHelpers = createSemanticHelpers(resolvedOptions);
+  const componentHelpers = createComponentHelpers(resolvedOptions);
 
   const semantics = input.semantics ? input.semantics(helpers.ref) : undefined;
   const components = input.components ? input.components(helpers.ref) : undefined;
@@ -157,6 +201,8 @@ export function defineTokens<
   return {
     definition,
     helpers,
+    semantic: semanticHelpers as SemanticNamespace<S>,
+    component: componentHelpers as ComponentNamespace<C>,
 
     extendPrimitives: (overrides?: Partial<PrimitiveTokens>): DefinedTokens<P, S, C> => {
       const mergedPrimitives = overrides ? (deepMerge(input.primitives, overrides) as P) : input.primitives;

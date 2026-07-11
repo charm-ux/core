@@ -26,6 +26,9 @@ export { generateReset, generateMinimalReset, type ResetOptions } from './genera
 // Utility class generation
 export { generateUtilities, type UtilityOptions } from './generateUtilities.js';
 
+// DTCG (W3C Design Tokens) JSON generation
+export { generateTokensJson, generateTokensJsonForMode } from './generateTokensJson.js';
+
 // Theme orchestrator
 export {
   generateTheme,

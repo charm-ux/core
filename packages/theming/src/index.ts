@@ -36,6 +36,9 @@ export {
   // Theme orchestrator
   generateTheme,
   generateThemeSync,
+  // DTCG (W3C Design Tokens) JSON generation
+  generateTokensJson,
+  generateTokensJsonForMode,
 } from './generator/index.js';
 export type {
   PaletteStep as GeneratedPaletteStep,
