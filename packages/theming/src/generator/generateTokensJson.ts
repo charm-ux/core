@@ -2,12 +2,12 @@
 import { formatHex, oklch, parse as parseCssColor } from 'culori';
 import { cssVarName } from '../helpers/cssVar.js';
 import { isAutoExpandColor, walkExpandedColors } from './colorPalette.js';
+import { collectTokenTreeLeaves, resolveMaybeFactory, unwrapTokenMetadata } from './internal/tokenUtils.js';
 import { isLightDarkValue, resolveToMode } from './lightDark.js';
 import type {
   ComponentTokens,
   CubicBezierValue,
   PrimitiveTokens,
-  RefHelper,
   ResolvedTokenDefinition,
   SemanticTokens,
   ShadowValue,
@@ -237,18 +237,6 @@ function shadowLayerToDtcg(shadow: ShadowValue, aliasMap: Map<string, string>): 
 }
 
 /** Unwrap a `TokenWithMetadata<T>` wrapper, if present. */
-function unwrapMetadata(node: unknown): {
-  value: unknown;
-  description?: string;
-  deprecated?: string | boolean;
-} {
-  if (typeof node === 'object' && node !== null && !Array.isArray(node) && 'value' in node) {
-    const wrapper = node as { value: unknown; description?: string; deprecated?: string | boolean };
-    return { value: wrapper.value, description: wrapper.description, deprecated: wrapper.deprecated };
-  }
-  return { value: node };
-}
-
 function withMetadata(
   leaf: DtcgLeaf,
   description: string | undefined,
@@ -262,7 +250,7 @@ function withMetadata(
 }
 
 function primitiveLeafToDtcg(raw: unknown, hint: TypeHint, aliasMap: Map<string, string>): DtcgLeaf {
-  const { value, description, deprecated } = unwrapMetadata(raw);
+  const { value, description, deprecated } = unwrapTokenMetadata(raw);
   return withMetadata(valueToDtcg(value, hint, aliasMap), description, deprecated);
 }
 
@@ -369,27 +357,39 @@ function primitivesToDtcg(
  * is no closed registry of expected group names to check against, since
  * semantics/components are user-extensible.
  */
-function semanticNodeToDtcg(node: unknown, propertyName: string, aliasMap: Map<string, string>): unknown {
-  const { value, description, deprecated } = unwrapMetadata(node);
-
-  if (value !== null && typeof value === 'object' && !Array.isArray(value) && !isShadowLayer(value)) {
-    const nested: Record<string, unknown> = {};
-    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
-      nested[key] = semanticNodeToDtcg(child, key, aliasMap);
+function setNestedValue(target: Record<string, unknown>, path: string[], value: unknown): void {
+  let current = target;
+  for (const segment of path.slice(0, -1)) {
+    const existing = current[segment];
+    if (existing && typeof existing === 'object' && !Array.isArray(existing)) {
+      current = existing as Record<string, unknown>;
+    } else {
+      const next: Record<string, unknown> = {};
+      current[segment] = next;
+      current = next;
     }
-    return nested;
   }
-
-  const hint = inferTypeHintFromPropertyName(propertyName);
-  const substituted = typeof value === 'string' ? substituteAliases(value, aliasMap) : value;
-  return withMetadata(valueToDtcg(substituted, hint, aliasMap), description, deprecated);
+  current[path[path.length - 1]] = value;
 }
 
 function semanticGroupToDtcg(group: Record<string, unknown>, aliasMap: Map<string, string>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
-  for (const [name, value] of Object.entries(group)) {
-    result[name] = semanticNodeToDtcg(value, name, aliasMap);
+
+  for (const [name, node] of Object.entries(group)) {
+    const leaves = collectTokenTreeLeaves(node, {
+      path: [name],
+      isLeafValue: value => isShadowLayer(value),
+    });
+
+    for (const leaf of leaves) {
+      const propertyName = leaf.path[leaf.path.length - 1];
+      const hint = inferTypeHintFromPropertyName(propertyName);
+      const substituted = typeof leaf.value === 'string' ? substituteAliases(leaf.value, aliasMap) : leaf.value;
+      const dtcg = withMetadata(valueToDtcg(substituted, hint, aliasMap), leaf.description, leaf.deprecated);
+      setNestedValue(result, leaf.path, dtcg);
+    }
   }
+
   return result;
 }
 
@@ -447,42 +447,15 @@ function collectGroupAliases(
   prefix: string,
   map: Map<string, string>
 ): void {
-  function walk(node: unknown, cssPath: (string | number)[], jsonPath: string[]): void {
-    const { value } = unwrapMetadata(node);
-
-    if (
-      isLightDarkValue(value) ||
-      typeof value !== 'object' ||
-      value === null ||
-      Array.isArray(value) ||
-      isShadowLayer(value)
-    ) {
-      map.set(cssVarName(prefix, ...cssPath), [layerName, ...jsonPath].join('.'));
-      return;
-    }
-
-    for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
-      walk(child, [...cssPath, key], [...jsonPath, key]);
+  for (const [name, node] of Object.entries(group)) {
+    const leaves = collectTokenTreeLeaves(node, {
+      path: [name],
+      isLeafValue: value => isShadowLayer(value),
+    });
+    for (const leaf of leaves) {
+      map.set(cssVarName(prefix, ...leaf.path), [layerName, ...leaf.path].join('.'));
     }
   }
-
-  for (const [name, value] of Object.entries(group)) {
-    walk(value, [name], [name]);
-  }
-}
-
-/** Resolve a semantics/components field that may be a factory function or an already-resolved object. */
-function resolveMaybeFactory<T extends Record<string, unknown>>(
-  input: T | ((ref: RefHelper) => T) | undefined,
-  prefix: string
-): T | undefined {
-  if (input === undefined) return undefined;
-  if (typeof input === 'function') {
-    const ref = ((...segments: (string | number)[]) =>
-      `var(${cssVarName(prefix, ...segments)})`) as unknown as RefHelper;
-    return (input as (ref: RefHelper) => T)(ref);
-  }
-  return input;
 }
 
 function buildAliasMap(
@@ -514,14 +487,8 @@ type AnyDefinition<P extends PrimitiveTokens = PrimitiveTokens> = TokenDefinitio
  * `$type` hints) rather than a closed registry of expected shapes.
  */
 export function generateTokensJson<P extends PrimitiveTokens>(definition: AnyDefinition<P>, prefix: string): string {
-  const semantics = resolveMaybeFactory(
-    definition.semantics as SemanticTokens | ((ref: RefHelper) => SemanticTokens) | undefined,
-    prefix
-  );
-  const components = resolveMaybeFactory(
-    definition.components as ComponentTokens | ((ref: RefHelper) => ComponentTokens) | undefined,
-    prefix
-  );
+  const semantics = resolveMaybeFactory<P, SemanticTokens>(definition.semantics, prefix);
+  const components = resolveMaybeFactory<P, ComponentTokens>(definition.components, prefix);
 
   const aliasMap = buildAliasMap(definition.primitives, semantics, components, prefix);
 
@@ -549,14 +516,8 @@ export function generateTokensJsonForMode<P extends PrimitiveTokens>(
   prefix: string,
   mode: 'light' | 'dark'
 ): string {
-  const semantics = resolveMaybeFactory(
-    definition.semantics as SemanticTokens | ((ref: RefHelper) => SemanticTokens) | undefined,
-    prefix
-  );
-  const components = resolveMaybeFactory(
-    definition.components as ComponentTokens | ((ref: RefHelper) => ComponentTokens) | undefined,
-    prefix
-  );
+  const semantics = resolveMaybeFactory<P, SemanticTokens>(definition.semantics, prefix);
+  const components = resolveMaybeFactory<P, ComponentTokens>(definition.components, prefix);
 
   const aliasMap = buildAliasMap(definition.primitives, semantics, components, prefix);
 

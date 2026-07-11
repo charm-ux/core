@@ -1,6 +1,7 @@
 // src/generator/colorPalette.ts
 import { clampChroma, displayable, formatHex, oklch, parse, wcagContrast } from 'culori';
 import { isLightDarkValue } from './lightDark.js';
+import { unwrapTokenValue } from './internal/tokenUtils.js';
 import type { Oklch } from 'culori';
 import type { ColorDefinitions, LightDarkValue } from '../types/tokens.js';
 
@@ -223,13 +224,6 @@ export function getColorScheme(color: string): 'light' | 'dark' {
 }
 
 /**
- * Check if a value is wrapped with metadata (has a 'value' property).
- */
-function isMetadataWrapped(value: unknown): value is { value: unknown } {
-  return typeof value === 'object' && value !== null && 'value' in value && !('light' in value) && !('dark' in value);
-}
-
-/**
  * Expand all single-color values in a color definitions object to palettes.
  *
  * - Single hex strings are expanded to 11-step palettes
@@ -251,8 +245,7 @@ export function expandColors(colors: ColorDefinitions): ColorDefinitions {
   const result: ColorDefinitions = {};
 
   for (const [name, rawValue] of Object.entries(colors)) {
-    // Unwrap metadata wrapper if present
-    const value = isMetadataWrapped(rawValue) ? rawValue.value : rawValue;
+    const value = unwrapTokenValue(rawValue);
 
     if (isAutoExpandColor(value)) {
       // Single color string - expand to palette

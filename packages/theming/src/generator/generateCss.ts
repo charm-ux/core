@@ -8,8 +8,10 @@ import {
   walkExpandedColors,
 } from './colorPalette.js';
 import { formatShadowValue } from './formatShadow.js';
+import { collectTokenTreeLeaves, resolveMaybeFactory, unwrapTokenValue } from './internal/tokenUtils.js';
 import type { GeneratorConfig } from '../types/config.js';
 import type {
+  ComponentTokens,
   CubicBezierValue,
   LightDarkValue,
   PrimitiveTokens,
@@ -63,8 +65,7 @@ function pushFlatTokenVariables(
 ): void {
   if (!tokenMap) return;
   for (const [name, value] of Object.entries(tokenMap)) {
-    const resolved =
-      typeof value === 'object' && value !== null && 'value' in value ? (value as { value: unknown }).value : value;
+    const resolved = unwrapTokenValue(value);
     lines.push(`  ${cssVarName(prefix, category, name)}: ${formatValue(resolved)};`);
   }
 }
@@ -96,10 +97,7 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
   // Shadows
   if (primitives.shadow) {
     for (const [name, rawValue] of Object.entries(primitives.shadow)) {
-      const value =
-        typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue
-          ? (rawValue as { value: ShadowTokenValue }).value
-          : rawValue;
+      const value = unwrapTokenValue(rawValue) as ShadowTokenValue;
       lines.push(`  ${cssVarName(prefix, 'shadow', name)}: ${formatShadowValue(value)};`);
     }
   }
@@ -110,10 +108,7 @@ function generatePrimitiveVariables(primitives: PrimitiveTokens, prefix: string)
   // Timing functions
   if (primitives.timingFunction) {
     for (const [name, rawValue] of Object.entries(primitives.timingFunction)) {
-      const value =
-        typeof rawValue === 'object' && rawValue !== null && 'value' in rawValue
-          ? (rawValue as { value: CubicBezierValue }).value
-          : rawValue;
+      const value = unwrapTokenValue(rawValue) as CubicBezierValue;
       if (isCubicBezier(value)) {
         lines.push(`  ${cssVarName(prefix, 'timing-function', name)}: ${formatTimingFunction(value)};`);
       }
@@ -255,34 +250,26 @@ function generateSemanticVariables(
   const light: string[] = [];
   const dark: string[] = [];
 
-  function processValue(path: string[], value: unknown): void {
-    const varName = cssVarName(prefix, ...path);
-
-    if (isLightDarkValue(value)) {
-      const ldValue = value as LightDarkValue;
-      if (config.useLightDarkFunction) {
-        base.push(`  ${varName}: light-dark(${ldValue.light}, ${ldValue.dark});`);
-      } else {
-        light.push(`  ${varName}: ${ldValue.light};`);
-        dark.push(`  ${varName}: ${ldValue.dark};`);
-      }
-    } else if (typeof value === 'object' && value !== null) {
-      // Check if it's a metadata wrapper
-      if ('value' in value && !('light' in value) && !('dark' in value)) {
-        processValue(path, (value as { value: unknown }).value);
-      } else {
-        // Nested object
-        for (const [key, nested] of Object.entries(value)) {
-          processValue([...path, toKebabCase(key)], nested);
+  for (const [group, tokens] of Object.entries(semantics)) {
+    const leaves = collectTokenTreeLeaves(tokens, {
+      path: [toKebabCase(group)],
+      mapKey: toKebabCase,
+    });
+    for (const leaf of leaves) {
+      const varName = cssVarName(prefix, ...leaf.path);
+      const value = leaf.value;
+      if (isLightDarkValue(value)) {
+        const ldValue = value as LightDarkValue;
+        if (config.useLightDarkFunction) {
+          base.push(`  ${varName}: light-dark(${ldValue.light}, ${ldValue.dark});`);
+        } else {
+          light.push(`  ${varName}: ${ldValue.light};`);
+          dark.push(`  ${varName}: ${ldValue.dark};`);
         }
+      } else if (value !== undefined) {
+        base.push(`  ${varName}: ${formatValue(value)};`);
       }
-    } else if (value !== undefined) {
-      base.push(`  ${varName}: ${formatValue(value)};`);
     }
-  }
-
-  for (const [component, tokens] of Object.entries(semantics)) {
-    processValue([toKebabCase(component)], tokens);
   }
 
   return { base, light, dark };
@@ -326,39 +313,27 @@ export function generateCss(
   // Generate semantic variables
   let semanticVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
   if (definition.semantics) {
-    // Check if semantics is a factory function or already resolved
-    const resolved =
-      typeof definition.semantics === 'function'
-        ? (() => {
-            const ref = (...segments: (string | number)[]) =>
-              `var(${cssVarName(prefix, ...segments.map(s => (typeof s === 'string' ? toKebabCase(s) : s)))})`;
-            return definition.semantics({ ref } as unknown as Parameters<typeof definition.semantics>[0]);
-          })()
-        : definition.semantics;
-    semanticVars = generateSemanticVariables(resolved, prefix, {
-      ...config,
-      prefix,
-      useLightDarkFunction,
-    });
+    const resolved = resolveMaybeFactory<PrimitiveTokens, SemanticTokens>(definition.semantics, prefix);
+    if (resolved) {
+      semanticVars = generateSemanticVariables(resolved, prefix, {
+        ...config,
+        prefix,
+        useLightDarkFunction,
+      });
+    }
   }
 
   // Generate component variables
   let componentVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
   if (definition.components) {
-    // Check if components is a factory function or already resolved
-    const resolved =
-      typeof definition.components === 'function'
-        ? (() => {
-            const ref = (...segments: (string | number)[]) =>
-              `var(${cssVarName(prefix, ...segments.map(s => (typeof s === 'string' ? toKebabCase(s) : s)))})`;
-            return definition.components({ ref } as unknown as Parameters<typeof definition.components>[0]);
-          })()
-        : definition.components;
-    componentVars = generateSemanticVariables(resolved, prefix, {
-      ...config,
-      prefix,
-      useLightDarkFunction,
-    });
+    const resolved = resolveMaybeFactory<PrimitiveTokens, ComponentTokens>(definition.components, prefix);
+    if (resolved) {
+      componentVars = generateSemanticVariables(resolved, prefix, {
+        ...config,
+        prefix,
+        useLightDarkFunction,
+      });
+    }
   }
 
   // Auto-generate --{prefix}-color-on-* (accessible text color) and

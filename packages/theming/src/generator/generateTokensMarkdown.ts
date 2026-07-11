@@ -1,5 +1,5 @@
 // src/generator/generateTokensMarkdown.ts
-import { cssVar, cssVarName } from '../helpers/cssVar.js';
+import { cssVarName } from '../helpers/cssVar.js';
 import {
   expandColors,
   getColorScheme,
@@ -8,12 +8,17 @@ import {
   walkExpandedColors,
 } from './colorPalette.js';
 import { formatShadowValue } from './formatShadow.js';
+import {
+  collectTokenTreeLeaves,
+  resolveMaybeFactory,
+  type TokenTreeLeaf,
+  unwrapTokenMetadata,
+} from './internal/tokenUtils.js';
 import type {
   ComponentTokens,
   CubicBezierValue,
   LightDarkValue,
   PrimitiveTokens,
-  RefHelper,
   ResolvedTokenDefinition,
   SemanticTokens,
   ShadowTokenValue,
@@ -32,32 +37,6 @@ const AUTO_COLOR_DOC_SKIP_LIST = new Set(['transparent']);
 // Shared helpers
 // ---------------------------------------------------------------------------
 
-/** Unwrap a `TokenWithMetadata<T>` wrapper, if present, returning the inner value plus any metadata. */
-function unwrapMetadata(value: unknown): {
-  value: unknown;
-  description?: string;
-  deprecated?: string | boolean;
-} {
-  if (typeof value === 'object' && value !== null && 'value' in value && !('light' in value && 'dark' in value)) {
-    const wrapper = value as { value: unknown; description?: string; deprecated?: string | boolean };
-    return { value: wrapper.value, description: wrapper.description, deprecated: wrapper.deprecated };
-  }
-  return { value };
-}
-
-/** Resolve a semantics/components field that may be a factory function or an already-resolved object. */
-function resolveGroup<P extends PrimitiveTokens, T extends Record<string, unknown>>(
-  input: T | ((ref: RefHelper<P>) => T) | undefined,
-  prefix: string
-): T | undefined {
-  if (input === undefined) return undefined;
-  if (typeof input === 'function') {
-    const ref = ((...segments: (string | number)[]) => cssVar(...segments, { prefix })) as unknown as RefHelper<P>;
-    return (input as (ref: RefHelper<P>) => T)(ref);
-  }
-  return input;
-}
-
 type TokenLeaf = {
   path: string[];
   value: string | LightDarkValue;
@@ -67,22 +46,12 @@ type TokenLeaf = {
 
 /** Recursively walk a semantic/component token tree into a flat list of leaves. */
 function walkTokenTree(node: unknown, path: string[] = []): TokenLeaf[] {
-  if (node === null || node === undefined) return [];
-
-  const { value, description, deprecated } = unwrapMetadata(node);
-
-  if (typeof value === 'string') {
-    return [{ path, value, description, deprecated }];
-  }
-  if (isLightDarkValue(value)) {
-    return [{ path, value: value as LightDarkValue, description, deprecated }];
-  }
-  if (typeof value === 'object') {
-    return Object.entries(value as Record<string, unknown>).flatMap(([key, child]) =>
-      walkTokenTree(child, [...path, key])
-    );
-  }
-  return [{ path, value: String(value), description, deprecated }];
+  const leaves = collectTokenTreeLeaves(node, { path });
+  return leaves.map((leaf: TokenTreeLeaf) => {
+    if (typeof leaf.value === 'string') return { ...leaf, value: leaf.value };
+    if (isLightDarkValue(leaf.value)) return { ...leaf, value: leaf.value };
+    return { ...leaf, value: String(leaf.value) };
+  });
 }
 
 /** Render a leaf's value for a markdown table cell. */
@@ -588,7 +557,7 @@ function buildDesignMdTypography(
     if (!tokenMap || !mapping) continue;
     const family: Record<string, string> = {};
     for (const [name, raw] of Object.entries(tokenMap)) {
-      const { value } = unwrapMetadata(raw);
+      const { value } = unwrapTokenMetadata(raw);
       family[name] = String(value);
       resolutionMap.set(
         cssVarName(prefix, mapping.category, name),
@@ -612,7 +581,7 @@ function buildDesignMdFlatScale(
   if (!tokenMap) return {};
   const result: Record<string, string> = {};
   for (const [name, raw] of Object.entries(tokenMap)) {
-    const { value } = unwrapMetadata(raw);
+    const { value } = unwrapTokenMetadata(raw);
     result[name] = String(value);
     resolutionMap.set(cssVarName(prefix, category, name), `{primitive.${yamlKey}.${name}}`);
   }
@@ -634,7 +603,7 @@ function buildDesignMdShadows(
   if (!shadows) return {};
   const result: Record<string, string> = {};
   for (const [name, raw] of Object.entries(shadows)) {
-    const { value } = unwrapMetadata(raw);
+    const { value } = unwrapTokenMetadata(raw);
     const rendered = formatShadowValue(value as ShadowTokenValue);
     result[name] = rendered;
     resolutionMap.set(cssVarName(prefix, 'shadow', name), `{primitive.shadow.${name}}`);
@@ -651,7 +620,7 @@ function buildDesignMdTimingFunctions(
   if (!timingFunctions) return {};
   const result: Record<string, string> = {};
   for (const [name, raw] of Object.entries(timingFunctions)) {
-    const { value } = unwrapMetadata(raw);
+    const { value } = unwrapTokenMetadata(raw);
     const rendered = isCubicBezier(value) ? `cubic-bezier(${value.join(', ')})` : String(value);
     result[name] = rendered;
     resolutionMap.set(cssVarName(prefix, 'timing-function', name), `{primitive.timingFunction.${name}}`);
@@ -1066,8 +1035,8 @@ export function generateTokensMarkdown<
   S extends SemanticTokens = SemanticTokens,
   C extends ComponentTokens = ComponentTokens,
 >(definition: TokenDefinition<P, S, C> | ResolvedTokenDefinition<P, S, C>, prefix: string): string {
-  const semantics = resolveGroup<P, S>(definition.semantics, prefix);
-  const components = resolveGroup<P, C>(definition.components, prefix);
+  const semantics = resolveMaybeFactory<P, S>(definition.semantics, prefix);
+  const components = resolveMaybeFactory<P, C>(definition.components, prefix);
 
   const lines: string[] = [
     ...renderDesignMdFrontmatter(definition.primitives, semantics, components, prefix),

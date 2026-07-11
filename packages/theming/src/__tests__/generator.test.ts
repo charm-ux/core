@@ -7,8 +7,10 @@ import {
   isLightDarkValue,
   PALETTE_STEPS,
 } from '../generator/colorPalette.js';
+import { generateCss } from '../generator/generateCss.js';
 import { generateThemeSync } from '../generator/generateTheme.js';
 import { generateTokensJson, generateTokensJsonForMode } from '../generator/generateTokensJson.js';
+import { generateTokensMarkdown } from '../generator/generateTokensMarkdown.js';
 import { defineTokens } from '../defineTokens.js';
 
 describe('colorPalette', () => {
@@ -380,5 +382,48 @@ describe('generateTokensJson (DTCG format)', () => {
     const doc = JSON.parse(generateTokensJson(tokens.definition, 'app'));
 
     expect(doc.primitives.opacity.subtle.$value).toBe(0.5);
+  });
+
+  it('keeps semantic/component leaf paths aligned across css, json, and markdown outputs', () => {
+    const tokens = defineTokens(
+      {
+        primitives: {
+          color: { brand: '#3b82f6' },
+        },
+        semantics: ref => ({
+          body: {
+            bgColor: { value: ref('color', 'brand', 500), description: 'Body background' },
+            text: { light: '#111111', dark: '#f5f5f5' },
+          },
+        }),
+        components: ref => ({
+          card: {
+            surfaceColor: ref('body', 'bgColor'),
+            header: {
+              textColor: ref('body', 'text'),
+            },
+          },
+        }),
+      },
+      { prefix: 'app' }
+    );
+
+    const css = generateCss(tokens.definition, { prefix: 'app' });
+    expect(css).toContain('--app-body-bg-color');
+    expect(css).toContain('--app-body-text');
+    expect(css).toContain('--app-card-surface-color');
+    expect(css).toContain('--app-card-header-text-color');
+
+    const json = JSON.parse(generateTokensJson(tokens.definition, 'app'));
+    expect(json.semantics.body.bgColor.$value).toBe('{primitives.color.brand.500}');
+    expect(json.semantics.body.bgColor.$description).toBe('Body background');
+    expect(json.semantics.body.text.$value).toEqual({ light: '#111111', dark: '#f5f5f5' });
+    expect(json.components.card.surfaceColor.$value).toBe('{semantics.body.bgColor}');
+    expect(json.components.card.header.textColor.$value).toBe('{semantics.body.text}');
+
+    const markdown = generateTokensMarkdown(tokens.definition, 'app');
+    expect(markdown).toContain('`body.bgColor`');
+    expect(markdown).toContain('`card.header.textColor`');
+    expect(markdown).toContain('Body background');
   });
 });
