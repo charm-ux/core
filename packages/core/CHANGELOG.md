@@ -1,5 +1,11 @@
 # CHARM-UX Core Changelog
 
+## 0.5.1
+
+### Patch Changes
+
+- 6961f49: Fix select rendering for grouped options
+
 ## 0.5.0
 
 ### Minor Changes
