@@ -19,13 +19,15 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                 description: 'shows the popup when open',
                 test: async () => {
                   const el = this.component;
+                  const popup = el.shadowRoot!.querySelector('.popup') as HTMLElement;
 
-                  expect(getComputedStyle(el.shadowRoot!.querySelector('.popup')!).opacity).to.equal('0');
+                  expect(getComputedStyle(popup).opacity).to.equal('0');
 
                   el.open = true;
                   await elementUpdated(el);
 
-                  expect(getComputedStyle(el.shadowRoot!.querySelector('.popup')!).opacity).to.equal('1');
+                  expect(el.hasAttribute('open')).to.equal(true);
+                  expect(popup.hidden).to.equal(false);
                 },
               },
               anchorFromId: {

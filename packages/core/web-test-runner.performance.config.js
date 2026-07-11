@@ -1,19 +1,16 @@
-import { playwrightLauncher } from '@web/test-runner-playwright';
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { defaultReporter } from '@web/test-runner';
 import { bundlePerformancePlugin, performanceReporter, renderPerformancePlugin } from 'web-test-runner-performance';
+import { resolvePlaywrightLaunchers } from './test/playwrightLaunchers.js';
+
+const browsers = resolvePlaywrightLaunchers().slice(0, 1);
 
 export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   concurrency: 1,
   concurrentBrowsers: 1,
   files: ['./src/**/*.performance.ts'],
   nodeResolve: true,
-  browsers: [
-    playwrightLauncher({
-      product: 'chromium',
-      launchOptions: { headless: true },
-    }),
-  ], // !!process.env.GITHUB_ACTION
+  browsers,
   plugins: [
     esbuildPlugin({ ts: true, json: true, target: 'es2020' }),
     renderPerformancePlugin(),

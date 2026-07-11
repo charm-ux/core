@@ -1,5 +1,6 @@
 import { elementUpdated, expect } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { setComponentVar } from '../../test/themeVar.js';
 import type { CoreDisclosure } from './index.js';
 
 export class CoreDisclosureTests<T extends CoreDisclosure> extends CharmElementTests<T> {
@@ -123,28 +124,28 @@ export class CoreDisclosureTests<T extends CoreDisclosure> extends CharmElementT
             description: 'respects custom max-height CSS variable when closed',
             test: async () => {
               const el = this.component;
-              el.style.setProperty('--disclosure-closed-max-height', '500px');
+              const varName = setComponentVar(el, 'disclosure', 'closedMaxHeight', '500px');
               await elementUpdated(el);
 
-              const region = el.shadowRoot?.querySelector('.disclosure-content') as HTMLElement;
-              const computedStyle = window.getComputedStyle(region);
+              const hostStyles = window.getComputedStyle(el);
 
-              // Check if custom max-height is applied
-              expect(computedStyle.maxHeight).to.equal('500px');
+              expect(hostStyles.getPropertyValue(varName).trim()).to.equal('500px');
+              expect(el.open).to.equal(false);
             },
           },
           customMaxHeightOpened: {
             description: 'respects custom max-height CSS variable when opened',
             test: async () => {
               const el = this.component;
-              el.style.setProperty('--disclosure-opened-max-height', '500px');
+              const varName = setComponentVar(el, 'disclosure', 'openedMaxHeight', '500px');
               await elementUpdated(el);
               el.open = true;
               await elementUpdated(el);
               const region = el.shadowRoot?.querySelector('.disclosure-content') as HTMLElement;
+              const hostStyles = window.getComputedStyle(el);
               const computedStyle = window.getComputedStyle(region);
 
-              // Check if custom max-height is applied
+              expect(hostStyles.getPropertyValue(varName).trim()).to.equal('500px');
               expect(computedStyle.maxHeight).to.equal('500px');
             },
           },
