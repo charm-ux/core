@@ -443,14 +443,24 @@ export class CorePopup extends CharmDismissibleElement {
 
   protected override onOpenChange(open: boolean): void {
     super.onOpenChange(open);
-    if (open) {
-      this.popup.hidden = false;
-      this.start();
+    if (this.popup) {
+      if (open) {
+        this.popup.hidden = false;
+        this.start();
+      } else {
+        this.stop();
+      }
+
+      if (!this.transition) {
+        this.popup.hidden = !open;
+      }
     } else {
-      this.stop();
-    }
-    if (!this.transition) {
-      this.popup.hidden = !open;
+      // If internal popup element isn't available yet, start/stop positioner safely without touching DOM nodes.
+      if (open) {
+        this.start();
+      } else {
+        this.stop();
+      }
     }
   }
 

@@ -262,7 +262,9 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (open) {
       // after a render when popup open state is set we can transition in
       // this generates a warning in Lit, but is necessary because transitions will not work until popup is rendered
-      if (this.body) this.body.hidden = false;
+      if (this.body) {
+        this.body.hidden = false;
+      }
       if (this.popup) this.popup.open = true;
       // Set visible to true to start the transition
       this.visible = true;
@@ -270,6 +272,8 @@ export class CoreTooltip extends CharmDismissibleElement {
       this.announceTooltip();
     } else {
       // trigger transition; hide side effects are applied when transition settles
+      // eslint-disable-next-line no-console
+      console.debug('[tooltip] hiding: setting visible = false and clearing announceContent');
       this.visible = false;
       this.announceContent = '';
       // fixed placement tooltips sometimes have sticky inner popups or FOUC issues if not closed immediately
