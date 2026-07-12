@@ -269,7 +269,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       // this activates popup, this.visible transition state will happen after render
       this.announceTooltip();
     } else {
-      // trigger transition, this.open state will be changed in `handleTransitionEnd` to hide popup after complete
+      // trigger transition; hide side effects are applied when transition settles
       this.visible = false;
       this.announceContent = '';
       // fixed placement tooltips sometimes have sticky inner popups or FOUC issues if not closed immediately
@@ -287,21 +287,15 @@ export class CoreTooltip extends CharmDismissibleElement {
     }
   }
 
-  /** Handles the transition end */
-  protected override handleTransitionEnd(e: TransitionEvent) {
-    if (e.target !== e.currentTarget) return;
+  protected override settleTransition(waitId: number) {
+    if (waitId !== this.transitionWaitId || !this.pendingAfterEvent) return;
 
-    if (this.visible) {
-      this.emitScopedEvent('after-show');
-    } else {
+    if (this.pendingAfterEvent === 'after-hide') {
       this.body.hidden = true;
       this.popup.open = false;
-      // once animation is finished, deactivate popup
-      // Hide transition completed - now we can apply hidden
-      this.updateComplete.then(() => {
-        this.emitScopedEvent('after-hide');
-      });
     }
+
+    super.settleTransition(waitId);
   }
 
   /** Handles popup options changing */

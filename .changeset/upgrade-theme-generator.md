@@ -90,3 +90,12 @@ const { css, cssReset, cssUtilities } = project.generateTheme();
 - `project.theme` - Token helpers (primitive, semantic, component)
 - `project.generateTheme()` - Generate theme CSS
 - `project.css`, `project.cssReset`, `project.cssUtilities` - Quick access to generated CSS
+
+### Additional fixes included in this release
+
+- Improved `CharmDismissibleElement` transition settling:
+  - transition timing is derived from matching CSS custom properties (including prefixed tokens)
+  - `*-after-show` / `*-after-hide` now settle via a guarded transition-end + timeout fallback path
+- Updated dismissible consumers (`alert`, `dialog`) to rely on generic transition settle behavior rather than a specific transitioned property name.
+- Updated `tooltip` to use base dismissible transition settling while keeping tooltip-specific hide side effects (`body.hidden`, `popup.open = false`) in `settleTransition`.
+- Stabilized disclosure max-height coverage in tests for cross-browser transition timing.

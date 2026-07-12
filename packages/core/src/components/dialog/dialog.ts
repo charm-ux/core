@@ -226,7 +226,7 @@ export class CoreDialog extends CharmDismissibleElement {
   protected override handleTransitionEnd(e: TransitionEvent) {
     super.handleTransitionEnd(e);
     if (e.target !== e.currentTarget) return;
-    if (!this.open && e.propertyName === this.transitionProperty) {
+    if (!this.open) {
       this.dialog?.close();
     }
   }

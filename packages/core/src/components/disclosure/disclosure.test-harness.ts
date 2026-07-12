@@ -1,4 +1,4 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { setComponentVar } from '../../test/themeVar.js';
 import type { CoreDisclosure } from './index.js';
@@ -137,10 +137,12 @@ export class CoreDisclosureTests<T extends CoreDisclosure> extends CharmElementT
             description: 'respects custom max-height CSS variable when opened',
             test: async () => {
               const el = this.component;
+              el.innerHTML = 'Disclosure content';
               const varName = setComponentVar(el, 'disclosure', 'openedMaxHeight', '500px');
               await elementUpdated(el);
               el.open = true;
               await elementUpdated(el);
+              await aTimeout(350);
               const region = el.shadowRoot?.querySelector('.disclosure-content') as HTMLElement;
               const hostStyles = window.getComputedStyle(el);
               const computedStyle = window.getComputedStyle(region);

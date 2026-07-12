@@ -123,7 +123,7 @@ export class CoreAlert extends CharmDismissibleElement {
    */
   protected override handleTransitionEnd(e: TransitionEvent) {
     super.handleTransitionEnd(e);
-    if (e.target !== e.currentTarget || e.propertyName !== this.transitionProperty) return;
+    if (e.target !== e.currentTarget) return;
     if (!this.open) {
       this.hidden = true;
     }
