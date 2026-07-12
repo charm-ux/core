@@ -257,7 +257,7 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Handles internal logic for when the open attribute changes */
   protected override onOpenChange(open: boolean) {
-    if (!this.hasUpdated || (open && this.disabled)) return;
+    if (open && this.disabled) return;
 
     if (open) {
       // after a render when popup open state is set we can transition in
