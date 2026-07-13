@@ -370,7 +370,14 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Handles the change of the default slot which contains the anchor of the tooltip. */
   protected handleSlotChange(e: Event) {
     // Don't reset the anchor element if it was already set by the `anchor` property.
-    if (!this.anchor) this.anchorEl = e.target as HTMLSlotElement as HTMLElement;
+    if (this.anchor) return;
+
+    const slot = e.target as HTMLSlotElement | null;
+    if (!slot) return;
+
+    // Use the first assigned element as the anchor (slots use display:contents so the slot itself can't be positioned)
+    const assigned = slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
+    this.anchorEl = assigned;
   }
 
   /** Generates the template for the tooltip */
