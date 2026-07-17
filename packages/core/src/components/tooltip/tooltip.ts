@@ -260,40 +260,16 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (open && this.disabled) return;
 
     if (open) {
-      // If internals are not yet rendered, defer setting body/popup until after updateComplete
-      if (!this.body || !this.popup) {
-        // eslint-disable-next-line no-console
-        console.debug('[tooltip] deferring open until updateComplete');
-        this.updateComplete.then(() => {
-          // Guard again in case it was disabled or closed in the meantime
-          if (!this.open || this.disabled) return;
-          if (this.body) this.body.hidden = false;
-          if (this.popup) {
-            this.popup.open = true;
-            // reposition after opening
-            try {
-              this.popup.reposition();
-            } catch (e) {
-              // ignore reposition errors in tests
-            }
-          }
-          this.visible = true;
-          this.announceTooltip();
-        });
-      } else {
-        // after a render when popup open state is set we can transition in
-        // this generates a warning in Lit, but is necessary because transitions will not work until popup is rendered
-        this.body.hidden = false;
-        this.popup.open = true;
-        // Set visible to true to start the transition
-        this.visible = true;
-        // this activates popup, this.visible transition state will happen after render
-        this.announceTooltip();
-      }
+      // after a render when popup open state is set we can transition in
+      // this generates a warning in Lit, but is necessary because transitions will not work until popup is rendered
+      if (this.body) this.body.hidden = false;
+      if (this.popup) this.popup.open = true;
+      // Set visible to true to start the transition
+      this.visible = true;
+      // this activates popup, this.visible transition state will happen after render
+      this.announceTooltip();
     } else {
       // trigger transition; hide side effects are applied when transition settles
-      // eslint-disable-next-line no-console
-      console.debug('[tooltip] hiding: setting visible = false and clearing announceContent');
       this.visible = false;
       this.announceContent = '';
       // fixed placement tooltips sometimes have sticky inner popups or FOUC issues if not closed immediately
