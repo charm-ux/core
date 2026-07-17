@@ -721,6 +721,12 @@ const charmTokensBase = defineTokens(
         },
       },
 
+      // Overflow
+      overflow: {
+        collapsingContainerDisplay: 'inline-block',
+        itemGap: ref('spacing', 'sm'),
+      },
+
       // Popup
       popup: {
         arrowColor: ref('surface', 'primary'),
