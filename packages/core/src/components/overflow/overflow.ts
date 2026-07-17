@@ -31,8 +31,8 @@ export interface OverflowMenuItem {
  * @slot start - Start slot that can be used for static content.
  * @slot menu - Slot that can be used to provide a custom menu for overflowed items.
  *
- * @cssproperty --overflow-item-gap - Sets the gap between items in the overflow container.
- * @cssproperty --overflow-collapsing-container-display - Sets the display property of the collapsing container.
+ * @cssproperty --charm-overflow-item-gap - Sets the gap between items in the overflow container.
+ * @cssproperty --charm-overflow-collapsing-container-display - Sets the display property of the collapsing container.
  *
  * @csspart overflow-base - The component's base wrapper.
  * @csspart overflow-content - The container for the default slot.
