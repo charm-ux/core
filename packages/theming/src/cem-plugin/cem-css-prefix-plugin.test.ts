@@ -1,10 +1,10 @@
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest';
 
 import {
   ANY_PREFIX,
-  DEFAULT_PREFIX,
   applyThemePrefix,
   cssPrefixPlugin,
+  DEFAULT_PREFIX,
   rewriteCssVarName,
 } from './cem-css-prefix-plugin.js';
 
