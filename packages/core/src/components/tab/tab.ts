@@ -18,33 +18,33 @@ import type { CoreTabPanel } from '../tab-panel/tab-panel.js';
  *
  * @csspart tab-base - The component's internal wrapper.
  *
- * @cssproperty --tab-active-bg-color - The background color of the tab when active.
- * @cssproperty --tab-active-border-color - The border color of the tab when active.
- * @cssproperty --tab-active-fg-color - The foreground color of the tab when active.
- * @cssproperty --tab-active-font-weight - The font weight of the tab when active.
- * @cssproperty --tab-bg-color - The background color of the tab.
- * @cssproperty --tab-border-color - The border color of the tab.
- * @cssproperty --tab-border-radius - The border radius of the tab.
- * @cssproperty --tab-border-width - The width of the tab's border.
- * @cssproperty --tab-border-style - The style of the tab's border.
- * @cssproperty --tab-disabled-bg-color - The background color of the tab when disabled.
- * @cssproperty --tab-disabled-border-color - The border color of the tab when disabled.
- * @cssproperty --tab-disabled-fg-color - The foreground color of the tab when disabled.
- * @cssproperty --tab-fg-color - The foreground color of the tab.
- * @cssproperty --tab-focus-bg-color - The background color of the tab when focused.
- * @cssproperty --tab-focus-border-color - The border color of the tab when focused.
- * @cssproperty --tab-focus-fg-color - The foreground color of the tab when focused.
- * @cssproperty --tab-font-size - The font size of the tab.
- * @cssproperty --tab-font-weight - The font weight of the tab.
- * @cssproperty --tab-gap - The gap between elements inside the tab.
- * @cssproperty --tab-hover-bg-color - The background color of the tab when hovered.
- * @cssproperty --tab-hover-border-color - The border color of the tab when hovered.
- * @cssproperty --tab-hover-fg-color - The foreground color of the tab when hovered.
- * @cssproperty --tab-icon-gap - The gap between an icon and text in the tab.
- * @cssproperty --tab-icon-size - The size of icons in the tab.
- * @cssproperty --tab-padding-x - The component's inline padding.
- * @cssproperty --tab-padding-y - The component's block padding.
- * @cssproperty --tab-transition - The transition effect for tab state changes.
+ * @cssproperty --charm-tab-active-bg-color - The background color of the tab when active.
+ * @cssproperty --charm-tab-active-border-color - The border color of the tab when active.
+ * @cssproperty --charm-tab-active-fg-color - The foreground color of the tab when active.
+ * @cssproperty --charm-tab-active-font-weight - The font weight of the tab when active.
+ * @cssproperty --charm-tab-bg-color - The background color of the tab.
+ * @cssproperty --charm-tab-border-color - The border color of the tab.
+ * @cssproperty --charm-tab-border-radius - The border radius of the tab.
+ * @cssproperty --charm-tab-border-width - The width of the tab's border.
+ * @cssproperty --charm-tab-border-style - The style of the tab's border.
+ * @cssproperty --charm-tab-disabled-bg-color - The background color of the tab when disabled.
+ * @cssproperty --charm-tab-disabled-border-color - The border color of the tab when disabled.
+ * @cssproperty --charm-tab-disabled-fg-color - The foreground color of the tab when disabled.
+ * @cssproperty --charm-tab-fg-color - The foreground color of the tab.
+ * @cssproperty --charm-tab-focus-bg-color - The background color of the tab when focused.
+ * @cssproperty --charm-tab-focus-border-color - The border color of the tab when focused.
+ * @cssproperty --charm-tab-focus-fg-color - The foreground color of the tab when focused.
+ * @cssproperty --charm-tab-font-size - The font size of the tab.
+ * @cssproperty --charm-tab-font-weight - The font weight of the tab.
+ * @cssproperty --charm-tab-gap - The gap between elements inside the tab.
+ * @cssproperty --charm-tab-hover-bg-color - The background color of the tab when hovered.
+ * @cssproperty --charm-tab-hover-border-color - The border color of the tab when hovered.
+ * @cssproperty --charm-tab-hover-fg-color - The foreground color of the tab when hovered.
+ * @cssproperty --charm-tab-icon-gap - The gap between an icon and text in the tab.
+ * @cssproperty --charm-tab-icon-size - The size of icons in the tab.
+ * @cssproperty --charm-tab-padding-x - The component's inline padding.
+ * @cssproperty --charm-tab-padding-y - The component's block padding.
+ * @cssproperty --charm-tab-transition - The transition effect for tab state changes.
  **/
 export class CoreTab extends CharmElement {
   public static override styles = [...super.styles, styles];

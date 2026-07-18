@@ -32,9 +32,9 @@ type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
  * @csspart start - Container for the start slot content.
  * @csspart end - Container for the end slot content.
  *
- * @cssproperty --select-icon-size - Determines the chevron size.
- * @cssproperty --select-option-bg-color - Determines the background color of the options.
- * @cssproperty --select-option-fg-color - Determines the foreground color of the options.
+ * @cssproperty --charm-select-icon-size - Determines the chevron size.
+ * @cssproperty --charm-select-option-bg-color - Determines the background color of the options.
+ * @cssproperty --charm-select-option-fg-color - Determines the foreground color of the options.
  *
  * @dependency icon
  **/

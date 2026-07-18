@@ -43,15 +43,15 @@ export type InputTypes =
  * @csspart input-label - The label.
  * @csspart start - Container for start slot.
  *
- * @cssproperty --input-range-active-bg-color - The background color of the progress track and thumb when the input is active and the input type is `range`.
- * @cssproperty --input-range-active-fg-color - The foreground color of the progress track and thumb when the input is active and the input type is `range`.
- * @cssproperty --input-range-disabled-bg-color - The background color of the progress track and thumb when the input is disabled and the input type is `range`.
- * @cssproperty --input-range-disabled-fg-color - The foreground color of the progress track and thumb when the input is disabled and the input type is `range`.
- * @cssproperty --input-range-hover-bg-color - The background color of the progress track and thumb when the input is hovered and the input type is `range`.
- * @cssproperty --input-range-hover-fg-color - The foreground color of the progress track and thumb when the input is hovered and the input type is `range`.
- * @cssproperty --input-range-progress-color - The color of the slider's track that represents the selected range.
- * @cssproperty --input-range-thumb-color - The color of the slider's thumb.
- * @cssproperty --input-range-track-color - The color of the slider's track.
+ * @cssproperty --charm-input-range-active-bg-color - The background color of the progress track and thumb when the input is active and the input type is `range`.
+ * @cssproperty --charm-input-range-active-fg-color - The foreground color of the progress track and thumb when the input is active and the input type is `range`.
+ * @cssproperty --charm-input-range-disabled-bg-color - The background color of the progress track and thumb when the input is disabled and the input type is `range`.
+ * @cssproperty --charm-input-range-disabled-fg-color - The foreground color of the progress track and thumb when the input is disabled and the input type is `range`.
+ * @cssproperty --charm-input-range-hover-bg-color - The background color of the progress track and thumb when the input is hovered and the input type is `range`.
+ * @cssproperty --charm-input-range-hover-fg-color - The foreground color of the progress track and thumb when the input is hovered and the input type is `range`.
+ * @cssproperty --charm-input-range-progress-color - The color of the slider's track that represents the selected range.
+ * @cssproperty --charm-input-range-thumb-color - The color of the slider's thumb.
+ * @cssproperty --charm-input-range-track-color - The color of the slider's track.
  *
  * @dependency icon
  **/

@@ -43,39 +43,39 @@ export interface PushPaneRequestCloseEvent {
  * @csspart push-pane-actions - The actions container in the footer.
  * @csspart push-pane-heading - The heading of the push pane.
  *
- * @cssproperty --push-pane-bg-color - The background color of the push pane.
- * @cssproperty --push-pane-body-margin-top - sets margin top for pane body.
- * @cssproperty --push-pane-body-margin-bottom - sets margin bottom for pane body.
- * @cssproperty --push-pane-body-margin-inline - sets margin inline for pane body.
- * @cssproperty --push-pane-body-padding-x - sets block padding for pane body.
- * @cssproperty --push-pane-body-padding-y - sets inline padding for pane body.
- * @cssproperty --push-pane-close-button-active-bg-color - sets close button active background color.
- * @cssproperty --push-pane-close-button-active-border-color - sets close button active border color.
- * @cssproperty --push-pane-close-button-active-border-width - sets close button active border width.
- * @cssproperty --push-pane-close-button-bg-color - sets close button background color.
- * @cssproperty --push-pane-close-button-border-color - sets close button border color.
- * @cssproperty --push-pane-close-button-border-radius - sets close button border radius.
- * @cssproperty --push-pane-close-button-border-width - sets close button border width.
- * @cssproperty --push-pane-close-button-fg-color - sets close button foreground (text) color.
- * @cssproperty --push-pane-close-button-focus-bg-color - sets close button focus background color.
- * @cssproperty --push-pane-close-button-focus-border-color - sets close button focus border color.
- * @cssproperty --push-pane-close-button-focus-border-width - sets close button focus border width.
- * @cssproperty --push-pane-close-button-hover-bg-color - sets close button hover background color.
- * @cssproperty --push-pane-close-button-hover-border-color - sets close button hover border color.
- * @cssproperty --push-pane-close-button-hover-border-width - sets close button hover border width.
- * @cssproperty --push-pane-close-button-padding - sets close button padding.
- * @cssproperty --push-pane-divider-color - sets the color of the divider.
- * @cssproperty --push-pane-fg-color - The foreground color of the push pane.
- * @cssproperty --push-pane-footer-button-gap - The gap between buttons in the footer.
- * @cssproperty --push-pane-footer-padding-x - sets block padding for pane footer.
- * @cssproperty --push-pane-footer-padding-y - sets inline padding for pane footer.
- * @cssproperty --push-pane-header-padding-x - sets block padding for pane header.
- * @cssproperty --push-pane-header-padding-y - sets inline padding for pane header.
- * @cssproperty --push-pane-padding-x - sets block padding for pane component.
- * @cssproperty --push-pane-padding-y - sets inline padding for pane component.
- * @cssproperty --push-pane-size - sets the width of the pane.
- * @cssproperty --push-pane-toolbar-button-gap - The gap between buttons in the toolbar.
- * @cssproperty --push-pane-transition - sets transition for pane.
+ * @cssproperty --charm-push-pane-bg-color - The background color of the push pane.
+ * @cssproperty --charm-push-pane-body-margin-top - sets margin top for pane body.
+ * @cssproperty --charm-push-pane-body-margin-bottom - sets margin bottom for pane body.
+ * @cssproperty --charm-push-pane-body-margin-inline - sets margin inline for pane body.
+ * @cssproperty --charm-push-pane-body-padding-x - sets block padding for pane body.
+ * @cssproperty --charm-push-pane-body-padding-y - sets inline padding for pane body.
+ * @cssproperty --charm-push-pane-close-button-active-bg-color - sets close button active background color.
+ * @cssproperty --charm-push-pane-close-button-active-border-color - sets close button active border color.
+ * @cssproperty --charm-push-pane-close-button-active-border-width - sets close button active border width.
+ * @cssproperty --charm-push-pane-close-button-bg-color - sets close button background color.
+ * @cssproperty --charm-push-pane-close-button-border-color - sets close button border color.
+ * @cssproperty --charm-push-pane-close-button-border-radius - sets close button border radius.
+ * @cssproperty --charm-push-pane-close-button-border-width - sets close button border width.
+ * @cssproperty --charm-push-pane-close-button-fg-color - sets close button foreground (text) color.
+ * @cssproperty --charm-push-pane-close-button-focus-bg-color - sets close button focus background color.
+ * @cssproperty --charm-push-pane-close-button-focus-border-color - sets close button focus border color.
+ * @cssproperty --charm-push-pane-close-button-focus-border-width - sets close button focus border width.
+ * @cssproperty --charm-push-pane-close-button-hover-bg-color - sets close button hover background color.
+ * @cssproperty --charm-push-pane-close-button-hover-border-color - sets close button hover border color.
+ * @cssproperty --charm-push-pane-close-button-hover-border-width - sets close button hover border width.
+ * @cssproperty --charm-push-pane-close-button-padding - sets close button padding.
+ * @cssproperty --charm-push-pane-divider-color - sets the color of the divider.
+ * @cssproperty --charm-push-pane-fg-color - The foreground color of the push pane.
+ * @cssproperty --charm-push-pane-footer-button-gap - The gap between buttons in the footer.
+ * @cssproperty --charm-push-pane-footer-padding-x - sets block padding for pane footer.
+ * @cssproperty --charm-push-pane-footer-padding-y - sets inline padding for pane footer.
+ * @cssproperty --charm-push-pane-header-padding-x - sets block padding for pane header.
+ * @cssproperty --charm-push-pane-header-padding-y - sets inline padding for pane header.
+ * @cssproperty --charm-push-pane-padding-x - sets block padding for pane component.
+ * @cssproperty --charm-push-pane-padding-y - sets inline padding for pane component.
+ * @cssproperty --charm-push-pane-size - sets the width of the pane.
+ * @cssproperty --charm-push-pane-toolbar-button-gap - The gap between buttons in the toolbar.
+ * @cssproperty --charm-push-pane-transition - sets transition for pane.
  *
  **/
 export class CorePushPane extends CharmDismissibleElement {

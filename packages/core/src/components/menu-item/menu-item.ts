@@ -38,32 +38,32 @@ import styles from './menu-item.styles.js';
  * @csspart menu-item-radio-indicator - The control's radio indicator.
  * @csspart menu-item-submenu-item-icon-expanded - The control's submenu icon when expanded.
  *
- * @cssproperty --menu-item-active-bg-color - Determines the background color when active.
- * @cssproperty --menu-item-active-border-color - Determines the border color when active.
- * @cssproperty --menu-item-active-fg-color - Determines the foreground color when active.
- * @cssproperty --menu-item-bg-color - Determines the background color.
- * @cssproperty --menu-item-border-color - Determines the border color.
- * @cssproperty --menu-item-border-radius - Determines the border radius of the menu item.
- * @cssproperty --menu-item-disabled-bg-color - Determines the background color when disabled.
- * @cssproperty --menu-item-disabled-border-color - Determines the border color when disabled.
- * @cssproperty --menu-item-disabled-fg-color - Determines the foreground color when disabled.
- * @cssproperty --menu-item-fg-color - Determines the foreground color.
- * @cssproperty --menu-item-focus-outline-color - Determines the outline color when focused.
- * @cssproperty --menu-item-focus-outline-offset - Determines the outline offset when focused.
- * @cssproperty --menu-item-hover-bg-color - Determines the background color when hovered.
- * @cssproperty --menu-item-hover-border-color - Determines the border color when hovered.
- * @cssproperty --menu-item-hover-fg-color - Determines the foreground color when hovered.
- * @cssproperty --menu-item-input-container-width - Determines the width of the input container.
- * @cssproperty --menu-item-input-hover-bg-color - Determines the background color of the input container when hovered.
- * @cssproperty --menu-item-input-size - Determines the size of the input (checkbox or radio).
- * @cssproperty --menu-item-margin-x - Determines the inline margin of the menu item.
- * @cssproperty --menu-item-padding-x - Determines list item's inline padding.
- * @cssproperty --menu-item-padding-y - Determines list item's block padding.
- * @cssproperty --menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
- * @cssproperty --menu-item-radio-bg-color - Determines the background color of the radio indicator.
- * @cssproperty --menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
- * @cssproperty --menu-item-submenu-item-icon-rotation - Determines the rotation of the submenu icon on expanded.
- * @cssproperty --menu-item-submenu-item-icon-size - Determines the size of the submenu icon.
+ * @cssproperty --charm-menu-item-active-bg-color - Determines the background color when active.
+ * @cssproperty --charm-menu-item-active-border-color - Determines the border color when active.
+ * @cssproperty --charm-menu-item-active-fg-color - Determines the foreground color when active.
+ * @cssproperty --charm-menu-item-bg-color - Determines the background color.
+ * @cssproperty --charm-menu-item-border-color - Determines the border color.
+ * @cssproperty --charm-menu-item-border-radius - Determines the border radius of the menu item.
+ * @cssproperty --charm-menu-item-disabled-bg-color - Determines the background color when disabled.
+ * @cssproperty --charm-menu-item-disabled-border-color - Determines the border color when disabled.
+ * @cssproperty --charm-menu-item-disabled-fg-color - Determines the foreground color when disabled.
+ * @cssproperty --charm-menu-item-fg-color - Determines the foreground color.
+ * @cssproperty --charm-menu-item-focus-outline-color - Determines the outline color when focused.
+ * @cssproperty --charm-menu-item-focus-outline-offset - Determines the outline offset when focused.
+ * @cssproperty --charm-menu-item-hover-bg-color - Determines the background color when hovered.
+ * @cssproperty --charm-menu-item-hover-border-color - Determines the border color when hovered.
+ * @cssproperty --charm-menu-item-hover-fg-color - Determines the foreground color when hovered.
+ * @cssproperty --charm-menu-item-input-container-width - Determines the width of the input container.
+ * @cssproperty --charm-menu-item-input-hover-bg-color - Determines the background color of the input container when hovered.
+ * @cssproperty --charm-menu-item-input-size - Determines the size of the input (checkbox or radio).
+ * @cssproperty --charm-menu-item-margin-x - Determines the inline margin of the menu item.
+ * @cssproperty --charm-menu-item-padding-x - Determines list item's inline padding.
+ * @cssproperty --charm-menu-item-padding-y - Determines list item's block padding.
+ * @cssproperty --charm-menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
+ * @cssproperty --charm-menu-item-radio-bg-color - Determines the background color of the radio indicator.
+ * @cssproperty --charm-menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
+ * @cssproperty --charm-menu-item-submenu-item-icon-rotation - Determines the rotation of the submenu icon on expanded.
+ * @cssproperty --charm-menu-item-submenu-item-icon-size - Determines the size of the submenu icon.
  *
  * @dependency CoreIcon
  * @dependency CoreMenu

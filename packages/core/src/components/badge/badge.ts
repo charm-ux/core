@@ -13,14 +13,14 @@ import styles from './badge.styles.js';
  *
  * @csspart badge-base - The component's base wrapper.
  *
- * @cssproperty --badge-bg-color - determines the background color.
- * @cssproperty --badge-border-color - determines the border color.
- * @cssproperty --badge-border-radius - override css property `--badge-shape` if customs are needed.
- * @cssproperty --badge-border-style - determines border style.
- * @cssproperty --badge-border-width - determines the border.
- * @cssproperty --badge-fg-color - determines the color of the text.
- * @cssproperty --badge-padding - determines the padding.
- * @cssproperty --badge-size - used to size the badge in relation to the font.
+ * @cssproperty --charm-badge-bg-color - determines the background color.
+ * @cssproperty --charm-badge-border-color - determines the border color.
+ * @cssproperty --charm-badge-border-radius - override css property `--badge-shape` if customs are needed.
+ * @cssproperty --charm-badge-border-style - determines border style.
+ * @cssproperty --charm-badge-border-width - determines the border.
+ * @cssproperty --charm-badge-fg-color - determines the color of the text.
+ * @cssproperty --charm-badge-padding - determines the padding.
+ * @cssproperty --charm-badge-size - used to size the badge in relation to the font.
  **/
 
 export class CoreBadge extends CharmElement {

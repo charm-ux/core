@@ -32,21 +32,21 @@ import styles from './tooltip.styles.js';
  * @csspart popup-arrow - The popup's `arrow` part. Use this to target the tooltip's arrow.
  * @csspart body - The tooltip's body.
  *
- * @cssproperty --tooltip-arrow-border-color - The border color of the tooltip arrow
- * @cssproperty --tooltip-arrow-size - The size of the tooltip arrow
- * @cssproperty --tooltip-bg-color - The background color of the tooltip
- * @cssproperty --tooltip-border-color - The border color of the tooltip
- * @cssproperty --tooltip-border-radius - The border radius of the tooltip
- * @cssproperty --tooltip-border-style - The border style of the tooltip
- * @cssproperty --tooltip-border-width - The border width of the tooltip
- * @cssproperty --tooltip-box-shadow - The box shadow of the tooltip
- * @cssproperty --tooltip-fg-color - The foreground color of the tooltip
- * @cssproperty --tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
- * @cssproperty --tooltip-max-width - The maximum width of the tooltip.
- * @cssproperty --tooltip-padding - The padding of the tooltip
- * @cssproperty --tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
- * @cssproperty --tooltip-show-transition - The transition effect when opening the tooltip
- * @cssproperty --tooltip-show-transition - The transition effect when closing the tooltip
+ * @cssproperty --charm-tooltip-arrow-border-color - The border color of the tooltip arrow
+ * @cssproperty --charm-tooltip-arrow-size - The size of the tooltip arrow
+ * @cssproperty --charm-tooltip-bg-color - The background color of the tooltip
+ * @cssproperty --charm-tooltip-border-color - The border color of the tooltip
+ * @cssproperty --charm-tooltip-border-radius - The border radius of the tooltip
+ * @cssproperty --charm-tooltip-border-style - The border style of the tooltip
+ * @cssproperty --charm-tooltip-border-width - The border width of the tooltip
+ * @cssproperty --charm-tooltip-box-shadow - The box shadow of the tooltip
+ * @cssproperty --charm-tooltip-fg-color - The foreground color of the tooltip
+ * @cssproperty --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
+ * @cssproperty --charm-tooltip-max-width - The maximum width of the tooltip.
+ * @cssproperty --charm-tooltip-padding - The padding of the tooltip
+ * @cssproperty --charm-tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
+ * @cssproperty --charm-tooltip-show-transition - The transition effect when opening the tooltip
+ * @cssproperty --charm-tooltip-show-transition - The transition effect when closing the tooltip
  */
 
 export class CoreTooltip extends CharmDismissibleElement {

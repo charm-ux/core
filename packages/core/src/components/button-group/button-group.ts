@@ -22,20 +22,20 @@ const BUTTON_CHILDREN = ['button'];
  *
  * @csspart button-group-base - The component's base wrapper.
  *
- * @cssproperty --button-group-divider-color - Sets the divider color when the button is in a button group, defaults to --button-fg-color.
- * @cssproperty --button-group-divider-height - Sets the divider height when the button is in a button group, defaults to 100% for horizontal button groups, 1px for vertical groups.
- * @cssproperty --button-group-divider-width - Sets the divider width when the button is in a button group, defaults to 100% for vertical button groups, 1px for horizontal groups.
- * @cssproperty --button-group-gap - Sets the gap between each button.
- * @cssproperty --button-pressed-bg-color - Sets the pressed background color of each button.
- * @cssproperty --button-pressed-border - Sets the pressed border of each button.
- * @cssproperty --button-bg-color - Sets the background color of the button group when split.
- * @cssproperty --button-border-color - Sets the border color of the button group when split.
- * @cssproperty --button-border-radius - Sets border radius for the button group when split.
- * @cssproperty --button-border-size - Sets the border width of the button group when split.
- * @cssproperty --button-border-style - Sets the border style of the button group when split.
- * @cssproperty --button-focus-border-color - Sets the border color when focused and split.
- * @cssproperty --button-hover-border-color - Sets the border color when hovered and split.
- * @cssproperty --button-disabled-border-color - Sets the border color when disabled and split.
+ * @cssproperty --charm-button-group-divider-color - Sets the divider color when the button is in a button group, defaults to --charm-button-fg-color.
+ * @cssproperty --charm-button-group-divider-height - Sets the divider height when the button is in a button group, defaults to 100% for horizontal button groups, 1px for vertical groups.
+ * @cssproperty --charm-button-group-divider-width - Sets the divider width when the button is in a button group, defaults to 100% for vertical button groups, 1px for horizontal groups.
+ * @cssproperty --charm-button-group-gap - Sets the gap between each button.
+ * @cssproperty --charm-button-pressed-bg-color - Sets the pressed background color of each button.
+ * @cssproperty --charm-button-pressed-border - Sets the pressed border of each button.
+ * @cssproperty --charm-button-bg-color - Sets the background color of the button group when split.
+ * @cssproperty --charm-button-border-color - Sets the border color of the button group when split.
+ * @cssproperty --charm-button-border-radius - Sets border radius for the button group when split.
+ * @cssproperty --charm-button-border-size - Sets the border width of the button group when split.
+ * @cssproperty --charm-button-border-style - Sets the border style of the button group when split.
+ * @cssproperty --charm-button-focus-border-color - Sets the border color when focused and split.
+ * @cssproperty --charm-button-hover-border-color - Sets the border color when hovered and split.
+ * @cssproperty --charm-button-disabled-border-color - Sets the border color when disabled and split.
  **/
 export class CoreButtonGroup extends CharmElement {
   public static override styles = [...super.styles, styles];

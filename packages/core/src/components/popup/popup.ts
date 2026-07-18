@@ -64,14 +64,14 @@ export interface PopupRepositionEvent {
  * @csspart popup-base - The popup's container. Useful for setting a background color, box shadow, etc.
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
- * @cssproperty --popup-arrow-color - The color of the arrow.
- * @cssproperty --popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
- * @cssproperty --popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
- * @cssproperty --popup-hide-transition - animation when the overlay is hidden.
- * @cssproperty --popup-show-transition - animation when the overlay is shown.
- * @cssproperty --popup-z-index - controls the CSS z-index value for the overlay content.
+ * @cssproperty --charm-popup-arrow-color - The color of the arrow.
+ * @cssproperty --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
+ * @cssproperty --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssproperty --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssproperty --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
+ * @cssproperty --charm-popup-hide-transition - animation when the overlay is hidden.
+ * @cssproperty --charm-popup-show-transition - animation when the overlay is shown.
+ * @cssproperty --charm-popup-z-index - controls the CSS z-index value for the overlay content.
  */
 export class CorePopup extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];

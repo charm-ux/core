@@ -1,6 +1,7 @@
 ---
+
 title: Extending Charm
----
+--charm--
 
 Charm provides unstyled, accessible base components designed to be extended and customized for your project's needs.
 
@@ -36,7 +37,7 @@ project.updateProject({
   prefix: 'vel', // Components will be <vel-button>, <vel-card>, etc.
   theme: {
     definition: myTokens.definition,
-    tokenPrefix: 'vel', // CSS variables will be --vel-*
+    tokenPrefix: 'vel', // CSS variables will be --charm-vel-*
   },
 });
 
@@ -49,10 +50,10 @@ const { css, cssReset, cssUtilities } = project.generateTheme();
 
 The `theme` option in `project.updateProject()` accepts:
 
-| Option        | Description                                                           |
-| ------------- | --------------------------------------------------------------------- |
-| `definition`  | Token definition from `defineTokens()` or extended from `charmTokens` |
-| `tokenPrefix` | CSS variable prefix (e.g., `'vel'` → `--vel-button-bgColor`)          |
+| Option | Description |
+| --charm------------ | --charm-------------------------------------------------------------------- |
+| `definition` | Token definition from `defineTokens()` or extended from `charmTokens` |
+| `tokenPrefix` | CSS variable prefix (e.g., `'vel'` → `--vel-button-bgColor`) |
 
 ### Import Order Matters
 
@@ -199,12 +200,12 @@ import styles from './tag.styles.js';
  *
  * @csspart tag-base - The component's base wrapper.
  *
- * @cssproperty --tag-bg-color - Background color of the tag.
- * @cssproperty --tag-border-color - Border color.
- * @cssproperty --tag-border-radius - Border radius.
- * @cssproperty --tag-fg-color - Text color.
- * @cssproperty --tag-gap - Spacing between icon and content.
- * @cssproperty --tag-padding - Padding.
+ * @cssproperty --charm-tag-bg-color - Background color of the tag.
+ * @cssproperty --charm-tag-border-color - Border color.
+ * @cssproperty --charm-tag-border-radius - Border radius.
+ * @cssproperty --charm-tag-fg-color - Text color.
+ * @cssproperty --charm-tag-gap - Spacing between icon and content.
+ * @cssproperty --charm-tag-padding - Padding.
  */
 export class MyTag extends CharmElement {
   public static override styles = [...super.styles, styles];
