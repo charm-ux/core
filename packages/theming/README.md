@@ -273,6 +273,76 @@ const styles = css`
 `;
 ```
 
+## Custom Elements Manifest Prefix
+
+Charm's components document their CSS custom properties via `@cssproperty` JSDoc tags, which the [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) (`custom-elements.json`) surfaces to tools like Storybook, VS Code, and design-system docs. Those documented names should carry the same prefix the theme emits at runtime (`charmDefinition.prefix`, default `charm` → `--charm-...`).
+
+This tooling lives in `@charm-ux/core` at `scripts/cem-css-prefix-plugin.js` (build-time tooling — not part of the published package exports). It comes in two forms: an analyzer **plugin** that runs during `cem analyze`, and standalone **functions** you can run against an already-generated manifest.
+
+### Analyzer plugin
+
+Register `cssPrefixPlugin()` in `custom-elements-manifest.config.mjs`, before the sorter so the finalized names are the ones that get sorted:
+
+```js
+import { cssPrefixPlugin } from './scripts/cem-css-prefix-plugin.js';
+
+export default {
+  // ...
+  plugins: [
+    // ...other plugins
+    cssPrefixPlugin(), // target prefix defaults to charmDefinition.prefix
+    cemSorterPlugin({}),
+  ],
+};
+```
+
+### Standalone function
+
+`applyThemePrefix(manifest, options)` rewrites every `cssProperties[].name` in a parsed manifest **in place** and returns the number of names changed:
+
+```js
+import fs from 'node:fs';
+import { applyThemePrefix } from './scripts/cem-css-prefix-plugin.js';
+
+const manifest = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8'));
+const changed = applyThemePrefix(manifest, { prefix: 'acme' });
+fs.writeFileSync('custom-elements.json', JSON.stringify(manifest, null, 2));
+console.log(`Rewrote ${changed} CSS custom property names`);
+```
+
+`rewriteCssVarName(name, options)` is the pure per-name transform underneath both.
+
+### Options
+
+Both `cssPrefixPlugin`, `applyThemePrefix`, and `rewriteCssVarName` accept the same options:
+
+| Option          | Type                           | Default                              | Description                                                         |
+| --------------- | ------------------------------ | ------------------------------------ | ------------------------------------------------------------------- |
+| `prefix`        | `string`                       | `charmDefinition.prefix` (`'charm'`) | Target prefix to apply. An empty string strips the prefix entirely. |
+| `defaultPrefix` | `string \| string[] \| RegExp` | `ANY_PREFIX` (`/^[^-]+-/`)           | Existing prefix(es) to strip before applying `prefix`.              |
+
+By default (`defaultPrefix` omitted), the transform replaces the **first `--xxxx-` segment** regardless of what it is, so the source prefix does not need to be known ahead of time:
+
+```js
+rewriteCssVarName('--charm-overflow-item-gap', { prefix: 'acme' }); // → --acme-overflow-item-gap
+rewriteCssVarName('---button-color', { prefix: 'acme' }); // → --acme-button-color
+rewriteCssVarName('--gap', { prefix: 'acme' }); // → --acme-gap (no segment to strip)
+```
+
+Scope the stripping when you know the source prefix(es):
+
+```js
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: 'charm' }); // single
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: ['charm', 'fui'] }); // list
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: /^(charm|fui)-/ }); // regex
+```
+
+Notes:
+
+- **Idempotent** — names already starting with `--{prefix}-` are left unchanged, so the transform is safe to re-run.
+- **RegExp** patterns are matched against the name body (after `--`), auto-anchored to the start, and the `g` flag is ignored, so only a leading prefix is ever removed.
+- **Caveat** — the default `ANY_PREFIX` cannot tell a real prefix from a genuine first segment, so an unprefixed name like `--form-control-bg-color` becomes `--{prefix}-control-bg-color`. Pass an explicit `defaultPrefix` when names may be unprefixed.
+
 ## Pre-built Themes
 
 | Export        | Description                                    |
