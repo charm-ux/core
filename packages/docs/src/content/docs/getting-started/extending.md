@@ -1,7 +1,6 @@
 ---
-
-title: Extending Charm
---charm--
+title: 'Extending Charm'
+---
 
 Charm provides unstyled, accessible base components designed to be extended and customized for your project's needs.
 
