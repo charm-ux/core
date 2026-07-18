@@ -550,6 +550,16 @@ export class CorePopup extends CharmDismissibleElement {
       return;
     }
 
+    // Starting is idempotent: tear down any existing positioner first. Otherwise a second
+    // start() (e.g. firstUpdated() followed by onOpenChange()) overwrites `this.cleanup` and
+    // orphans the previous autoUpdate's observers (ResizeObserver/IntersectionObserver/scroll),
+    // which then keep firing forever and prevent the page from ever going idle.
+    if (this.cleanup) {
+      this.cleanup();
+      this.cleanup = undefined;
+      window.removeEventListener('scroll', this.handleScrollDismiss);
+    }
+
     this.cleanup = autoUpdate(this.anchorEl, this.popup, async () => {
       await this.reposition();
     });
