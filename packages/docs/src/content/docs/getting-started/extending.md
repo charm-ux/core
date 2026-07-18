@@ -1,5 +1,9 @@
 ---
 title: 'Extending Charm'
+description: 'How to extend Charm components, configure project themes and register custom components in your app.'
+tags:
+  - getting-started
+  - guide
 ---
 
 Charm provides unstyled, accessible base components designed to be extended and customized for your project's needs.
