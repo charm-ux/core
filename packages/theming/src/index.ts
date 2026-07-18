@@ -65,3 +65,6 @@ export {
 
 // Lit CSS helpers (requires lit peer dependency)
 export { createCssHelpers, type CssHelpers } from './lit/index.js';
+
+// Custom Elements Manifest (CEM) plugin helpers
+export { cssPrefixPlugin, applyThemePrefix, rewriteCssVarName } from './cem-plugin/index.js';

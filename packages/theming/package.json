@@ -17,6 +17,10 @@
     "./lit": {
       "types": "./dist/lit/index.d.ts",
       "import": "./dist/lit/index.js"
+    },
+    "./cem-plugin": {
+      "types": "./dist/cem-plugin/index.d.ts",
+      "import": "./dist/cem-plugin/index.js"
     }
   },
   "files": [

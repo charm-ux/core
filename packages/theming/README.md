@@ -277,14 +277,18 @@ const styles = css`
 
 Charm's components document their CSS custom properties via `@cssproperty` JSDoc tags, which the [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) (`custom-elements.json`) surfaces to tools like Storybook, VS Code, and design-system docs. Those documented names should carry the same prefix the theme emits at runtime (`charmDefinition.prefix`, default `charm` → `--charm-...`).
 
-This tooling lives in `@charm-ux/core` at `scripts/cem-css-prefix-plugin.js` (build-time tooling — not part of the published package exports). It comes in two forms: an analyzer **plugin** that runs during `cem analyze`, and standalone **functions** you can run against an already-generated manifest.
+The repository provides a small utility that normalizes documented CSS custom property names in a manifest to the active theme prefix. The implementation lives in the theming package at `packages/theming/src/cem-plugin/cem-css-prefix-plugin.ts` (source-only tooling; not exported from the published package). It exposes three helpers you can use in your build-time tooling:
+
+- `cssPrefixPlugin(options?)` — a Custom Elements Manifest analyzer plugin you can register during `cem analyze` to rewrite names as manifests are linked.
+- `applyThemePrefix(manifest, options)` — an in-place transform that rewrites every `cssProperties[].name` in a parsed manifest and returns the number of names changed.
+- `rewriteCssVarName(name, options)` — the pure per-name transform used by both helpers.
 
 ### Analyzer plugin
 
-Register `cssPrefixPlugin()` in `custom-elements-manifest.config.mjs`, before the sorter so the finalized names are the ones that get sorted:
+Register `cssPrefixPlugin()` in `custom-elements-manifest.config.mjs`, before the sorter so the finalized names are the ones that get sorted. Import it from the local source file when used in this repository's CEM config:
 
 ```js
-import { cssPrefixPlugin } from './scripts/cem-css-prefix-plugin.js';
+import { cssPrefixPlugin } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
 
 export default {
   // ...
@@ -302,7 +306,7 @@ export default {
 
 ```js
 import fs from 'node:fs';
-import { applyThemePrefix } from './scripts/cem-css-prefix-plugin.js';
+import { applyThemePrefix } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
 
 const manifest = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8'));
 const changed = applyThemePrefix(manifest, { prefix: 'acme' });
