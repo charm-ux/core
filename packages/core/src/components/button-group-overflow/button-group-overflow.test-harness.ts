@@ -1,5 +1,4 @@
 import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
-import { setViewport } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
 import type { CoreButtonGroupOverflow } from './index.js';
@@ -11,19 +10,13 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
     this.updateTests({
       'button-group-overflow': {
         description: 'ButtonGroupOverflow',
-        afterEach: async () => {
-          // Reset viewport to default size to avoid affecting other tests
-          await setViewport({ width: 1200, height: 800 });
-          // Wait for any pending resize observers to settle
-          await aTimeout(50);
-        },
         tests: {
           groupDividers: {
             description: 'should group overflowed buttons by parent group and render dividers',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 120, height: 600 });
+              // Force overflow by setting a small width on the component
               const el = this.component;
+              el.style.width = '120px';
               await elementUpdated(el);
               await aTimeout(300);
 
@@ -65,9 +58,6 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
           singleElementSlotted: {
             description: 'should handle single elements with no children correctly',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 120, height: 600 });
-
               // Create a new component instance with a single element with no children
               const container = document.createElement('div');
               const buttonTag = project.scope.tagName('button');
@@ -113,9 +103,6 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
           dividerRendering: {
             description: 'should render dividers correctly in the overflow menu',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 120, height: 600 });
-
               // Create a component with dividers that will overflow
               const container = document.createElement('div');
               const buttonTag = project.scope.tagName('button');
@@ -160,9 +147,6 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
           complexSlottedElements: {
             description: 'should handle a mix of elements with and without children correctly',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 120, height: 600 });
-
               // Create a component with a complex mix of elements
               const container = document.createElement('div');
               const buttonTag = project.scope.tagName('button');
@@ -220,9 +204,6 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
           menuPosition: {
             description: 'should correctly position the overflow menu at start or end',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 120, height: 600 });
-
               // Create a container for our tests
               const container = document.createElement('div');
               const buttonTag = project.scope.tagName('button');
@@ -278,9 +259,6 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
           overflowEvent: {
             description: 'should emit overflow event when items overflow',
             test: async () => {
-              // Set up a small viewport to force overflow
-              await setViewport({ width: 300, height: 600 });
-
               // Create a component with buttons that will overflow
               const container = document.createElement('div');
               const buttonTag = project.scope.tagName('button');
