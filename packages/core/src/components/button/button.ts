@@ -214,7 +214,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.showHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.show();
         this.expanded = true;
       };
@@ -229,7 +229,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.hideHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.hide();
         this.expanded = false;
       };
@@ -244,7 +244,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.toggleHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.toggle();
         if (el?.open) {
           this.expanded = el?.open;

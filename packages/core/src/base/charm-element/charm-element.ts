@@ -78,6 +78,21 @@ export class CharmElement extends LitElement {
   protected findRootNode(element: HTMLElement): Document | ShadowRoot {
     return (element.getRootNode() || document) as Document | ShadowRoot;
   }
+
+  /**
+   * Get an element by ID from the nearest scoped root (ShadowRoot or Document).
+   * Uses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.
+   */
+  protected getScopedElementById(id: string): Element | null {
+    const rootNode = (this.getRootNode && this.getRootNode()) || document;
+    if ((rootNode as Document).getElementById) {
+      return (rootNode as Document).getElementById(id);
+    }
+
+    // For ShadowRoot, use querySelector with an ID selector. Escape id if CSS.escape is available.
+    const escaped = typeof (CSS as any)?.escape === 'function' ? (CSS as any).escape(id) : id;
+    return (rootNode as ShadowRoot).querySelector(`#${escaped}`);
+  }
 }
 
 export default CharmElement;

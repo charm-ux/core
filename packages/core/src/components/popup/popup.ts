@@ -529,7 +529,7 @@ export class CorePopup extends CharmDismissibleElement {
   protected setAnchorElement() {
     if (this.anchor && typeof this.anchor === 'string') {
       // Locate the anchor by id
-      this.anchorEl = this.findRootNode(this).getElementById(this.anchor);
+      this.anchorEl = this.getScopedElementById(this.anchor) as HTMLElement | null;
     } else if (this.anchor instanceof HTMLElement) {
       // Use the anchor's reference
       this.anchorEl = this.anchor;

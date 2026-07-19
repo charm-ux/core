@@ -142,7 +142,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       target = this.anchor;
     } else if (typeof this.anchor === 'string' && this.anchor.length > 0) {
       // Anchor was passed as an id
-      target = this.findRootNode(this).getElementById(this.anchor);
+      target = this.getScopedElementById(this.anchor) as HTMLElement | null;
     }
 
     if (!target) {
@@ -222,7 +222,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Updates the trigger of the tooltip if the anchor is provided as a string. */
   protected updateAnchorElement() {
     if (typeof this.anchor === 'string' && this.anchor.length > 0) {
-      this.anchorEl = document.getElementById(this.anchor) || undefined;
+      this.anchorEl = (this.getScopedElementById(this.anchor) as HTMLElement) || undefined;
     }
   }
 
