@@ -520,8 +520,8 @@ export class CorePopup extends CharmDismissibleElement {
     return html` ${this.arrow ? html`<div part="popup-arrow" class="arrow" role="presentation"></div>` : ''} `;
   }
 
-  protected async handleAnchorChange() {
-    await this.stop();
+  protected handleAnchorChange() {
+    this.stop();
     this.setAnchorElement();
     this.start();
   }
@@ -529,7 +529,7 @@ export class CorePopup extends CharmDismissibleElement {
   protected setAnchorElement() {
     if (this.anchor && typeof this.anchor === 'string') {
       // Locate the anchor by id
-      this.anchorEl = this.getScopedElementById(this.anchor) as HTMLElement | null;
+      this.anchorEl = this.findRootNode(this).getElementById(this.anchor);
     } else if (this.anchor instanceof HTMLElement) {
       // Use the anchor's reference
       this.anchorEl = this.anchor;
@@ -571,20 +571,15 @@ export class CorePopup extends CharmDismissibleElement {
     this.open = false;
   }
 
-  protected async stop(): Promise<void> {
-    return new Promise(resolve => {
-      if (this.cleanup) {
-        this.cleanup();
-        this.cleanup = undefined;
-        this.removeAttribute('data-current-placement');
-        this.style.removeProperty('--popup-auto-size-available-width');
-        this.style.removeProperty('--popup-auto-size-available-height');
-        window.removeEventListener('scroll', this.handleScrollDismiss);
-        requestAnimationFrame(() => resolve());
-      } else {
-        resolve();
-      }
-    });
+  protected stop(): void {
+    if (this.cleanup) {
+      this.cleanup();
+      this.cleanup = undefined;
+      this.removeAttribute('data-current-placement');
+      this.style.removeProperty('--popup-auto-size-available-width');
+      this.style.removeProperty('--popup-auto-size-available-height');
+      window.removeEventListener('scroll', this.handleScrollDismiss);
+    }
   }
 
   protected configureMiddleware(): Middleware[] {

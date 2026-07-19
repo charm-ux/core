@@ -112,7 +112,12 @@ export class CoreOverflow extends CharmElement {
    */
   protected overflowSet = new Map();
 
-  protected resizeObserver = new ResizeObserver(() => this.handleResize());
+  protected resizeObserver = new ResizeObserver(() => {
+    // Guard against callbacks firing after disconnect
+    if (this.isConnected) {
+      this.handleResize();
+    }
+  });
 
   /**
    * Used to determine resize direction.
@@ -159,9 +164,10 @@ export class CoreOverflow extends CharmElement {
   }
 
   public override disconnectedCallback() {
-    this.lastWidth = 0;
-    this.resizeObserver.unobserve(this);
+    // Disconnect observer first to prevent queued callbacks
     this.resizeObserver.disconnect();
+    this.lastWidth = 0;
+    this.overflowSet.clear();
     super.disconnectedCallback();
   }
 
