@@ -11,6 +11,12 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
     this.updateTests({
       'button-group-overflow': {
         description: 'ButtonGroupOverflow',
+        afterEach: async () => {
+          // Reset viewport to default size to avoid affecting other tests
+          await setViewport({ width: 1200, height: 800 });
+          // Wait for any pending resize observers to settle
+          await aTimeout(50);
+        },
         tests: {
           groupDividers: {
             description: 'should group overflowed buttons by parent group and render dividers',
