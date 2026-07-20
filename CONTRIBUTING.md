@@ -13,6 +13,20 @@ cd core
 pnpm install
 ```
 
+## Coding Standards
+
+Authoring standards for this repo are codified as **rules** in
+[`.agents/rules/`](.agents/rules/README.md) — one rule per file, referenced by ID (e.g.
+`COMP-001`, `PROP-003`, `CODE-001`) in code review. **That directory is the canonical source**;
+the guidelines in this document only summarize the highlights and link back to it.
+
+The same rules are wired into AI coding tools: [`AGENTS.md`](AGENTS.md) and
+[`CLAUDE.md`](CLAUDE.md) load the always-applied categories (CHARM, A11Y, CODE, PROC) on every
+task, and the path-gated categories (COMP, PROP, STYLE, I18N, TEST, DOC) when you edit matching
+files.
+
+Skim the [rules index](.agents/rules/README.md) before your first contribution.
+
 ## Development
 
 ### Storybook
@@ -80,15 +94,28 @@ This creates the component file, tests, and Storybook stories.
 
 ### Component Guidelines
 
-- Extend from appropriate base classes
-- Use Lit decorators for properties and state
-- Implement keyboard navigation and ARIA attributes
-- Add comprehensive tests
-- Create Storybook stories demonstrating all variants
+Highlights only — see [`.agents/rules/`](.agents/rules/README.md) for the full, ID-referenced
+standards:
+
+- Extend the lowest fitting base class (never `LitElement` directly) and register through the
+  project scope, not `customElements.define`
+  ([CHARM-001](.agents/rules/internal/CHARM-001.md), [CHARM-002](.agents/rules/internal/CHARM-002.md))
+- Expose structure through slots; declare config with `@property`/`@state`
+  ([COMP-001](.agents/rules/component-design/COMP-001.md), [PROP-001](.agents/rules/props/PROP-001.md))
+- Emit events through the base `emit()` helper
+  ([PROP-003](.agents/rules/props/PROP-003.md))
+- Implement keyboard navigation and ARIA, and tear down listeners/observers/timers
+  symmetrically ([A11Y-003](.agents/rules/accessibility/A11Y-003.md),
+  [COMP-010](.agents/rules/component-design/COMP-010.md)–[COMP-012](.agents/rules/component-design/COMP-012.md))
+- Ship tests via the test-harness pattern, including an accessibility test
+  ([TEST-001](.agents/rules/testing/TEST-001.md), [A11Y-004](.agents/rules/accessibility/A11Y-004.md))
+- Provide Storybook stories and a component docs page
+  ([DOC-001](.agents/rules/documentation/DOC-001.md), [DOC-003](.agents/rules/documentation/DOC-003.md))
 
 ## Changesets
 
 We use [Changesets](https://github.com/changesets/changesets) to manage versions and changelogs.
+Canonical rule: [PROC-001](.agents/rules/process/PROC-001.md).
 
 ### When to Add a Changeset
 
@@ -153,6 +180,8 @@ Add new color tokens and update button to use them
 
 ## Pull Request Process
 
+Canonical rule: [PROC-002](.agents/rules/process/PROC-002.md).
+
 1. Create a branch:
 
    ```bash
@@ -184,10 +213,17 @@ Releases are automated:
 
 ## Code Style
 
-- TypeScript for all code
-- Tests for new features and bug fixes
-- JSDoc comments for public APIs
-- Small, focused components
+Lint and formatting are **CI-enforced** — `pnpm lint` runs with `--max-warnings 0`. The full
+conventions live in the `CODE-*` rules ([`.agents/rules/code/`](.agents/rules/code/)); the
+essentials:
+
+- TypeScript for all code; relative imports end in `.js`
+  ([CODE-001](.agents/rules/code/CODE-001.md))
+- Explicit member accessibility + `override`; ordered/sorted imports
+  ([CODE-002](.agents/rules/code/CODE-002.md), [CODE-003](.agents/rules/code/CODE-003.md))
+- JSDoc comments for public APIs ([PROP-005](.agents/rules/props/PROP-005.md))
+- Small, focused components; never hand-edit generated files
+  ([CODE-005](.agents/rules/code/CODE-005.md))
 
 ## Questions?
 
