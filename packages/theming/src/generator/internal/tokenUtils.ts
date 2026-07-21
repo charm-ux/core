@@ -1,5 +1,12 @@
 import { cssVarName } from '../../helpers/cssVar.js';
-import type { PrimitiveTokens, RefHelper } from '../../types/tokens.js';
+import type {
+  ComponentFactoryHelpers,
+  ComponentRefFn,
+  PrimitiveRefFn,
+  PrimitiveTokens,
+  SemanticFactoryHelpers,
+  SemanticRefFn,
+} from '../../types/tokens.js';
 
 type MetadataFields = {
   description?: string;
@@ -86,25 +93,46 @@ export function collectTokenTreeLeaves(node: unknown, options: CollectTokenTreeL
   return walk(node, options.path ?? []);
 }
 
-function createFactoryRef<P extends PrimitiveTokens>(prefix: string): RefHelper<P> {
-  const ref = ((...segments: (string | number)[]) => `var(${cssVarName(prefix, ...segments)})`) as RefHelper<P> & {
-    ref: RefHelper<P>;
-  };
+/**
+ * Create layer-specific reference functions for factories.
+ * All functions generate the same CSS var() output, but are typed differently
+ * to support the layer-specific helper signatures.
+ */
+function createFactoryHelpers<P extends PrimitiveTokens>(
+  prefix: string
+): {
+  semantic: SemanticFactoryHelpers<P>;
+  component: ComponentFactoryHelpers<P>;
+} {
+  const makeRef = ((...segments: (string | number)[]) =>
+    `var(${cssVarName(prefix, ...segments)})`) as PrimitiveRefFn<P> & SemanticRefFn & ComponentRefFn;
 
-  // Supports both callback styles:
-  //   semantics: ref => ({ ... })
-  //   semantics: ({ ref }) => ({ ... })
-  ref.ref = ref;
-  return ref;
+  return {
+    semantic: { primitive: makeRef },
+    component: { primitive: makeRef, semantic: makeRef },
+  };
 }
 
-export function resolveMaybeFactory<P extends PrimitiveTokens, T extends Record<string, unknown>>(
-  input: T | ((ref: RefHelper<P>) => T) | undefined,
+export function resolveMaybeSemanticFactory<P extends PrimitiveTokens, T extends Record<string, unknown>>(
+  input: T | ((helpers: SemanticFactoryHelpers<P>) => T) | undefined,
   prefix: string
 ): T | undefined {
   if (input === undefined) return undefined;
   if (typeof input === 'function') {
-    return (input as (ref: RefHelper<P>) => T)(createFactoryRef<P>(prefix));
+    const helpers = createFactoryHelpers<P>(prefix);
+    return (input as (helpers: SemanticFactoryHelpers<P>) => T)(helpers.semantic);
+  }
+  return input;
+}
+
+export function resolveMaybeComponentFactory<P extends PrimitiveTokens, T extends Record<string, unknown>>(
+  input: T | ((helpers: ComponentFactoryHelpers<P>) => T) | undefined,
+  prefix: string
+): T | undefined {
+  if (input === undefined) return undefined;
+  if (typeof input === 'function') {
+    const helpers = createFactoryHelpers<P>(prefix);
+    return (input as (helpers: ComponentFactoryHelpers<P>) => T)(helpers.component);
   }
   return input;
 }

@@ -6,7 +6,8 @@ import { charmTokens } from './charm.js';
  * for showcasing components in documentation and demos.
  *
  * Uses the `.extendPrimitives()` and `.extendSemantics()` methods to override
- * specific tokens while inheriting the rest from charm.
+ * specific tokens while inheriting the rest from charm, plus `.extendRawCss()`
+ * to layer demo-only styles on top of the raw CSS inherited from charm.
  */
 export const demoTokens = charmTokens
   .extendPrimitives({
@@ -91,22 +92,35 @@ export const demoTokens = charmTokens
       },
     },
   })
-  .extendSemantics((ref, base) => ({
-    ...base,
-
+  // Only the overridden tokens need to be listed - they are deep-merged into
+  // the semantics inherited from charm, so untouched groups (text, border, ...)
+  // and untouched keys within these groups are preserved automatically.
+  .extendSemantics(({ primitive }) => ({
     surface: {
-      ...base?.surface,
-      primary: { light: ref('color', 'white'), dark: ref('color', 'neutral', 950) },
-      secondary: { light: ref('color', 'neutral', 50), dark: ref('color', 'neutral', 900) },
-      tertiary: { light: ref('color', 'neutral', 100), dark: ref('color', 'neutral', 800) },
+      primary: { light: primitive('color', 'white'), dark: primitive('color', 'neutral', 950) },
+      secondary: { light: primitive('color', 'neutral', 50), dark: primitive('color', 'neutral', 900) },
+      tertiary: { light: primitive('color', 'neutral', 100), dark: primitive('color', 'neutral', 800) },
     },
 
     action: {
-      ...base?.action,
-      primary: ref('color', 'brand', 500),
-      primaryHover: { light: ref('color', 'brand', 600), dark: ref('color', 'brand', 400) },
-      primaryActive: { light: ref('color', 'brand', 700), dark: ref('color', 'brand', 300) },
+      primary: primitive('color', 'brand', 500),
+      primaryHover: { light: primitive('color', 'brand', 600), dark: primitive('color', 'brand', 400) },
+      primaryActive: { light: primitive('color', 'brand', 700), dark: primitive('color', 'brand', 300) },
     },
+  }))
+  .extendRawCss(({ primitive, semantic }, base) => ({
+    // The factory return *replaces* the raw CSS inherited from charm, so spread
+    // `base` to keep the inherited buckets (the focus-ring reset) and
+    // interpolate `base?.theme` to append after — rather than drop — it.
+    ...base,
+    theme: `${base?.theme ?? ''}
+:root {
+  accent-color: ${primitive('color', 'brand', 500)};
+}
+
+body {
+  background: ${semantic('surface', 'primary')};
+}`,
   }));
 
 /** The resolved token definition for the demo theme */

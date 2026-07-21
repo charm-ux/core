@@ -27,11 +27,10 @@ const myTokens = charmTokens
       accent: '#9333ea',
     },
   })
-  .extendSemantics((ref, base) => ({
-    ...base,
+  .extendSemantics(({ primitive }) => ({
+    // Deep-merged into the inherited semantics - only list what changes
     action: {
-      ...base?.action,
-      primary: ref('color', 'brand', 500),
+      primary: primitive('color', 'brand', 500),
     },
   }));
 
@@ -279,19 +278,21 @@ project.scope.registerComponent(tag);
 When extending the theme, you can add new component tokens:
 
 ```typescript
-const myTokens = charmTokens.extendComponents((ref, base) => ({
-  ...base,
-  // Add tokens for your new component
+const myTokens = charmTokens.extendComponents(({ primitive, semantic }) => ({
+  // Add tokens for your new component - merged into the inherited components,
+  // so the existing component tokens are left untouched.
   tag: {
-    bgColor: ref('surface', 'secondary'),
-    fgColor: ref('text', 'primary'),
-    borderColor: ref('border', 'primary'),
-    borderRadius: ref('borderRadius', 'md'),
-    padding: ref('spacing', 'sm'),
-    gap: ref('spacing', 'xs'),
+    bgColor: semantic('surface', 'secondary'),
+    fgColor: semantic('text', 'primary'),
+    borderColor: semantic('border', 'primary'),
+    borderRadius: primitive('borderRadius', 'md'),
+    padding: primitive('spacing', 'sm'),
+    gap: primitive('spacing', 'xs'),
   },
 }));
 ```
+
+The component factory receives `{ primitive, semantic }` reference helpers — use `semantic(...)` to point at semantic tokens and `primitive(...)` for raw primitives. The returned tokens are deep-merged into what you inherited, so you only describe additions and overrides.
 
 Then access them in your styles:
 
@@ -305,3 +306,39 @@ css`
   }
 `;
 ```
+
+## Injecting Raw CSS
+
+Sometimes a theme needs plain CSS that isn't expressible as a token — a global reset tweak, a keyframes rule, or a utility class. Use `.extendRawCss()` to append CSS to the generated `reset`, `theme`, and `utilities` files:
+
+```typescript
+const myTokens = charmTokens.extendRawCss({
+  theme: `
+    @keyframes brand-pulse {
+      from { opacity: 1; }
+      to { opacity: 0.6; }
+    }
+  `,
+});
+```
+
+The plain-object form **appends** each bucket after whatever was inherited from the base theme. To reference tokens or take full control over inherited CSS, pass a factory instead — it receives `{ primitive, semantic, component }` reference helpers and the inherited raw CSS as `base`, and its return value **replaces** the inherited raw CSS:
+
+```typescript
+const myTokens = charmTokens.extendRawCss(({ semantic }, base) => ({
+  // Keep the inherited buckets, then append to `theme`
+  ...base,
+  theme: `${base?.theme ?? ''}
+    .brand-surface {
+      background: ${semantic('surface', 'brand')};
+      color: ${semantic('text', 'primary')};
+    }
+  `,
+}));
+```
+
+Because the factory return replaces inherited raw CSS, you control inheritance explicitly:
+
+- **Append** — spread `base` and interpolate `base?.<bucket>` into your new value.
+- **Drop** an inherited bucket — omit it from the returned object.
+- **Replace** a bucket — return a fresh value for it without referencing `base`.

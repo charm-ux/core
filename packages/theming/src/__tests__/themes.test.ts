@@ -26,7 +26,6 @@ describe('charmTokens', () => {
     expect(charmTokens.helpers).toBeDefined();
     expect(charmTokens.helpers.color).toBeInstanceOf(Function);
     expect(charmTokens.helpers.spacing).toBeInstanceOf(Function);
-    expect(charmTokens.helpers.ref).toBeInstanceOf(Function);
   });
 
   it('helpers produce correct CSS variables', () => {
@@ -48,10 +47,10 @@ describe('charmTokens', () => {
     });
 
     it('extendSemantics returns new tokens', () => {
-      const extended = charmTokens.extendSemantics((ref, base) => ({
+      const extended = charmTokens.extendSemantics(({ primitive }, base) => ({
         ...base,
         custom: {
-          value: ref('color', 'brand', 500),
+          value: primitive('color', 'brand', 500),
         },
       }));
 
@@ -61,10 +60,10 @@ describe('charmTokens', () => {
     });
 
     it('extendComponents returns new tokens', () => {
-      const extended = charmTokens.extendComponents((ref, base) => ({
+      const extended = charmTokens.extendComponents(({ primitive }, base) => ({
         ...base,
         customComponent: {
-          padding: ref('spacing', 'md'),
+          padding: primitive('spacing', 'md'),
         },
       }));
 

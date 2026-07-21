@@ -2,7 +2,12 @@
 import { formatHex, oklch, parse as parseCssColor } from 'culori';
 import { cssVarName } from '../helpers/cssVar.js';
 import { isAutoExpandColor, walkExpandedColors } from './colorPalette.js';
-import { collectTokenTreeLeaves, resolveMaybeFactory, unwrapTokenMetadata } from './internal/tokenUtils.js';
+import {
+  collectTokenTreeLeaves,
+  resolveMaybeComponentFactory,
+  resolveMaybeSemanticFactory,
+  unwrapTokenMetadata,
+} from './internal/tokenUtils.js';
 import { isLightDarkValue, resolveToMode } from './lightDark.js';
 import type {
   ComponentTokens,
@@ -487,8 +492,8 @@ type AnyDefinition<P extends PrimitiveTokens = PrimitiveTokens> = TokenDefinitio
  * `$type` hints) rather than a closed registry of expected shapes.
  */
 export function generateTokensJson<P extends PrimitiveTokens>(definition: AnyDefinition<P>, prefix: string): string {
-  const semantics = resolveMaybeFactory<P, SemanticTokens>(definition.semantics, prefix);
-  const components = resolveMaybeFactory<P, ComponentTokens>(definition.components, prefix);
+  const semantics = resolveMaybeSemanticFactory<P, SemanticTokens>(definition.semantics, prefix);
+  const components = resolveMaybeComponentFactory<P, ComponentTokens>(definition.components, prefix);
 
   const aliasMap = buildAliasMap(definition.primitives, semantics, components, prefix);
 
@@ -516,8 +521,8 @@ export function generateTokensJsonForMode<P extends PrimitiveTokens>(
   prefix: string,
   mode: 'light' | 'dark'
 ): string {
-  const semantics = resolveMaybeFactory<P, SemanticTokens>(definition.semantics, prefix);
-  const components = resolveMaybeFactory<P, ComponentTokens>(definition.components, prefix);
+  const semantics = resolveMaybeSemanticFactory<P, SemanticTokens>(definition.semantics, prefix);
+  const components = resolveMaybeComponentFactory<P, ComponentTokens>(definition.components, prefix);
 
   const aliasMap = buildAliasMap(definition.primitives, semantics, components, prefix);
 

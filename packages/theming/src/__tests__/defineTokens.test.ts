@@ -31,9 +31,9 @@ describe('defineTokens', () => {
           primary: '#3b82f6',
         },
       },
-      semantics: ref => ({
+      semantics: ({ primitive }) => ({
         action: {
-          main: ref('color', 'primary', 500),
+          main: primitive('color', 'primary', 500),
         },
       }),
     });
@@ -51,15 +51,15 @@ describe('defineTokens', () => {
           md: '8px',
         },
       },
-      semantics: ref => ({
+      semantics: ({ primitive }) => ({
         action: {
-          primary: ref('color', 'primary', 500),
+          primary: primitive('color', 'primary', 500),
         },
       }),
-      components: ref => ({
+      components: ({ primitive, semantic }) => ({
         button: {
-          bgColor: ref('action', 'primary'),
-          borderRadius: ref('borderRadius', 'md'),
+          bgColor: semantic('action', 'primary'),
+          borderRadius: primitive('borderRadius', 'md'),
         },
       }),
     });
@@ -76,9 +76,9 @@ describe('defineTokens', () => {
             primary: '#3b82f6',
           },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           action: {
-            main: ref('color', 'primary', 500),
+            main: primitive('color', 'primary', 500),
           },
         }),
       },
@@ -146,9 +146,9 @@ describe('defineTokens', () => {
             primary: '#3b82f6',
           },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           action: {
-            main: ref('color', 'primary', 500),
+            main: primitive('color', 'primary', 500),
           },
         }),
       });
@@ -172,18 +172,18 @@ describe('defineTokens', () => {
             secondary: '#9333ea',
           },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           action: {
-            main: ref('color', 'primary', 500),
+            main: primitive('color', 'primary', 500),
           },
         }),
       });
 
-      const extended = base.extendSemantics((ref, baseSemantics) => ({
+      const extended = base.extendSemantics(({ primitive }, baseSemantics) => ({
         ...baseSemantics,
         action: {
           ...baseSemantics?.action,
-          main: ref('color', 'secondary', 500),
+          main: primitive('color', 'secondary', 500),
         },
       }));
 
@@ -197,26 +197,57 @@ describe('defineTokens', () => {
             primary: '#3b82f6',
           },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           surface: {
-            primary: ref('color', 'primary', 50),
+            primary: primitive('color', 'primary', 50),
           },
           action: {
-            main: ref('color', 'primary', 500),
+            main: primitive('color', 'primary', 500),
           },
         }),
       });
 
-      const extended = base.extendSemantics((ref, baseSemantics) => ({
+      const extended = base.extendSemantics(({ primitive }, baseSemantics) => ({
         ...baseSemantics,
         custom: {
-          value: ref('color', 'primary', 700),
+          value: primitive('color', 'primary', 700),
         },
       }));
 
       expect(extended.definition.semantics?.surface.primary).toBe('var(--color-primary-50)');
       expect(extended.definition.semantics?.action.main).toBe('var(--color-primary-500)');
       expect(extended.definition.semantics?.custom.value).toBe('var(--color-primary-700)');
+    });
+
+    it('deep-merges the delta into inherited semantics without spreading base', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6', secondary: '#9333ea' },
+        },
+        semantics: ({ primitive }) => ({
+          surface: {
+            primary: primitive('color', 'primary', 50),
+            secondary: primitive('color', 'primary', 100),
+          },
+          action: {
+            main: primitive('color', 'primary', 500),
+          },
+        }),
+      });
+
+      // No spread, no base param - only the changed leaf is listed.
+      const extended = base.extendSemantics(({ primitive }) => ({
+        surface: {
+          primary: primitive('color', 'secondary', 500),
+        },
+      }));
+
+      // Overridden leaf changed
+      expect(extended.definition.semantics?.surface.primary).toBe('var(--color-secondary-500)');
+      // Sibling key within the same group preserved
+      expect(extended.definition.semantics?.surface.secondary).toBe('var(--color-primary-100)');
+      // Untouched group preserved
+      expect(extended.definition.semantics?.action.main).toBe('var(--color-primary-500)');
     });
   });
 
@@ -229,18 +260,18 @@ describe('defineTokens', () => {
             full: '9999px',
           },
         },
-        components: ref => ({
+        components: ({ primitive }) => ({
           button: {
-            borderRadius: ref('borderRadius', 'sm'),
+            borderRadius: primitive('borderRadius', 'sm'),
           },
         }),
       });
 
-      const extended = base.extendComponents((ref, baseComponents) => ({
+      const extended = base.extendComponents(({ primitive }, baseComponents) => ({
         ...baseComponents,
         button: {
           ...baseComponents?.button,
-          borderRadius: ref('borderRadius', 'full'),
+          borderRadius: primitive('borderRadius', 'full'),
         },
       }));
 
@@ -254,22 +285,49 @@ describe('defineTokens', () => {
             sm: '0.5rem',
           },
         },
-        components: ref => ({
+        components: ({ primitive }) => ({
           button: {
-            padding: ref('spacing', 'sm'),
+            padding: primitive('spacing', 'sm'),
           },
         }),
       });
 
-      const extended = base.extendComponents((ref, baseComponents) => ({
+      const extended = base.extendComponents(({ primitive }, baseComponents) => ({
         ...baseComponents,
         card: {
-          padding: ref('spacing', 'sm'),
+          padding: primitive('spacing', 'sm'),
         },
       }));
 
       expect(extended.definition.components?.button.padding).toBe('var(--spacing-sm)');
       expect(extended.definition.components?.card.padding).toBe('var(--spacing-sm)');
+    });
+
+    it('deep-merges the delta into inherited components without spreading base', () => {
+      const base = defineTokens({
+        primitives: {
+          borderRadius: { sm: '4px', full: '9999px' },
+          spacing: { sm: '0.5rem' },
+        },
+        components: ({ primitive }) => ({
+          button: {
+            borderRadius: primitive('borderRadius', 'sm'),
+            padding: primitive('spacing', 'sm'),
+          },
+        }),
+      });
+
+      // No spread, no base param - only the changed leaf is listed.
+      const extended = base.extendComponents(({ primitive }) => ({
+        button: {
+          borderRadius: primitive('borderRadius', 'full'),
+        },
+      }));
+
+      // Overridden leaf changed
+      expect(extended.definition.components?.button.borderRadius).toBe('var(--border-radius-full)');
+      // Sibling key within the same component preserved
+      expect(extended.definition.components?.button.padding).toBe('var(--spacing-sm)');
     });
   });
 
@@ -284,14 +342,14 @@ describe('defineTokens', () => {
             md: '8px',
           },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           action: {
-            main: ref('color', 'primary', 500),
+            main: primitive('color', 'primary', 500),
           },
         }),
-        components: ref => ({
+        components: ({ semantic }) => ({
           button: {
-            bgColor: ref('action', 'main'),
+            bgColor: semantic('action', 'main'),
           },
         }),
       });
@@ -302,18 +360,18 @@ describe('defineTokens', () => {
             brand: '#ff6600',
           },
         })
-        .extendSemantics((ref, baseSem) => ({
+        .extendSemantics(({ primitive }, baseSem) => ({
           ...baseSem,
           action: {
             ...baseSem?.action,
-            secondary: ref('color', 'brand', 500),
+            secondary: primitive('color', 'brand', 500),
           },
         }))
-        .extendComponents((ref, baseComp) => ({
+        .extendComponents(({ primitive }, baseComp) => ({
           ...baseComp,
           button: {
             ...baseComp?.button,
-            borderRadius: ref('borderRadius', 'md'),
+            borderRadius: primitive('borderRadius', 'md'),
           },
         }));
 
@@ -342,25 +400,251 @@ describe('defineTokens', () => {
       expect(tokens.helpers.color('primary', 500)).toBe('var(--app-color-primary-500)');
       expect(tokens.helpers.spacing('md')).toBe('var(--app-spacing-md)');
     });
+  });
 
-    it('provides ref helper for cross-references', () => {
-      const tokens = defineTokens(
+  describe('rawCss', () => {
+    it('stores rawCss in definition', () => {
+      const tokens = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: 'html { scroll-behavior: smooth; }',
+          theme: '@font-face { font-family: "Brand"; }',
+          utilities: '.sr-only { position: absolute; }',
+        },
+      });
+
+      expect(tokens.definition.rawCss?.reset).toBe('html { scroll-behavior: smooth; }');
+      expect(tokens.definition.rawCss?.theme).toBe('@font-face { font-family: "Brand"; }');
+      expect(tokens.definition.rawCss?.utilities).toBe('.sr-only { position: absolute; }');
+    });
+
+    it('allows partial rawCss', () => {
+      const tokens = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: 'html { box-sizing: border-box; }',
+        },
+      });
+
+      expect(tokens.definition.rawCss?.reset).toBe('html { box-sizing: border-box; }');
+      expect(tokens.definition.rawCss?.theme).toBeUndefined();
+      expect(tokens.definition.rawCss?.utilities).toBeUndefined();
+    });
+  });
+
+  describe('extendRawCss', () => {
+    it('appends raw CSS to existing', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: '/* base reset */',
+          theme: '/* base theme */',
+        },
+      });
+
+      const extended = base.extendRawCss({
+        reset: '/* extended reset */',
+        theme: '/* extended theme */',
+      });
+
+      expect(extended.definition.rawCss?.reset).toBe('/* base reset */\n/* extended reset */');
+      expect(extended.definition.rawCss?.theme).toBe('/* base theme */\n/* extended theme */');
+    });
+
+    it('creates rawCss when base has none', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+      });
+
+      const extended = base.extendRawCss({
+        utilities: '.custom { display: flex; }',
+      });
+
+      expect(extended.definition.rawCss?.utilities).toBe('.custom { display: flex; }');
+    });
+
+    it('preserves base rawCss when addition is partial', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: '/* base reset */',
+          theme: '/* base theme */',
+        },
+      });
+
+      const extended = base.extendRawCss({
+        utilities: '/* new utilities */',
+      });
+
+      expect(extended.definition.rawCss?.reset).toBe('/* base reset */');
+      expect(extended.definition.rawCss?.theme).toBe('/* base theme */');
+      expect(extended.definition.rawCss?.utilities).toBe('/* new utilities */');
+    });
+
+    it('accepts factory function with layer helpers', () => {
+      const base = defineTokens(
         {
           primitives: {
-            color: {
-              primary: '#3b82f6',
-            },
+            color: { primary: '#3b82f6' },
+            spacing: { md: '1rem' },
           },
-          semantics: ref => ({
-            action: {
-              main: ref('color', 'primary', 500),
-            },
-          }),
         },
-        { prefix: 'test' }
+        { prefix: 'app' }
       );
 
-      expect(tokens.helpers.ref('action', 'main')).toBe('var(--test-action-main)');
+      const extended = base.extendRawCss(({ primitive }) => ({
+        theme: `.custom { background: ${primitive('color', 'primary', 500)}; padding: ${primitive('spacing', 'md')}; }`,
+      }));
+
+      expect(extended.definition.rawCss?.theme).toBe(
+        '.custom { background: var(--app-color-primary-500); padding: var(--app-spacing-md); }'
+      );
+    });
+
+    it('factory receives inherited raw CSS as base and can append to it', () => {
+      const base = defineTokens(
+        {
+          primitives: {
+            color: { primary: '#3b82f6' },
+          },
+        },
+        { prefix: 'app' }
+      );
+
+      const extended = base.extendRawCss({ theme: '/* plain css */' }).extendRawCss(({ primitive }, inherited) => ({
+        theme: `${inherited?.theme ?? ''}\n.ref { color: ${primitive('color', 'primary', 500)}; }`,
+      }));
+
+      expect(extended.definition.rawCss?.theme).toBe('/* plain css */\n.ref { color: var(--app-color-primary-500); }');
+    });
+
+    it('factory return replaces inherited raw CSS (does not auto-append)', () => {
+      const base = defineTokens({
+        primitives: { color: { primary: '#3b82f6' } },
+        rawCss: { theme: '/* inherited theme */' },
+      });
+
+      // Return a fresh value without interpolating base -> base is discarded.
+      const extended = base.extendRawCss(() => ({ theme: '/* replaced theme */' }));
+
+      expect(extended.definition.rawCss?.theme).toBe('/* replaced theme */');
+    });
+
+    it('factory can drop an inherited bucket by omitting it', () => {
+      const base = defineTokens({
+        primitives: { color: { primary: '#3b82f6' } },
+        rawCss: {
+          reset: '/* inherited reset */',
+          theme: '/* inherited theme */',
+        },
+      });
+
+      // Keep theme, drop reset by not returning it.
+      const extended = base.extendRawCss((_, inherited) => ({ theme: inherited?.theme }));
+
+      expect(extended.definition.rawCss?.reset).toBeUndefined();
+      expect(extended.definition.rawCss?.theme).toBe('/* inherited theme */');
+    });
+
+    it('factory can drop all inherited raw CSS by returning an empty object', () => {
+      const base = defineTokens({
+        primitives: { color: { primary: '#3b82f6' } },
+        rawCss: {
+          reset: '/* inherited reset */',
+          theme: '/* inherited theme */',
+          utilities: '/* inherited utilities */',
+        },
+      });
+
+      const extended = base.extendRawCss(() => ({}));
+
+      expect(extended.definition.rawCss?.reset).toBeUndefined();
+      expect(extended.definition.rawCss?.theme).toBeUndefined();
+      expect(extended.definition.rawCss?.utilities).toBeUndefined();
+    });
+  });
+
+  describe('rawCss preservation', () => {
+    it('preserves rawCss through extendPrimitives', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: '/* custom reset */',
+        },
+      });
+
+      const extended = base.extendPrimitives({
+        color: { secondary: '#9333ea' },
+      });
+
+      expect(extended.definition.rawCss?.reset).toBe('/* custom reset */');
+    });
+
+    it('preserves rawCss through extendSemantics', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          theme: '/* custom theme */',
+        },
+      });
+
+      const extended = base.extendSemantics(({ primitive }) => ({
+        action: { main: primitive('color', 'primary', 500) },
+      }));
+
+      expect(extended.definition.rawCss?.theme).toBe('/* custom theme */');
+    });
+
+    it('preserves rawCss through extendComponents', () => {
+      const base = defineTokens({
+        primitives: {
+          spacing: { md: '1rem' },
+        },
+        rawCss: {
+          utilities: '/* custom utilities */',
+        },
+      });
+
+      const extended = base.extendComponents(({ primitive }) => ({
+        button: { padding: primitive('spacing', 'md') },
+      }));
+
+      expect(extended.definition.rawCss?.utilities).toBe('/* custom utilities */');
+    });
+
+    it('supports chaining extendRawCss with other extensions', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+      });
+
+      const extended = base
+        .extendRawCss({ reset: '/* step 1 */' })
+        .extendPrimitives({ color: { secondary: '#9333ea' } })
+        .extendRawCss({ reset: '/* step 2 */' })
+        .extendSemantics(({ primitive }) => ({
+          action: { main: primitive('color', 'primary', 500) },
+        }))
+        .extendRawCss({ theme: '/* custom theme */' });
+
+      expect(extended.definition.rawCss?.reset).toBe('/* step 1 */\n/* step 2 */');
+      expect(extended.definition.rawCss?.theme).toBe('/* custom theme */');
+      expect(extended.definition.primitives.color?.secondary).toBe('#9333ea');
     });
   });
 });

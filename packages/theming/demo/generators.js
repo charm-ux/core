@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { charmTokens, defineTokens, generateTheme } from '../dist/index.js';
+import { charmTokens, defineTokens, generateThemeSync } from '../dist/index.js';
 
 // Helper to write all theme outputs
 function writeThemeAssets(name, theme) {
@@ -9,16 +9,29 @@ function writeThemeAssets(name, theme) {
   writeFileSync(`${dir}/tokens.css`, theme.css);
   writeFileSync(`${dir}/reset.css`, theme.cssReset);
   writeFileSync(`${dir}/utilities.css`, theme.cssUtilities);
-  writeFileSync(`${dir}/tokens.json`, theme.tokensJson);
+
+  // Themes with light/dark tokens emit split JSON files; others emit a single one.
+  if (theme.tokensJson) {
+    writeFileSync(`${dir}/tokens.json`, theme.tokensJson);
+  }
+  if (theme.tokensLightJson) {
+    writeFileSync(`${dir}/tokens.light.json`, theme.tokensLightJson);
+  }
+  if (theme.tokensDarkJson) {
+    writeFileSync(`${dir}/tokens.dark.json`, theme.tokensDarkJson);
+  }
+
   writeFileSync(`${dir}/TOKENS.md`, theme.tokensMarkdown);
+
+  const jsonForCount = theme.tokensJson ?? theme.tokensLightJson;
+  const colors = jsonForCount ? JSON.parse(jsonForCount).primitives?.color : undefined;
+  const colorPalettes = colors ? Object.keys(colors).length : 0;
 
   console.log(`Generated ${name}:`);
   console.log(`  - tokens.css (${theme.css.split('\n').length} lines)`);
   console.log(`  - reset.css (${theme.cssReset.split('\n').length} lines)`);
   console.log(`  - utilities.css (${theme.cssUtilities.split('\n').length} lines)`);
-  console.log(
-    `  - tokens.json (${JSON.parse(theme.tokensJson).color ? Object.keys(JSON.parse(theme.tokensJson).color).length : 0} color palettes)`
-  );
+  console.log(`  - tokens.json (${colorPalettes} color palettes)`);
   console.log(`  - TOKENS.md (${theme.tokensMarkdown.split('\n').length} lines)`);
 }
 
@@ -69,20 +82,20 @@ const { definition: customDefinition } = defineTokens({
       modal: '100',
     },
   },
-  semantics: ref => ({
+  semantics: ({ primitive }) => ({
     body: {
       bgColor: { light: '#ffffff', dark: '#1a1a1a' },
       fgColor: { light: '#1a1a1a', dark: '#ffffff' },
     },
     button: {
-      bgColor: { light: ref('color', 'neutral', 200), dark: ref('color', 'neutral', 800) },
+      bgColor: { light: primitive('color', 'neutral', 200), dark: primitive('color', 'neutral', 800) },
       fgColor: { light: '#1a1a1a', dark: '#ffffff' },
-      borderRadius: ref('borderRadius', 'md'),
+      borderRadius: primitive('borderRadius', 'md'),
     },
   }),
 });
 
-const customTheme = generateTheme(customDefinition, { prefix: 'custom' });
+const customTheme = generateThemeSync(customDefinition, { prefix: 'custom' });
 writeThemeAssets('custom', customTheme);
 
 // 3. Minimal Theme (just primitives)
@@ -99,7 +112,7 @@ const { definition: minimalDefinition } = defineTokens({
   },
 });
 
-const minimalTheme = generateTheme(minimalDefinition);
+const minimalTheme = generateThemeSync(minimalDefinition);
 writeThemeAssets('minimal', minimalTheme);
 
 console.log('\n--- Demo Complete ---\n');

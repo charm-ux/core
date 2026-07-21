@@ -399,25 +399,25 @@ export type TypographySubKeys<
 /** Extract property keys from a semantic or component token group */
 export type SemanticPropertyKeys<T> = keyof T & string;
 
+// ---- Layer-specific reference helpers ----
+
 /**
- * Type-safe reference function for creating CSS variable references.
- *
- * Returns a CSS `var()` reference string based on the token path.
- * Overloaded to provide autocomplete and type checking for primitive token
- * categories, plus flexible overloads for semantic token references.
+ * Reference function for primitive tokens (colors, spacing, typography, etc.).
  *
  * @template P - Primitive tokens type for type-safe key inference
+ *
+ * @example
+ * ```ts
+ * primitive('color', 'primary', 500)  // -> 'var(--prefix-color-primary-500)'
+ * primitive('spacing', 'md')          // -> 'var(--prefix-spacing-md)'
+ * primitive('fontFamily', 'sans')     // -> 'var(--prefix-font-family-sans)'
+ * ```
  */
-export type TypedRefFn<P extends PrimitiveTokens> = {
-  // ---- Color overloads ----
-
+export type PrimitiveRefFn<P extends PrimitiveTokens = PrimitiveTokens> = {
   /** Base color reference (no palette step) */
   (category: 'color', name: ColorKeys<P>): string;
   /** Palette color with step */
   (category: 'color', name: ColorKeys<P>, step: PaletteStep): string;
-
-  // ---- Other primitive overloads ----
-
   /** Spacing token reference */
   (category: 'spacing', name: SpacingKeys<P>): string;
   /** Border radius token reference */
@@ -442,34 +442,89 @@ export type TypedRefFn<P extends PrimitiveTokens> = {
   (category: 'borderWidth', name: BorderWidthKeys<P>): string;
   /** Z-index token reference */
   (category: 'zIndex', name: ZIndexKeys<P>): string;
+  /** Fallback for arbitrary primitive paths */
+  (category: string, ...segments: (string | number)[]): string;
+};
 
-  // ---- Semantic token overloads ----
-
-  /** Semantic token reference with a single property segment */
-  (category: 'semantic', component: string, property: string): string;
-  /** Semantic token reference with a nested group segment */
-  (category: 'semantic', component: string, group: string, property: string): string;
-  /** Semantic token reference with a nested subgroup segment */
-  (category: 'semantic', component: string, group: string, subgroup: string, property: string): string;
-
-  // ---- Catch-all fallback ----
-
-  /**
-   * Fallback for arbitrary paths when TypeScript can't infer the key type.
-   * Accepts any string/number segments and joins them into a CSS variable name.
-   */
+/**
+ * Reference function for semantic tokens.
+ *
+ * @example
+ * ```ts
+ * semantic('surface', 'primary')              // -> 'var(--prefix-surface-primary)'
+ * semantic('surface', 'primary', 'bgColor')   // -> 'var(--prefix-surface-primary-bg-color)'
+ * semantic('action', 'primary', 'hover', 'bgColor')
+ * ```
+ */
+export type SemanticRefFn = {
+  /** Single-level semantic reference */
+  (group: string, property: string): string;
+  /** Two-level semantic reference */
+  (group: string, subgroup: string, property: string): string;
+  /** Three-level semantic reference */
+  (group: string, subgroup: string, subsubgroup: string, property: string): string;
+  /** Fallback for arbitrary semantic paths */
   (...segments: (string | number)[]): string;
 };
 
 /**
- * Reference helper passed to the semantics and components factory functions.
+ * Reference function for component tokens.
  *
- * This is the same callable shape as `TypedRefFn` - call it directly to
- * create CSS variable references (e.g. `ref('color', 'primary', 500)`).
- *
- * @template P - The primitive tokens type for type-safe references
+ * @example
+ * ```ts
+ * component('button', 'bgColor')              // -> 'var(--prefix-button-bg-color)'
+ * component('button', 'hover', 'bgColor')     // -> 'var(--prefix-button-hover-bg-color)'
+ * ```
  */
-export type RefHelper<P extends PrimitiveTokens = PrimitiveTokens> = TypedRefFn<P>;
+export type ComponentRefFn = {
+  /** Single-level component reference */
+  (componentName: string, property: string): string;
+  /** Two-level component reference */
+  (componentName: string, state: string, property: string): string;
+  /** Three-level component reference */
+  (componentName: string, variant: string, state: string, property: string): string;
+  /** Fallback for arbitrary component paths */
+  (...segments: (string | number)[]): string;
+};
+
+/**
+ * Helpers passed to the semantics factory function.
+ * Only includes `primitive` since semantics should only reference primitives.
+ *
+ * @template P - Primitive tokens type
+ */
+export type SemanticFactoryHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
+  /** Reference primitive tokens (colors, spacing, typography, etc.) */
+  primitive: PrimitiveRefFn<P>;
+};
+
+/**
+ * Helpers passed to the components factory function.
+ * Includes `primitive` and `semantic` since components can reference both layers.
+ *
+ * @template P - Primitive tokens type
+ */
+export type ComponentFactoryHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
+  /** Reference primitive tokens (colors, spacing, typography, etc.) */
+  primitive: PrimitiveRefFn<P>;
+  /** Reference semantic tokens */
+  semantic: SemanticRefFn;
+};
+
+/**
+ * Helpers passed to the rawCss factory function.
+ * Includes all layers since raw CSS can reference any token.
+ *
+ * @template P - Primitive tokens type
+ */
+export type RawCssFactoryHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
+  /** Reference primitive tokens (colors, spacing, typography, etc.) */
+  primitive: PrimitiveRefFn<P>;
+  /** Reference semantic tokens */
+  semantic: SemanticRefFn;
+  /** Reference component tokens */
+  component: ComponentRefFn;
+};
 
 /**
  * Semantic token value - a CSS variable reference string or metadata-wrapped.
@@ -783,6 +838,85 @@ export type ComponentTokens = {
 };
 
 /**
+ * Raw CSS strings to append to generated files.
+ *
+ * Use this to inject custom CSS that can't be expressed as tokens,
+ * such as CSS resets, @font-face rules, or utility overrides.
+ * Raw CSS is appended after the generated CSS, so it can override
+ * generated styles.
+ *
+ * @example
+ * ```ts
+ * const tokens = defineTokens({
+ *   primitives: { ... },
+ *   rawCss: {
+ *     reset: `
+ *       html { scroll-behavior: smooth; }
+ *     `,
+ *     theme: `
+ *       @font-face {
+ *         font-family: 'CustomFont';
+ *         src: url('/fonts/custom.woff2') format('woff2');
+ *       }
+ *     `,
+ *     utilities: `
+ *       .visually-hidden { ... }
+ *     `,
+ *   },
+ * });
+ * ```
+ */
+export type RawCss = {
+  /** Raw CSS appended to reset.css */
+  reset?: string;
+  /** Raw CSS appended to theme.css */
+  theme?: string;
+  /** Raw CSS appended to utilities.css */
+  utilities?: string;
+};
+
+/**
+ * Input for raw CSS - either a plain object or a factory function
+ * that receives helpers for referencing tokens from all layers.
+ *
+ * The two forms differ in how they combine with inherited raw CSS when
+ * passed to `.extendRawCss()`:
+ *
+ * - **Plain object** - each bucket is *appended* after the inherited value
+ *   (the ergonomic default for adding CSS on top of a base theme).
+ * - **Factory function** - receives the inherited raw CSS as its second
+ *   argument (`base`) and its return value *replaces* the inherited raw CSS,
+ *   giving full control: append by interpolating `base`, drop a bucket by
+ *   omitting it, or replace it by returning a fresh value.
+ *
+ * @template P - Primitive tokens type for type-safe references
+ *
+ * @example
+ * ```ts
+ * // Plain object (no token references) - appends to inherited CSS
+ * rawCss: {
+ *   reset: 'html { scroll-behavior: smooth; }',
+ * }
+ *
+ * // Factory function - receives token helpers and the inherited raw CSS
+ * rawCss: ({ primitive, semantic, component }, base) => ({
+ *   // Append explicitly by interpolating the inherited value
+ *   theme: `${base?.theme ?? ''}
+ *     .custom-surface {
+ *       background: ${primitive('color', 'primary', 500)};
+ *       color: ${semantic('surface', 'primary', 'fgColor')};
+ *       padding: ${component('button', 'paddingX')};
+ *     }
+ *   `,
+ *   // Drop the inherited reset by omitting it here
+ * })
+ * ```
+ */
+export type RawCssFactory<P extends PrimitiveTokens = PrimitiveTokens> =
+  | RawCss
+  | ((helpers: RawCssFactoryHelpers<P>, base: RawCss | undefined) => RawCss);
+
+/**
  * Complete token definition - the input to `defineTokens()`.
  *
  * @template P - Primitive tokens type
@@ -797,10 +931,15 @@ export type ComponentTokens = {
  *     color: { primary: '#3b82f6' },
  *     spacing: { 4: '4px', 8: '8px' },
  *   },
- *   semantics: ({ ref }) => ({
- *     defaultButton: {
- *       backgroundColor: ref('color', 'primary', 500),
- *       paddingX: ref('spacing', 8),
+ *   semantics: ({ primitive }) => ({
+ *     surface: {
+ *       primary: primitive('color', 'primary', 500),
+ *     },
+ *   }),
+ *   components: ({ primitive, semantic }) => ({
+ *     button: {
+ *       bgColor: semantic('surface', 'primary'),
+ *       paddingX: primitive('spacing', 8),
  *     },
  *   }),
  * };
@@ -816,9 +955,11 @@ export type TokenDefinition<
   /** Primitive design tokens (colors, spacing, typography, etc.) */
   primitives: P;
   /** Factory function for semantic tokens that reference primitives */
-  semantics?: (helper: RefHelper<P>) => S;
-  /** Factory function for component tokens that reference primitives or semantics */
-  components?: (helper: RefHelper<P>) => C;
+  semantics?: (helpers: SemanticFactoryHelpers<P>) => S;
+  /** Factory function for component tokens that reference primitives and semantics */
+  components?: (helpers: ComponentFactoryHelpers<P>) => C;
+  /** Raw CSS strings appended to generated files */
+  rawCss?: RawCss;
 };
 
 /**
@@ -854,4 +995,6 @@ export type ResolvedTokenDefinition<
   semantics?: S;
   /** Resolved component tokens (after the factory function has been invoked) */
   components?: C;
+  /** Raw CSS strings appended to generated files */
+  rawCss?: RawCss;
 };

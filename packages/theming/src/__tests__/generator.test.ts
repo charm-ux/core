@@ -193,9 +193,9 @@ describe('generateThemeSync', () => {
           primary: '#3b82f6',
         },
       },
-      semantics: ref => ({
+      semantics: ({ primitive }) => ({
         action: {
-          main: ref('color', 'primary', 500),
+          main: primitive('color', 'primary', 500),
         },
       }),
     });
@@ -212,9 +212,9 @@ describe('generateThemeSync', () => {
           md: '1rem',
         },
       },
-      components: ref => ({
+      components: ({ primitive }) => ({
         button: {
-          padding: ref('spacing', 'md'),
+          padding: primitive('spacing', 'md'),
         },
       }),
     });
@@ -285,6 +285,90 @@ describe('generateThemeSync', () => {
     expect(parsed).toHaveProperty('primitives');
     expect(parsed.primitives).toHaveProperty('color');
   });
+
+  describe('rawCss output', () => {
+    it('appends rawCss.theme to theme CSS', () => {
+      const tokens = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          theme: '@font-face { font-family: "Custom"; src: url("custom.woff2"); }',
+        },
+      });
+
+      const theme = generateThemeSync(tokens.definition, { prefix: 'app' });
+
+      expect(theme.css).toContain('/* Custom theme CSS */');
+      expect(theme.css).toContain('@font-face { font-family: "Custom"');
+    });
+
+    it('appends rawCss.reset to reset CSS', () => {
+      const tokens = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          reset: 'html { scroll-behavior: smooth; }',
+        },
+      });
+
+      const theme = generateThemeSync(tokens.definition, { prefix: 'app' });
+
+      expect(theme.cssReset).toContain('/* Custom reset CSS */');
+      expect(theme.cssReset).toContain('html { scroll-behavior: smooth; }');
+    });
+
+    it('appends rawCss.utilities to utilities CSS', () => {
+      const tokens = defineTokens({
+        primitives: {
+          spacing: { sm: '0.5rem' },
+        },
+        rawCss: {
+          utilities: '.sr-only { position: absolute; width: 1px; height: 1px; }',
+        },
+      });
+
+      const theme = generateThemeSync(tokens.definition, { prefix: 'app' });
+
+      expect(theme.cssUtilities).toContain('/* Custom utility CSS */');
+      expect(theme.cssUtilities).toContain('.sr-only { position: absolute');
+    });
+
+    it('does not add comment when rawCss is not provided', () => {
+      const tokens = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+      });
+
+      const theme = generateThemeSync(tokens.definition, { prefix: 'app' });
+
+      expect(theme.css).not.toContain('/* Custom theme CSS */');
+      expect(theme.cssReset).not.toContain('/* Custom reset CSS */');
+      expect(theme.cssUtilities).not.toContain('/* Custom utility CSS */');
+    });
+
+    it('preserves rawCss through theme extension', () => {
+      const base = defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+        },
+        rawCss: {
+          theme: '/* base theme css */',
+        },
+      });
+
+      const extended = base.extendRawCss({
+        theme: '/* extended theme css */',
+      });
+
+      const theme = generateThemeSync(extended.definition, { prefix: 'app' });
+
+      expect(theme.css).toContain('/* base theme css */');
+      expect(theme.css).toContain('/* extended theme css */');
+    });
+  });
 });
 
 describe('generateTokensJson (DTCG format)', () => {
@@ -310,13 +394,13 @@ describe('generateTokensJson (DTCG format)', () => {
         primitives: {
           color: { brand: '#3b82f6' },
         },
-        semantics: ref => ({
-          surface: { primary: ref('color', 'brand', 500) },
+        semantics: ({ primitive }) => ({
+          surface: { primary: primitive('color', 'brand', 500) },
         }),
-        components: ref => ({
+        components: ({ semantic }) => ({
           // Arbitrary, non-registered component/group name - not in any
           // fixed SEMANTIC_GROUPS/COMPONENT_GROUPS-style list.
-          totallyCustomWidget: { bgColor: ref('surface', 'primary') },
+          totallyCustomWidget: { bgColor: semantic('surface', 'primary') },
         }),
       },
       { prefix: 'app' }
@@ -334,11 +418,11 @@ describe('generateTokensJson (DTCG format)', () => {
         primitives: {
           color: { brand: '#3b82f6' },
         },
-        components: ref => ({
+        components: ({ primitive }) => ({
           widget: {
             cursor: 'not-allowed',
             transition: 'opacity 0.3s ease',
-            border: `1px solid ${ref('color', 'brand', 500)}`,
+            border: `1px solid ${primitive('color', 'brand', 500)}`,
           },
         }),
       },
@@ -390,17 +474,17 @@ describe('generateTokensJson (DTCG format)', () => {
         primitives: {
           color: { brand: '#3b82f6' },
         },
-        semantics: ref => ({
+        semantics: ({ primitive }) => ({
           body: {
-            bgColor: { value: ref('color', 'brand', 500), description: 'Body background' },
+            bgColor: { value: primitive('color', 'brand', 500), description: 'Body background' },
             text: { light: '#111111', dark: '#f5f5f5' },
           },
         }),
-        components: ref => ({
+        components: ({ semantic }) => ({
           card: {
-            surfaceColor: ref('body', 'bgColor'),
+            surfaceColor: semantic('body', 'bgColor'),
             header: {
-              textColor: ref('body', 'text'),
+              textColor: semantic('body', 'text'),
             },
           },
         }),

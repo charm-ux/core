@@ -4,18 +4,33 @@ import {
   createHelpers,
   type CreateHelpersOptions,
   createSemanticHelpers,
+  cssVar,
   deepMerge,
   type TokenHelpers,
 } from './helpers/index.js';
 import type { TypedGet } from './helpers/typedGet.js';
 import type {
+  ComponentFactoryHelpers,
+  ComponentRefFn,
   ComponentTokens,
+  PrimitiveRefFn,
   PrimitiveTokens,
-  RefHelper,
+  RawCss,
+  RawCssFactory,
+  RawCssFactoryHelpers,
   ResolvedTokenDefinition,
+  SemanticFactoryHelpers,
+  SemanticRefFn,
   SemanticTokens,
   TokenDefinition,
 } from './types/index.js';
+
+function concatCss(base: string | undefined, addition: string | undefined): string | undefined {
+  if (!base && !addition) return undefined;
+  if (!base) return addition;
+  if (!addition) return base;
+  return `${base}\n${addition}`;
+}
 
 /**
  * Semantic token namespace with a typed `get()` accessor - provides
@@ -79,56 +94,93 @@ export type DefinedTokens<
 
   /**
    * Extend this theme with new or overridden semantic tokens.
-   * Receives the base resolved semantics so you can spread them.
+   *
+   * The returned tokens are deep-merged into the inherited semantics, so you
+   * only describe what changes - no need to spread `base`. Nested groups merge
+   * key-by-key (inherited siblings are preserved). The inherited semantics are
+   * still passed as the second arg (`base`) for when you need to derive a value
+   * from them. Merging can add or override keys but cannot remove an inherited
+   * one.
    *
    * @example
    * ```ts
-   * const customTokens = charmTokens.extendSemantics((ref, base) => ({
-   *   ...base,
+   * const customTokens = charmTokens.extendSemantics(({ primitive }) => ({
    *   body: {
-   *     ...base?.body,
-   *     bgColor: ref('color', 'neutral', 900),
+   *     bgColor: primitive('color', 'neutral', 900),
    *   },
    * }));
    * ```
    */
   extendSemantics: <NewS extends SemanticTokens>(
-    factory: (ref: RefHelper<P>, base: S | undefined) => NewS
-  ) => DefinedTokens<P, NewS, C>;
+    factory: (helpers: SemanticFactoryHelpers<P>, base: S | undefined) => NewS
+  ) => DefinedTokens<P, S & NewS, C>;
 
   /**
    * Extend this theme with new or overridden component tokens.
-   * Receives the base resolved components so you can spread them.
+   *
+   * The returned tokens are deep-merged into the inherited components, so you
+   * only describe what changes - no need to spread `base`. Nested groups merge
+   * key-by-key (inherited siblings are preserved). The inherited components are
+   * still passed as the second arg (`base`) for when you need to derive a value
+   * from them. Merging can add or override keys but cannot remove an inherited
+   * one.
    *
    * @example
    * ```ts
-   * const customTokens = charmTokens.extendComponents((ref, base) => ({
-   *   ...base,
+   * const customTokens = charmTokens.extendComponents(({ primitive, semantic }) => ({
    *   button: {
-   *     ...base?.button,
-   *     borderRadius: ref('borderRadius', 'full'),
+   *     borderRadius: primitive('borderRadius', 'full'),
+   *     bgColor: semantic('surface', 'primary'),
    *   },
    * }));
    * ```
    */
   extendComponents: <NewC extends ComponentTokens>(
-    factory: (ref: RefHelper<P>, base: C | undefined) => NewC
-  ) => DefinedTokens<P, S, NewC>;
+    factory: (helpers: ComponentFactoryHelpers<P>, base: C | undefined) => NewC
+  ) => DefinedTokens<P, S, C & NewC>;
+
+  /**
+   * Extend this theme with raw CSS injected into the generated files.
+   *
+   * Accepts either a plain object or a factory function - the two forms
+   * combine with the inherited raw CSS differently:
+   *
+   * - **Plain object** - each bucket is *appended* after the base theme's
+   *   value (the common case: adding CSS on top of what you inherited).
+   * - **Factory function** - receives token helpers and the inherited raw CSS
+   *   as `base`; its return value *replaces* the inherited raw CSS. This is
+   *   how you opt out of or override inherited CSS: append by interpolating
+   *   `base`, drop a bucket by omitting it, or replace it by returning a
+   *   fresh value.
+   *
+   * @example
+   * ```ts
+   * // Plain object - appends after inherited CSS
+   * const customTokens = charmTokens.extendRawCss({
+   *   reset: `html { scroll-behavior: smooth; }`,
+   * });
+   *
+   * // Factory function - full control via `base`
+   * const customTokens = charmTokens.extendRawCss(({ primitive, semantic, component }, base) => ({
+   *   // Append explicitly by interpolating the inherited value
+   *   theme: `${base?.theme ?? ''}
+   *     .brand-surface {
+   *       background: ${primitive('color', 'primary', 500)};
+   *       color: ${semantic('text', 'primary')};
+   *       padding: ${component('button', 'paddingX')};
+   *     }
+   *   `,
+   *   // `reset` and `utilities` omitted -> inherited values are dropped
+   * }));
+   * ```
+   */
+  extendRawCss: (additions: RawCssFactory<P>) => DefinedTokens<P, S, C>;
 };
 
 /**
- * @deprecated Use {@link DefinedTokens} instead.
- */
-export type DefineTokensResult<
-  P extends PrimitiveTokens,
-  S extends SemanticTokens = SemanticTokens,
-  C extends ComponentTokens = ComponentTokens,
-> = DefinedTokens<P, S, C>;
-
-/**
  * Input accepted by {@link defineTokens} - primitives plus optional factory
- * functions for deriving semantic and component tokens from a type-safe
- * `ref()` helper.
+ * functions for deriving semantic and component tokens from layer-specific
+ * helpers (`primitive`, `semantic`, `component`).
  *
  * This is the same shape as {@link TokenDefinition}.
  */
@@ -146,6 +198,7 @@ export type DefineTokensInput<
  * - `.extendPrimitives()` - Override primitive values
  * - `.extendSemantics()` - Override/extend semantic tokens
  * - `.extendComponents()` - Override/extend component tokens
+ * - `.extendRawCss()` - Append raw CSS to generated files
  *
  * @example
  * ```ts
@@ -154,11 +207,14 @@ export type DefineTokensInput<
  *     color: { primary: '#3b82f6' },
  *     spacing: { sm: '0.5rem', md: '0.75rem' },
  *   },
- *   semantics: (ref) => ({
- *     surface: { primary: ref('color', 'primary', 500) },
+ *   semantics: ({ primitive }) => ({
+ *     surface: { primary: primitive('color', 'primary', 500) },
  *   }),
- *   components: (ref) => ({
- *     button: { background: ref('surface', 'primary') },
+ *   components: ({ primitive, semantic }) => ({
+ *     button: {
+ *       background: semantic('surface', 'primary'),
+ *       padding: primitive('spacing', 'md'),
+ *     },
  *   }),
  * }, { prefix: 'charm' });
  *
@@ -188,14 +244,32 @@ export function defineTokens<
   const semanticHelpers = createSemanticHelpers(resolvedOptions);
   const componentHelpers = createComponentHelpers(resolvedOptions);
 
-  const semantics = input.semantics ? input.semantics(helpers.ref) : undefined;
-  const components = input.components ? input.components(helpers.ref) : undefined;
+  // Create layer-specific ref functions
+  const primitiveRef = ((...segments: (string | number)[]) =>
+    cssVar(...segments, resolvedOptions)) as PrimitiveRefFn<P>;
+
+  const semanticRef = ((...segments: (string | number)[]) => cssVar(...segments, resolvedOptions)) as SemanticRefFn;
+
+  const componentRef = ((...segments: (string | number)[]) => cssVar(...segments, resolvedOptions)) as ComponentRefFn;
+
+  // Create helper objects for each layer
+  const semanticFactoryHelpers: SemanticFactoryHelpers<P> = { primitive: primitiveRef };
+  const componentFactoryHelpers: ComponentFactoryHelpers<P> = { primitive: primitiveRef, semantic: semanticRef };
+  const rawCssFactoryHelpers: RawCssFactoryHelpers<P> = {
+    primitive: primitiveRef,
+    semantic: semanticRef,
+    component: componentRef,
+  };
+
+  const semantics = input.semantics ? input.semantics(semanticFactoryHelpers) : undefined;
+  const components = input.components ? input.components(componentFactoryHelpers) : undefined;
 
   const definition: ResolvedTokenDefinition<P, S, C> = {
     primitives: input.primitives,
     ...(resolvedPrefix && { prefix: resolvedPrefix }),
     ...(semantics !== undefined && { semantics }),
     ...(components !== undefined && { components }),
+    ...(input.rawCss && { rawCss: input.rawCss }),
   };
 
   return {
@@ -213,34 +287,74 @@ export function defineTokens<
           primitives: mergedPrimitives,
           semantics: input.semantics,
           components: input.components,
+          rawCss: input.rawCss,
         },
         { prefix: resolvedPrefix }
       );
     },
 
     extendSemantics: <NewS extends SemanticTokens>(
-      factory: (ref: RefHelper<P>, base: S | undefined) => NewS
-    ): DefinedTokens<P, NewS, C> => {
+      factory: (helpers: SemanticFactoryHelpers<P>, base: S | undefined) => NewS
+    ): DefinedTokens<P, S & NewS, C> => {
       return defineTokens(
         {
           prefix: resolvedPrefix,
           primitives: input.primitives,
-          semantics: ref => factory(ref, semantics),
+          // Deep-merge the delta into the inherited semantics so callers only
+          // describe what changes (spreading `base` still works, since merging
+          // a superset is a no-op).
+          semantics: h => {
+            const delta = factory(h, semantics);
+            return (semantics ? deepMerge<SemanticTokens>(semantics, delta) : delta) as S & NewS;
+          },
           components: input.components,
+          rawCss: input.rawCss,
         },
         { prefix: resolvedPrefix }
       );
     },
 
     extendComponents: <NewC extends ComponentTokens>(
-      factory: (ref: RefHelper<P>, base: C | undefined) => NewC
-    ): DefinedTokens<P, S, NewC> => {
+      factory: (helpers: ComponentFactoryHelpers<P>, base: C | undefined) => NewC
+    ): DefinedTokens<P, S, C & NewC> => {
       return defineTokens(
         {
           prefix: resolvedPrefix,
           primitives: input.primitives,
           semantics: input.semantics,
-          components: ref => factory(ref, components),
+          // Deep-merge the delta into the inherited components (see above).
+          components: h => {
+            const delta = factory(h, components);
+            return (components ? deepMerge<ComponentTokens>(components, delta) : delta) as C & NewC;
+          },
+          rawCss: input.rawCss,
+        },
+        { prefix: resolvedPrefix }
+      );
+    },
+
+    extendRawCss: (additions: RawCssFactory<P>): DefinedTokens<P, S, C> => {
+      // The factory form receives the inherited raw CSS as `base` and its
+      // return value *replaces* it - the author controls appending (by
+      // interpolating `base`), removing (by omitting a bucket), or replacing
+      // (by returning a fresh value). The plain-object form keeps the
+      // ergonomic append-after-inherited default.
+      const mergedRawCss: RawCss =
+        typeof additions === 'function'
+          ? additions(rawCssFactoryHelpers, input.rawCss)
+          : {
+              reset: concatCss(input.rawCss?.reset, additions.reset),
+              theme: concatCss(input.rawCss?.theme, additions.theme),
+              utilities: concatCss(input.rawCss?.utilities, additions.utilities),
+            };
+
+      return defineTokens(
+        {
+          prefix: resolvedPrefix,
+          primitives: input.primitives,
+          semantics: input.semantics,
+          components: input.components,
+          rawCss: mergedRawCss,
         },
         { prefix: resolvedPrefix }
       );

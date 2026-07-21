@@ -8,7 +8,12 @@ import {
   walkExpandedColors,
 } from './colorPalette.js';
 import { formatShadowValue } from './formatShadow.js';
-import { collectTokenTreeLeaves, resolveMaybeFactory, unwrapTokenValue } from './internal/tokenUtils.js';
+import {
+  collectTokenTreeLeaves,
+  resolveMaybeComponentFactory,
+  resolveMaybeSemanticFactory,
+  unwrapTokenValue,
+} from './internal/tokenUtils.js';
 import type { GeneratorConfig } from '../types/config.js';
 import type {
   ComponentTokens,
@@ -313,7 +318,7 @@ export function generateCss(
   // Generate semantic variables
   let semanticVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
   if (definition.semantics) {
-    const resolved = resolveMaybeFactory<PrimitiveTokens, SemanticTokens>(definition.semantics, prefix);
+    const resolved = resolveMaybeSemanticFactory<PrimitiveTokens, SemanticTokens>(definition.semantics, prefix);
     if (resolved) {
       semanticVars = generateSemanticVariables(resolved, prefix, {
         ...config,
@@ -326,7 +331,7 @@ export function generateCss(
   // Generate component variables
   let componentVars = { base: [] as string[], light: [] as string[], dark: [] as string[] };
   if (definition.components) {
-    const resolved = resolveMaybeFactory<PrimitiveTokens, ComponentTokens>(definition.components, prefix);
+    const resolved = resolveMaybeComponentFactory<PrimitiveTokens, ComponentTokens>(definition.components, prefix);
     if (resolved) {
       componentVars = generateSemanticVariables(resolved, prefix, {
         ...config,

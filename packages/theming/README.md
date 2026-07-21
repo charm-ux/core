@@ -26,7 +26,7 @@ fs.writeFileSync('utilities.css', cssUtilities);
 
 ### Extending the Charm Theme
 
-Use `.extendPrimitives()`, `.extendSemantics()`, and `.extendComponents()` to create derived themes:
+Use `.extendPrimitives()`, `.extendSemantics()`, `.extendComponents()`, and `.extendRawCss()` to create derived themes. The semantic and component factories receive layer-specific reference helpers (`primitive`, `semantic`, `component`); their return value is **deep-merged** into the inherited tokens, so you only describe what changes — no need to spread `base`:
 
 ```typescript
 import { charmTokens, generateTheme } from '@charm-ux/theming';
@@ -39,25 +39,30 @@ const myTokens = charmTokens
       accent: '#9333ea',
     },
   })
-  .extendSemantics((ref, base) => ({
-    ...base,
+  .extendSemantics(({ primitive }) => ({
     action: {
-      ...base?.action,
-      primary: ref('color', 'brand', 500),
-      primaryHover: ref('color', 'brand', 600),
+      primary: primitive('color', 'brand', 500),
+      primaryHover: primitive('color', 'brand', 600),
     },
   }))
-  .extendComponents((ref, base) => ({
-    ...base,
+  .extendComponents(({ primitive }) => ({
     button: {
-      ...base?.button,
-      borderRadius: ref('borderRadius', 'full'),
+      borderRadius: primitive('borderRadius', 'full'),
     },
+  }))
+  .extendRawCss(({ semantic }, base) => ({
+    // Raw CSS is the exception: the factory return *replaces* inherited CSS,
+    // so spread `base` (and interpolate `base?.theme`) to append instead.
+    ...base,
+    theme: `${base?.theme ?? ''}
+      .brand-surface { background: ${semantic('surface', 'brand')}; }`,
   }));
 
 // Generate CSS with your prefix
 const theme = generateTheme(myTokens.definition, { prefix: 'myapp' });
 ```
+
+Untouched groups and untouched keys within a group are preserved automatically. Merging can add or override tokens, but it cannot _remove_ an inherited one. The inherited tokens are still passed as the factory's second argument (`base`) for when you need to derive a value from them.
 
 ### Creating a Theme from Scratch
 
@@ -77,20 +82,24 @@ const myTokens = defineTokens(
         lg: '1.5rem',
       },
     },
-    semantics: ref => ({
+    semantics: ({ primitive }) => ({
       surface: {
         primary: { light: '#ffffff', dark: '#18181b' },
       },
       action: {
-        primary: ref('color', 'primary', 500),
+        primary: primitive('color', 'primary', 500),
       },
     }),
-    components: ref => ({
+    components: ({ semantic, primitive }) => ({
       button: {
-        bgColor: ref('action', 'primary'),
-        borderRadius: ref('borderRadius', 'md'),
+        bgColor: semantic('action', 'primary'),
+        borderRadius: primitive('borderRadius', 'md'),
       },
     }),
+    // Optional raw CSS appended to the generated files
+    rawCss: {
+      reset: `html { scroll-behavior: smooth; }`,
+    },
   },
   { prefix: 'myapp' }
 );
@@ -139,14 +148,17 @@ primitives: {
 Context-aware tokens referencing primitives:
 
 ```typescript
-semantics: ref => ({
+semantics: ({ primitive }) => ({
   surface: {
     primary: { light: '#ffffff', dark: '#18181b' },
-    secondary: { light: ref('color', 'neutral', 100), dark: ref('color', 'neutral', 800) },
+    secondary: {
+      light: primitive('color', 'neutral', 100),
+      dark: primitive('color', 'neutral', 800),
+    },
   },
   action: {
-    primary: ref('color', 'primary', 500),
-    primaryHover: ref('color', 'primary', 600),
+    primary: primitive('color', 'primary', 500),
+    primaryHover: primitive('color', 'primary', 600),
   },
   text: {
     primary: { light: '#18181b', dark: '#fafafa' },
@@ -161,13 +173,13 @@ Use `{ light, dark }` objects for color-scheme-aware tokens.
 Component-specific tokens:
 
 ```typescript
-components: ref => ({
+components: ({ primitive, semantic }) => ({
   button: {
-    bgColor: ref('action', 'primary'),
-    fgColor: ref('text', 'inverse'),
-    borderRadius: ref('borderRadius', 'md'),
+    bgColor: semantic('action', 'primary'),
+    fgColor: semantic('text', 'inverse'),
+    borderRadius: primitive('borderRadius', 'md'),
     hover: {
-      bgColor: ref('action', 'primaryHover'),
+      bgColor: semantic('action', 'primaryHover'),
     },
   },
 });
@@ -187,31 +199,57 @@ const customTokens = charmTokens.extendPrimitives({
 
 ### `.extendSemantics(factory)`
 
-Override semantic tokens. Receives the base semantics to spread:
+Add or override semantic tokens. The factory receives `{ primitive }` reference helpers; its return is deep-merged into the inherited semantics, so you list only what changes:
 
 ```typescript
-const customTokens = charmTokens.extendSemantics((ref, base) => ({
-  ...base,
+const customTokens = charmTokens.extendSemantics(({ primitive }) => ({
   surface: {
-    ...base?.surface,
-    brand: ref('color', 'brand', 500),
+    brand: primitive('color', 'brand', 500),
   },
 }));
 ```
+
+The inherited `surface` siblings (and every other group) are preserved. The base semantics are still available as the second argument (`base`) when you need to derive a value from them.
 
 ### `.extendComponents(factory)`
 
-Override component tokens:
+Add or override component tokens. The factory receives `{ primitive, semantic }` reference helpers; its return is deep-merged into the inherited components:
 
 ```typescript
-const customTokens = charmTokens.extendComponents((ref, base) => ({
-  ...base,
+const customTokens = charmTokens.extendComponents(({ primitive }) => ({
   button: {
-    ...base?.button,
-    borderRadius: ref('borderRadius', 'full'),
+    borderRadius: primitive('borderRadius', 'full'),
   },
 }));
 ```
+
+### `.extendRawCss(additions)`
+
+Inject raw CSS into the generated `reset`, `theme`, and `utilities` files. It accepts two forms that combine with inherited raw CSS differently:
+
+- **Plain object** — each bucket is _appended_ after the inherited value. This is the common case for adding CSS on top of what you inherited:
+
+  ```typescript
+  const customTokens = charmTokens.extendRawCss({
+    reset: `html { scroll-behavior: smooth; }`,
+  });
+  ```
+
+- **Factory function** — receives `{ primitive, semantic, component }` reference helpers and the inherited raw CSS as `base`. Its return value **replaces** the inherited raw CSS, giving you full control:
+
+  ```typescript
+  const customTokens = charmTokens.extendRawCss(({ semantic }, base) => ({
+    // Append: interpolate the inherited value
+    ...base,
+    theme: `${base?.theme ?? ''}
+      .brand-surface { background: ${semantic('surface', 'brand')}; }`,
+
+    // Drop an inherited bucket: omit it from the return value
+    // Replace a bucket entirely: return a fresh value without spreading base
+  }));
+  ```
+
+  Because the factory return replaces inherited raw CSS, spread `base` (and interpolate `base?.<bucket>`) to keep what you inherited, omit a bucket to drop it, or return a bucket without referencing `base` to replace it outright.
 
 ### Chaining
 
@@ -220,8 +258,13 @@ Methods can be chained:
 ```typescript
 const customTokens = charmTokens
   .extendPrimitives({ color: { brand: '#ff6600' } })
-  .extendSemantics((ref, base) => ({ ...base /* ... */ }))
-  .extendComponents((ref, base) => ({ ...base /* ... */ }));
+  .extendSemantics(({ primitive }) => ({
+    /* merged into inherited semantics */
+  }))
+  .extendComponents(({ primitive }) => ({
+    /* merged into inherited components */
+  }))
+  .extendRawCss(({ semantic }, base) => ({ ...base /* raw CSS replaces; spread to keep */ }));
 ```
 
 ## Generated Outputs
@@ -360,7 +403,7 @@ Notes:
 
 Creates a token definition with typed helpers and extension methods.
 
-Returns: `{ definition, helpers, extendPrimitives, extendSemantics, extendComponents }`
+Returns: `{ definition, helpers, extendPrimitives, extendSemantics, extendComponents, extendRawCss }`
 
 ### `generateTheme(definition, options?)`
 

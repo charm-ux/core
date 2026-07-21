@@ -10,7 +10,8 @@ import {
 import { formatShadowValue } from './formatShadow.js';
 import {
   collectTokenTreeLeaves,
-  resolveMaybeFactory,
+  resolveMaybeComponentFactory,
+  resolveMaybeSemanticFactory,
   type TokenTreeLeaf,
   unwrapTokenMetadata,
 } from './internal/tokenUtils.js';
@@ -855,18 +856,22 @@ function renderApiReferenceSection(
   );
 
   lines.push(
-    '### `ref(...)`',
+    '### Layer reference helpers (`primitive`, `semantic`, `component`)',
     '',
-    'Low-level reference helper passed into `semantics`/`components` factory',
-    'functions when defining a theme. Returns a `var()` string pointing at',
-    'another token, letting semantic and component layers compose on top of',
-    'primitives (or on top of each other).',
+    'Reference helpers passed into the `semantics`/`components` factory functions',
+    'when defining a theme. Each returns a `var()` string pointing at a token in',
+    'that layer, letting semantic and component layers compose on top of',
+    'primitives (or on top of each other). The `semantics` factory receives',
+    '`{ primitive }`; the `components` factory receives `{ primitive, semantic }`.',
     '',
     '```ts',
     'defineTokens({',
     "  primitives: { color: { brand: '#0265dc' } },",
-    '  semantics: (ref) => ({',
-    "    action: { primary: ref('color', 'brand', 500) },",
+    '  semantics: ({ primitive }) => ({',
+    "    action: { primary: primitive('color', 'brand', 500) },",
+    '  }),',
+    '  components: ({ semantic }) => ({',
+    "    button: { bgColor: semantic('action', 'primary') },",
     '  }),',
     '});',
     '```',
@@ -999,10 +1004,10 @@ function renderBuildingComponentGuideSection(): string[] {
     '2. If the component needs its own reusable values, extend `components`:',
     '',
     '```ts',
-    'const myTokens = baseTokens.extendComponents((ref, base) => ({',
-    '  ...base,',
+    'const myTokens = baseTokens.extendComponents(({ primitive }) => ({',
+    '  // Deep-merged into the inherited components - only list what you add',
     '  myComponent: {',
-    "    bgColor: ref('color', 'brand', 500),",
+    "    bgColor: primitive('color', 'brand', 500),",
     '  },',
     '}));',
     '```',
@@ -1035,8 +1040,8 @@ export function generateTokensMarkdown<
   S extends SemanticTokens = SemanticTokens,
   C extends ComponentTokens = ComponentTokens,
 >(definition: TokenDefinition<P, S, C> | ResolvedTokenDefinition<P, S, C>, prefix: string): string {
-  const semantics = resolveMaybeFactory<P, S>(definition.semantics, prefix);
-  const components = resolveMaybeFactory<P, C>(definition.components, prefix);
+  const semantics = resolveMaybeSemanticFactory<P, S>(definition.semantics, prefix);
+  const components = resolveMaybeComponentFactory<P, C>(definition.components, prefix);
 
   const lines: string[] = [
     ...renderDesignMdFrontmatter(definition.primitives, semantics, components, prefix),

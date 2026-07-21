@@ -8,7 +8,6 @@ import type {
   ShadowKeys,
   SpacingKeys,
   TimingFunctionKeys,
-  TypedRefFn,
   TypographySubKeys,
   ZIndexKeys,
 } from '../types/index.js';
@@ -57,8 +56,6 @@ export type TokenHelpers<P extends PrimitiveTokens = PrimitiveTokens> = {
    * token (`--{prefix}-color-scheme-{name}[-{step}]`), based on its luminance.
    */
   colorScheme: (name: ColorKeys<P>, step?: string | number) => string;
-  /** Generic ref function for arbitrary token paths */
-  ref: TypedRefFn<P>;
 };
 
 /** Options for creating token helpers */
@@ -108,9 +105,5 @@ export function createHelpers<P extends PrimitiveTokens>(
 
     colorScheme: (name, step) =>
       step !== undefined ? makeVar('color', 'scheme', name, step) : makeVar('color', 'scheme', name),
-
-    ref: ((...segments: (string | number)[]) => {
-      return makeVar(...segments);
-    }) as TypedRefFn<P>,
   };
 }

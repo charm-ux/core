@@ -1,5 +1,5 @@
 // Core API
-export { defineTokens, type DefineTokensInput, type DefineTokensResult, type DefinedTokens } from './defineTokens.js';
+export { defineTokens, type DefineTokensInput, type DefinedTokens } from './defineTokens.js';
 
 // Types
 export * from './types/index.js';
