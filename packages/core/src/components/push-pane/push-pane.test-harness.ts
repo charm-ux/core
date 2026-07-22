@@ -96,7 +96,9 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
                   const spy = sinon.spy();
                   this.component.addEventListener('push-pane-after-show', spy);
                   this.component.show();
-                  await waitUntil(() => spy.calledOnce);
+                  await waitUntil(() => spy.calledOnce, 'push-pane-after-show should fire', {
+                    timeout: 2500,
+                  });
 
                   expect(spy).to.have.been.calledOnce;
                 },

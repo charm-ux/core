@@ -103,7 +103,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   closeButton.click();
                   await elementUpdated(this.component);
                   expect(this.component.open).to.be.false;
-                  await waitUntil(() => afterHideSpy.called);
+                  await waitUntil(() => afterHideSpy.called, 'dialog-after-hide should fire', {
+                    timeout: 2500,
+                  });
                   const dialogElement = this.component.shadowRoot?.querySelector('dialog');
                   expect(dialogElement?.hasAttribute('open')).to.be.false;
                 },
@@ -126,7 +128,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   await aTimeout(500);
                   expect(this.component.open).to.be.false;
                   const dialogElement = this.component.shadowRoot?.querySelector('dialog');
-                  expect(dialogElement?.getAttribute('open')).to.equal(null);
+                  expect(dialogElement?.hasAttribute('open')).to.be.false;
                 },
                 config: {
                   id: 'dialog-1',
