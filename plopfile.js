@@ -375,4 +375,54 @@ export default function (plop) {
       ];
     },
   });
+
+  plop.setGenerator('Project config', {
+    description: 'Scaffold a project-config.ts to extend the Charm theme (custom prefix + tokens).',
+    prompts: [
+      {
+        type: 'input',
+        name: 'outDir',
+        message: 'Where should project-config.ts be created? (relative path)',
+        default: 'src',
+      },
+      {
+        type: 'input',
+        name: 'prefix',
+        message: 'Custom tag/token prefix in kebab-case (e.g. myapp -> <myapp-button>)',
+        default: 'myapp',
+      },
+      {
+        type: 'confirm',
+        name: 'withTheme',
+        message: 'Include a custom theme (extend brand color and tokens)?',
+        default: true,
+      },
+      {
+        type: 'input',
+        name: 'brandColor',
+        message: 'Brand color (hex)',
+        default: '#0265dc',
+        when: answers => answers.withTheme,
+      },
+    ],
+    actions: function (data) {
+      const prefix = data?.prefix;
+      if (
+        // Must only contain lowercase letters and numbers (matches CharmProject prefix rules)
+        !/^[a-z][a-z0-9]*$/.test(prefix)
+      ) {
+        console.log('Prefix must start with a lowercase letter and contain only lowercase letters and numbers.');
+        return [];
+      }
+
+      return [
+        {
+          type: 'add',
+          skipIfExists: true,
+          path: `{{outDir}}/project-config.ts`,
+          templateFile: 'plop-templates/project-config.ts.hbs',
+        },
+      ];
+    },
+  });
 }

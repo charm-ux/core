@@ -1,0 +1,56 @@
+// project-config.ts
+//
+// ⚠️ IMPORT ORDER MATTERS.
+// Component styles read `project.theme` once, when their module first evaluates.
+// This file must run BEFORE anything that imports a Charm component, so import
+// it first in your app entry point:
+//
+//   // main.ts
+//   import './project-config.js';                              // configures the theme first
+//   import '@charm-ux/core/dist/components/button/button.js';  // now picks up the configured theme
+//
+// Writing `project.updateProject()` above a component import in the SAME file
+// does not work — a file's own imports always resolve before its own code runs.
+import { project } from '@charm-ux/core';
+{{#if withTheme}}
+import { charmTokens } from '@charm-ux/theming';
+
+// Build a custom token set by extending the default Charm theme.
+// You only specify the deltas — everything else inherits from `charm`.
+const {{camelCase prefix}}Tokens = charmTokens.extendPrimitives({
+  color: {
+    brand: '{{brandColor}}',
+  },
+});
+
+// Want to override more than the brand color? Extend additional primitives, and
+// optionally chain `.extendSemantics()` / `.extendComponents()`. Each `extend*`
+// call only lists the deltas — anything you omit inherits from `charm`.
+//
+//   const {{camelCase prefix}}Tokens = charmTokens
+//     .extendPrimitives({
+//       color: { brand: '{{brandColor}}', accent: '#9333ea' },
+//       borderRadius: { md: '6px', lg: '10px' },
+//       spacing: { md: '10px' },
+//     })
+//     // Remap a semantic token to a primitive (ref(group, name, step)):
+//     .extendSemantics((ref, base) => ({
+//       ...base,
+//       action: { ...base?.action, primary: ref('color', 'brand', 500) },
+//     }))
+//     // Override a component-level token:
+//     .extendComponents((ref, base) => ({
+//       ...base,
+//       button: { ...base?.button, padding: ref('spacing', 'md') },
+//     }));
+{{/if}}
+
+project.updateProject({
+  prefix: '{{prefix}}', // Components render as <{{prefix}}-button>, <{{prefix}}-card>, etc.
+{{#if withTheme}}
+  theme: {
+    definition: {{camelCase prefix}}Tokens.definition,
+    tokenPrefix: '{{prefix}}', // CSS variables become --{{prefix}}-*
+  },
+{{/if}}
+});
