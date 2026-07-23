@@ -1,4 +1,4 @@
-import { project } from '../utilities/project.js';
+import { tokens } from '../utilities/theme.js';
 
 function extractVarName(cssText: string, pathLabel: string): string {
   const match = cssText.match(/var\((--[^,\s)]+)/);
@@ -9,7 +9,7 @@ function extractVarName(cssText: string, pathLabel: string): string {
 }
 
 export function getComponentVarName(component: string, token: string): string {
-  const cssResult = project.theme.component(component, token);
+  const cssResult = tokens.lit.component(component, token);
   const cssText = (cssResult as unknown as { cssText?: string }).cssText ?? String(cssResult);
   return extractVarName(cssText, `${component}.${token}`);
 }

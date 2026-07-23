@@ -1,8 +1,8 @@
 import { css } from 'lit';
-import { project } from '../../utilities/project.js';
+import { tokens } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
 
-const { component } = project.theme;
+const { component } = tokens.lit;
 
 export default css`
   :host {

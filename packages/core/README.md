@@ -99,13 +99,54 @@ document.body.appendChild(button);
 
 ## Theming
 
-Components use CSS custom properties from `@charm-ux/theming`. Include the theme CSS or define your own variables:
+Components use CSS custom properties from `@charm-ux/theming`. Include the generated theme CSS:
 
 ```html
-<link rel="stylesheet" href="path/to/charm-theme.css" />
+<link rel="stylesheet" href="path/to/charm/theme.css" />
 ```
 
-See [@charm-ux/theming](https://www.npmjs.com/package/@charm-ux/theming) for theme customization.
+### Token Helpers
+
+The `tokens` object provides typed helpers for accessing design tokens. Three namespaces cover different use cases:
+
+```typescript
+import { tokens, setThemeDefinition } from '@charm-ux/core';
+
+// Lit component styles — returns CSSResult for css`` templates
+const { component } = tokens.lit;
+css`
+  background: ${component('button', 'bgColor')};
+`;
+
+// JS contexts — returns plain var() strings
+element.style.background = tokens.var.semantic('surface', 'primary');
+
+// CSS property names — returns --path only
+element.style.setProperty(tokens.prop.semantic('surface', 'primary'), '#fff');
+```
+
+### Custom Themes
+
+Configure a custom prefix and token definition before importing components:
+
+```typescript
+import { project, setThemeDefinition } from '@charm-ux/core';
+import { charmTokens } from '@charm-ux/theming';
+
+project.updateProject({ prefix: 'myapp' });
+setThemeDefinition(myTokens.definition, 'myapp');
+```
+
+### Generating Theme CSS
+
+For runtime CSS generation (SSR, build scripts), import from the dedicated path:
+
+```typescript
+import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+const { css, cssReset } = generateTheme(definition, 'myapp');
+```
+
+See [@charm-ux/theming](https://www.npmjs.com/package/@charm-ux/theming) for token definition and theme customization.
 
 ## Accessibility
 

@@ -299,13 +299,13 @@ Usage:
 
 ## Lit Integration
 
-For Lit components, use typed CSS helpers:
+For Lit components, use typed CSS helpers. In `@charm-ux/core` these are pre-bound via the `tokens` object:
 
 ```typescript
-import { createCssHelpers, charmDefinition } from '@charm-ux/theming';
+import { tokens } from '@charm-ux/core';
 import { css } from 'lit';
 
-const { primitive, semantic, component } = createCssHelpers(charmDefinition, 'charm');
+const { primitive, semantic, component } = tokens.lit;
 
 const styles = css`
   :host {
@@ -314,6 +314,13 @@ const styles = css`
     padding: ${primitive('spacing', 'md')};
   }
 `;
+```
+
+You can also create helpers directly with `createCssHelpers`:
+
+```typescript
+import { createCssHelpers, charmDefinition } from '@charm-ux/theming';
+const { primitive, semantic, component } = createCssHelpers(charmDefinition, 'charm');
 ```
 
 ## Custom Elements Manifest Prefix

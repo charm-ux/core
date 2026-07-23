@@ -1,7 +1,7 @@
 import { css } from 'lit';
-import { project } from '../../utilities/project.js';
+import { tokens } from '../../utilities/theme.js';
 
-const { component, semantic } = project.theme;
+const { component, semantic } = tokens.lit;
 
 export default css`
   .checkbox {

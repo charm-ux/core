@@ -16,8 +16,11 @@ Configure your project with a custom prefix and theme before registering compone
 
 ```typescript
 // project-config.ts
-import { project } from '@charm-ux/core';
+import { project, setThemeDefinition } from '@charm-ux/core';
 import { charmTokens } from '@charm-ux/theming';
+
+// Configure the project prefix early
+project.updateProject({ prefix: 'vel' }); // Components will be <vel-button>, <vel-card>, etc.
 
 // Create your custom theme by extending charm
 const myTokens = charmTokens
@@ -28,46 +31,24 @@ const myTokens = charmTokens
     },
   })
   .extendSemantics(({ primitive }) => ({
-    // Deep-merged into the inherited semantics - only list what changes
     action: {
       primary: primitive('color', 'brand', 500),
     },
   }));
 
-// Configure the project
-project.updateProject({
-  prefix: 'vel', // Components will be <vel-button>, <vel-card>, etc.
-  theme: {
-    definition: myTokens.definition,
-    tokenPrefix: 'vel', // CSS variables will be --charm-vel-*
-  },
-});
-
-// Access generated CSS directly from project
-const { css, cssReset, cssUtilities } = project.generateTheme();
-// Or use the convenience getters: project.css, project.cssReset, project.cssUtilities
+// Configure the theme definition and prefix
+setThemeDefinition(myTokens.definition, 'vel'); // CSS variables will be --vel-button-bgColor
 ```
-
-### Theme Configuration Options
-
-The `theme` option in `project.updateProject()` accepts:
-
-| Option | Description |
-| --charm------------ | --charm-------------------------------------------------------------------- |
-| `definition` | Token definition from `defineTokens()` or extended from `charmTokens` |
-| `tokenPrefix` | CSS variable prefix (e.g., `'vel'` → `--vel-button-bgColor`) |
 
 ### Import Order Matters
 
-Component style files read `project.theme` once, when the style module first evaluates. If a component is imported before `project.updateProject()` runs, that component's styles are locked to the default `charm` prefix regardless of any configuration that happens afterward — so your app's entry point must import `project-config.ts` **before** anything that imports a component:
+Component style files read `tokens.lit` once, when the style module first evaluates. If a component is imported before the theme is configured, that component's styles are locked to the default `charm` prefix — so your app's entry point must import `project-config.ts` **before** anything that imports a component:
 
 ```typescript
 // main.ts
-import './project-config.js'; // configures the theme first
+import './project-config.js'; // configures prefix and theme first
 import '@charm-ux/core/dist/components/button/index.js'; // components now pick up the configured theme
 ```
-
-This is why `project-config.ts` lives in its own module: a single file's own code always runs _after_ all of that file's imports resolve, so writing `project.updateProject()` above a component import in the same file doesn't help — the component import still evaluates first.
 
 ## Styling with Custom Properties
 
@@ -116,14 +97,14 @@ export class ShapedButton extends CoreButton {
 export default ShapedButton;
 ```
 
-Create the component styles using project theme tokens:
+Create the component styles using theme tokens:
 
 ```typescript
 // shaped-button.styles.ts
 import { css } from 'lit';
-import { project } from '@charm-ux/core';
+import { tokens } from '@charm-ux/core';
 
-const { component } = project.theme;
+const { component } = tokens.lit;
 
 export default css`
   :host([shape='square']) .control {
@@ -148,30 +129,68 @@ export * from './shaped-button.js';
 project.scope.registerComponent(button);
 ```
 
-### Using Theme Tokens in Styles
+### Tokens API
 
-Access theme token helpers via `project.theme`:
+The `tokens` object exposes three namespaces for accessing design tokens, each suited to a different context:
+
+| Namespace     | Returns                         | Use case                                |
+| ------------- | ------------------------------- | --------------------------------------- |
+| `tokens.lit`  | Lit `CSSResult` (`var(--path)`) | Component `css` template literals       |
+| `tokens.var`  | Plain string (`var(--path)`)    | JS context where `CSSResult` won't work |
+| `tokens.prop` | CSS property name (`--path`)    | `setProperty()` / `getPropertyValue()`  |
+
+All three expose `primitive()`, `semantic()`, and `component()` helpers that stay in sync with the current theme configuration.
+
+#### Lit Component Styles — `tokens.lit`
+
+Returns Lit `CSSResult` objects safe to interpolate in `css` tagged templates:
 
 ```typescript
 import { css } from 'lit';
-import { project } from '@charm-ux/core';
+import { tokens } from '@charm-ux/core';
 
-const { primitive, semantic, component } = project.theme;
+const { primitive, semantic, component } = tokens.lit;
 
 export default css`
   .base {
-    /* Primitive tokens */
     padding: ${primitive('spacing', 'md')};
     border-radius: ${primitive('borderRadius', 'sm')};
-
-    /* Semantic tokens */
     background: ${semantic('surface', 'primary')};
     color: ${semantic('text', 'primary')};
-
-    /* Component tokens */
     border: ${component('button', 'borderWidth')} solid ${component('button', 'borderColor')};
   }
 `;
+```
+
+#### JS Contexts — `tokens.var`
+
+Returns plain `var()` strings for use outside Lit's `css` template (inline styles, canvas, etc.):
+
+```typescript
+const bg = tokens.var.semantic('surface', 'primary');
+element.style.background = bg;
+```
+
+#### CSS Property Names — `tokens.prop`
+
+Returns just the custom property name without the `var()` wrapper, ideal for `setProperty`:
+
+```typescript
+element.style.setProperty(tokens.prop.semantic('surface', 'primary'), '#fff');
+const value = getComputedStyle(element).getPropertyValue(
+  tokens.prop.semantic('surface', 'primary')
+);
+```
+
+#### Generating Theme CSS — `generateTheme`
+
+If you need to generate theme CSS at runtime (server-side rendering, build scripts, etc.),
+import from the dedicated path to avoid pulling the CSS generator into your main bundle:
+
+```typescript
+import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+
+const { css, cssReset, cssUtilities } = generateTheme(myDefinition, 'fui');
 ```
 
 ## Creating New Components
@@ -242,9 +261,9 @@ Create styles using theme tokens:
 ```typescript
 // tag.styles.ts
 import { css } from 'lit';
-import { project } from '@charm-ux/core';
+import { tokens } from '@charm-ux/core';
 
-const { primitive, semantic } = project.theme;
+const { primitive, semantic } = tokens.lit;
 
 export default css`
   .base {
@@ -297,7 +316,7 @@ The component factory receives `{ primitive, semantic }` reference helpers — u
 Then access them in your styles:
 
 ```typescript
-const { component } = project.theme;
+const { component } = tokens.lit;
 
 css`
   .base {
