@@ -1,7 +1,9 @@
 import { cssVarName } from '../../helpers/cssVar.js';
+import { isLightDarkValue } from '../lightDark.js';
 import type {
   ComponentFactoryHelpers,
   ComponentRefFn,
+  CubicBezierValue,
   PrimitiveRefFn,
   PrimitiveTokens,
   SemanticFactoryHelpers,
@@ -27,12 +29,12 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
-function hasLightDarkShape(value: unknown): value is { light: unknown; dark: unknown } {
-  return isObject(value) && 'light' in value && 'dark' in value;
+export function isCubicBezier(value: unknown): value is CubicBezierValue {
+  return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
 }
 
 export function isMetadataWrapped(value: unknown): value is MetadataWrapper {
-  return isObject(value) && 'value' in value && !hasLightDarkShape(value);
+  return isObject(value) && 'value' in value && !isLightDarkValue(value);
 }
 
 export function unwrapTokenMetadata(node: unknown): {
@@ -78,7 +80,7 @@ export function collectTokenTreeLeaves(node: unknown, options: CollectTokenTreeL
 
     if (value === undefined) return [];
     if (
-      hasLightDarkShape(value) ||
+      isLightDarkValue(value) ||
       typeof value !== 'object' ||
       value === null ||
       Array.isArray(value) ||

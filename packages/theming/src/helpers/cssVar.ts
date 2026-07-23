@@ -50,3 +50,16 @@ export function cssVar(...args: (string | number | CssVarOptions)[]): string {
   }
   return `var(${name})`;
 }
+
+/**
+ * Hot-path variant of {@link cssVar} that avoids runtime type detection
+ * of the options argument. Use when options are known at the call site.
+ */
+export function cssVarWithOptions(segments: (string | number)[], options: CssVarOptions): string {
+  const prefix = options.prefix !== undefined ? options.prefix : DEFAULT_PREFIX;
+  const name = cssVarName(prefix, ...segments);
+  if (options.fallback) {
+    return `var(${name}, ${options.fallback})`;
+  }
+  return `var(${name})`;
+}

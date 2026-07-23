@@ -10,6 +10,7 @@ import {
 import { formatShadowValue } from './formatShadow.js';
 import {
   collectTokenTreeLeaves,
+  isCubicBezier,
   resolveMaybeComponentFactory,
   resolveMaybeSemanticFactory,
   type TokenTreeLeaf,
@@ -102,10 +103,6 @@ function firstEntry<T>(obj: Record<string, T> | undefined): [string, T] | undefi
 // ---------------------------------------------------------------------------
 // Primitives
 // ---------------------------------------------------------------------------
-
-function isCubicBezier(value: unknown): value is CubicBezierValue {
-  return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
-}
 
 /**
  * Colors are already fully documented (name -> value) in the `primitive`

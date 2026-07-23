@@ -1,4 +1,11 @@
-export { toKebabCase, escapeCssIdentifier, cssVarName, cssVar, type CssVarOptions } from './cssVar.js';
+export {
+  toKebabCase,
+  escapeCssIdentifier,
+  cssVarName,
+  cssVar,
+  cssVarWithOptions,
+  type CssVarOptions,
+} from './cssVar.js';
 export { deepMerge } from './objects.js';
 export { createHelpers, type TokenHelpers, type CreateHelpersOptions } from './createHelpers.js';
 export { createSemanticHelpers, type SemanticHelpers } from './createSemanticHelpers.js';

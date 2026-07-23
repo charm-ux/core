@@ -7,10 +7,12 @@ export function deepMerge<T extends object>(target: T, source: Partial<T>): T {
     const sourceVal = source[key];
     const targetVal = target[key];
     if (
-      sourceVal &&
+      sourceVal !== undefined &&
+      sourceVal !== null &&
       typeof sourceVal === 'object' &&
       !Array.isArray(sourceVal) &&
-      targetVal &&
+      targetVal !== undefined &&
+      targetVal !== null &&
       typeof targetVal === 'object' &&
       !Array.isArray(targetVal)
     ) {

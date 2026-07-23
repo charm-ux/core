@@ -4,6 +4,7 @@ import { cssVarName } from '../helpers/cssVar.js';
 import { isAutoExpandColor, walkExpandedColors } from './colorPalette.js';
 import {
   collectTokenTreeLeaves,
+  isCubicBezier,
   resolveMaybeComponentFactory,
   resolveMaybeSemanticFactory,
   unwrapTokenMetadata,
@@ -90,10 +91,6 @@ const NUMBER_RE = /^-?\d+(?:\.\d+)?$/;
 const ALIAS_RE = /^\{[^{}]+\}$/;
 const VAR_REF_RE = /var\((--[a-zA-Z0-9-]+)(?:\s*,[^)]*)?\)/g;
 
-function isCubicBezierArray(value: unknown): value is CubicBezierValue {
-  return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
-}
-
 function isShadowLayer(value: unknown): value is ShadowValue {
   return (
     typeof value === 'object' &&
@@ -173,7 +170,7 @@ type DtcgLeaf = {
  * schema of expected shapes.
  */
 function valueToDtcg(value: unknown, hint: TypeHint, aliasMap: Map<string, string>): DtcgLeaf {
-  if (isCubicBezierArray(value)) {
+  if (isCubicBezier(value)) {
     return { $value: value, $type: 'cubicBezier' };
   }
 

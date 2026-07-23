@@ -4,7 +4,7 @@ import {
   createHelpers,
   type CreateHelpersOptions,
   createSemanticHelpers,
-  cssVar,
+  cssVarWithOptions,
   deepMerge,
   type TokenHelpers,
 } from './helpers/index.js';
@@ -246,11 +246,13 @@ export function defineTokens<
 
   // Create layer-specific ref functions
   const primitiveRef = ((...segments: (string | number)[]) =>
-    cssVar(...segments, resolvedOptions)) as PrimitiveRefFn<P>;
+    cssVarWithOptions(segments, resolvedOptions)) as PrimitiveRefFn<P>;
 
-  const semanticRef = ((...segments: (string | number)[]) => cssVar(...segments, resolvedOptions)) as SemanticRefFn;
+  const semanticRef = ((...segments: (string | number)[]) =>
+    cssVarWithOptions(segments, resolvedOptions)) as SemanticRefFn;
 
-  const componentRef = ((...segments: (string | number)[]) => cssVar(...segments, resolvedOptions)) as ComponentRefFn;
+  const componentRef = ((...segments: (string | number)[]) =>
+    cssVarWithOptions(segments, resolvedOptions)) as ComponentRefFn;
 
   // Create helper objects for each layer
   const semanticFactoryHelpers: SemanticFactoryHelpers<P> = { primitive: primitiveRef };
@@ -285,8 +287,12 @@ export function defineTokens<
         {
           prefix: resolvedPrefix,
           primitives: mergedPrimitives,
-          semantics: input.semantics,
-          components: input.components,
+          semantics:
+            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
+          components:
+            components !== undefined
+              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
+              : undefined,
           rawCss: input.rawCss,
         },
         { prefix: resolvedPrefix }
@@ -300,14 +306,14 @@ export function defineTokens<
         {
           prefix: resolvedPrefix,
           primitives: input.primitives,
-          // Deep-merge the delta into the inherited semantics so callers only
-          // describe what changes (spreading `base` still works, since merging
-          // a superset is a no-op).
           semantics: h => {
             const delta = factory(h, semantics);
             return (semantics ? deepMerge<SemanticTokens>(semantics, delta) : delta) as S & NewS;
           },
-          components: input.components,
+          components:
+            components !== undefined
+              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
+              : undefined,
           rawCss: input.rawCss,
         },
         { prefix: resolvedPrefix }
@@ -321,8 +327,8 @@ export function defineTokens<
         {
           prefix: resolvedPrefix,
           primitives: input.primitives,
-          semantics: input.semantics,
-          // Deep-merge the delta into the inherited components (see above).
+          semantics:
+            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
           components: h => {
             const delta = factory(h, components);
             return (components ? deepMerge<ComponentTokens>(components, delta) : delta) as C & NewC;
@@ -352,8 +358,12 @@ export function defineTokens<
         {
           prefix: resolvedPrefix,
           primitives: input.primitives,
-          semantics: input.semantics,
-          components: input.components,
+          semantics:
+            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
+          components:
+            components !== undefined
+              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
+              : undefined,
           rawCss: mergedRawCss,
         },
         { prefix: resolvedPrefix }

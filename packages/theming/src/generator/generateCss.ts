@@ -10,6 +10,7 @@ import {
 import { formatShadowValue } from './formatShadow.js';
 import {
   collectTokenTreeLeaves,
+  isCubicBezier,
   resolveMaybeComponentFactory,
   resolveMaybeSemanticFactory,
   unwrapTokenValue,
@@ -38,7 +39,8 @@ type CssConfig = Pick<
 function formatValue(value: unknown): string {
   if (typeof value === 'string') return value;
   if (typeof value === 'number') return String(value);
-  return String(value);
+  if (value === null || value === undefined) return '';
+  throw new Error(`Unexpected token value type: ${typeof value}. Expected string or number.`);
 }
 
 /**
@@ -46,13 +48,6 @@ function formatValue(value: unknown): string {
  */
 function formatTimingFunction(value: CubicBezierValue): string {
   return `cubic-bezier(${value.join(', ')})`;
-}
-
-/**
- * Check if a value is a cubic bezier array.
- */
-function isCubicBezier(value: unknown): value is CubicBezierValue {
-  return Array.isArray(value) && value.length === 4 && value.every(v => typeof v === 'number');
 }
 
 /**

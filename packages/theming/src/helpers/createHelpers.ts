@@ -1,4 +1,4 @@
-import { cssVar, type CssVarOptions } from './cssVar.js';
+import { cssVarWithOptions, type CssVarOptions } from './cssVar.js';
 import type {
   BorderRadiusKeys,
   BorderWidthKeys,
@@ -72,7 +72,7 @@ export function createHelpers<P extends PrimitiveTokens>(
   _primitives: P,
   options: CreateHelpersOptions = {}
 ): TokenHelpers<P> {
-  const makeVar = (...segments: (string | number)[]) => cssVar(...segments, options);
+  const makeVar = (...segments: (string | number)[]) => cssVarWithOptions(segments, options);
 
   return {
     color: (name, step) => (step !== undefined ? makeVar('color', name, step) : makeVar('color', name)),
