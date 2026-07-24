@@ -1,5 +1,11 @@
 # CHARM-UX Core Changelog
 
+## 0.5.2
+
+### Patch Changes
+
+- e390066: Improved input accessibility (label and description associations) and refreshed the overflow component documentation and stories. Covers changes merged in #18, #20, and #21 that were missing changesets.
+
 ## 0.5.1
 
 ### Patch Changes

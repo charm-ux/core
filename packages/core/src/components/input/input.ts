@@ -247,7 +247,7 @@ export class CoreInput extends CharmFormControlElement {
         class="form-control-base-input"
         enterkeyhint=${ifDefined(this.enterkeyhint)}
         id="input"
-        list="input-datalist"
+        list=${ifDefined(this.options?.length ? 'input-datalist' : undefined)}
         inputmode=${ifDefined(this.inputmode)}
         part="input"
         pattern=${ifDefined(this.pattern)}
@@ -279,6 +279,7 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Generates the template for the input's datalist.  */
   protected dataListTemplate() {
+    if (!this.options?.length) return '';
     return html` <datalist id="input-datalist" class="datalist">${this.optionsTemplate()}</datalist> `;
   }
 
