@@ -1,4 +1,4 @@
-import { cssVarWithOptions, type CssVarOptions } from './cssVar.js';
+import { type CssVarOptions, cssVarWithOptions } from './cssVar.js';
 import type {
   BorderRadiusKeys,
   BorderWidthKeys,

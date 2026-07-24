@@ -5,7 +5,14 @@ export { defineTokens, type DefineTokensInput, type DefinedTokens } from './defi
 export * from './types/index.js';
 
 // Helpers
-export { createHelpers, type TokenHelpers, type CreateHelpersOptions } from './helpers/index.js';
+export {
+  createHelpers,
+  type TokenHelpers,
+  type CreateHelpersOptions,
+  cssVarName,
+  toKebabCase,
+  cssVarWithOptions,
+} from './helpers/index.js';
 
 // Generator
 // Note: `PaletteStep` and `ColorPalette` are exported explicitly (rather than

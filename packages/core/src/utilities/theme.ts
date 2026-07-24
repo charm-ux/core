@@ -1,11 +1,13 @@
-import { charmDefinition, createCssHelpers, type CssHelpers, type ResolvedTokenDefinition } from '@charm-ux/theming';
-
-function toKebab(s: string): string {
-  return s.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-}
+import {
+  charmDefinition,
+  createCssHelpers,
+  type CssHelpers,
+  type ResolvedTokenDefinition,
+  toKebabCase,
+} from '@charm-ux/theming';
 
 function varName(prefix: string, ...segments: (string | number)[]): string {
-  const parts = segments.map(s => toKebab(String(s)));
+  const parts = segments.map(s => toKebabCase(String(s)));
   return `--${prefix}-${parts.join('-')}`;
 }
 
@@ -95,3 +97,16 @@ export function setThemeDefinition(definition: ResolvedTokenDefinition, prefix?:
   if (prefix !== undefined) _themePrefix = prefix;
   rebuild();
 }
+
+/**
+ * Streamlined Lit CSS helpers for component styles.
+ *
+ * These are destructured from `tokens.lit` for convenience:
+ *
+ * @example
+ * ```ts
+ * import { component } from '../../utilities/theme.js';
+ * css`background: ${component('button', 'bgColor')};`
+ * ```
+ */
+export const { primitive, semantic, component } = tokens.lit;

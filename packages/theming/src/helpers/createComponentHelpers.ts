@@ -1,5 +1,5 @@
 import { type CssVarOptions } from './cssVar.js';
-import { createAccessor, type AccessorHelpers } from './createSemanticHelpers.js';
+import { type AccessorHelpers, createAccessor } from './createSemanticHelpers.js';
 
 export type ComponentHelpers = AccessorHelpers;
 

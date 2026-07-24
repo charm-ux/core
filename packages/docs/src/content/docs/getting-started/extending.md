@@ -20,7 +20,7 @@ import { project, setThemeDefinition } from '@charm-ux/core';
 import { charmTokens } from '@charm-ux/theming';
 
 // Configure the project prefix early
-project.updateProject({ prefix: 'vel' }); // Components will be <vel-button>, <vel-card>, etc.
+project.updateProject({ prefix: 'vel', tokenPrefix: 'vel' });
 
 // Create your custom theme by extending charm
 const myTokens = charmTokens
@@ -36,8 +36,8 @@ const myTokens = charmTokens
     },
   }));
 
-// Configure the theme definition and prefix
-setThemeDefinition(myTokens.definition, 'vel'); // CSS variables will be --vel-button-bgColor
+// Configure the theme definition — prefix already set by project
+setThemeDefinition(myTokens.definition);
 ```
 
 ### Import Order Matters

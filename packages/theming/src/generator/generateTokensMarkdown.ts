@@ -18,7 +18,6 @@ import {
 } from './internal/tokenUtils.js';
 import type {
   ComponentTokens,
-  CubicBezierValue,
   LightDarkValue,
   PrimitiveTokens,
   ResolvedTokenDefinition,

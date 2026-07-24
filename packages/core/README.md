@@ -110,7 +110,7 @@ Components use CSS custom properties from `@charm-ux/theming`. Include the gener
 The `tokens` object provides typed helpers for accessing design tokens. Three namespaces cover different use cases:
 
 ```typescript
-import { tokens, setThemeDefinition } from '@charm-ux/core';
+import { tokens } from '@charm-ux/core';
 
 // Lit component styles — returns CSSResult for css`` templates
 const { component } = tokens.lit;
@@ -127,14 +127,24 @@ element.style.setProperty(tokens.prop.semantic('surface', 'primary'), '#fff');
 
 ### Custom Themes
 
-Configure a custom prefix and token definition before importing components:
+Configure a custom prefix and token prefix before importing components. The token prefix defaults to the tag prefix if not set separately:
 
 ```typescript
 import { project, setThemeDefinition } from '@charm-ux/core';
-import { charmTokens } from '@charm-ux/theming';
 
-project.updateProject({ prefix: 'myapp' });
-setThemeDefinition(myTokens.definition, 'myapp');
+// Tag prefix and token prefix can differ
+project.updateProject({ prefix: 'myapp', tokenPrefix: 'charm' });
+
+const myTokens = charmTokens.extendPrimitives({
+  color: { brand: '#ff6600' },
+});
+setThemeDefinition(myTokens.definition);
+```
+
+For convenience in component styles, the helpers are also exported directly:
+
+```typescript
+import { component } f
 ```
 
 ### Generating Theme CSS

@@ -12,7 +12,6 @@ import {
 import { isLightDarkValue, resolveToMode } from './lightDark.js';
 import type {
   ComponentTokens,
-  CubicBezierValue,
   PrimitiveTokens,
   ResolvedTokenDefinition,
   SemanticTokens,

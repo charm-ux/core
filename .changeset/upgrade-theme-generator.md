@@ -3,26 +3,9 @@
 '@charm-ux/theming': minor
 ---
 
-Upgrade theming system with configurable project themes and token extension API
+Upgrade theming system with configurable project token prefix and streamlined helpers
 
 ### Breaking Changes
-
-**Component styles now use project-configured theme:**
-
-Component styles import token helpers from `project.theme` instead of a static tokens file. This enables extending projects to configure their own themes.
-
-**Migration:** If you were importing from `@charm-ux/core/theme/tokens`, update to use the project:
-
-```typescript
-// Before
-import { component } from '@charm-ux/core/theme/tokens';
-
-// After
-import { project } from '@charm-ux/core';
-const { component } = project.theme;
-```
-
-Component style files read `project.theme` once, when the style module first evaluates. Call `project.updateProject()` in its own module and import that module before anything that imports a component — writing `project.updateProject()` above a component import in the same file does not work, since all of a file's own imports resolve before any of that file's own code runs.
 
 **Components are no longer exported from the main entry point:**
 
@@ -55,41 +38,42 @@ const myTokens = charmTokens
   .extendComponents((ref, base) => ({ ...base /* ... */ }));
 ```
 
-**Project theme configuration** (`@charm-ux/core`):
+**Project token prefix** (`@charm-ux/core`):
 
-Configure custom themes via `project.updateProject()`, in its own module imported before anything that imports a component:
+`ProjectConfiguration` now accepts a separate `tokenPrefix` field for CSS variable names, independent of the tag `prefix`:
 
 ```typescript
-// project-config.ts
-import { project } from '@charm-ux/core';
-
 project.updateProject({
-  prefix: 'myapp',
-  theme: {
-    definition: myTokens.definition,
-    tokenPrefix: 'myapp',
-  },
+  prefix: 'myapp', // tag prefix: <myapp-button>
+  tokenPrefix: 'charm', // CSS var prefix: --charm-button-bgColor
 });
 ```
 
+`CharmProject` also accepts an optional constructor argument:
+
 ```typescript
-// main.ts
-import './project-config.js'; // must run first
-import { project } from '@charm-ux/core';
-
-// Access theme helpers
-const { component, semantic, primitive } = project.theme;
-
-// Generate CSS
-const { css, cssReset, cssUtilities } = project.generateTheme();
+const project = new CharmProject({ prefix: 'myapp', tokenPrefix: 'charm' });
 ```
 
-**New exports:**
+When `tokenPrefix` is omitted, it falls back to the tag `prefix`.
 
-- `demoTokens` - Demo theme that extends charmTokens
-- `project.theme` - Token helpers (primitive, semantic, component)
-- `project.generateTheme()` - Generate theme CSS
-- `project.css`, `project.cssReset`, `project.cssUtilities` - Quick access to generated CSS
+**Streamlined Lit CSS helpers** (`@charm-ux/core`):
+
+Helpers are now exported directly from the theme module for use in component styles:
+
+```typescript
+import { component } from '../../utilities/theme.js';
+```
+
+Equivalent to the existing `const { component } = tokens.lit;` pattern.
+
+**CSS variable utilities now public** (`@charm-ux/theming`):
+
+- `cssVarName`, `toKebabCase`, `cssVarWithOptions` are now exported from the main entry point for reuse by consumers.
+
+### Internal
+
+- Core's `theme.ts` now imports `toKebabCase` from `@charm-ux/theming` instead of duplicating the implementation.
 
 ### Additional fixes included in this release
 

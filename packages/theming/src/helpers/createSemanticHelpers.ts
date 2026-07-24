@@ -1,4 +1,4 @@
-import { cssVarWithOptions, type CssVarOptions, toKebabCase } from './cssVar.js';
+import { type CssVarOptions, cssVarWithOptions, toKebabCase } from './cssVar.js';
 
 export type AccessorHelpers = {
   get: (...path: [string, ...string[]]) => string;
