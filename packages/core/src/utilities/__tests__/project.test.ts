@@ -6,17 +6,17 @@ describe('CharmProject', () => {
   const defaultButton = tokens.var.component('button', 'bgColor');
 
   it('defaults to charm prefix with no config', () => {
-    const p = new CharmProject();
+    new CharmProject();
     expect(tokens.var.component('button', 'bgColor')).to.equal(defaultButton);
   });
 
   it('sets tokenPrefix from tag prefix when tokenPrefix omitted', () => {
-    const p = new CharmProject({ prefix: 'testproj' });
+    new CharmProject({ prefix: 'testproj' });
     expect(tokens.var.component('button', 'bgColor')).to.match(/var\(--testproj-/);
   });
 
   it('uses tokenPrefix when provided separately from tag prefix', () => {
-    const p = new CharmProject({ prefix: 'tp', tokenPrefix: 'customprefix' });
+    new CharmProject({ prefix: 'tp', tokenPrefix: 'customprefix' });
     expect(tokens.var.component('button', 'bgColor')).to.match(/var\(--customprefix-/);
   });
 
