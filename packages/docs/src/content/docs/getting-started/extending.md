@@ -143,7 +143,16 @@ All three expose `primitive()`, `semantic()`, and `component()` helpers that sta
 
 #### Lit Component Styles — `tokens.lit`
 
-Returns Lit `CSSResult` objects safe to interpolate in `css` tagged templates:
+Returns Lit `CSSResult` objects safe to interpolate in `css` tagged templates. For component styles, the helpers are also exported directly:
+
+```typescript
+import { css } from 'lit';
+import { component } from '@charm-ux/core';
+
+// Shorthand — equivalent to `const { component } = tokens.lit;`
+```
+
+When you need all three helpers, destructure from `tokens.lit` as usual:
 
 ```typescript
 import { css } from 'lit';

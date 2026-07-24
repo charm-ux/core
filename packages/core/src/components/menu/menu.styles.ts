@@ -1,7 +1,5 @@
 import { css } from 'lit';
-import { tokens } from '../../utilities/theme.js';
-
-const { component } = tokens.lit;
+import { component } from '../../utilities/theme.js';
 
 export default css`
   .popup-base {

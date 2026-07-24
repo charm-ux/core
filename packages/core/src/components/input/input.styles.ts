@@ -1,7 +1,5 @@
 import { css } from 'lit';
-import { tokens } from '../../utilities/theme.js';
-
-const { component, semantic } = tokens.lit;
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   .form-control-input {
