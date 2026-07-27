@@ -83,22 +83,26 @@ npm install @charm-ux/core
 
 The library theme is a CSS stylesheet that provides default custom properties and styles for the components.
 
-To use the theme, you must include the theme stylesheet:
+To use the theme, import the theme stylesheet in JavaScript (requires a bundler that resolves npm package sub-paths like Vite or Webpack):
+
+```typescript
+import '@charm-ux/core/theme/charm/theme.css';
+```
+
+Or link it directly if you're serving static files (copy from `node_modules/@charm-ux/core/dist/themes/charm/theme.css`):
 
 ```html
-<link rel="stylesheet" href="./node_modules/@charm-ux/core/dist/themes/charm/theme.css" />
+<link rel="stylesheet" href="/path/to/theme.css" />
 ```
 
 Review the [theming documentation](/theming/) for more details on customizing the theme, as well as additional stylesheets you may want to include like a reset and dark mode.
-
-Depending on your build process and any bundler you may be using, you may need to copy the CSS file to a location that your build process can access. For example, you may need to copy the CSS file to a public directory and update the href path in the link tag.
 
 ### Use the components
 
 Finally, import the components you want to use, and place the tag for the component in your application.
 
 ```html
-<!-- import '@charm-ux/core/dist/components/button/index.js'; -->
+<!-- import '@charm-ux/core/components/button/index.js'; -->
 
 <ch-button>My button</ch-button>
 ```

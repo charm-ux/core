@@ -18,7 +18,7 @@ You can import the harness from the same location you import the component insta
 
 ```ts
 // my-component.test.ts
-import { CoreComponentTests } from '@charm-ux/core/dist/components/core-component/core-component.test-harness.js';
+import { CoreComponentTests } from '@charm-ux/core/components/core-component/core-component.test-harness.js';
 import './index.js'; // import your component instance so it is initialized for the test browser instances
 ```
 
@@ -38,7 +38,7 @@ When adding new tests for your components, you can use the standard syntax for y
 
 ```ts
 // my-component.test.ts
-import { CoreComponentTests } from '@charm-ux/core/dist/components/core-component/core-component.test-harness.js';
+import { CoreComponentTests } from '@charm-ux/core/components/core-component/core-component.test-harness.js';
 import './index.js'; // import your component instance so it is initialized for the test browser instances
 import type { MyComponent } from './my-component.js';
 
@@ -62,7 +62,7 @@ The test harness has a built-in mechanism to extend the tests inherited from cor
 
 ```ts
 // my-component.test-harness.ts
-import { CoreComponentTests } from '@charm-ux/core/dist/components/core-component/core-component.test-harness.js';
+import { CoreComponentTests } from '@charm-ux/core/components/core-component/core-component.test-harness.js';
 import type { MyComponent } from './my-component.js';
 
 export class MyComponentTests<T extends MyComponent> extends CoreComponentTests<T> {}
@@ -76,7 +76,7 @@ All tests are configured in an object and are assigned to a `test` property in t
 
 ```ts
 // my-component.test-harness.ts
-import { CoreComponentTests } from '@charm-ux/core/dist/components/core-component/core-component.test-harness.js';
+import { CoreComponentTests } from '@charm-ux/core/components/core-component/core-component.test-harness.js';
 import type { MyComponent } from './my-component.js';
 
 export class MyComponentTests<T extends MyComponent> extends CoreComponentTests<T> {
@@ -157,7 +157,7 @@ Using this pattern you can translate the test above to now extend the existing t
 
 ```ts
 // my-component.test-harness.ts
-import { CoreComponentTests } from '@charm-ux/core/dist/components/core-component/core-component.test-harness.js';
+import { CoreComponentTests } from '@charm-ux/core/components/core-component/core-component.test-harness.js';
 import type { MyComponent } from './my-component.js';
 
 export class MyComponentTests<T extends MyComponent> extends CoreComponentTests<T> {

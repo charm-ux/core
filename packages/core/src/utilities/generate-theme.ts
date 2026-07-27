@@ -7,7 +7,7 @@ import { type GenerateThemeResult, generateThemeSync, type ResolvedTokenDefiniti
  * Import from the dedicated path to keep the main bundle lean:
  *
  * ```ts
- * import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+ * import { generateTheme } from '@charm-ux/core/utilities/generate-theme';
  * ```
  *
  * @param definition - The resolved token definition
