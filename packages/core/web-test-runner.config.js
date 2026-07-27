@@ -2,22 +2,19 @@ import { fileURLToPath } from 'url';
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { defaultReporter } from '@web/test-runner';
 import { junitReporter } from '@web/test-runner-junit-reporter';
-import { playwrightLauncher } from '@web/test-runner-playwright';
 import { globbySync } from 'globby';
+import { resolvePlaywrightLaunchers } from './test/playwrightLaunchers.js';
 
 const testFilePatterns = ['src/**/*.test.ts'];
+const browsers = resolvePlaywrightLaunchers();
 
 export default {
   rootDir: '.',
   plugins: [
     esbuildPlugin({ ts: true, json: true, tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)) }),
   ],
-  concurrentBrowsers: 3,
-  browsers: [
-    playwrightLauncher({ product: 'chromium' }),
-    playwrightLauncher({ product: 'firefox' }),
-    playwrightLauncher({ product: 'webkit' }),
-  ],
+  concurrentBrowsers: browsers.length,
+  browsers,
   reporters: [
     defaultReporter({ reportTestResults: true, reportTestProgress: true }),
     junitReporter({

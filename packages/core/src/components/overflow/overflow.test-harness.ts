@@ -14,7 +14,10 @@ export class CoreOverflowTests<T extends CoreOverflow> extends CharmElementTests
       overflow: {
         description: 'overflow',
         afterEach: async () => {
+          // Reset viewport to default size to avoid affecting other tests
           await setViewport({ width: 500, height: 600 });
+          // Wait for any pending resize observers to settle
+          await aTimeout(50);
         },
         tests: {
           // accessibility tests

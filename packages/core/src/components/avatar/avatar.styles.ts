@@ -1,31 +1,16 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  size: css`32px`,
-  backgroundColor: css`#E6E6E6`,
-  borderRadius: css`100%`,
-};
+import { component } from '../../utilities/theme.js';
 
 export default css`
   :host {
-    --avatar-bg-color: inherit;
-    --avatar-size: inherit;
-    --avatar-border-radius: inherit;
-    --avatar-indicator-bg-color: inherit;
-    --avatar-indicator-border-width: inherit;
-    --avatar-indicator-border-color: inherit;
-    --avatar-indicator-border-radius: inherit;
-    --avatar-indicator-color: inherit;
-    --avatar-indicator-padding: inherit;
-    --avatar-indicator-size: calc(var(--avatar-size, 32px) * 10 / 32);
     display: inline-block;
     position: relative;
   }
 
   .base {
     position: relative;
-    width: var(--avatar-size, ${fallbackStyles.size});
-    height: var(--avatar-size, ${fallbackStyles.size});
+    width: ${component('avatar', 'size')};
+    height: ${component('avatar', 'size')};
   }
 
   .background {
@@ -38,8 +23,8 @@ export default css`
     position: relative;
     width: 100%;
     height: 100%;
-    background-color: var(--avatar-bg-color, ${fallbackStyles.backgroundColor});
-    border-radius: var(--avatar-border-radius, ${fallbackStyles.borderRadius});
+    background-color: ${component('avatar', 'bgColor')};
+    border-radius: ${component('avatar', 'borderRadius')};
   }
 
   .initials {
@@ -62,10 +47,10 @@ export default css`
     position: absolute;
     inset-block-end: 0;
     inset-inline-end: 0;
-    background-color: var(--avatar-indicator-bg-color);
-    border: var(--avatar-indicator-border-width) solid var(--avatar-indicator-border-color);
-    border-radius: var(--avatar-indicator-border-radius);
-    color: var(--avatar-indicator-color);
+    background-color: ${component('avatar', 'indicatorBgColor')};
+    border: ${component('avatar', 'indicatorBorderWidth')} solid ${component('avatar', 'indicatorBorderColor')};
+    border-radius: ${component('avatar', 'indicatorBorderRadius')};
+    color: ${component('avatar', 'indicatorColor')};
   }
 
   ::slotted([slot='image']) {
@@ -79,7 +64,7 @@ export default css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: var(--avatar-indicator-size);
-    height: var(--avatar-indicator-size);
+    width: ${component('avatar', 'indicatorSize')};
+    height: ${component('avatar', 'indicatorSize')};
   }
 `;

@@ -1,953 +1,437 @@
-# Charm Theming
+# @charm-ux/theming
 
-This package is designed to help generate and manage themes for the Charm UI library. It is a part of the Charm UI ecosystem.
-
-> This package is _optional_ and not required for using the Charm UI library.
+Design token system for Charm UI with automatic color palette generation, theme extension, and CSS variable output.
 
 ## Installation
 
 ```bash
-npm i -D @charm-ux/theming
+npm install @charm-ux/theming
 ```
 
-## Usage
+## Quick Start
 
-After you install the package, you will need to create a file where you can run the `generateTheme()` method.
+### Using the Pre-built Theme
 
-```ts
-// scripts/make-theme.js
-import { generateTheme } from '../index.js';
+```typescript
+import { charmTokens } from '@charm-ux/theming';
 
-generateTheme({
-  /* Add your options here */
-});
+// Access generated CSS
+const { css, cssReset, cssUtilities } = charmTokens.theme;
+
+// Write to files
+fs.writeFileSync('tokens.css', css);
+fs.writeFileSync('reset.css', cssReset);
+fs.writeFileSync('utilities.css', cssUtilities);
 ```
 
-Now you can execute the theme generator with your npm build scripts or include it as a module in another build file.
+### Extending the Charm Theme
 
-```json
-{
-  "name": "your-project",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "tsc && npm run make-theme",
-    "make-theme": "node scripts/make-theme.js"
-  }
+Use `.extendPrimitives()`, `.extendSemantics()`, `.extendComponents()`, and `.extendRawCss()` to create derived themes. The semantic and component factories receive layer-specific reference helpers (`primitive`, `semantic`, `component`); their return value is **deep-merged** into the inherited tokens, so you only describe what changes — no need to spread `base`:
+
+```typescript
+import { charmTokens, generateTheme } from '@charm-ux/theming';
+
+// Extend with custom brand colors
+const myTokens = charmTokens
+  .extendPrimitives({
+    color: {
+      brand: '#ff6600',
+      accent: '#9333ea',
+    },
+  })
+  .extendSemantics(({ primitive }) => ({
+    action: {
+      primary: primitive('color', 'brand', 500),
+      primaryHover: primitive('color', 'brand', 600),
+    },
+  }))
+  .extendComponents(({ primitive }) => ({
+    button: {
+      borderRadius: primitive('borderRadius', 'full'),
+    },
+  }))
+  .extendRawCss(({ semantic }, base) => ({
+    // Raw CSS is the exception: the factory return *replaces* inherited CSS,
+    // so spread `base` (and interpolate `base?.theme`) to append instead.
+    ...base,
+    theme: `${base?.theme ?? ''}
+      .brand-surface { background: ${semantic('surface', 'brand')}; }`,
+  }));
+
+// Generate CSS with your prefix
+const theme = generateTheme(myTokens.definition, { prefix: 'myapp' });
+```
+
+Untouched groups and untouched keys within a group are preserved automatically. Merging can add or override tokens, but it cannot _remove_ an inherited one. The inherited tokens are still passed as the factory's second argument (`base`) for when you need to derive a value from them.
+
+### Creating a Theme from Scratch
+
+```typescript
+import { defineTokens, generateTheme } from '@charm-ux/theming';
+
+const myTokens = defineTokens(
+  {
+    primitives: {
+      color: {
+        primary: '#0265dc',
+        neutral: '#71717a',
+      },
+      spacing: {
+        sm: '0.5rem',
+        md: '1rem',
+        lg: '1.5rem',
+      },
+    },
+    semantics: ({ primitive }) => ({
+      surface: {
+        primary: { light: '#ffffff', dark: '#18181b' },
+      },
+      action: {
+        primary: primitive('color', 'primary', 500),
+      },
+    }),
+    components: ({ semantic, primitive }) => ({
+      button: {
+        bgColor: semantic('action', 'primary'),
+        borderRadius: primitive('borderRadius', 'md'),
+      },
+    }),
+    // Optional raw CSS appended to the generated files
+    rawCss: {
+      reset: `html { scroll-behavior: smooth; }`,
+    },
+  },
+  { prefix: 'myapp' }
+);
+
+const theme = generateTheme(myTokens.definition, { prefix: 'myapp' });
+```
+
+## Token Architecture
+
+The system uses a 3-layer hierarchy:
+
+### 1. Primitives
+
+Raw design values. Single color values auto-expand into 11-step palettes (50-950):
+
+```typescript
+primitives: {
+  color: {
+    primary: '#0265dc',    // Generates --prefix-color-primary-50 through -950
+    neutral: '#71717a',
+
+    // Or define explicit palette scales
+    brand: {
+      50: '#fff7ed',
+      100: '#ffedd4',
+      // ...
+      900: '#7c2d12',
+      950: '#431407',
+    },
+  },
+  spacing: {
+    xs: '0.25rem',
+    sm: '0.5rem',
+    md: '0.75rem',
+  },
+  borderRadius: {
+    sm: '0.25rem',
+    md: '0.5rem',
+    full: '9999px',
+  },
 }
 ```
 
-The default configuration will generate the following assets:
+### 2. Semantics
 
-- CSS Reset - this is CSS file used to standardize the native elements across all browsers as well as according to the styles defined in the Semantic Tokens
-- Theme - this is a CSS file containing all of your CSS variable/token definitions
-- Token Helpers - this is a JavaScript file with helper functions that are strongly typed according to the tokens you have defined. These are designed to be used in lit's `css` tagged template literals, but these can also be used to define other tokens
+Context-aware tokens referencing primitives:
 
-Depending on your configuration, you may also generate the following assets:
-
-- Dark Theme - this is a CSS file containing the media query and token definitions for "dark mode"
-- Selector Theme - this is a CSS file containing class-based themes for toggling light/dark mode. These class names can be defined using the `lightThemeSelector` and `darkThemeSelector` properties
-
-## Configuration
-
-The theme generator has the following configuration:
-
-```ts
-type ThemeConfiguration = {
-  /** Primitive and semantic tokens used to generate theme */
-  tokens: CharmTokens;
-  /** Identifies the neutral color palette for generated colors */
-  neutralColor?: string;
-  /** Used to add a custom prefix to your primitive tokens - `--my-color...` */
-  tokenPrefix?: string;
-  /** Specifies where the generated files should be added - default is `./` */
-  outDir?: string;
-  /** The name of the file that will contain the reset styles - default is `reset.css` */
-  resetFileName?: string;
-  /** The name of the file that will contain the base theme - default is `theme.css` */
-  themeFileName?: string;
-  /** The name of the file that will contain the dark theme - default is `dark-theme.css` */
-  darkThemeFileName?: string;
-  /** The name of the file that will contain the selector theme (if you have specified selectors) - default is `selector-theme.css` */
-  selectorThemeFileName?: string;
-  /** The name of the file that will contain the CSS utility classes (if you have specified selectors) - default is `utility-classes.css` */
-  cssUtilityClassesFileName?: string;
-  /** The name of the file that will contain the helper functions for quick access to your tokens - default is `token-helpers.ts` */
-  helpersFileName?: string;
-  /** Specifies where the helper functions file should be added - default is the same as the `outDir` setting */
-  helpersOutDir?: string;
-  /** Adds custom styles to your reset file */
-  extendedResetStyles?: string;
-  /** Adds custom styles to your base theme */
-  extendedTokens?: string;
-  /** Adds custom styles to your light theme */
-  extendedLightTokens?: string;
-  /** Adds custom styles to your dark theme */
-  extendedDarkTokens?: string;
-  /** Adds custom styles to your selector theme */
-  extendedSemanticTokens?: string;
-  /** Adds custom functions to the token helpers */
-  extendedTokenHelpers?: string;
-  /** Adds custom CSS utilities to the generated utilities */
-  extendedCssUtilities?: string;
-  /** Specifies the CSS selector for your light theme */
-  lightThemeSelector?: string;
-  /** Specifies the CSS selector for your dark theme */
-  darkThemeSelector?: string;
-  /** Skips the generation of the helper functions file */
-  skipHelpers?: boolean;
-  /** Skips the generation of the reset file */
-  skipReset?: boolean;
-  /** Skips the generation of the non-selector themes */
-  skipNonSelectorThemes?: boolean;
-  /** Skips the generation of the alpha color token for each color in the color palette */
-  skipAlphaColorGeneration?: boolean;
-  /** Skips the generation of the alternate color for each color in the color palette */
-  skipAltColorGeneration?: boolean;
-  /** Skips the generation of the CSS utility classes */
-  skipCssUtilityGeneration?: boolean;
-  /** Provides custom tools for colors if they palette differs from other colors */
-  uniquePalettes?: string[];
-  /** Specifies if the generated CSS should use HSL instead of RGB */
-  useHsl?: boolean;
-};
-```
-
-## Tokens
-
-The theme generator takes to groups of token configurations - `primitives` and `semantics`.
-
-- **_Primitive Tokens:_** These tokens represent the fundamental building blocks of your design system. They reference raw values, such as colors (`#942d3a`), percentages (`50%`), or pixel sizes (`22px`). They define the core properties and values used consistently throughout a design.
-- **_Semantic Tokens:_** These tokens represent design intent and provide context-aware implementation of the primitive tokens. These tokens are used in the CSS reset to standardize native element styles as well as in the components.
-
-```ts
-type CharmTokens = {
-  /** Primitives are reusable foundational tokens for your global CSS or components */
-  primitives?: {
-    borderRadius?: BorderRadii;
-    borderWidth?: BorderWidths;
-    color?: Colors;
-    containerQuery?: ContainerQueries;
-    duration?: Durations;
-    fontFamily?: FontFamilies;
-    fontSize?: FontSizes;
-    fontWeight?: FontWeights;
-    lineHeight?: LineHeights;
-    mediaQuery?: MediaQueries;
-    shadow?: Shadows;
-    spacing?: Spacings;
-    timingFunction?: TimingFunctions;
-    zIndex?: ZIndexes;
-    extendedTokens?: object;
-  };
-
-  /** Semantics define baseline themes and Charm core components, CSS reset, and can also use them in your global CSS or within your components */
-  semantics?: {
-    body?: Body;
-    defaultBorder?: DefaultBorder;
-    button?: Button;
-    form?: Form;
-    formControl?: FormControl;
-    heading?: Heading;
-    link?: Link;
-    focusOutline?: FocusOutline;
-    extendedTokens?: object;
-  };
-};
-```
-
-### Defining Primitives
-
-The following properties all take a key/value pair of values to provide aliases and values:
-
-- `borderRadius`
-- `borderWidth`
-- `color`
-- `containerQuery`
-- `duration`
-- `fontFamily`
-- `fontSize`
-- `fontWeight`
-- `lineHeight`
-- `mediaQuery`
-- `shadow`
-- `spacing`
-- `timingFunction`
-- `zIndex`
-- `extendedTokens`
-
-```ts
-const myOptions = {
-  tokens: {
-    primitives: {
-      borderRadius: {
-        none: '0',
-        sm: '0.25rem',
-        md: '0.5rem',
-        lg: '0.75rem',
-        xl: '1rem',
-        pill: '10rem',
-        circle: '50%',
-      },
-      duration: {
-        xslow: '2s',
-        slow: '1s',
-        med: '0.5s',
-        fast: '0.3s',
-        xfast: '0.1s',
-      },
-      /* Add the rest of your tokens here */
+```typescript
+semantics: ({ primitive }) => ({
+  surface: {
+    primary: { light: '#ffffff', dark: '#18181b' },
+    secondary: {
+      light: primitive('color', 'neutral', 100),
+      dark: primitive('color', 'neutral', 800),
     },
   },
-};
+  action: {
+    primary: primitive('color', 'primary', 500),
+    primaryHover: primitive('color', 'primary', 600),
+  },
+  text: {
+    primary: { light: '#18181b', dark: '#fafafa' },
+  },
+});
 ```
 
-> Use Token Helper functions for media and container queries, as these queries do not support CSS variables.
+Use `{ light, dark }` objects for color-scheme-aware tokens.
 
-#### Colors
+### 3. Components
 
-Colors have a slightly different interface to accommodate more complex naming conventions.
+Component-specific tokens:
 
-```ts
-export type Colors = {
-  [key: string]:
-    | {
-        [key: string]: ColorSchemeColors | string;
-      }
-    | string;
-};
-```
-
-Using this structure, you can define your color palette using a color/variation naming convention.
-
-```ts
-const options = {
-  tokens: {
-    primitives: {
-      colors: {
-        primary: {
-          100: '#ffe5e5',
-          200: '#ffb3b3',
-          300: '#ff7f7f',
-          400: '#ff4c4c',
-          500: '#ff1919',
-          600: '#e50000',
-          700: '#b30000',
-          800: '#7f0000',
-          900: '#4c0000',
-        },
-        secondary: {
-          100: '#fff0e5',
-          200: '#ffcc99',
-          300: '#ff9966',
-          400: '#ff6633',
-          500: '#ff3300',
-          600: '#e52e00',
-          700: '#b32400',
-          800: '#7f1a00',
-          900: '#4c1000',
-        },
-        neutral: {
-          100: '#f7f7f7',
-          200: '#e1e1e1',
-          300: '#cfcfcf',
-          400: '#b1b1b1',
-          500: '#939393',
-          600: '#757575',
-          700: '#616161',
-          800: '#4f4f4f',
-          900: '#3f3f3f',
-        },
-      },
+```typescript
+components: ({ primitive, semantic }) => ({
+  button: {
+    bgColor: semantic('action', 'primary'),
+    fgColor: semantic('text', 'inverse'),
+    borderRadius: primitive('borderRadius', 'md'),
+    hover: {
+      bgColor: semantic('action', 'primaryHover'),
     },
   },
-};
+});
 ```
 
-Or an alternative naming convention.
+## Theme Extension API
 
-```ts
-const options = {
-  tokens: {
-    primitives: {
-      colors: {
-        primary: {
-          darker: '#ffe5e5',
-          dark: '#ffb3b3',
-          base: '#ff7f7f',
-          light: '#ff4c4c',
-          lighter: '#ff1919',
-        },
-        secondary: {
-          darker: '#fff0e5',
-          dark: '#ffcc99',
-          base: '#ff9966',
-          light: '#ff6633',
-          lighter: '#ff3300',
-        },
-        neutral: {
-          darker: '#f7f7f7',
-          dark: '#e1e1e1',
-          base: '#cfcfcf',
-          light: '#b1b1b1',
-          lighter: '#939393',
-        },
-      },
-    },
+### `.extendPrimitives(overrides)`
+
+Override primitive values:
+
+```typescript
+const customTokens = charmTokens.extendPrimitives({
+  color: { brand: '#ff6600' },
+});
+```
+
+### `.extendSemantics(factory)`
+
+Add or override semantic tokens. The factory receives `{ primitive }` reference helpers; its return is deep-merged into the inherited semantics, so you list only what changes:
+
+```typescript
+const customTokens = charmTokens.extendSemantics(({ primitive }) => ({
+  surface: {
+    brand: primitive('color', 'brand', 500),
   },
-};
+}));
 ```
 
-> These values are converted to `rgba` format (unless otherwise configured) to accommodate the "alpha" channel. The color tokens also include color "alpha" tokens, allowing you to control the opacity of a color based on a given context. The value should be between `0` and `1`.
->
-> Color token: `--colors-primary-500: rgba(255, 255, 224, var(--colors-primary-500-alpha));`
->
-> Alpha token: `--colors-primary-500-alpha: 1;`
+The inherited `surface` siblings (and every other group) are preserved. The base semantics are still available as the second argument (`base`) when you need to derive a value from them.
 
-These properties also support the `ColorSchemeColors` as a value, allowing you to specify `light` and `dark` variations for your color palette, which will generate your dark-mode themes.
+### `.extendComponents(factory)`
 
-```ts
-type ColorSchemeColors = {
-  light: string;
-  dark: string;
-};
-```
+Add or override component tokens. The factory receives `{ primitive, semantic }` reference helpers; its return is deep-merged into the inherited components:
 
-```ts
-const options = {
-  tokens: {
-    primitives: {
-      colors: {
-        primary: {
-          100: {
-            light: '#ff8c00',
-            dark: '#ff4500',
-          },
-          200: {
-            light: '#ffa500',
-            dark: '#ff6347',
-          },
-          300: {
-            light: '#ffd700',
-            dark: '#ffa500',
-          },
-          400: {
-            light: '#ffff00',
-            dark: '#ffd700',
-          },
-          500: {
-            light: '#ffffe0',
-            dark: '#fffacd',
-          },
-        },
-      },
-    },
+```typescript
+const customTokens = charmTokens.extendComponents(({ primitive }) => ({
+  button: {
+    borderRadius: primitive('borderRadius', 'full'),
   },
-};
+}));
 ```
 
-> When creating color names, use a generic naming convention - "primary", "secondary", "success", "danger", "neutral" etc. This will reduce confusion when creating theme variations or extending a project.
+### `.extendRawCss(additions)`
 
-##### Generating a Color Palette
+Inject raw CSS into the generated `reset`, `theme`, and `utilities` files. It accepts two forms that combine with inherited raw CSS differently:
 
-If you do not want to define your own color palette, you can define your base colors and the palette will automatically create the variations for you.
+- **Plain object** — each bucket is _appended_ after the inherited value. This is the common case for adding CSS on top of what you inherited:
 
-```ts
-const options = {
-  neutralColor: 'neutral',
+  ```typescript
+  const customTokens = charmTokens.extendRawCss({
+    reset: `html { scroll-behavior: smooth; }`,
+  });
+  ```
 
-  tokens: {
-    primitives: {
-      colors: {
-        primary: '#0f6cbd',
-        danger: '#C50F1F',
-        neutral: '#808080',
-      },
-    },
-  },
-};
+- **Factory function** — receives `{ primitive, semantic, component }` reference helpers and the inherited raw CSS as `base`. Its return value **replaces** the inherited raw CSS, giving you full control:
+
+  ```typescript
+  const customTokens = charmTokens.extendRawCss(({ semantic }, base) => ({
+    // Append: interpolate the inherited value
+    ...base,
+    theme: `${base?.theme ?? ''}
+      .brand-surface { background: ${semantic('surface', 'brand')}; }`,
+
+    // Drop an inherited bucket: omit it from the return value
+    // Replace a bucket entirely: return a fresh value without spreading base
+  }));
+  ```
+
+  Because the factory return replaces inherited raw CSS, spread `base` (and interpolate `base?.<bucket>`) to keep what you inherited, omit a bucket to drop it, or return a bucket without referencing `base` to replace it outright.
+
+### Chaining
+
+Methods can be chained:
+
+```typescript
+const customTokens = charmTokens
+  .extendPrimitives({ color: { brand: '#ff6600' } })
+  .extendSemantics(({ primitive }) => ({
+    /* merged into inherited semantics */
+  }))
+  .extendComponents(({ primitive }) => ({
+    /* merged into inherited components */
+  }))
+  .extendRawCss(({ semantic }, base) => ({ ...base /* raw CSS replaces; spread to keep */ }));
 ```
 
-> When generating a color palette, be sure to set the `neutralColor` value to the name of your neutral color palette. That will include the "black" and "white" colors on the palette and will generate the appropriate token helpers.
+## Generated Outputs
 
-#### Shadows
+`generateTheme()` returns:
 
-Shadows can accept a key/value pair of values, but it also supports the `ColorSchemeColors` interface in case you need to vary your shadows in dark-mode.
+| Output               | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `css`                | CSS variables in `:root`                     |
+| `cssReset`           | CSS reset styles                             |
+| `cssUtilities`       | Utility classes (`.p-sm`, `.bg-primary-500`) |
+| `tokensJson`         | W3C Design Tokens format                     |
+| `hasLightDarkTokens` | Whether theme has light/dark variants        |
 
-```ts
-type Shadows = {
-  [key: string]: ColorSchemeColors | string;
-};
+## Accessible Colors
+
+The generator creates semantic tokens for text on colored backgrounds:
+
+```css
+--charm-color-on-primary-500: #fafafa; /* Light text for dark bg */
+--charm-color-on-primary-50: #18181b; /* Dark text for light bg */
 ```
 
-```ts
-const myOptions = {
-  tokens: {
-    primitives: {
-      shadow: {
-        sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-        md: '0 4px 8px 0 rgba(0, 0, 0, 0.1)',
-        lg: '0 8px 16px 0 rgba(0, 0, 0, 0.1)',
-        xl: '0 12px 24px 0 rgba(0, 0, 0, 0.1)',
-      },
-    },
-  },
-};
+Usage:
+
+```css
+.badge {
+  background: var(--charm-color-primary-500);
+  color: var(--charm-color-on-primary-500);
+}
 ```
 
-Using color scheme variations:
+## Lit Integration
 
-```ts
-const myOptions = {
-  tokens: {
-    primitives: {
-      shadow: {
-        sm: {
-          light: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-          dark: '0 1px 2px 0 rgba(0, 0, 0, 0.1)',
-        },
-        md: {
-          light: '0 4px 8px 0 rgba(0, 0, 0, 0.1)',
-          dark: '0 4px 4px 0 rgba(0, 0, 0, 0.2)',
-        },
-        lg: {
-          light: '0 8px 16px 0 rgba(0, 0, 0, 0.1)',
-          dark: '0 8px 14px 0 rgba(0, 0, 0, 0.2)',
-        },
-        xl: {
-          light: '0 12px 24px 0 rgba(0, 0, 0, 0.1)',
-          dark: '0 12px 18px 0 rgba(0, 0, 0, 0.2)',
-        },
-      },
-    },
-  },
-};
-```
+For Lit components, use typed CSS helpers. In `@charm-ux/core` these are pre-bound via the `tokens` object:
 
-### Token Helpers
+```typescript
+import { tokens } from '@charm-ux/core';
+import { css } from 'lit';
 
-The theme generator outputs Token Helper functions based on the tokens you provide. These functions are strongly typed according to your tokens.
+const { primitive, semantic, component } = tokens.lit;
 
-> If you do not want these helpers, you can use the `skipHelpers` option to prevent their generation.
-
-```ts
-// avatar.styles.ts
-
-export default css`
+const styles = css`
   :host {
-    border-radius: ${borderRadius('circle')};
-    font-size: ${fontSize('md')};
-    background-color: ${color('primary', 500)};
-    color: ${color('neutral', 900)};
+    background: ${component('button', 'bgColor')};
+    color: ${semantic('text', 'primary')};
+    padding: ${primitive('spacing', 'md')};
   }
 `;
 ```
 
-#### Unique Palettes
+You can also create helpers directly with `createCssHelpers`:
 
-There may be instances where a color palette's interface differs from your other color palettes. Neutral colors are a good example, because they include additional values like white and black. In this case, you can specify the name of your unique palettes using the `uniquePalettes` configuration. As a result, appropriately typed functions will be generated for those palettes.
+```typescript
+import { createCssHelpers, charmDefinition } from '@charm-ux/theming';
+const { primitive, semantic, component } = createCssHelpers(charmDefinition, 'charm');
+```
 
-```ts
-// make-theme.js
+## Custom Elements Manifest Prefix
 
-const options = {
-  uniquePalettes = ['neutral'],
+Charm's components document their CSS custom properties via `@cssproperty` JSDoc tags, which the [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) (`custom-elements.json`) surfaces to tools like Storybook, VS Code, and design-system docs. Those documented names should carry the same prefix the theme emits at runtime (`charmDefinition.prefix`, default `charm` → `--charm-...`).
+
+The repository provides a small utility that normalizes documented CSS custom property names in a manifest to the active theme prefix. The implementation lives in the theming package at `packages/theming/src/cem-plugin/cem-css-prefix-plugin.ts` (source-only tooling; not exported from the published package). It exposes three helpers you can use in your build-time tooling:
+
+- `cssPrefixPlugin(options?)` — a Custom Elements Manifest analyzer plugin you can register during `cem analyze` to rewrite names as manifests are linked.
+- `applyThemePrefix(manifest, options)` — an in-place transform that rewrites every `cssProperties[].name` in a parsed manifest and returns the number of names changed.
+- `rewriteCssVarName(name, options)` — the pure per-name transform used by both helpers.
+
+### Analyzer plugin
+
+Register `cssPrefixPlugin()` in `custom-elements-manifest.config.mjs`, before the sorter so the finalized names are the ones that get sorted. Import it from the local source file when used in this repository's CEM config:
+
+```js
+import { cssPrefixPlugin } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
+
+export default {
+  // ...
+  plugins: [
+    // ...other plugins
+    cssPrefixPlugin(), // target prefix defaults to charmDefinition.prefix
+    cemSorterPlugin({}),
+  ],
 };
 ```
 
-```ts
-// avatar.styles.ts
+### Standalone function
 
-export default css`
-  :host {
-    border-radius: ${borderRadius('circle')};
-    font-size: ${fontSize('md')};
-    background-color: ${color('primary', 500)};
-    color: ${neutralColor(1000)};
-  }
-`;
+`applyThemePrefix(manifest, options)` rewrites every `cssProperties[].name` in a parsed manifest **in place** and returns the number of names changed:
+
+```js
+import fs from 'node:fs';
+import { applyThemePrefix } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
+
+const manifest = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8'));
+const changed = applyThemePrefix(manifest, { prefix: 'acme' });
+fs.writeFileSync('custom-elements.json', JSON.stringify(manifest, null, 2));
+console.log(`Rewrote ${changed} CSS custom property names`);
 ```
 
-#### Color Alpha Helpers
+`rewriteCssVarName(name, options)` is the pure per-name transform underneath both.
 
-Primitive tokens are not often changed after they are initially set, but one exception is a color's "alpha channel", which controls opacity. There is a special helper called `setColorAlpha` (and `setNeutralColorAlpha` if you have specified a unique color palette) that can be used to update the value based on a specific context.
+### Options
 
-```ts
-// input.styles.ts
+Both `cssPrefixPlugin`, `applyThemePrefix`, and `rewriteCssVarName` accept the same options:
 
-export default css`
-  .input:invalid {
-    border-color: ${color('danger', 700)};
-    background-color: ${color('danger', 300)};
-    ${setColorAlpha('danger', 300, 0.5)};
-  }
-`;
+| Option          | Type                           | Default                              | Description                                                         |
+| --------------- | ------------------------------ | ------------------------------------ | ------------------------------------------------------------------- |
+| `prefix`        | `string`                       | `charmDefinition.prefix` (`'charm'`) | Target prefix to apply. An empty string strips the prefix entirely. |
+| `defaultPrefix` | `string \| string[] \| RegExp` | `ANY_PREFIX` (`/^[^-]+-/`)           | Existing prefix(es) to strip before applying `prefix`.              |
+
+By default (`defaultPrefix` omitted), the transform replaces the **first `--xxxx-` segment** regardless of what it is, so the source prefix does not need to be known ahead of time:
+
+```js
+rewriteCssVarName('--charm-overflow-item-gap', { prefix: 'acme' }); // → --acme-overflow-item-gap
+rewriteCssVarName('---button-color', { prefix: 'acme' }); // → --acme-button-color
+rewriteCssVarName('--gap', { prefix: 'acme' }); // → --acme-gap (no segment to strip)
 ```
 
-```ts
-// dialog.styles.ts
+Scope the stripping when you know the source prefix(es):
 
-export default css`
-  .overlay {
-    background-color: ${neutralColor(700)};
-    ${setNeutralColorAlpha(700, 0.08)};
-  }
-`;
+```js
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: 'charm' }); // single
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: ['charm', 'fui'] }); // list
+rewriteCssVarName(name, { prefix: 'acme', defaultPrefix: /^(charm|fui)-/ }); // regex
 ```
 
-#### Media and Container Queries
-
-Media and containers do not support using CSS variables as values, so to improve consistency there are two types functions. `containerQuery` and `mediaQuery` return values that you have defined in the tokens.
-
-```ts
-// nav-bar.styles.ts
-
-export default css`
-  @media screen and (max-width: ${mediaQuery('xl')}) {
-    .nav-bar {
-      flex-direction: row;
-    }
-  }
-
-  @media screen and (max-width: ${mediaQuery('sm')}) {
-    .nav-bar {
-      flex-direction: column;
-    }
-  }
-`;
-```
-
-You can use the `containerQueryBlock` and `mediaQueryBlock` for a simplified interface.
-
-```ts
-// nav-bar.styles.ts
-
-export default css`
-  ${mediaQueryBlock(
-    'xl',
-    css`
-      .nav-bar {
-        flex-direction: row;
-      }
-    `
-  )};
-
-  ${mediaQueryBlock(
-    'sm',
-    css`
-      .nav-bar {
-        flex-direction: column;
-      }
-    `
-  )};
-`;
-```
-
-If you are using the `containerQueryBlock`, be sure to set the `container` property on the element being observed.
-
-```ts
-// nav-bar.styles.ts
-
-export default css`
-  .nav-bar {
-    container: inline-size;
-  }
-
-  ${containerQueryBlock(
-    'xl',
-    css`
-      .nav-bar {
-        flex-direction: row;
-      }
-    `
-  )};
-
-  ${containerQueryBlock(
-    'sm',
-    css`
-      .nav-bar {
-        flex-direction: column;
-      }
-    `
-  )};
-`;
-```
-
-If you are using [CSS nesting](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_nesting/Using_CSS_nesting), you can simplify the implementation by nesting them in the container being styled.
-
-```ts
-// nav-bar.styles.ts
-
-export default css`
-  .nav-bar {
-    container: inline-size;
-
-    ${containerQueryBlock(
-      'xl',
-      css`
-        flex-direction: row;
-      `
-    )};
-    ${containerQueryBlock(
-      'sm',
-      css`
-        flex-direction: column;
-      `
-    )};
-  }
-`;
-```
+Notes:
 
-#### Using Helpers to Define Tokens
+- **Idempotent** — names already starting with `--{prefix}-` are left unchanged, so the transform is safe to re-run.
+- **RegExp** patterns are matched against the name body (after `--`), auto-anchored to the start, and the `g` flag is ignored, so only a leading prefix is ever removed.
+- **Caveat** — the default `ANY_PREFIX` cannot tell a real prefix from a genuine first segment, so an unprefixed name like `--form-control-bg-color` becomes `--{prefix}-control-bg-color`. Pass an explicit `defaultPrefix` when names may be unprefixed.
 
-The theme generator supports using the Token Helpers in your token definitions, but there are some steps you should take to prevent potential build and CI issues.
-
-1. Define your primitive tokens
-2. Run the theme generator to generate your Token Helpers
-3. Import the Token Helpers to define the rest of your tokens
-4. Include the Token Helpers in your source control to prevent further timing issues with Token Helper generation and builds
+## Pre-built Themes
 
-#### Adding Custom Helpers
-
-If you would like to include your own custom helper functions, you can define them using the `extendedTokenHelpers` property. These will be included in file with the rest of the generated token helpers.
+| Export        | Description                                    |
+| ------------- | ---------------------------------------------- |
+| `charmTokens` | Base Charm theme                               |
+| `demoTokens`  | Demo theme with vibrant colors (extends charm) |
 
-### Adding Custom Tokens
-
-If there are additional primitive tokens you would like to add, you can add them using the `extendedTokens` property for general tokens and the `extendedLightTokens`/`extendedDarkTokens` for the color scheme based. Each of these properties can use a string or the `css` tagged template literal from lit.
+## API Reference
 
-### Defining Semantic Tokens
-
-Semantic tokens are much more specific in their naming convention and implementation. These are used in the CSS reset as well as in the components to create style consistency throughout the user interface.
-
-> Several of the semantic tokens support `ColorSchemeColors` so you can provide color-scheme specific variations.
-
-#### Body
+### `defineTokens(config, options?)`
 
-These define the styles applied globally to the application.
+Creates a token definition with typed helpers and extension methods.
 
-```ts
-type Body = {
-  bgColor?: ColorSchemeColors | string;
-  fgColor?: ColorSchemeColors | string;
-  fontFamily?: string;
-  fontSize?: string;
-  fontWeight?: string;
-  lineHeight?: string;
-};
-```
-
-#### Border
-
-This defines the global border styles as well as defines the default border styles.
-
-```ts
-type Border = {
-  size?: string;
-  color?: ColorSchemeColors | string;
-  style?: string;
-};
-```
-
-#### Buttons
-
-This is used to set the styles for the native `<button>` element as well as the default styles for the button component.
-
-```ts
-type Button = {
-  // REST
-  bgColor?: ColorSchemeColors | string;
-  borderColor?: ColorSchemeColors | string;
-  borderSize?: string;
-  borderStyle?: string;
-  borderRadius?: string;
-  fgColor?: ColorSchemeColors | string;
-  fontWeight?: string;
-  paddingX?: string;
-  paddingY?: string;
-  shadow?: ColorSchemeColors | string;
-
-  // ACTIVE
-  activeFgColor?: ColorSchemeColors | string;
-  activeBorderColor?: ColorSchemeColors | string;
-  activeBgColor?: ColorSchemeColors | string;
-  shadowActive?: ColorSchemeColors | string;
-
-  // DISABLED
-  disabledBgColor?: ColorSchemeColors | string;
-  disabledBorderColor?: ColorSchemeColors | string;
-  disabledFgColor?: ColorSchemeColors | string;
-  shadowDisabled?: ColorSchemeColors | string;
-
-  // FOCUS
-  focusBgColor?: ColorSchemeColors | string;
-  focusBorderColor?: ColorSchemeColors | string;
-  focusFgColor?: ColorSchemeColors | string;
-  shadowFocus?: ColorSchemeColors | string;
-
-  // HOVER
-  hoverBgColor?: ColorSchemeColors | string;
-  hoverBorderColor?: ColorSchemeColors | string;
-  hoverFgColor?: ColorSchemeColors | string;
-  shadowHover?: ColorSchemeColors | string;
-};
-```
-
-#### Link
-
-Like the button styles, this is used to set the styles for the native anchor (`<a>`) element as well as the default styles for links in the button component.
-
-```ts
-type Link = {
-  // REST
-  fgColor?: ColorSchemeColors | string;
-  decoration?: string;
-
-  // ACTIVE
-  activeFgColor?: ColorSchemeColors | string;
-  activeDecoration?: string;
-
-  // HOVER
-  hoverFgColor?: ColorSchemeColors | string;
-  hoverDecoration?: string;
-
-  // FOCUS
-  focusFgColor?: ColorSchemeColors | string;
-  focusDecoration?: string;
-
-  // VISITED
-  visitedFgColor?: ColorSchemeColors | string;
-  visitedDecoration?: string;
-};
-```
-
-#### Forms
-
-This sets the styles for the native `<form>` element.
-
-```ts
-type Form = {
-  borderColor?: ColorSchemeColors | string;
-  borderSize?: string;
-  borderStyle?: string;
-  borderRadius?: string;
-  bgColor?: ColorSchemeColors | string;
-  contentGap?: string;
-  paddingX?: string;
-  paddingY?: string;
-};
-```
-
-#### Form Controls
-
-This sets the default styles for the native form control elements as well as the styles within the form control components.
-
-```ts
-type FormControl = {
-  // REST
-  bgColor?: ColorSchemeColors | string;
-  borderColor?: ColorSchemeColors | string;
-  borderRadius?: string;
-  borderSize?: string;
-  borderStyle?: string;
-  fgColor?: ColorSchemeColors | string;
-  fontSize?: string;
-  iconGap?: string;
-  inputHeight?: string;
-  placeholderColor?: ColorSchemeColors | string;
-  paddingX?: string;
-  paddingY?: string;
+Returns: `{ definition, helpers, extendPrimitives, extendSemantics, extendComponents, extendRawCss }`
 
-  // DISABLED
-  disabledBgColor?: ColorSchemeColors | string;
-  disabledBorderColor?: ColorSchemeColors | string;
-  disabledFgColor?: ColorSchemeColors | string;
-  disabledOpacity?: string;
-  disabledPlaceholderColor?: ColorSchemeColors | string;
+### `generateTheme(definition, options?)`
 
-  // INVALID
-  invalidBgColor?: ColorSchemeColors | string;
-  invalidBorderColor?: ColorSchemeColors | string;
-  invalidFgColor?: ColorSchemeColors | string;
-  invalidPlaceholderColor?: ColorSchemeColors | string;
-  invalidMessageFgColor?: ColorSchemeColors | string;
+Generates theme outputs asynchronously.
 
-  // FOCUS
-  focusBgColor?: ColorSchemeColors | string;
-  focusBorderColor?: ColorSchemeColors | string;
-  focusFgColor?: ColorSchemeColors | string;
+Options:
 
-  helpText?: {
-    fgColor?: ColorSchemeColors | string;
-    fontSize?: string;
-    fontWeight?: string;
-    gap?: string;
-  };
+- `prefix` — CSS variable prefix (default: `''`)
+- `selector` — CSS selector (default: `':root'`)
 
-  label?: {
-    fgColor?: ColorSchemeColors | string;
-    fontSize?: string;
-    fontWeight?: string;
-    gap?: string;
-    requiredIndicatorGap?: string;
-  };
-};
-```
+### `generateThemeSync(definition, options?)`
 
-#### Headings
+Synchronous version of `generateTheme()`.
 
-This sets the base styles for the native heading elements.
+### `createCssHelpers(definition, prefix)`
 
-```ts
-type Heading = {
-  fgColor?: ColorSchemeColors | string;
-  fontFamily?: string;
-  fontWeight?: string;
-  lineHeight?: string;
-};
-```
+Creates typed CSS helpers for Lit components.
 
-#### Focus Outline
+Returns: `{ primitive, semantic, component }`
 
-This globally sets the focus outline styles. The focus outline is configured to be used with the `:focus-visible` selector so they are visible when using keyboard navigation.
+## Links
 
-```ts
-type FocusOutline = {
-  color?: ColorSchemeColors | string;
-  offset?: string;
-  size?: string;
-  style?: string;
-};
-```
-
-## CSS Utility Classes
-
-Each theme will generate a file with CSS utility classes in them. These are designed to provide easy access to your token values to support design consistency.
-
-> These utility classes are considered "last mile" styling tools meaning you should not use them to style your components. Each of the styles use the `!important` property to prevent issues with specificity and inheritance. Using them in your components will make extending and customizing them very difficult. These should be reserved for teams using the component library.
-
-### CSS Utility Examples
-
-The following utilities will be generated based on your configuration.
-
-#### Border Radius
-
-`br-{size}` (ex - `br-none`, `br-xl`, `br-circle`, etc.)
-
-`br-s-{size}` "border-radius start" sets the `border-start-start-radius` and `border-end-start-radius` properties
-
-`br-e-{name}` "border-radius end" sets the `border-start-end-radius` and `border-end-end-radius` properties
-
-`br-t-{name}` "border-radius top" sets the `border-start-start-radius` and `border-start-end-radius` properties
-
-`br-b-{name}` "border-radius bottom" sets the `border-end-start-radius` and `border-end-end-radius` properties
-
-#### Border Widths
-
-`b-{name}` (ex - `b-none`, `b-3`, etc.)
-
-`bs-{name}` "border start" sets the `border-inline-start`
-
-`be-{name}` "border end" sets the `border-inline-end`
-
-`bt-{name}` "border top" sets the `border-block-start`
-
-`bb-{name}` "border bottom" sets the `border-block-end`
-
-`bx-{name}` "horizontal border" sets the `border-inline`
-
-`by-{name}` "vertical border" sets the `border-block`
-
-#### Colors
-
-##### Background
-
-The utilities prefixed with `bg-` will set the `background-color` property with the color associated to the class name and the `color` property will be set the to appropriate contrasting color to support accessible UIs.
-
-`bg-{color}-{variation}` (ex - `bg-primary-500`, `bg-danger-light`, etc.)
-
-##### Foreground
-
-The utilities prefixed with `fg-` will set the `color` property to the color with the associated class name.
-
-`fg-{color}-{variation}` (ex - `fg-neutral-900`, `fg-success-darker`, etc.)
-
-##### Border
-
-`b-{name}-{variation}` (ex - `b-primary-500`, `b-caution-base`, etc.)
-
-`bs-{name}-{variation}` "border start" sets the `border-inline-start-color`
-
-`be-{name}-{variation}` "border end" sets the `border-inline-end-color`
-
-`bt-{name}-{variation}` "border top" sets the `border-block-start-color`
-
-`bb-{name}-{variation}` "border bottom" sets the `border-block-end-color`
-
-`bx-{name}-{variation}` "horizontal border" sets the `border-inline-color`
-
-`by-{name}-{variation}` "vertical border" sets the `border-block-color`
-
-#### Duration
-
-`duration-{name}` sets the `transition-duration` property
-
-#### Font Families
-
-`font-{name}` (ex - `font-base`, `font-monospace`, etc.)
-
-#### Font Weights
-
-`font-{name}` (ex - `font-bold`, `font-normal`, etc.)
-
-#### Line Heights
-
-`lh-{name}` (ex - `lh-sm`, `lh-500`, etc.)
-
-#### Shadows
-
-`shadow-{name}` (ex - `shadow-0`, `shadow-xl`, etc.)
-
-#### Spacing
-
-##### Margins
-
-`m-{name}` (ex - `m-none`, `m-xl`, etc.)
-
-`mt-{name}` "margin top" sets the `margin-block-start` property
-
-`mb-{name}` "margin bottom" sets the `margin-block-end` property
-
-`ms-{name}` "margin start" sets the `margin-inline-start` property
-
-`me-{name}` "margin end" sets the `margin-inline-end` property
-
-`mx-{name}` "horizontal margin" sets the `margin-inline` property
-
-`my-{name}` "vertical margin" sets the `margin-block` property
-
-##### Padding
-
-`p-{name}` (ex - `p-none`, `p-xl`, etc.)
-
-`pt-{name}` "padding top" sets the `padding-block-start` property
-
-`pb-{name}` "padding bottom" sets the `padding-block-end` property
-
-`ps-{name}` "padding start" sets the `padding-inline-start` property
-
-`pe-{name}` "padding end" sets the `padding-inline-end` property
-
-`px-{name}` "horizontal padding" sets the `padding-inline` property
-
-`py-{name}` "vertical padding" sets the `padding-block` property
-
-##### Gap
-
-`gap-{name}` (ex - `gap-sm`, `gap-200`, etc.)
-
-#### Transition Function
-
-`tf-{name}` sets the `transition-timing-function`
-
-### Adding Custom CSS Utilities
-
-If you would like to add your own custom CSS utility classes, you can add them to the `extendedCssUtilities` config property. The property accepts a `string` or `CSSResult` from the Lit's `css` tagged template literal.
+- [GitHub](https://github.com/charm-ux/core)
+- [npm](https://www.npmjs.com/package/@charm-ux/theming)

@@ -24,7 +24,7 @@ import styles from './radio-group.styles.js';
  * @event blur - Emitted when the radio group loses focus.
  * @event focus - Emitted when the radio group gains focus.
  *
- * @cssproperty --radio-group-radio-gap - The gap between radio buttons.
+ * @cssproperty --charm-radio-group-radio-gap - The gap between radio buttons.
  *
  * @csspart form-control-error-text - The control's error text's wrapper.
  * @csspart radio-group-base - The component's internal wrapper.

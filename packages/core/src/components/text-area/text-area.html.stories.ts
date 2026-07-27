@@ -6,7 +6,7 @@ import type { CoreTextArea } from './index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-text-area');
 
 const meta: Meta<CoreTextArea> = {
-  title: 'Core/TextArea',
+  title: 'Core/Text Area',
   component: 'ch-text-area',
   args,
   argTypes,

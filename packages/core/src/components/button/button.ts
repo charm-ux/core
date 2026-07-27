@@ -28,36 +28,41 @@ import styles from './button.styles.js';
  * @csspart content - The button's label.
  * @csspart end - The container that wraps the suffix.
  *
- * @cssproperty --button-active-bg-color - Sets the background color of the button when active.
- * @cssproperty --button-active-border-color - Sets the border color of the button when active.
- * @cssproperty --button-active-fg-color - Sets button's text color when active.
- * @cssproperty --button-active-shadow - Sets button's box-shadow when active.
- * @cssproperty --button-bg-color - Sets the background color of the button.
- * @cssproperty --button-border-color - Sets the border color of the button.
- * @cssproperty --button-border-radius - Sets button's border-radius.
- * @cssproperty --button-border-size - Sets the border width of the button.
- * @cssproperty --button-border-style - Sets the border style of the button.
- * @cssproperty --button-content-gap - Determines the spacing between the slots.
- * @cssproperty --button-disabled-bg-color - Sets the background color of the button when disabled.
- * @cssproperty --button-disabled-border-color - Sets the border color of the button when disabled.
- * @cssproperty --button-disabled-fg-color - Sets button's text color when disabled.
- * @cssproperty --button-disabled-shadow - Sets button's box-shadow when disabled.
- * @cssproperty --button-fg-color - Sets button's text color.
- * @cssproperty --button-focus-bg-color - Sets the background color of the button when focused.
- * @cssproperty --button-focus-border-color - Sets the border color of the button when focused.
- * @cssproperty --button-focus-fg-color - Sets button's text color when focused.
- * @cssproperty --button-focus-shadow - Sets button's box-shadow when focused.
- * @cssproperty --button-hover-bg-color - Sets the background color of the button when hovered.
- * @cssproperty --button-hover-border-color - Sets the border color of the button when hovered.
- * @cssproperty --button-hover-fg-color - Sets button's text color when hovered.
- * @cssproperty --button-hover-shadow - Sets button's box-shadow when hovered.
- * @cssproperty --button-icon-size - Sets the height and width of the slotted icon and svg.
- * @cssproperty --button-padding-x - Determines left and right padding.
- * @cssproperty --button-padding-y - Determines top and bottom padding.
- * @cssproperty --button-shadow - Sets button's box-shadow.
- * @cssproperty --button-pressed-bg-color - Sets the background color of the button when toggled.
- * @cssproperty --button-pressed-border - Sets the border of the button when toggled.
- * @cssproperty --button-pressed-fg-color - Sets button's text color when toggled.
+ * @cssproperty --charm-button-active-bg-color - Sets the background color of the button when active.
+ * @cssproperty --charm-button-active-border-color - Sets the border color of the button when active.
+ * @cssproperty --charm-button-active-fg-color - Sets button's text color when active.
+ * @cssproperty --charm-button-active-shadow - Sets button's box-shadow when active.
+ * @cssproperty --charm-button-bg-color - Sets the background color of the button.
+ * @cssproperty --charm-button-border-color - Sets the border color of the button.
+ * @cssproperty --charm-button-border-radius - Sets button's border-radius.
+ * @cssproperty --charm-button-border-style - Sets the border style of the button.
+ * @cssproperty --charm-button-border-width - Sets the border width of the button.
+ * @cssproperty --charm-button-content-alignment - Sets the alignment of the button content.
+ * @cssproperty --charm-button-content-gap - Determines the spacing between the slots.
+ * @cssproperty --charm-button-disabled-bg-color - Sets the background color of the button when disabled.
+ * @cssproperty --charm-button-disabled-border-color - Sets the border color of the button when disabled.
+ * @cssproperty --charm-button-disabled-cursor - Sets the cursor style when disabled.
+ * @cssproperty --charm-button-disabled-fg-color - Sets button's text color when disabled.
+ * @cssproperty --charm-button-disabled-shadow - Sets button's box-shadow when disabled.
+ * @cssproperty --charm-button-fg-color - Sets button's text color.
+ * @cssproperty --charm-button-focus-bg-color - Sets the background color of the button when focused.
+ * @cssproperty --charm-button-focus-border-color - Sets the border color of the button when focused.
+ * @cssproperty --charm-button-focus-fg-color - Sets button's text color when focused.
+ * @cssproperty --charm-button-focus-shadow - Sets button's box-shadow when focused.
+ * @cssproperty --charm-button-font-weight - Sets the font weight of the button.
+ * @cssproperty --charm-button-hover-bg-color - Sets the background color of the button when hovered.
+ * @cssproperty --charm-button-hover-border-color - Sets the border color of the button when hovered.
+ * @cssproperty --charm-button-hover-fg-color - Sets button's text color when hovered.
+ * @cssproperty --charm-button-hover-shadow - Sets button's box-shadow when hovered.
+ * @cssproperty --charm-button-icon-padding-x - Sets the horizontal padding for icon-only buttons.
+ * @cssproperty --charm-button-icon-padding-y - Sets the vertical padding for icon-only buttons.
+ * @cssproperty --charm-button-icon-size - Sets the height and width of the slotted icon and svg.
+ * @cssproperty --charm-button-padding-x - Determines left and right padding.
+ * @cssproperty --charm-button-padding-y - Determines top and bottom padding.
+ * @cssproperty --charm-button-pressed-bg-color - Sets the background color of the button when toggled.
+ * @cssproperty --charm-button-pressed-border-color - Sets the border color of the button when toggled.
+ * @cssproperty --charm-button-pressed-fg-color - Sets button's text color when toggled.
+ * @cssproperty --charm-button-shadow - Sets button's box-shadow.
  **/
 export class CoreButton extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];
@@ -209,7 +214,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.showHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.show();
         this.expanded = true;
       };
@@ -224,7 +229,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.hideHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.hide();
         this.expanded = false;
       };
@@ -239,7 +244,7 @@ export class CoreButton extends CharmFocusableElement {
     }
     if (value) {
       this.toggleHandler = () => {
-        const el = this.findRootNode(this).getElementById(value) as CharmDismissibleElement;
+        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
         el?.toggle();
         if (el?.open) {
           this.expanded = el?.open;

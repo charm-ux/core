@@ -18,10 +18,10 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
             tests: {
               visibleWhenOpen: {
                 description: 'should be visible when open',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
-                  // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
                   el.open = true;
                   await elementUpdated(el);
                   await aTimeout(500);
@@ -33,6 +33,8 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               notVisibleWhenClosed: {
                 description: '.should not be visible when closed',
+                // Use manual trigger so Chromium's synthetic hover events can't show the closed tooltip.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
                   el.open = false;
@@ -45,6 +47,8 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               disabled: {
                 description: 'should hide the tooltip when tooltip is visible and disabled becomes true',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
                   el.open = true;
@@ -82,10 +86,10 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
             tests: {
               show: {
                 description: 'should emit tooltip-show and tooltip-after-show when calling show()',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
-                  // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
                   el.open = false;
                   await elementUpdated(el);
                   await aTimeout(200);
@@ -107,10 +111,10 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               showFromAttribute: {
                 description: 'should emit tooltip-show and tooltip-after-show when setting open = true',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
-                  // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
                   el.open = false;
                   await elementUpdated(el);
                   await aTimeout(200);
@@ -132,10 +136,10 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               hide: {
                 description: 'should emit tooltip-hide and tooltip-after-hide when calling hide()',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
-                  // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
                   el.open = true;
                   await elementUpdated(el);
                   await aTimeout(200);
@@ -157,10 +161,10 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               hideFromAttribute: {
                 description: 'should emit tooltip-hide and tooltip-after-hide when setting open = false',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
-                  // Disable pointer events-- Chromium gets a mouse out event on ADO
-                  el.style.pointerEvents = 'none';
                   el.open = true;
                   await elementUpdated(el);
                   await aTimeout(200);
@@ -182,6 +186,8 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
               },
               liveRegionAnnouncement: {
                 description: 'should update live region content when tooltip is shown',
+                // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.
+                config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
                   el.content = 'Test tooltip content';

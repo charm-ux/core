@@ -1,20 +1,36 @@
 {
   "name": "@charm-ux/theming",
-  "version": "0.2.0",
-  "description": "This package is designed to help generate and manage themes for the Charm UI library. It is a part of the Charm UI ecosystem.",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "version": "0.5.0",
+  "description": "Design token system with type-safe helpers and CSS generation for Charm UI",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./themes": {
+      "types": "./dist/themes/index.d.ts",
+      "import": "./dist/themes/index.js"
+    },
+    "./lit": {
+      "types": "./dist/lit/index.d.ts",
+      "import": "./dist/lit/index.js"
+    },
+    "./cem-plugin": {
+      "types": "./dist/cem-plugin/index.d.ts",
+      "import": "./dist/cem-plugin/index.js"
+    }
+  },
   "files": [
-    "index.js",
-    "index.d.ts",
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "demo": "tsc && node demo/generators.js",
-    "prepare": "npm run build",
-    "test": "vitest run"
+    "build": "tsc --build",
+    "demo": "node ./demo/generators.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "design-tokens",
@@ -40,14 +56,21 @@
     "access": "public"
   },
   "dependencies": {
-    "chroma-js": "^2.4.2",
-    "prettier": "^3.0.0"
+    "culori": "^4.0.0"
+  },
+  "peerDependencies": {
+    "lit": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "lit": {
+      "optional": true
+    }
   },
   "devDependencies": {
-    "@types/chroma-js": "^2.4.4",
-    "@types/node": "^24.3.0",
-    "lit": "^3.1.2",
-    "typescript": "^5.3.3",
-    "vitest": "^1.3.1"
+    "@types/node": "^22.0.0",
+    "lit": "^3.0.0",
+    "typescript": "^5.7.0",
+    "vite": "^7.1.12",
+    "vitest": "^4.1.8"
   }
 }

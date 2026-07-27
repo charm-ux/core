@@ -143,7 +143,7 @@ Most components expose CSS custom properties that allow you to customize their a
 
 We caution you to only use these custom properties when necessary, as frequent use can make your styles more difficult to maintain. They are intended for use cases where you need to override a specific aspect of the component's appearance in a way that is not intended to apply globally.
 
-> **Note:** If you do want global overrides for the semantic tokens applied to component styles, we recommend using the theme system to define your custom values. This ensures that your customizations are consistent across all components that use the theme. Theme guidance is coming soon.
+> **Note:** If you do want global overrides for the semantic tokens applied to component styles, we recommend using the theme system to define your custom values. This ensures that your customizations are consistent across all components that use the theme. See the [theming documentation](/theming/) for details.
 
 Custom properties are inheritable, meaning they can be set on a parent or host element, or even the `:root` element, to apply to all instances of the component.
 

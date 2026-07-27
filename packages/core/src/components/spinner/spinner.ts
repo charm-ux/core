@@ -12,17 +12,17 @@ import styles from './spinner.styles.js';
  *
  * @slot - A label to show next to the spinner when the `label` attribute is not provided.
  *
- * @cssproperty --spinner-gap - Gap between the ring and the label.
- * @cssproperty --spinner-image-animation - Animation for the spinner ring.
- * @cssproperty --spinner-indicator-animation - Animation for the spinner indicator.
- * @cssproperty --spinner-indicator-color - Color of the shaded in track.
- * @cssproperty --spinner-label-color - Font color of the label text.
- * @cssproperty --spinner-label-font-size -  Font size of the label text.
- * @cssproperty --spinner-label-font-weight - Font weight of the label text.
- * @cssproperty --spinner-label-line-height - Line height of the label text.
- * @cssproperty --spinner-ring-size - Spinner ring's width and height.
- * @cssproperty --spinner-track-color - Color of the unshaded track.
- * @cssproperty --spinner-track-width - Width of the progress ring indicator.
+ * @cssproperty --charm-spinner-gap - Gap between the ring and the label.
+ * @cssproperty --charm-spinner-image-animation - Animation for the spinner ring.
+ * @cssproperty --charm-spinner-indicator-animation - Animation for the spinner indicator.
+ * @cssproperty --charm-spinner-indicator-color - Color of the shaded in track.
+ * @cssproperty --charm-spinner-label-color - Font color of the label text.
+ * @cssproperty --charm-spinner-label-font-size -  Font size of the label text.
+ * @cssproperty --charm-spinner-label-font-weight - Font weight of the label text.
+ * @cssproperty --charm-spinner-label-line-height - Line height of the label text.
+ * @cssproperty --charm-spinner-ring-size - Spinner ring's width and height.
+ * @cssproperty --charm-spinner-track-color - Color of the unshaded track.
+ * @cssproperty --charm-spinner-track-width - Width of the progress ring indicator.
  *
  * @csspart spinner-base - The component's base wrapper.
  * @csspart spinner-container - The spinner's container.

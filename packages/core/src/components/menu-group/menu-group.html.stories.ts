@@ -11,7 +11,7 @@ import type { CoreMenuGroup } from './index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-menu-group');
 
 const meta: Meta<CoreMenuGroup> = {
-  title: 'Core/MenuGroup',
+  title: 'Core/Menu Group',
   component: 'ch-menu-group',
   args,
   argTypes,

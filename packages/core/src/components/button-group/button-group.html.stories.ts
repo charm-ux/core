@@ -13,7 +13,7 @@ import '../overflow/index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-button-group');
 
 const meta: Meta<CoreButtonGroup> = {
-  title: 'Core/ButtonGroup',
+  title: 'Core/Button Group',
   component: 'ch-button-group',
   args,
   argTypes,

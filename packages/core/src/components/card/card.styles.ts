@@ -1,42 +1,21 @@
 import { css } from 'lit';
+import { component } from '../../utilities/theme.js';
 
 export default css`
   :host {
-    --card-bg-color: inherit;
-    --card-body-padding-x: inherit;
-    --card-body-padding-y: inherit;
-    --card-border-color: inherit;
-    --card-border-radius: inherit;
-    --card-border-size: inherit;
-    --card-border-style: inherit;
-    --card-box-shadow: inherit;
-    --card-content-gap: inherit;
-    --card-fg-color: inherit;
-    --card-footer-padding-x: inherit;
-    --card-footer-padding-y: inherit;
-    --card-heading-gap: inherit;
-    --card-heading-padding-x: inherit;
-    --card-heading-padding-y: inherit;
-    --card-heading-size: inherit;
-    --card-heading-weight: inherit;
-    --card-padding: inherit;
-    --card-subheading-size: inherit;
-    --card-subheading-weight: inherit;
-
     display: inline-block;
   }
 
   .base {
     display: flex;
     flex-direction: column;
-    border: var(--card-border-size, var(--default-border-size)) var(--card-border-style, var(--default-border-style))
-      var(--card-border-color, var(--default-border-color));
-    border-radius: var(--card-border-radius);
-    gap: var(--card-content-gap);
-    color: var(--card-fg-color);
-    background-color: var(--card-bg-color);
-    box-shadow: var(--card-box-shadow);
-    padding: var(--card-padding);
+    border: ${component('card', 'borderSize')} ${component('card', 'borderStyle')} ${component('card', 'borderColor')};
+    border-radius: ${component('card', 'borderRadius')};
+    gap: ${component('card', 'contentGap')};
+    color: ${component('card', 'fgColor')};
+    background-color: ${component('card', 'bgColor')};
+    box-shadow: ${component('card', 'boxShadow')};
+    padding: ${component('card', 'padding')};
     height: 100%;
   }
 
@@ -56,31 +35,31 @@ export default css`
   .header {
     display: flex;
     flex-direction: column;
-    gap: var(--card-heading-gap);
-    padding: var(--card-heading-padding-y) var(--card-heading-padding-x);
+    gap: ${component('card', 'headingGap')};
+    padding: ${component('card', 'headingPaddingY')} ${component('card', 'headingPaddingX')};
   }
 
   .header h3 {
-    font-weight: var(--card-heading-weight);
-    font-size: var(--card-heading-size);
+    font-weight: ${component('card', 'headingWeight')};
+    font-size: ${component('card', 'headingSize')};
     margin: 0;
   }
 
   .header h4 {
-    font-weight: var(--card-subheading-weight);
-    font-size: var(--card-subheading-size);
+    font-weight: ${component('card', 'subheadingWeight')};
+    font-size: ${component('card', 'subheadingSize')};
     margin: 0;
   }
 
   .card-content {
     display: grid;
     grid-auto-flow: row;
-    padding: var(--card-body-padding-y) var(--card-body-padding-x);
+    padding: ${component('card', 'bodyPaddingY')} ${component('card', 'bodyPaddingX')};
   }
 
   .footer {
     margin-top: auto;
-    padding: var(--card-footer-padding-y) var(--card-footer-padding-x);
+    padding: ${component('card', 'footerPaddingY')} ${component('card', 'footerPaddingX')};
   }
 
   ::slotted([slot='media']) {

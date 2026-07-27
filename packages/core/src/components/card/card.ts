@@ -25,26 +25,26 @@ import styles from './card.styles.js';
  * @csspart card-media - The card's media.
  * @csspart card-subheading - The card's subheading element.
  *
- * @cssproperty --card-bg-color - Sets the background color for the card.
- * @cssproperty --card-body-padding-x - Controls the horizontal padding of the card body.
- * @cssproperty --card-body-padding-y - Controls the vertical padding of the card body.
- * @cssproperty --card-border-color - Sets the border color for the card.
- * @cssproperty --card-border-radius - Sets border-radius for the card.
- * @cssproperty --card-border-size - Sets the border width for the card.
- * @cssproperty --card-border-style - Sets the border style for the card.
- * @cssproperty --card-box-shadow - Sets the style of the shadowing for the card.
- * @cssproperty --card-content-gap - Determines the spacing between the slots.
- * @cssproperty --card-fg-color - Sets the foreground color (text color) for the card.
- * @cssproperty --card-footer-padding-x - Controls the horizontal padding of the card footer.
- * @cssproperty --card-footer-padding-y - Controls the vertical padding of the card footer.
- * @cssproperty --card-heading-gap - Controls the gap between the heading and subheading.
- * @cssproperty --card-heading-padding-x - Controls the horizontal padding of the card heading.
- * @cssproperty --card-heading-padding-y - Controls the vertical padding of the card heading.
- * @cssproperty --card-heading-size - Controls the font size of the heading.
- * @cssproperty --card-heading-weight - Controls the font weight of the heading.
- * @cssproperty --card-padding - Sets the padding for the card.
- * @cssproperty --card-subheading-size - Controls the font size of the subheading.
- * @cssproperty --card-subheading-weight - Controls the font weight of the subheading.
+ * @cssproperty --charm-card-bg-color - Sets the background color for the card.
+ * @cssproperty --charm-card-body-padding-x - Controls the horizontal padding of the card body.
+ * @cssproperty --charm-card-body-padding-y - Controls the vertical padding of the card body.
+ * @cssproperty --charm-card-border-color - Sets the border color for the card.
+ * @cssproperty --charm-card-border-radius - Sets border-radius for the card.
+ * @cssproperty --charm-card-border-size - Sets the border width for the card.
+ * @cssproperty --charm-card-border-style - Sets the border style for the card.
+ * @cssproperty --charm-card-box-shadow - Sets the style of the shadowing for the card.
+ * @cssproperty --charm-card-content-gap - Determines the spacing between the slots.
+ * @cssproperty --charm-card-fg-color - Sets the foreground color (text color) for the card.
+ * @cssproperty --charm-card-footer-padding-x - Controls the horizontal padding of the card footer.
+ * @cssproperty --charm-card-footer-padding-y - Controls the vertical padding of the card footer.
+ * @cssproperty --charm-card-heading-gap - Controls the gap between the heading and subheading.
+ * @cssproperty --charm-card-heading-padding-x - Controls the horizontal padding of the card heading.
+ * @cssproperty --charm-card-heading-padding-y - Controls the vertical padding of the card heading.
+ * @cssproperty --charm-card-heading-size - Controls the font size of the heading.
+ * @cssproperty --charm-card-heading-weight - Controls the font weight of the heading.
+ * @cssproperty --charm-card-padding - Sets the padding for the card.
+ * @cssproperty --charm-card-subheading-size - Controls the font size of the subheading.
+ * @cssproperty --charm-card-subheading-weight - Controls the font weight of the subheading.
  **/
 
 export class CoreCard extends CharmElement {

@@ -1,31 +1,15 @@
 import { css } from 'lit';
-
-const fallbackStyles = {
-  tabsGap: css`8px`,
-  tabsAlign: css`start`,
-};
+import { component } from '../../utilities/theme.js';
 
 export default css`
   :host {
-    --tabs-gap: inherit;
-    --tabs-align: inherit;
-    --tab-border-radius: inherit;
-    --tabs-border-width: inherit;
-    --tabs-border-color: inherit;
-    --tabs-border-style: inherit;
-    --tabs-border-radius: inherit;
-    --tabs-padding-x: inherit;
-    --tabs-padding-y: inherit;
-    --tabs-bg-color: inherit;
-    --tabs-vertical-min-width: inherit;
-
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
-    background-color: var(--tabs-bg-color);
-    padding: var(--tabs-padding-y, 0) var(--tabs-padding-x, 0);
-    border: var(--tabs-border-width, 0) var(--tabs-border-style, solid) var(--tabs-border-color, transparent);
-    border-radius: var(--tabs-border-radius);
+    background-color: ${component('tabs', 'bgColor')};
+    padding: ${component('tabs', 'paddingY')} ${component('tabs', 'paddingX')};
+    border: ${component('tabs', 'borderWidth')} ${component('tabs', 'borderStyle')} ${component('tabs', 'borderColor')};
+    border-radius: ${component('tabs', 'borderRadius')};
   }
 
   ::slotted([role='tab']) {
@@ -38,9 +22,9 @@ export default css`
     grid-template-columns: auto;
     width: max-content;
     position: relative;
-    column-gap: var(--tabs-gap, ${fallbackStyles.tabsGap});
+    column-gap: ${component('tabs', 'gap')};
     row-gap: revert;
-    justify-self: var(--tabs-align, ${fallbackStyles.tabsAlign});
+    justify-self: ${component('tabs', 'align')};
     overflow-x: auto;
   }
 
@@ -60,10 +44,10 @@ export default css`
     grid-column: 1;
     grid-row: 1;
     position: relative;
-    row-gap: var(--tabs-gap, ${fallbackStyles.tabsGap});
+    row-gap: ${component('tabs', 'gap')};
     width: 100%;
     width: max-content;
-    min-width: var(--tabs-vertical-min-width);
+    min-width: ${component('tabs', 'verticalMinWidth')};
   }
 
   :host([layout='vertical']) .tabpanel {

@@ -8,36 +8,36 @@ import styles from './form-control.styles.js';
 /**
  * Base class for input components.
  *
- * @cssproperty --default-border - Determines the border of the control.
- * @cssproperty --form-control-bg-color - Determines the background color for the control.
- * @cssproperty --form-control-border-radius - Determines the border radius of the control.
- * @cssproperty --form-control-disabled-bg-color - Determines the disabled input background color.
- * @cssproperty --form-control-disabled-border-color - Determines the disabled input border color.
- * @cssproperty --form-control-disabled-fg-color - Determines the disabled input foreground color.
- * @cssproperty --form-control-disabled-opacity - Determines the disabled input opacity.
- * @cssproperty --form-control-fg-color - Determines the control text color.
- * @cssproperty --form-control-focus-border-color - Determines the focused control border color.
- * @cssproperty --form-control-font-size - Determines the font size.
- * @cssproperty --form-control-help-text-fg-color - Determines the help text color.
- * @cssproperty --form-control-help-text-font-size - Determines the help text font size.
- * @cssproperty --form-control-help-text-font-weight - Determines the help text font weight.
- * @cssproperty --form-control-help-text-gap - Determines the margin after help text.
- * @cssproperty --form-control-icon-gap - Determines the margin between start/end icons and the input.
- * @cssproperty --form-control-input-height - Determines the input height.
- * @cssproperty --form-control-invalid-border-color - Determines the error border color.
- * @cssproperty --form-control-invalid-message-fg-color - Determines the error text color.
- * @cssproperty --form-control-invalid-message-font-size - Determines the error message font size.
- * @cssproperty --form-control-label-fg-color - Determines the label color.
- * @cssproperty --form-control-label-font-size - Determines the label font size.
- * @cssproperty --form-control-label-font-weight - Determines the label font weight.
- * @cssproperty --form-control-label-gap - Determines the margin between label and the control.
- * @cssproperty --form-control-label-required-indicator-gap - Determines the margin between the required indicator and the label.
- * @cssproperty --form-control-padding-x - Determines the inline padding within the input element.
- * @cssproperty --form-control-padding-y - Determines the input block padding within the input element.
- * @cssproperty --form-control-placeholder-color - Determines the placeholder text color.
- * @cssproperty --form-control-range-thumb-size - Determines thumb size when the input type is range.
- * @cssproperty --form-control-range-track-margin-top - Determines the margin-top of the track when the input type is range.
- * @cssproperty --form-control-range-track-size - Determines track size when the input type is range.
+ * @cssproperty --charm-default-border - Determines the border of the control.
+ * @cssproperty --charm-form-control-bg-color - Determines the background color for the control.
+ * @cssproperty --charm-form-control-border-radius - Determines the border radius of the control.
+ * @cssproperty --charm-form-control-disabled-bg-color - Determines the disabled input background color.
+ * @cssproperty --charm-form-control-disabled-border-color - Determines the disabled input border color.
+ * @cssproperty --charm-form-control-disabled-fg-color - Determines the disabled input foreground color.
+ * @cssproperty --charm-form-control-disabled-opacity - Determines the disabled input opacity.
+ * @cssproperty --charm-form-control-fg-color - Determines the control text color.
+ * @cssproperty --charm-form-control-focus-border-color - Determines the focused control border color.
+ * @cssproperty --charm-form-control-font-size - Determines the font size.
+ * @cssproperty --charm-form-control-help-text-fg-color - Determines the help text color.
+ * @cssproperty --charm-form-control-help-text-font-size - Determines the help text font size.
+ * @cssproperty --charm-form-control-help-text-font-weight - Determines the help text font weight.
+ * @cssproperty --charm-form-control-help-text-gap - Determines the margin after help text.
+ * @cssproperty --charm-form-control-icon-gap - Determines the margin between start/end icons and the input.
+ * @cssproperty --charm-form-control-input-height - Determines the input height.
+ * @cssproperty --charm-form-control-invalid-border-color - Determines the error border color.
+ * @cssproperty --charm-form-control-invalid-message-fg-color - Determines the error text color.
+ * @cssproperty --charm-form-control-invalid-message-font-size - Determines the error message font size.
+ * @cssproperty --charm-form-control-label-fg-color - Determines the label color.
+ * @cssproperty --charm-form-control-label-font-size - Determines the label font size.
+ * @cssproperty --charm-form-control-label-font-weight - Determines the label font weight.
+ * @cssproperty --charm-form-control-label-gap - Determines the margin between label and the control.
+ * @cssproperty --charm-form-control-label-required-indicator-gap - Determines the margin between the required indicator and the label.
+ * @cssproperty --charm-form-control-padding-x - Determines the inline padding within the input element.
+ * @cssproperty --charm-form-control-padding-y - Determines the input block padding within the input element.
+ * @cssproperty --charm-form-control-placeholder-color - Determines the placeholder text color.
+ * @cssproperty --charm-form-control-range-thumb-size - Determines thumb size when the input type is range.
+ * @cssproperty --charm-form-control-range-track-margin-top - Determines the margin-top of the track when the input type is range.
+ * @cssproperty --charm-form-control-range-track-size - Determines track size when the input type is range.
  *
  * @csspart form-control-error-text - The error message container.
  * @csspart form-control-error-text-icon - The error message icon.

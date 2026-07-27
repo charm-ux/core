@@ -1,1 +1,168 @@
-# Welcome to @charm-ux/core!
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# Charm UX
+
+A modern, accessible web component library built with [Lit](https://lit.dev). Charm provides headless UI components and a design token system to help you build consistent, themeable interfaces.
+
+## Features
+
+| Feature                | Description                                                        |
+| ---------------------- | ------------------------------------------------------------------ |
+| **Accessible**         | WCAG compliant with proper ARIA attributes and keyboard navigation |
+| **Themeable**          | Design token system with automatic color palette generation        |
+| **Framework Agnostic** | Works with React, Vue, Angular, or vanilla JavaScript              |
+| **Tree-Shakeable**     | Import only what you need                                          |
+| **Type-Safe**          | Full TypeScript support                                            |
+
+## Installation
+
+```bash
+npm install @charm-ux/core @charm-ux/theming
+```
+
+## Quick Start
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="path/to/charm-theme.css" />
+    <script type="module">
+      import '@charm-ux/core/components/button/button.js';
+    </script>
+  </head>
+  <body>
+    <charm-button variant="primary">Click Me</charm-button>
+  </body>
+</html>
+```
+
+## Components
+
+### Layout
+
+- **Card** — Content containers with header, body, and footer sections
+- **Divider** — Visual separators for content
+- **Push Pane** — Sliding side panels
+
+### Navigation
+
+- **Breadcrumb** — Navigation hierarchy indicators
+- **Menu** — Contextual and dropdown menus
+- **Tabs** — Tabbed content interfaces
+
+### Form Controls
+
+- **Button** — Action triggers with variants and states
+- **Checkbox** — Boolean selection inputs
+- **Input** — Text input fields
+- **Radio Group** — Single selection from options
+- **Select** — Dropdown selection
+- **Switch** — Toggle controls
+- **Text Area** — Multi-line text input
+
+### Feedback
+
+- **Alert** — Status messages and notifications
+- **Dialog** — Modal dialogs and confirmations
+- **Progress Bar** — Progress indicators
+- **Spinner** — Loading state indicators
+- **Tooltip** — Contextual hints on hover/focus
+- **Skeleton** — Loading placeholder animations
+
+### Data Display
+
+- **Avatar** — User profile images with fallbacks
+- **Badge** — Labels, tags, and status indicators
+- **Icon** — SVG iconography wrapper
+
+### Disclosure
+
+- **Accordion** — Collapsible content sections
+- **Disclosure** — Simple show/hide toggle
+- **Popup** — Floating positioned elements
+
+## Theming
+
+Charm uses CSS custom properties for theming. You can use the pre-built theme or generate a custom one:
+
+```typescript
+import { charmTokens } from '@charm-ux/theming';
+
+// Write the CSS to your build output
+fs.writeFileSync('tokens.css', charmTokens.theme.css);
+fs.writeFileSync('reset.css', charmTokens.theme.cssReset);
+```
+
+Or create a custom theme:
+
+```typescript
+import { defineTokens, generateTheme } from '@charm-ux/theming';
+
+const { definition } = defineTokens({
+  primitives: {
+    color: {
+      primary: '#0265dc',
+      neutral: '#71717a',
+    },
+    spacing: {
+      sm: '8px',
+      md: '12px',
+      lg: '16px',
+    },
+  },
+});
+
+const theme = generateTheme(definition, { prefix: 'my-app' });
+```
+
+## Usage with Frameworks
+
+### React
+
+```tsx
+import '@charm-ux/core/components/button/button.js';
+
+function App() {
+  return <charm-button variant="primary">Click Me</charm-button>;
+}
+```
+
+### Vue
+
+```vue
+<template>
+  <charm-button variant="primary">Click Me</charm-button>
+</template>
+
+<script setup>
+import '@charm-ux/core/components/button/button.js';
+</script>
+```
+
+### Vanilla JavaScript
+
+```javascript
+import '@charm-ux/core/components/button/button.js';
+
+const button = document.createElement('charm-button');
+button.variant = 'primary';
+button.textContent = 'Click Me';
+document.body.appendChild(button);
+```
+
+## Browser Support
+
+Charm supports all modern browsers that implement the Web Components standards:
+
+- Chrome/Edge 79+
+- Firefox 63+
+- Safari 13.1+
+
+## Resources
+
+- [GitHub Repository](https://github.com/charm-ux/core)
+- [npm: @charm-ux/core](https://www.npmjs.com/package/@charm-ux/core)
+- [npm: @charm-ux/theming](https://www.npmjs.com/package/@charm-ux/theming)

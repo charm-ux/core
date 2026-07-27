@@ -31,31 +31,30 @@ import styles from './switch.styles.js';
  * @csspart switch-thumb - The switch position indicator.
  * @csspart switch-unchecked-message - The message to display when the toggle is unchecked.
  *
- * @cssproperty --switch-control-active-bg-color - The background color of the switch control when active.
- * @cssproperty --switch-control-active-border-color - The border color of the switch control when active.
- * @cssproperty --switch-control-bg-color - The background color of the switch control.
- * @cssproperty --switch-control-border-color - The border color of the switch control.
- * @cssproperty --switch-control-checked-active-bg-color - The background color of the switch control when checked and active.
- * @cssproperty --switch-control-checked-active-border-color - The border color of the switch control when checked and active.
- * @cssproperty --switch-control-checked-bg-color - The background color of the switch control when checked.
- * @cssproperty --switch-control-checked-border-color - The border color of the switch control when checked.
- * @cssproperty --switch-control-checked-hover-bg-color - The background color of the switch control when checked and hovered.
- * @cssproperty --switch-control-checked-hover-border-color - The border color of the switch control when checked and hovered.
- * @cssproperty --switch-control-hover-bg-color - The background color of the switch control when hovered.
- * @cssproperty --switch-control-hover-border-color - The border color of the switch control when hovered.
- * @cssproperty --switch-control-transition - The transition effect of the switch control.
- * @cssproperty --switch-focused-outline - The outline style of the switch wrapper when the switch is focused.
- * @cssproperty --switch-height - The height of the switch.
- * @cssproperty --switch-thumb-active-bg-color - The background color of the switch thumb when active.
- * @cssproperty --switch-thumb-bg-color - The background color of the switch thumb.
- * @cssproperty --switch-thumb-checked-active-bg-color - The background color of the switch thumb when checked and active.
- * @cssproperty --switch-thumb-checked-bg-color - The background color of the switch thumb when checked.
- * @cssproperty --switch-thumb-checked-hover-bg-color - The background color of the switch thumb when checked and hovered.
- * @cssproperty --switch-thumb-hover-bg-color - The background color of the switch thumb when hovered.
- * @cssproperty --switch-thumb-size - The size of the thumb.
- * @cssproperty --switch-thumb-transform - The shift of the thumb along the x-axis.
- * @cssproperty --switch-thumb-transition - The transition effect of the switch thumb.
- * @cssproperty --switch-width - The width of the switch.
+ * @cssproperty --charm-switch-control-active-bg-color - The background color of the switch control when active.
+ * @cssproperty --charm-switch-control-active-border-color - The border color of the switch control when active.
+ * @cssproperty --charm-switch-control-bg-color - The background color of the switch control.
+ * @cssproperty --charm-switch-control-border-color - The border color of the switch control.
+ * @cssproperty --charm-switch-control-checked-active-bg-color - The background color of the switch control when checked and active.
+ * @cssproperty --charm-switch-control-checked-active-border-color - The border color of the switch control when checked and active.
+ * @cssproperty --charm-switch-control-checked-bg-color - The background color of the switch control when checked.
+ * @cssproperty --charm-switch-control-checked-border-color - The border color of the switch control when checked.
+ * @cssproperty --charm-switch-control-checked-hover-bg-color - The background color of the switch control when checked and hovered.
+ * @cssproperty --charm-switch-control-checked-hover-border-color - The border color of the switch control when checked and hovered.
+ * @cssproperty --charm-switch-control-hover-bg-color - The background color of the switch control when hovered.
+ * @cssproperty --charm-switch-control-hover-border-color - The border color of the switch control when hovered.
+ * @cssproperty --charm-switch-control-transition - The transition effect of the switch control.
+ * @cssproperty --charm-switch-height - The height of the switch.
+ * @cssproperty --charm-switch-thumb-active-bg-color - The background color of the switch thumb when active.
+ * @cssproperty --charm-switch-thumb-bg-color - The background color of the switch thumb.
+ * @cssproperty --charm-switch-thumb-checked-active-bg-color - The background color of the switch thumb when checked and active.
+ * @cssproperty --charm-switch-thumb-checked-bg-color - The background color of the switch thumb when checked.
+ * @cssproperty --charm-switch-thumb-checked-hover-bg-color - The background color of the switch thumb when checked and hovered.
+ * @cssproperty --charm-switch-thumb-hover-bg-color - The background color of the switch thumb when hovered.
+ * @cssproperty --charm-switch-thumb-size - The size of the thumb.
+ * @cssproperty --charm-switch-thumb-transform - The shift of the thumb along the x-axis.
+ * @cssproperty --charm-switch-thumb-transition - The transition effect of the switch thumb.
+ * @cssproperty --charm-switch-width - The width of the switch.
  *
  * @dependency icon
  */

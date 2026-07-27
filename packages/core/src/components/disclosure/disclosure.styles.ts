@@ -1,35 +1,24 @@
 import { css } from 'lit';
+import { component } from '../../utilities/theme.js';
 
 export default css`
-  :host {
-    --disclosure-gap: inherit;
-    --disclosure-content-border: inherit;
-    --disclosure-content-border-radius: inherit;
-    --disclosure-bg-color: inherit;
-    --disclosure-fg-color: inherit;
-    --disclosure-closed-max-height: inherit;
-    --disclosure-opened-max-height: inherit;
-    --disclosure-show-transition: inherit;
-    --disclosure-hide-transition: inherit;
-  }
-
   .disclosure-base {
-    color: var(--disclosure-fg-color);
-    background-color: var(--disclosure-bg-color);
+    color: ${component('disclosure', 'fgColor')};
+    background-color: ${component('disclosure', 'bgColor')};
     display: flex;
     flex-direction: column;
-    gap: var(--disclosure-gap, 0);
+    gap: ${component('disclosure', 'gap')};
     position: relative;
     width: fit-content;
   }
 
   :host .disclosure-content {
-    border: var(--disclosure-content-border, 1px solid transparent);
-    border-radius: var(--disclosure-content-border-radius, 0);
-    max-height: var(--disclosure-closed-max-height, 0);
+    border: ${component('disclosure', 'contentBorder')};
+    border-radius: ${component('disclosure', 'contentBorderRadius')};
+    max-height: ${component('disclosure', 'closedMaxHeight')};
     order: -1;
     overflow: hidden;
-    transition: var(--disclosure-hide-transition);
+    transition: ${component('disclosure', 'hideTransition')};
   }
 
   :host([content-below]) .disclosure-content {
@@ -37,7 +26,7 @@ export default css`
   }
 
   :host([open]) .disclosure-content {
-    max-height: var(--disclosure-opened-max-height, none);
-    transition: var(--disclosure-show-transition);
+    max-height: ${component('disclosure', 'openedMaxHeight')};
+    transition: ${component('disclosure', 'showTransition')};
   }
 `;

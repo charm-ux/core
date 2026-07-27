@@ -8,7 +8,10 @@ import CharmElement from '../charm-element/charm-element.js';
 export class CharmDismissibleElement extends CharmElement {
   protected _open = false;
   protected transition = false;
-  protected transitionProperty?: string;
+  protected transitionMaxTime = 0;
+  protected pendingAfterEvent?: 'after-show' | 'after-hide';
+  protected transitionSettleTimer?: ReturnType<typeof setTimeout>;
+  protected transitionWaitId = 0;
 
   /**
    * Indicates whether or not the component is open. Can be used in lieu of show/hide methods.
@@ -19,8 +22,15 @@ export class CharmDismissibleElement extends CharmElement {
   }
 
   public set open(val: boolean) {
-    if (this.hasUpdated && this._open != val) this.onOpenChange(val);
-    this._open = !!val; // ensure it's a boolean
+    const oldVal = this._open;
+    const newVal = !!val;
+    if (oldVal === newVal) return;
+
+    this._open = newVal;
+    this.toggleAttribute('open', newVal);
+    this.requestUpdate('open', oldVal);
+
+    if (this.hasUpdated) this.onOpenChange(newVal);
   }
 
   /**
@@ -46,34 +56,79 @@ export class CharmDismissibleElement extends CharmElement {
 
   public override connectedCallback() {
     super.connectedCallback();
-    const baseName = (<any>this.constructor).baseName;
-    const transitionStyles =
-      getComputedStyle(this).getPropertyValue(`--${baseName}-transition`) ||
-      getComputedStyle(this).getPropertyValue(`--${baseName}-show-transition`) ||
-      getComputedStyle(this).getPropertyValue(`--${baseName}-hide-transition`);
-    this.transition = transitionStyles.length > 0 && transitionStyles !== 'none';
-    // get the transition property that have the longest time of duration so that after-show and after-hide events only get emitted once
-    if (this.transition) {
-      const div = Object.assign(document.createElement('span'), {
-        class: 'transition',
-        style: `transition: ${transitionStyles}`,
-      });
-      this.appendChild(div);
-      setTimeout(() => {
-        const divStyle = getComputedStyle(div);
-        const properties = divStyle.getPropertyValue('transition-property').split(', ');
-        const durations = divStyle.getPropertyValue('transition-duration').split(', ');
-        const maxDuration = Math.max(...durations.map(d => parseFloat(d)));
-        const index = durations.indexOf(maxDuration.toString() + 's');
-        this.transitionProperty = properties[index];
-        this.removeChild(div);
-      });
-    }
+    this.updateTransitionState();
   }
 
-  protected override firstUpdated() {
-    super.firstUpdated();
-    if (this.open) this.onOpenChange(true);
+  public override disconnectedCallback() {
+    if (this.transitionSettleTimer) {
+      clearTimeout(this.transitionSettleTimer);
+      this.transitionSettleTimer = undefined;
+    }
+    super.disconnectedCallback();
+  }
+
+  protected getTransitionStyles() {
+    const baseName = (<any>this.constructor).baseName;
+    const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const transitionPropertyNamePattern = new RegExp(
+      `^--(?:[a-z0-9-]+-)?${escapedBaseName}(?:-(?:show|hide|position))?-transition$`,
+      'i'
+    );
+    const style = getComputedStyle(this);
+    const transitions: string[] = [];
+
+    for (let i = 0; i < style.length; i++) {
+      const property = style.item(i);
+      if (!transitionPropertyNamePattern.test(property)) continue;
+
+      const value = style.getPropertyValue(property).trim();
+      if (!value || value === 'none') continue;
+      transitions.push(value);
+    }
+
+    return transitions;
+  }
+
+  protected updateTransitionState() {
+    const transitionStyles = this.getTransitionStyles();
+    this.transition = transitionStyles.length > 0;
+    this.transitionMaxTime = this.getMaxTransitionTime(transitionStyles);
+  }
+
+  protected parseTimeToMilliseconds(value: string) {
+    const trimmed = value.trim();
+    if (!trimmed) return 0;
+    if (trimmed.endsWith('ms')) return parseFloat(trimmed);
+    if (trimmed.endsWith('s')) return parseFloat(trimmed) * 1000;
+    return parseFloat(trimmed) * 1000;
+  }
+
+  protected getMaxTransitionTime(transitionStyles: string[]) {
+    if (!transitionStyles.length) return 0;
+
+    const div = Object.assign(document.createElement('span'), {
+      class: 'transition',
+      style: `transition: ${transitionStyles.join(', ')}`,
+    });
+    this.appendChild(div);
+
+    const divStyle = getComputedStyle(div);
+    const durations = divStyle
+      .getPropertyValue('transition-duration')
+      .split(',')
+      .map(value => value.trim());
+    const delays = divStyle
+      .getPropertyValue('transition-delay')
+      .split(',')
+      .map(value => value.trim());
+
+    this.removeChild(div);
+
+    return durations.reduce((max, duration, index) => {
+      const delay = delays[index] ?? delays[0] ?? '0s';
+      const total = this.parseTimeToMilliseconds(duration) + this.parseTimeToMilliseconds(delay);
+      return Math.max(max, total);
+    }, 0);
   }
 
   /**
@@ -82,14 +137,49 @@ export class CharmDismissibleElement extends CharmElement {
    */
   protected onOpenChange(open: boolean) {
     this.emitScopedEvent(open ? 'show' : 'hide');
+
+    this.updateTransitionState();
+    this.pendingAfterEvent = open ? 'after-show' : 'after-hide';
+    this.transitionWaitId += 1;
+    const waitId = this.transitionWaitId;
+
+    if (this.transitionSettleTimer) {
+      clearTimeout(this.transitionSettleTimer);
+      this.transitionSettleTimer = undefined;
+    }
+
+    if (!this.transition) {
+      this.settleTransition(waitId);
+      return;
+    }
+
+    this.transitionSettleTimer = setTimeout(() => this.settleTransition(waitId), this.transitionMaxTime + 50);
+  }
+
+  protected override firstUpdated() {
+    super.firstUpdated();
+    if (this.open) this.onOpenChange(true);
   }
 
   /**
    * Handles transitionend event to emit `{baseName}-after-show` and `{baseName}-after-hide` events after transitions are complete. Should be added to the element with the CSS transition.
    */
   protected handleTransitionEnd(e: TransitionEvent) {
-    if (e.target !== e.currentTarget || e.propertyName !== this.transitionProperty) return;
-    this.emitScopedEvent(this.open ? 'after-show' : 'after-hide');
+    if (e.target !== e.currentTarget) return;
+    this.settleTransition(this.transitionWaitId);
+  }
+
+  protected settleTransition(waitId: number) {
+    if (waitId !== this.transitionWaitId || !this.pendingAfterEvent) return;
+
+    if (this.transitionSettleTimer) {
+      clearTimeout(this.transitionSettleTimer);
+      this.transitionSettleTimer = undefined;
+    }
+
+    const afterEvent = this.pendingAfterEvent;
+    this.pendingAfterEvent = undefined;
+    this.emitScopedEvent(afterEvent);
   }
 
   /**

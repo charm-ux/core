@@ -7,7 +7,7 @@ import type { CoreScopedStyles } from './index.js';
 const { args, argTypes, events, template } = getStorybookHelpers('ch-scoped-styles');
 
 const meta: Meta<CoreScopedStyles> = {
-  title: 'Core/Theme',
+  title: 'Core/Scoped Styles',
   component: 'ch-scoped-styles',
   args,
   argTypes,

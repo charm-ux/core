@@ -32,21 +32,21 @@ import styles from './tooltip.styles.js';
  * @csspart popup-arrow - The popup's `arrow` part. Use this to target the tooltip's arrow.
  * @csspart body - The tooltip's body.
  *
- * @cssproperty --tooltip-arrow-border-color - The border color of the tooltip arrow
- * @cssproperty --tooltip-arrow-size - The size of the tooltip arrow
- * @cssproperty --tooltip-bg-color - The background color of the tooltip
- * @cssproperty --tooltip-border-color - The border color of the tooltip
- * @cssproperty --tooltip-border-radius - The border radius of the tooltip
- * @cssproperty --tooltip-border-style - The border style of the tooltip
- * @cssproperty --tooltip-border-width - The border width of the tooltip
- * @cssproperty --tooltip-box-shadow - The box shadow of the tooltip
- * @cssproperty --tooltip-fg-color - The foreground color of the tooltip
- * @cssproperty --tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
- * @cssproperty --tooltip-max-width - The maximum width of the tooltip.
- * @cssproperty --tooltip-padding - The padding of the tooltip
- * @cssproperty --tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
- * @cssproperty --tooltip-show-transition - The transition effect when opening the tooltip
- * @cssproperty --tooltip-show-transition - The transition effect when closing the tooltip
+ * @cssproperty --charm-tooltip-arrow-border-color - The border color of the tooltip arrow
+ * @cssproperty --charm-tooltip-arrow-size - The size of the tooltip arrow
+ * @cssproperty --charm-tooltip-bg-color - The background color of the tooltip
+ * @cssproperty --charm-tooltip-border-color - The border color of the tooltip
+ * @cssproperty --charm-tooltip-border-radius - The border radius of the tooltip
+ * @cssproperty --charm-tooltip-border-style - The border style of the tooltip
+ * @cssproperty --charm-tooltip-border-width - The border width of the tooltip
+ * @cssproperty --charm-tooltip-box-shadow - The box shadow of the tooltip
+ * @cssproperty --charm-tooltip-fg-color - The foreground color of the tooltip
+ * @cssproperty --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
+ * @cssproperty --charm-tooltip-max-width - The maximum width of the tooltip.
+ * @cssproperty --charm-tooltip-padding - The padding of the tooltip
+ * @cssproperty --charm-tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
+ * @cssproperty --charm-tooltip-show-transition - The transition effect when opening the tooltip
+ * @cssproperty --charm-tooltip-show-transition - The transition effect when closing the tooltip
  */
 
 export class CoreTooltip extends CharmDismissibleElement {
@@ -142,7 +142,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       target = this.anchor;
     } else if (typeof this.anchor === 'string' && this.anchor.length > 0) {
       // Anchor was passed as an id
-      target = this.findRootNode(this).getElementById(this.anchor);
+      target = this.getScopedElementById(this.anchor) as HTMLElement | null;
     }
 
     if (!target) {
@@ -222,7 +222,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Updates the trigger of the tooltip if the anchor is provided as a string. */
   protected updateAnchorElement() {
     if (typeof this.anchor === 'string' && this.anchor.length > 0) {
-      this.anchorEl = document.getElementById(this.anchor) || undefined;
+      this.anchorEl = (this.getScopedElementById(this.anchor) as HTMLElement) || undefined;
     }
   }
 
@@ -257,7 +257,7 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Handles internal logic for when the open attribute changes */
   protected override onOpenChange(open: boolean) {
-    if (!this.hasUpdated || (open && this.disabled)) return;
+    if (open && this.disabled) return;
 
     if (open) {
       // after a render when popup open state is set we can transition in
@@ -269,7 +269,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       // this activates popup, this.visible transition state will happen after render
       this.announceTooltip();
     } else {
-      // trigger transition, this.open state will be changed in `handleTransitionEnd` to hide popup after complete
+      // trigger transition; hide side effects are applied when transition settles
       this.visible = false;
       this.announceContent = '';
       // fixed placement tooltips sometimes have sticky inner popups or FOUC issues if not closed immediately
@@ -287,21 +287,15 @@ export class CoreTooltip extends CharmDismissibleElement {
     }
   }
 
-  /** Handles the transition end */
-  protected override handleTransitionEnd(e: TransitionEvent) {
-    if (e.target !== e.currentTarget) return;
+  protected override settleTransition(waitId: number) {
+    if (waitId !== this.transitionWaitId || !this.pendingAfterEvent) return;
 
-    if (this.visible) {
-      this.emitScopedEvent('after-show');
-    } else {
+    if (this.pendingAfterEvent === 'after-hide') {
       this.body.hidden = true;
       this.popup.open = false;
-      // once animation is finished, deactivate popup
-      // Hide transition completed - now we can apply hidden
-      this.updateComplete.then(() => {
-        this.emitScopedEvent('after-hide');
-      });
     }
+
+    super.settleTransition(waitId);
   }
 
   /** Handles popup options changing */
@@ -372,7 +366,14 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Handles the change of the default slot which contains the anchor of the tooltip. */
   protected handleSlotChange(e: Event) {
     // Don't reset the anchor element if it was already set by the `anchor` property.
-    if (!this.anchor) this.anchorEl = e.target as HTMLSlotElement as HTMLElement;
+    if (this.anchor) return;
+
+    const slot = e.target as HTMLSlotElement | null;
+    if (!slot) return;
+
+    // Use the first assigned element as the anchor (slots use display:contents so the slot itself can't be positioned)
+    const assigned = slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
+    this.anchorEl = assigned;
   }
 
   /** Generates the template for the tooltip */

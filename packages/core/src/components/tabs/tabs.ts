@@ -26,17 +26,17 @@ let charmTabsId = 0;
  *
  * @csspart tabs-tablist - The tab list container.
  *
- * @cssproperty --tabs-align - The alignment of the tabs ('start', 'center', or 'end').
- * @cssproperty --tabs-bg-color - The background color of the tabs container.
- * @cssproperty --tabs-border-color - The border color of the tabs container.
- * @cssproperty --tabs-border-radius - The border radius of the tabs container.
- * @cssproperty --tabs-border-style - The border style of the tabs container.
- * @cssproperty --tabs-border-width - The border width of the tabs container.
- * @cssproperty --tabs-gap - The gap between each tab.
- * @cssproperty --tabs-padding-x - The horizontal padding of the tabs container.
- * @cssproperty --tabs-padding-y - The vertical padding of the tabs container.
- * @cssproperty --tabs-tablist-spacing - The spacing between the tablist and tab panels.
- * @cssproperty --tabs-vertical-min-width - The minimum width for tabs in vertical layout.
+ * @cssproperty --charm-tabs-align - The alignment of the tabs ('start', 'center', or 'end').
+ * @cssproperty --charm-tabs-bg-color - The background color of the tabs container.
+ * @cssproperty --charm-tabs-border-color - The border color of the tabs container.
+ * @cssproperty --charm-tabs-border-radius - The border radius of the tabs container.
+ * @cssproperty --charm-tabs-border-style - The border style of the tabs container.
+ * @cssproperty --charm-tabs-border-width - The border width of the tabs container.
+ * @cssproperty --charm-tabs-gap - The gap between each tab.
+ * @cssproperty --charm-tabs-padding-x - The horizontal padding of the tabs container.
+ * @cssproperty --charm-tabs-padding-y - The vertical padding of the tabs container.
+ * @cssproperty --charm-tabs-tablist-spacing - The spacing between the tablist and tab panels.
+ * @cssproperty --charm-tabs-vertical-min-width - The minimum width for tabs in vertical layout.
  *
  * @event {TabsChangeEvent} tabs-change - Emitted when the active tab changes.
  *

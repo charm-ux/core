@@ -20,15 +20,15 @@ let disclosureButtonId = 0;
  * @csspart disclosure-base - The component's base wrapper.
  * @csspart disclosure-content - Wrapper around the main slotted content.
  *
- * @cssproperty --disclosure-gap - controls the space between the trigger and the expandable content.
- * @cssproperty --disclosure-content-border - controls the border styles of expanded region.
- * @cssproperty --disclosure-content-border-radius - controls the border styles of expanded region.
- * @cssproperty --disclosure-bg-color - controls the background color of the expanded region.
- * @cssproperty --disclosure-fg-color - controls the text color of the expanded region.
- * @cssproperty --disclosure-closed-max-height - controls the height of the collapsed region when it's closed (default is 0).
- * @cssproperty --disclosure-opened-max-height - controls the height of the collapsed region when it's opened.
- * @cssproperty --disclosure-open-transition - Transition for the content when opening.
- * @cssproperty --disclosure-close-transition - Transition for the content when closing,
+ * @cssproperty --charm-disclosure-gap - controls the space between the trigger and the expandable content.
+ * @cssproperty --charm-disclosure-content-border - controls the border styles of expanded region.
+ * @cssproperty --charm-disclosure-content-border-radius - controls the border styles of expanded region.
+ * @cssproperty --charm-disclosure-bg-color - controls the background color of the expanded region.
+ * @cssproperty --charm-disclosure-fg-color - controls the text color of the expanded region.
+ * @cssproperty --charm-disclosure-closed-max-height - controls the height of the collapsed region when it's closed (default is 0).
+ * @cssproperty --charm-disclosure-opened-max-height - controls the height of the collapsed region when it's opened.
+ * @cssproperty --charm-disclosure-open-transition - Transition for the content when opening.
+ * @cssproperty --charm-disclosure-close-transition - Transition for the content when closing,
  *
  * @event disclosure-show - Emitted when the disclosure begins to show.
  * @event disclosure-after-show - Emitted after the disclosure has shown and all animations are complete.

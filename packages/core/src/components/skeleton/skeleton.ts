@@ -13,13 +13,13 @@ import styles from './skeleton.styles.js';
  *
  * @csspart skeleton-base - the component's base wrapper
  *
- * @cssproperty --skeleton-animation - the animation for the skeleton.
- * @cssproperty --skeleton-bg-color - the background color for the skeleton.
- * @cssproperty --skeleton-bg-size - the background image size for pulse or wave animations.
- * @cssproperty --skeleton-border-radius - the border radius for the skeleton.
- * @cssproperty --skeleton-min-height - minimum height of the skeleton.
- * @cssproperty --skeleton-sheen-color - the background color for the skeleton when there is animation.
- * @cssproperty --skeleton-width - the width of the skeleton.
+ * @cssproperty --charm-skeleton-animation - the animation for the skeleton.
+ * @cssproperty --charm-skeleton-bg-color - the background color for the skeleton.
+ * @cssproperty --charm-skeleton-bg-size - the background image size for pulse or wave animations.
+ * @cssproperty --charm-skeleton-border-radius - the border radius for the skeleton.
+ * @cssproperty --charm-skeleton-min-height - minimum height of the skeleton.
+ * @cssproperty --charm-skeleton-sheen-color - the background color for the skeleton when there is animation.
+ * @cssproperty --charm-skeleton-width - the width of the skeleton.
  **/
 export class CoreSkeleton extends CharmElement {
   public static override styles = [...super.styles, styles];

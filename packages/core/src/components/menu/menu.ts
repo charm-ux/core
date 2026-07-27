@@ -36,18 +36,18 @@ let dropdownButtonId = 0;
  * @csspart menu-popup-base - The popup's internal container.
  * @csspart menu-popup - The popup's base wrapper.
  *
- * @cssproperty --menu-bg-color - The background color of the menu.
- * @cssproperty --menu-border-color - The border color of the menu.
- * @cssproperty --menu-border-radius - The border radius of the menu.
- * @cssproperty --menu-border-style - The border style of the menu.
- * @cssproperty --menu-border-width - The border width of the menu.
- * @cssproperty --menu-max-width - The maximum width of the menu.
- * @cssproperty --menu-min-width - The minimum width of the menu.
- * @cssproperty --menu-popup-padding - The padding to apply to the menu popup.
- * @cssproperty --menu-shadow - The shadow of the menu.
- * @cssproperty --menu-transition - The transition of the menu.
- * @cssproperty --menu-width - The width of the menu.
- * @cssproperty --menu-z-index - The z-index of the menu.
+ * @cssproperty --charm-menu-bg-color - The background color of the menu.
+ * @cssproperty --charm-menu-border-color - The border color of the menu.
+ * @cssproperty --charm-menu-border-radius - The border radius of the menu.
+ * @cssproperty --charm-menu-border-style - The border style of the menu.
+ * @cssproperty --charm-menu-border-width - The border width of the menu.
+ * @cssproperty --charm-menu-max-width - The maximum width of the menu.
+ * @cssproperty --charm-menu-min-width - The minimum width of the menu.
+ * @cssproperty --charm-menu-popup-padding - The padding to apply to the menu popup.
+ * @cssproperty --charm-menu-shadow - The shadow of the menu.
+ * @cssproperty --charm-menu-transition - The transition of the menu.
+ * @cssproperty --charm-menu-width - The width of the menu.
+ * @cssproperty --charm-menu-z-index - The z-index of the menu.
  *
  * @dependency CorePopup
  **/

@@ -1,37 +1,8 @@
 import { css } from 'lit';
+import { component } from '../../utilities/theme.js';
 
 export default css`
   :host {
-    --breadcrumb-item-gap: inherit;
-    --breadcrumb-item-padding: inherit;
-    --breadcrumb-item-control-width: inherit;
-    --breadcrumb-item-border-width: inherit;
-
-    /**Rest */
-    --breadcrumb-item-bg-color: inherit;
-    --breadcrumb-item-border-color: inherit;
-    --breadcrumb-item-fg-color: inherit;
-
-    /**Hover */
-    --breadcrumb-item-hover-bg-color: inherit;
-    --breadcrumb-item-hover-border-color: inherit;
-    --breadcrumb-item-hover-fg-color: inherit;
-
-    /**Active */
-    --breadcrumb-item-active-bg-color: inherit;
-    --breadcrumb-item-active-border-color: inherit;
-    --breadcrumb-item-active-fg-color: inherit;
-
-    /**Focus */
-    --breadcrumb-item-focus-bg-color: inherit;
-    --breadcrumb-item-focus-border-color: inherit;
-    --breadcrumb-item-focus-fg-color: inherit;
-
-    /**Disabled */
-    --breadcrumb-item-disabled-bg-color: inherit;
-    --breadcrumb-item-disabled-border-color: inherit;
-    --breadcrumb-item-disabled-fg-color: inherit;
-
     background: transparent;
     display: inline-flex;
     fill: currentColor;
@@ -51,43 +22,43 @@ export default css`
   }
 
   .control {
-    width: var(--breadcrumb-item-control-width, 100%);
+    width: ${component('breadcrumb', 'item', 'controlWidth')};
     align-items: center;
     text-decoration: none;
   }
 
   a {
     display: flex;
-    padding: var(--breadcrumb-item-padding, 6px);
-    background-color: var(--breadcrumb-item-bg-color);
-    border: var(--breadcrumb-item-border-width, 1px) solid var(--breadcrumb-item-border-color, transparent);
-    color: var(--breadcrumb-item-fg-color);
+    padding: ${component('breadcrumb', 'item', 'padding')};
+    background-color: ${component('breadcrumb', 'item', 'bgColor')};
+    border: ${component('breadcrumb', 'item', 'borderWidth')} solid ${component('breadcrumb', 'item', 'borderColor')};
+    color: ${component('breadcrumb', 'item', 'fgColor')};
   }
 
   :host(:not([selected])) a:hover {
     cursor: pointer;
-    background-color: var(--breadcrumb-item-hover-bg-color);
-    border-color: var(--breadcrumb-item-hover-border-color, transparent);
-    color: var(--breadcrumb-item-hover-fg-color);
+    background-color: ${component('breadcrumb', 'item', 'hover', 'bgColor')};
+    border-color: ${component('breadcrumb', 'item', 'hover', 'borderColor')};
+    color: ${component('breadcrumb', 'item', 'hover', 'fgColor')};
   }
 
   a:hover:active {
-    background-color: var(--breadcrumb-item-active-bg-color);
-    border-color: var(--breadcrumb-item-active-border-color, transparent);
-    color: var(--breadcrumb-item-active-fg-color);
+    background-color: ${component('breadcrumb', 'item', 'active', 'bgColor')};
+    border-color: ${component('breadcrumb', 'item', 'active', 'borderColor')};
+    color: ${component('breadcrumb', 'item', 'active', 'fgColor')};
   }
 
   a:focus {
     outline: none;
-    background-color: var(--breadcrumb-item-focus-bg-color);
-    border-color: var(--breadcrumb-item-focus-border-color);
-    color: var(--breadcrumb-item-focus-fg-color);
+    background-color: ${component('breadcrumb', 'item', 'focus', 'bgColor')};
+    border-color: ${component('breadcrumb', 'item', 'focus', 'borderColor')};
+    color: ${component('breadcrumb', 'item', 'focus', 'fgColor')};
   }
 
   :host([disabled]) a {
-    background-color: var(--breadcrumb-item-disabled-bg-color);
-    border-color: var(--breadcrumb-item-disabled-border-color, transparent);
-    color: var(--breadcrumb-item-disabled-fg-color);
+    background-color: ${component('breadcrumb', 'item', 'disabled', 'bgColor')};
+    border-color: ${component('breadcrumb', 'item', 'disabled', 'borderColor')};
+    color: ${component('breadcrumb', 'item', 'disabled', 'fgColor')};
   }
 
   :host([disabled]) .control {
@@ -100,11 +71,11 @@ export default css`
   }
 
   .start ::slotted(*) {
-    margin-inline-end: var(--breadcrumb-item-gap, 4px);
+    margin-inline-end: ${component('breadcrumb', 'item', 'gap')};
   }
 
   .end ::slotted(*) {
-    margin-inline-start: var(--breadcrumb-item-gap, 4px);
+    margin-inline-start: ${component('breadcrumb', 'item', 'gap')};
   }
 
   .content {

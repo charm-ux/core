@@ -64,14 +64,14 @@ export interface PopupRepositionEvent {
  * @csspart popup-base - The popup's container. Useful for setting a background color, box shadow, etc.
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
- * @cssproperty --popup-arrow-color - The color of the arrow.
- * @cssproperty --popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
- * @cssproperty --popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
- * @cssproperty --popup-hide-transition - animation when the overlay is hidden.
- * @cssproperty --popup-show-transition - animation when the overlay is shown.
- * @cssproperty --popup-z-index - controls the CSS z-index value for the overlay content.
+ * @cssproperty --charm-popup-arrow-color - The color of the arrow.
+ * @cssproperty --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
+ * @cssproperty --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssproperty --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssproperty --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
+ * @cssproperty --charm-popup-hide-transition - animation when the overlay is hidden.
+ * @cssproperty --charm-popup-show-transition - animation when the overlay is shown.
+ * @cssproperty --charm-popup-z-index - controls the CSS z-index value for the overlay content.
  */
 export class CorePopup extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
@@ -443,14 +443,24 @@ export class CorePopup extends CharmDismissibleElement {
 
   protected override onOpenChange(open: boolean): void {
     super.onOpenChange(open);
-    if (open) {
-      this.popup.hidden = false;
-      this.start();
+    if (this.popup) {
+      if (open) {
+        this.popup.hidden = false;
+        this.start();
+      } else {
+        this.stop();
+      }
+
+      if (!this.transition) {
+        this.popup.hidden = !open;
+      }
     } else {
-      this.stop();
-    }
-    if (!this.transition) {
-      this.popup.hidden = !open;
+      // If internal popup element isn't available yet, start/stop positioner safely without touching DOM nodes.
+      if (open) {
+        this.start();
+      } else {
+        this.stop();
+      }
     }
   }
 
@@ -510,8 +520,8 @@ export class CorePopup extends CharmDismissibleElement {
     return html` ${this.arrow ? html`<div part="popup-arrow" class="arrow" role="presentation"></div>` : ''} `;
   }
 
-  protected async handleAnchorChange() {
-    await this.stop();
+  protected handleAnchorChange() {
+    this.stop();
     this.setAnchorElement();
     this.start();
   }
@@ -540,6 +550,16 @@ export class CorePopup extends CharmDismissibleElement {
       return;
     }
 
+    // Starting is idempotent: tear down any existing positioner first. Otherwise a second
+    // start() (e.g. firstUpdated() followed by onOpenChange()) overwrites `this.cleanup` and
+    // orphans the previous autoUpdate's observers (ResizeObserver/IntersectionObserver/scroll),
+    // which then keep firing forever and prevent the page from ever going idle.
+    if (this.cleanup) {
+      this.cleanup();
+      this.cleanup = undefined;
+      window.removeEventListener('scroll', this.handleScrollDismiss);
+    }
+
     this.cleanup = autoUpdate(this.anchorEl, this.popup, async () => {
       await this.reposition();
     });
@@ -551,20 +571,15 @@ export class CorePopup extends CharmDismissibleElement {
     this.open = false;
   }
 
-  protected async stop(): Promise<void> {
-    return new Promise(resolve => {
-      if (this.cleanup) {
-        this.cleanup();
-        this.cleanup = undefined;
-        this.removeAttribute('data-current-placement');
-        this.style.removeProperty('--popup-auto-size-available-width');
-        this.style.removeProperty('--popup-auto-size-available-height');
-        window.removeEventListener('scroll', this.handleScrollDismiss);
-        requestAnimationFrame(() => resolve());
-      } else {
-        resolve();
-      }
-    });
+  protected stop(): void {
+    if (this.cleanup) {
+      this.cleanup();
+      this.cleanup = undefined;
+      this.removeAttribute('data-current-placement');
+      this.style.removeProperty('--popup-auto-size-available-width');
+      this.style.removeProperty('--popup-auto-size-available-height');
+      window.removeEventListener('scroll', this.handleScrollDismiss);
+    }
   }
 
   protected configureMiddleware(): Middleware[] {

@@ -1,154 +1,146 @@
 # Contributing to Charm
 
-Thank you for your interest in contributing to Charm! This document provides guidelines and instructions for contributing to the project.
+## Prerequisites
 
-## Getting Started
+- Node.js 20+
+- pnpm 8+
 
-### Prerequisites
-
-- Node.js 20 or higher
-- pnpm 8 or higher
-
-### Setup
-
-1. Fork and clone the repository
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
-3. Build the packages:
-   ```bash
-   pnpm run build
-   ```
-
-## Development Workflow
-
-### Running the Development Server
-
-To start the development server for the core package:
+## Setup
 
 ```bash
-pnpm run dev:core
+git clone https://github.com/charm-ux/core.git
+cd core
+pnpm install
 ```
 
-To start the documentation site:
+## Development
+
+### Storybook
+
+Storybook is the primary development environment. Run from the project root:
 
 ```bash
-pnpm run dev:docs
+pnpm dev
 ```
 
-To start the demo:
+This starts Storybook at http://localhost:6006 with stories for all packages:
+
+- **Core** — Component stories with interactive examples
+- **Theming** — Design token documentation
+  - Primitives: colors, spacing, typography, border radius, shadows
+  - Semantic: surfaces, text, borders, actions, indicators
+
+### Building
 
 ```bash
-pnpm run dev:demo
+# Build all packages
+pnpm build
+
+# Build specific package
+pnpm build:core
+pnpm build:theming
 ```
 
-### Running Tests
-
-Run all tests:
+### Testing
 
 ```bash
-pnpm run test
+# Run all tests
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Run core package tests only
+pnpm test:core
 ```
 
-Run tests for the core package only:
+### Linting & Formatting
 
 ```bash
-pnpm run test:core
+# Check for issues
+pnpm lint
+pnpm prettier:check
+
+# Auto-fix
+pnpm lint:fix
+pnpm prettier
 ```
 
-Run tests in watch mode:
+## Making Changes
+
+### Creating a Component
+
+Use the generator to scaffold a new component:
 
 ```bash
-pnpm run test:watch
+pnpm generate
 ```
 
-### Linting and Formatting
+This creates the component file, tests, and Storybook stories.
 
-Check for linting errors:
+### Component Guidelines
 
-```bash
-pnpm run lint
-```
+- Extend from appropriate base classes
+- Use Lit decorators for properties and state
+- Implement keyboard navigation and ARIA attributes
+- Add comprehensive tests
+- Create Storybook stories demonstrating all variants
 
-Fix linting errors automatically:
+## Changesets
 
-```bash
-pnpm run lint:fix
-```
-
-Check code formatting:
-
-```bash
-pnpm run prettier:check
-```
-
-Format code:
-
-```bash
-pnpm run prettier
-```
-
-## Creating a Changeset
-
-We use [Changesets](https://github.com/changesets/changesets) to manage versions and changelogs. When you make changes that should be published, you need to create a changeset.
+We use [Changesets](https://github.com/changesets/changesets) to manage versions and changelogs.
 
 ### When to Add a Changeset
 
-Add a changeset when your changes include:
+Add a changeset for:
 
-- **New features** - Any new functionality, components, or capabilities
-- **Bug fixes** - Corrections to existing functionality
-- **Breaking changes** - Changes that may break existing code
-- **Dependency updates** - Updates to external dependencies that affect consumers
-- **Documentation updates** - Significant documentation improvements
+- New features
+- Bug fixes
+- Breaking changes
+- Dependency updates affecting consumers
 
-You **don't** need a changeset for:
+Skip changesets for:
 
-- Internal refactoring that doesn't affect the public API
+- Internal refactoring
 - Test updates
-- Development tooling changes
-- README or comment updates
+- Tooling changes
+- Documentation typos
 
-### How to Add a Changeset
+### Creating a Changeset
 
-1. Make your changes to the codebase
-2. Run the changeset command:
-   ```bash
-   pnpm changeset
-   ```
-3. Follow the interactive prompts:
-   - Select which packages have changed (use space to select, enter to confirm)
-   - Select the type of change:
-     - **major** - Breaking changes (e.g., removing a public API, changing behavior significantly)
-     - **minor** - New features (e.g., adding a new component, new props to existing components)
-     - **patch** - Bug fixes and small improvements
-   - Write a summary of the changes
-     - First line should be a short summary
-     - Add more details on subsequent lines if needed
-     - Use present tense (e.g., "Add new button variant" not "Added new button variant")
+```bash
+pnpm changeset
+```
 
-4. Commit the generated changeset file along with your changes:
-   ```bash
-   git add .changeset/*.md
-   git commit -m "Add changeset for [your changes]"
-   ```
+Follow the prompts:
 
-### Changeset Example
+1. **Select packages** — Space to select, Enter to confirm
+2. **Select version bump**:
+   - `major` — Breaking changes
+   - `minor` — New features
+   - `patch` — Bug fixes
+3. **Write a summary** — Use present tense ("Add tooltip component")
 
-After running `pnpm changeset`, you'll create a file like `.changeset/mighty-bears-dance.md`:
+This creates a file in `.changeset/`:
 
 ```markdown
 ---
 '@charm-ux/core': minor
 ---
 
-Add new tooltip component with customizable positioning and animation options
+Add tooltip component with customizable positioning
 ```
 
-### Multiple Package Changes
+Commit the changeset file with your changes:
 
-If your changes affect multiple packages, select all relevant packages when prompted. For example:
+```bash
+git add .changeset/*.md
+git commit -m "Add tooltip component"
+```
+
+### Multi-Package Changes
+
+Select all affected packages when prompted:
 
 ```markdown
 ---
@@ -156,78 +148,48 @@ If your changes affect multiple packages, select all relevant packages when prom
 '@charm-ux/theming': patch
 ---
 
-Add new color tokens and update button component to use them
+Add new color tokens and update button to use them
 ```
 
 ## Pull Request Process
 
-1. Create a feature branch from `main`:
+1. Create a branch:
 
    ```bash
-   git checkout -b feature/your-feature-name
+   git checkout -b feature/your-feature
    ```
 
-2. Make your changes and add a changeset (if applicable)
+2. Make changes and add a changeset
 
-3. Ensure all tests pass and code is properly formatted:
+3. Verify everything passes:
 
    ```bash
-   pnpm run verify
-   pnpm run test
+   pnpm lint
+   pnpm test
+   pnpm build
    ```
 
-4. Push your branch and create a pull request:
-   - Provide a clear description of the changes
-   - Reference any related issues
-   - Ensure CI checks pass
-
-5. Wait for review and address any feedback
+4. Push and open a PR with:
+   - Clear description of changes
+   - Reference to related issues
+   - Screenshots for UI changes
 
 ## Release Process
 
-Releases are automated via GitHub Actions:
+Releases are automated:
 
-1. When PRs with changesets are merged to `main`, a "Version Packages" PR is automatically created
-2. This PR updates package versions and CHANGELOGs based on the changesets
-3. When the "Version Packages" PR is merged, packages are automatically published
-4. The changesets are consumed and removed from the `.changeset` directory
+1. PRs with changesets merge to `main`
+2. GitHub Actions creates a "Version Packages" PR
+3. Merging that PR publishes to npm and updates changelogs
 
 ## Code Style
 
-- Follow the existing code style in the project
-- Use TypeScript for all new code
-- Write tests for new features and bug fixes
-- Document public APIs with JSDoc comments
-- Keep components small and focused on a single responsibility
+- TypeScript for all code
+- Tests for new features and bug fixes
+- JSDoc comments for public APIs
+- Small, focused components
 
-## Component Development
+## Questions?
 
-When creating a new component:
-
-1. Use the component generator:
-
-   ```bash
-   pnpm run generate
-   ```
-
-2. Implement the component following the existing patterns:
-   - Extend from appropriate base classes
-   - Use Lit decorators for properties and state
-   - Implement proper accessibility features
-   - Add comprehensive tests
-   - Create Storybook stories
-
-3. Document the component:
-   - Add JSDoc comments to the component class and public methods
-   - Create usage examples in Storybook
-   - Update relevant documentation
-
-## Questions or Issues?
-
-If you have questions or run into issues:
-
-- Check existing [GitHub Issues](https://github.com/your-org/charm-core/issues)
-- Create a new issue with a clear description
-- Join our community discussions
-
-Thank you for contributing to Charm! 🎉
+- Check [existing issues](https://github.com/charm-ux/core/issues)
+- Open a new issue with details
