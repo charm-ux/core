@@ -1,70 +1,86 @@
-# Docsite — Charm documentation for the Charm component library
+# docs — Charm documentation site
 
-This site hosts the Charm documentation (guides, component references, examples, and changelogs) powered by Astro + Starlight.
+This package hosts the Charm documentation (guides, component references, examples, and changelogs) powered by **Astro + [Starlight](https://starlight.astro.build/)**. Live component examples are rendered with `code-bubble`, and API tables are generated from the core package's custom-elements manifest via `wc-dox`.
 
-Quick links:
+The package name is `docs` (unscoped); the libraries it documents are `@charm-ux/core` and `@charm-ux/theming`.
 
-- Getting started — [Installation](packages/docsite/src/content/docs/getting-started/installation.md)
-- Usage patterns — [Usage](packages/docsite/src/content/docs/getting-started/usage.md)
-- Extending Charm — [Extending Charm](packages/docsite/src/content/docs/getting-started/extending.md)
-- Scoping components — [Scoping](packages/docsite/src/content/docs/getting-started/scoping.md)
-- Versioning & changelogs — [Version Management](packages/docsite/src/content/docs/contributing/version-management.mdx) and changelogs: [CHANGELOG.md](packages/docsite/CHANGELOG.md) / [CHANGELOG.json](packages/docsite/CHANGELOG.json)
-- Testing guide — [Testing](packages/docsite/src/content/docs/overview/testing.md)
+## Quick links
 
-Getting started (local)
+- Getting started — [Installation](./src/content/docs/getting-started/installation.md)
+- Usage patterns — [Usage](./src/content/docs/getting-started/usage.md)
+- Extending Charm — [Extending](./src/content/docs/getting-started/extending.md)
+- Scoping components — [Scoping](./src/content/docs/getting-started/scoping.md)
+- Testing guide — [Testing](./src/content/docs/overview/testing.md)
+- Versioning & changelogs — [Version Management](./src/content/docs/contributing/version-management.mdx)
 
-1. From repository root:
+## Local development
 
-   ```sh
-   pnpm install
-   pnpm --filter @charm-ux/docsite dev
-   ```
-
-2. Open http://localhost:4321 and verify site.
-
-Build & preview
+From the repository root:
 
 ```sh
-pnpm --filter @charm-ux/docsite build
-pnpm --filter @charm-ux/docsite preview
+pnpm install
+pnpm --filter docs dev
 ```
 
-Content structure
+Then open http://localhost:4321 (Astro's default dev port).
 
-- Docs source: packages/docsite/src/content/docs/
-  - Getting started: packages/docsite/src/content/docs/getting-started/
-  - Overview: packages/docsite/src/content/docs/overview/
-  - Contributing: packages/docsite/src/content/docs/contributing/
-- Site config: packages/docsite/astro.config.mjs
-- Scripts that help generate doc content: packages/docsite/scripts/copy-support-files.js
+The `dev` script first runs `charm-setup` (see below), so `@charm-ux/core` and `@charm-ux/theming` must already be built — their `dist/` output is copied into the site. If you hit a "Source file not found" error, build the libraries first:
 
-Generating reference pages
+```sh
+pnpm --filter @charm-ux/core build
+pnpm --filter @charm-ux/theming build
+```
 
-- Component README files are generated/updated from the core package manifests. The helper script is at: packages/docsite/scripts/copy-support-files.js. Run it from the docsite package root if you need to refresh copied READMEs for component reference pages.
+## Build & preview
 
-Custom elements manifest helpers
+```sh
+pnpm --filter docs build
+pnpm --filter docs preview
+```
 
-- See the core helper used to create README content from custom-elements.json: packages/core/scripts/cem-to-markdown.js
-- Demo variant: packages/demo/scripts/cem-to-markdown.cjs
+`build:docs` at the repo root runs the same `build` script for this package.
 
-Versioning & changelogs
+## How the build wires up
 
-- The project uses Beachball for change files and release bumps. See the doc: packages/docsite/src/content/docs/contributing/version-management.mdx
-- Changelogs are published under: packages/docsite/CHANGELOG.md and packages/docsite/CHANGELOG.json
+The `charm-setup` script (run by both `dev` and `build`) does two things:
 
-How to contribute docs
+1. **`build:charm`** — bundles the Charm modules (`vite build`) and generates types (`tsup` over `../core/src/kitchen-sink.ts`).
+2. **`copy-files`** — runs `node ./scripts/copy-support-files.js`, which:
+   - copies `../core/custom-elements.json` into this package,
+   - copies the built theme CSS (`reset.css`, `theme.css`, `dark-theme.css`) from `../core/dist/themes/charm` into `public/charm/`, and
+   - generates `src/content/docs/changelog/core.md` and `theming.md` from each library's `CHANGELOG.md`.
 
-- Add or update Markdown/MDX under packages/docsite/src/content/docs/.
-- If adding a component reference, ensure the component README exists in ../core/src/components (the copy script will generate docsite pages).
-- Follow the versioning workflow in packages/docsite/src/content/docs/contributing/version-management.mdx.
+`scripts/copy-custom-elements.js` is a standalone helper that copies just the core manifest (`../core/custom-elements.json`) — useful when you only need to refresh the API data.
 
-Helpful files
+## Content structure
 
-- Site config: packages/docsite/astro.config.mjs
-- Docsite scripts: packages/docsite/scripts/copy-support-files.js
-- Core manifest → markdown helper: packages/core/scripts/cem-to-markdown.js
-- Demo manifest helper: packages/demo/scripts/cem-to-markdown.cjs
-- Docsite changelogs: packages/docsite/CHANGELOG.md, packages/docsite/CHANGELOG.json
-- Root project readme: README.md
+- Docs source: `src/content/docs/`
+  - `getting-started/` — installation, usage, extending, scoping
+  - `overview/` — testing and other cross-cutting guides
+  - `contributing/` — version management workflow
+  - `components/` — component reference pages
+  - `changelog/` — generated from library `CHANGELOG.md` files (do not edit by hand)
+  - `index.mdx`, `config.ts`
+- Site config: `astro.config.mjs`
+- Manifest data: `custom-elements.json` (copied from core; do not edit)
 
-If you need to change the sidebar or autogeneration settings, edit: packages/docsite/astro.config.mjs
+## Versioning & changelogs
+
+The monorepo uses **[Changesets](https://github.com/changesets/changesets)** for change files and release bumps — not Beachball. See [Version Management](./src/content/docs/contributing/version-management.mdx) for the full workflow.
+
+Changelog pages under `src/content/docs/changelog/` are **generated** at build time from `@charm-ux/core` and `@charm-ux/theming`'s `CHANGELOG.md`; there is no changelog checked in at this package's root.
+
+## Contributing to the docs
+
+- Add or update Markdown/MDX under `src/content/docs/`.
+- To document a component, add or update its reference page under `src/content/docs/components/`; API tables are generated from the core manifest, so keep the component's JSDoc/CEM tags accurate rather than hand-writing prop tables.
+- Follow the release workflow in [Version Management](./src/content/docs/contributing/version-management.mdx).
+- To change the sidebar or content-collection settings, edit `astro.config.mjs`.
+
+## Helpful files
+
+- Site config: `astro.config.mjs`
+- Support-file generator: `scripts/copy-support-files.js`
+- Manifest copier: `scripts/copy-custom-elements.js`
+- Version management guide: `src/content/docs/contributing/version-management.mdx`
+- Root project readme: `../../README.md`
