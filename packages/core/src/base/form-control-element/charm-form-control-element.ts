@@ -8,7 +8,6 @@ import styles from './form-control.styles.js';
 /**
  * Base class for input components.
  *
- * @cssproperty --charm-default-border - Determines the border of the control.
  * @cssproperty --charm-form-control-bg-color - Determines the background color for the control.
  * @cssproperty --charm-form-control-border-radius - Determines the border radius of the control.
  * @cssproperty --charm-form-control-disabled-bg-color - Determines the disabled input background color.

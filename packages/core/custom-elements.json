@@ -676,10 +676,6 @@
           "name": "CharmFormControlElement",
           "cssProperties": [
             {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border"
-            },
-            {
               "description": "Determines the background color for the control.",
               "name": "--charm-form-control-bg-color"
             },
@@ -3241,10 +3237,6 @@
             {
               "description": "determine the size of the status indicator.",
               "name": "--charm-avatar-indicator-size"
-            },
-            {
-              "description": "determine the padding of the status indicator.",
-              "name": "--charm-avatar-indicator-padding"
             }
           ],
           "cssParts": [
@@ -5374,8 +5366,8 @@
               "name": "--charm-button-pressed-bg-color"
             },
             {
-              "description": "Sets the pressed border of each button.",
-              "name": "--charm-button-pressed-border"
+              "description": "Sets the pressed border color of each button.",
+              "name": "--charm-button-pressed-border-color"
             },
             {
               "description": "Sets the background color of the button group when split.",
@@ -5391,7 +5383,7 @@
             },
             {
               "description": "Sets the border width of the button group when split.",
-              "name": "--charm-button-border-size"
+              "name": "--charm-button-border-width"
             },
             {
               "description": "Sets the border style of the button group when split.",
@@ -7116,14 +7108,6 @@
             {
               "description": "Border color of checkbox when unchecked and hovered over.",
               "name": "--charm-checkbox-unchecked-hover-border-color"
-            },
-            {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "description": "Determines the background color for the control.",
@@ -10531,14 +10515,6 @@
             {
               "description": "The color of the slider's track.",
               "name": "--charm-input-range-track-color"
-            },
-            {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "description": "Determines the background color for the control.",
@@ -17065,14 +17041,6 @@
               "name": "--charm-radio-group-radio-gap"
             },
             {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
               "description": "Determines the background color for the control.",
               "name": "--charm-form-control-bg-color",
               "inheritedFrom": {
@@ -19306,14 +19274,6 @@
               "name": "--charm-select-option-fg-color"
             },
             {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
               "description": "Determines the background color for the control.",
               "name": "--charm-form-control-bg-color",
               "inheritedFrom": {
@@ -21337,14 +21297,6 @@
             {
               "description": "The width of the switch.",
               "name": "--charm-switch-width"
-            },
-            {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "description": "Determines the background color for the control.",
@@ -23784,14 +23736,6 @@
             {
               "description": "The min-width of the textarea control input.",
               "name": "--charm-text-area-input-min-width"
-            },
-            {
-              "description": "Determines the border of the control.",
-              "name": "--charm-default-border",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "description": "Determines the background color for the control.",

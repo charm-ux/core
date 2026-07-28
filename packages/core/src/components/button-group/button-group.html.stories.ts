@@ -159,7 +159,7 @@ export const Menu: Story = {
 
 export const Gap: Story = {
   args: {
-    '--button-group-gap': '10px',
+    '--charm-button-group-gap': '10px',
   },
   render: args =>
     template(
@@ -239,7 +239,6 @@ export const SplitButtonVertical: Story = {
 export const SelectSingle: Story = {
   args: {
     select: 'single',
-    '--button-pressed-bg-color': 'var(--button-active-bg-color)',
   },
   render: args =>
     template(
@@ -255,7 +254,6 @@ export const SelectSingle: Story = {
 export const SelectMultiple: Story = {
   args: {
     select: 'multiple',
-    '--button-pressed-bg-color': 'var(--button-active-bg-color)',
   },
   render: args =>
     template(
@@ -326,7 +324,10 @@ export const NestedToolbarWithOverflow: Story = {
           <ch-button>Inner</ch-button>
           <ch-button>Last</ch-button>
         </ch-button-group>
-        <ch-divider orientation="vertical" style="--divider-vertical-min-height: 20px; padding: 0 10px;"></ch-divider>
+        <ch-divider
+          orientation="vertical"
+          style="--charm-divider-vertical-min-height: 20px; padding: 0 10px;"
+        ></ch-divider>
         <ch-button-group>
           <ch-button>First</ch-button>
           <ch-button>Inner</ch-button>
@@ -338,7 +339,10 @@ export const NestedToolbarWithOverflow: Story = {
           </ch-menu>
           <ch-button>Last</ch-button>
         </ch-button-group>
-        <ch-divider orientation="vertical" style="--divider-vertical-min-height: 20px; padding: 0 10px;"></ch-divider>
+        <ch-divider
+          orientation="vertical"
+          style="--charm-divider-vertical-min-height: 20px; padding: 0 10px;"
+        ></ch-divider>
         <ch-button-group>
           <ch-button>First</ch-button>
           <ch-button>Inner</ch-button>
@@ -354,8 +358,8 @@ export const ToolbarSplitButton: Story = {
   args: {
     toolbar: true,
     split: true,
-    '--button-group-divider-height': '60%',
-    '--button-group-divider-color': 'white',
+    '--charm-button-group-divider-height': '60%',
+    '--charm-button-group-divider-color': 'white',
   },
   render: args =>
     template(
@@ -373,10 +377,9 @@ export const ToolbarSplitButtonSelect: Story = {
     toolbar: true,
     split: true,
     select: 'multiple',
-    '--button-group-divider-height': '60%',
-    '--button-group-divider-color': 'white',
-    '--button-pressed-bg-color': 'var(--button-active-bg-color)',
-    '--button-pressed-border': 'var(--button-pressed-bg-color) var(--default-border-size) var(--default-border-style)',
+    '--charm-button-group-divider-height': '60%',
+    '--charm-button-group-divider-color': 'white',
+    '--button-pressed-border-color': 'blue',
   },
   render: args =>
     template(
@@ -394,14 +397,13 @@ export const NestedToolbarSplitButtonSelect: Story = {
   render: () =>
     html` <style>
         ch-button-group {
-          --button-group-divider-height: 60%;
-          --button-group-divider-color: white;
-          --button-pressed-bg-color: var(--button-active-bg-color);
-          --button-pressed-border: var(--button-pressed-bg-color) var(--default-border-size) var(--default-border-style);
-          --divider-vertical-min-height: 20px;
+          --charm-button-group-divider-height: 60%;
+          --charm-button-group-divider-color: white;
+          --button-pressed-border-color: blue;
+          --charm-divider-vertical-min-height: 20px;
         }
       </style>
-      <ch-button-group toolbar style="--button-group-gap: 4px">
+      <ch-button-group toolbar style="--charm-button-group-gap: 4px">
         <ch-button-group split select="single">
           <ch-button>First</ch-button>
           <ch-button>Inner</ch-button>
