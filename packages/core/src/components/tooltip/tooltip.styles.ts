@@ -1,5 +1,5 @@
 import { css } from 'lit';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   :host {
@@ -44,29 +44,33 @@ export default css`
 
   .tooltip[data-current-placement^='top']::part(popup-arrow) {
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.07);
-    border-bottom: var(--default-border-size) var(--default-border-style) ${component('tooltip', 'arrowBorderColor')};
-    border-inline-end: var(--default-border-size) var(--default-border-style)
+    border-bottom: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${component('tooltip', 'arrowBorderColor')};
+    border-inline-end: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
   }
 
   .tooltip[data-current-placement^='bottom']::part(popup-arrow) {
     box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.05);
-    border-top: var(--default-border-size) var(--default-border-style) ${component('tooltip', 'arrowBorderColor')};
-    border-inline-start: var(--default-border-size) var(--default-border-style)
+    border-top: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${component('tooltip', 'arrowBorderColor')};
+    border-inline-start: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
   }
 
   .tooltip[data-current-placement^='left']::part(popup-arrow) {
     box-shadow: 2px -2px 2px rgba(0, 0, 0, 0.06);
-    border-top: var(--default-border-size) var(--default-border-style) ${component('tooltip', 'arrowBorderColor')};
-    border-inline-end: var(--default-border-size) var(--default-border-style)
+    border-top: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${component('tooltip', 'arrowBorderColor')};
+    border-inline-end: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
   }
 
   .tooltip[data-current-placement^='right']::part(popup-arrow) {
     box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.06);
-    border-bottom: var(--default-border-size) var(--default-border-style) ${component('tooltip', 'arrowBorderColor')};
-    border-inline-start: var(--default-border-size) var(--default-border-style)
+    border-bottom: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${component('tooltip', 'arrowBorderColor')};
+    border-inline-start: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
   }
 

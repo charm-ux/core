@@ -1522,140 +1522,64 @@
           "name": "CoreAccordionItem",
           "cssProperties": [
             {
-              "description": "Sets border width.",
-              "name": "--accordion-item-border-width"
-            },
-            {
-              "description": "Sets focus width.",
-              "name": "--accordion-item-focus-width"
-            },
-            {
-              "description": "Sets font size.",
-              "name": "--accordion-item-font-size"
-            },
-            {
-              "description": "Sets font weight.",
-              "name": "--accordion-item-font-weight"
-            },
-            {
-              "description": "Sets the line height of accordion-item.",
-              "name": "--accordion-item-line-height"
-            },
-            {
-              "description": "Sets vertical padding.",
-              "name": "--accordion-item-padding-y"
-            },
-            {
-              "description": "Sets horizontal padding.",
-              "name": "--accordion-item-padding-x"
-            },
-            {
-              "description": "Sets background color.",
-              "name": "--accordion-item-bg-color"
-            },
-            {
-              "description": "Sets border color.",
-              "name": "--accordion-item-border-color"
-            },
-            {
-              "description": "Sets foreground color.",
-              "name": "--accordion-item-fg-color"
-            },
-            {
-              "description": "Sets background color of accordion-item when disabled.",
-              "name": "--accordion-item-disabled-bg-color"
-            },
-            {
-              "description": "Sets border color of accordion-item when disabled.",
-              "name": "--accordion-item-disabled-border-color"
-            },
-            {
-              "description": "Sets foreground color of accordion-item when disabled.",
-              "name": "--accordion-item-disabled-fg-color"
-            },
-            {
-              "description": "Sets background color of accordion-item when hovered.",
-              "name": "--accordion-item-hover-bg-color"
-            },
-            {
-              "description": "Sets border color of accordion-item when hovered.",
-              "name": "--accordion-item-hover-border-color"
-            },
-            {
-              "description": "Sets foreground color of accordion-item when hovered.",
-              "name": "--accordion-item-hover-fg-color"
-            },
-            {
-              "description": "Sets background color of accordion-item when focused.",
-              "name": "--accordion-item-focus-bg-color"
-            },
-            {
-              "description": "the border color of accordion-item when focused.",
-              "name": "--accordion-item-focus-border-color"
-            },
-            {
-              "description": "Sets foreground color of accordion-item when focused.",
-              "name": "--accordion-item-focus-fg-color"
-            },
-            {
-              "description": "Sets background color of accordion-item when active.",
-              "name": "--accordion-item-active-bg-color"
-            },
-            {
-              "description": "Sets border color of accordion-item when active.",
-              "name": "--accordion-item-active-border-color"
-            },
-            {
-              "description": "Sets foreground color of accordion-item when active.",
-              "name": "--accordion-item-active-fg-color"
-            },
-            {
-              "description": "Transition for the icon when opening an accordion item",
-              "name": "--accordion-item-indicator-open-transition"
-            },
-            {
-              "description": "Transition for the icon when closing an accordion item",
-              "name": "--accordion-item-indicator-close-transition"
-            },
-            {
-              "description": "Transition for the content when opening an accordion item",
-              "name": "--accordion-item-open-transition"
-            },
-            {
-              "description": "Transition for the content when closing an accordion item",
-              "name": "--accordion-item-close-transition"
-            },
-            {
-              "description": "Sets the transform for the orientation of the icon when collapsed.",
-              "name": "--accordion-item-icon-collapsed-transform"
-            },
-            {
-              "description": "Sets the transform for the orientation of the icon when expanded.",
-              "name": "--accordion-item-icon-expanded-transform"
-            },
-            {
-              "description": "The bottom border color of the accordion item.",
-              "name": "--accordion-item-bottom-border-color"
-            },
-            {
               "description": "The duration of the accordion item animation.",
-              "name": "--accordion-item-animation-duration"
+              "name": "--charm-accordion-item-animation-duration"
             },
             {
               "description": "The timing function of the accordion item animation.",
-              "name": "--accordion-item-animation-timing-function"
+              "name": "--charm-accordion-item-animation-timing-function"
+            },
+            {
+              "description": "Sets background color.",
+              "name": "--charm-accordion-item-bg-color"
+            },
+            {
+              "description": "Sets border color.",
+              "name": "--charm-accordion-item-border-color"
+            },
+            {
+              "description": "Sets border width.",
+              "name": "--charm-accordion-item-border-width"
+            },
+            {
+              "description": "Sets background color of accordion-item when disabled.",
+              "name": "--charm-accordion-item-disabled-bg-color"
+            },
+            {
+              "description": "Sets border color of accordion-item when disabled.",
+              "name": "--charm-accordion-item-disabled-border-color"
+            },
+            {
+              "description": "Sets foreground color of accordion-item when disabled.",
+              "name": "--charm-accordion-item-disabled-fg-color"
+            },
+            {
+              "description": "Sets foreground color.",
+              "name": "--charm-accordion-item-fg-color"
+            },
+            {
+              "description": "Sets background color of accordion-item when hovered.",
+              "name": "--charm-accordion-item-hover-bg-color"
+            },
+            {
+              "description": "Sets border color of accordion-item when hovered.",
+              "name": "--charm-accordion-item-hover-border-color"
+            },
+            {
+              "description": "Sets foreground color of accordion-item when hovered.",
+              "name": "--charm-accordion-item-hover-fg-color"
+            },
+            {
+              "description": "Sets the transform for the orientation of the icon when collapsed.",
+              "name": "--charm-accordion-item-icon-collapsed-transform"
+            },
+            {
+              "description": "Sets the transform for the orientation of the icon when expanded.",
+              "name": "--charm-accordion-item-icon-expanded-transform"
             },
             {
               "description": "The transition for the icon when the state changes.",
-              "name": "--accordion-item-icon-transition"
-            },
-            {
-              "description": "The starting transform for the down icon when the icon position is 'start'.",
-              "name": "--accordion-item-icon-down-start-transform"
-            },
-            {
-              "description": "The starting transform for the down icon when the icon position is 'end'.",
-              "name": "--accordion-item-icon-down-end-transform"
+              "name": "--charm-accordion-item-icon-transition"
             }
           ],
           "cssParts": [
@@ -7098,52 +7022,48 @@
           "name": "CoreCheckbox",
           "cssProperties": [
             {
-              "description": "Background color when checked and active.",
-              "name": "--charm-checkbox-active-bg-color-checked"
-            },
-            {
-              "description": "Background color when unchecked and active.",
-              "name": "--charm-checkbox-active-bg-color-unchecked"
-            },
-            {
               "description": "Border color of checkbox when active.",
               "name": "--charm-checkbox-active-border-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and active.",
-              "name": "--charm-checkbox-active-border-color-checked"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and active.",
-              "name": "--charm-checkbox-active-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when active.",
               "name": "--charm-checkbox-active-fg-color"
             },
             {
-              "description": "The background color of the checkbox when checked.",
-              "name": "--charm-checkbox-bg-color-checked"
-            },
-            {
-              "description": "The background color of the checkbox when unchecked.",
-              "name": "--charm-checkbox-bg-color-unchecked"
-            },
-            {
-              "description": "Border color of checkbox when checked.",
-              "name": "--charm-checkbox-border-color-checked"
-            },
-            {
               "description": "The border radius of the checkbox.",
               "name": "--charm-checkbox-border-radius"
             },
             {
-              "description": "Background color of checkbox when checked and disabled.",
-              "name": "--charm-checkbox-disabled-bg-color-checked"
+              "description": "Background color when checked and active.",
+              "name": "--charm-checkbox-checked-active-bg-color"
             },
             {
-              "description": "Background color of checkbox when unchecked and disabled.",
-              "name": "--charm-checkbox-disabled-bg-color-unchecked"
+              "description": "Border color of checkbox when checked and active.",
+              "name": "--charm-checkbox-checked-active-border-color"
+            },
+            {
+              "description": "The background color of the checkbox when checked.",
+              "name": "--charm-checkbox-checked-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when checked.",
+              "name": "--charm-checkbox-checked-border-color"
+            },
+            {
+              "description": "Background color of checkbox when checked and disabled.",
+              "name": "--charm-checkbox-checked-disabled-bg-color"
+            },
+            {
+              "description": "Font color of checkbox when checked.",
+              "name": "--charm-checkbox-checked-fg-color"
+            },
+            {
+              "description": "Background color when checked and hovered over.",
+              "name": "--charm-checkbox-checked-hover-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when checked and hovered over.",
+              "name": "--charm-checkbox-checked-hover-border-color"
             },
             {
               "description": "Border color of checkbox when disabled.",
@@ -7158,28 +7078,8 @@
               "name": "--charm-checkbox-fg-color"
             },
             {
-              "description": "Font color of checkbox when checked.",
-              "name": "--charm-checkbox-fg-color-checked"
-            },
-            {
-              "description": "Background color when checked and hovered over.",
-              "name": "--charm-checkbox-hover-bg-color-checked"
-            },
-            {
-              "description": "Background color when unchecked and hovered over.",
-              "name": "--charm-checkbox-hover-bg-color-unchecked"
-            },
-            {
               "description": "Border color of checkbox while being hovered over.",
               "name": "--charm-checkbox-hover-border-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and hovered over.",
-              "name": "--charm-checkbox-hover-border-color-checked"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and hovered over.",
-              "name": "--charm-checkbox-hover-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when being hovered over.",
@@ -7192,6 +7092,30 @@
             {
               "description": "The size of the checkbox.",
               "name": "--charm-checkbox-size"
+            },
+            {
+              "description": "Background color when unchecked and active.",
+              "name": "--charm-checkbox-unchecked-active-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when unchecked and active.",
+              "name": "--charm-checkbox-unchecked-active-border-color"
+            },
+            {
+              "description": "The background color of the checkbox when unchecked.",
+              "name": "--charm-checkbox-unchecked-bg-color"
+            },
+            {
+              "description": "Background color of checkbox when unchecked and disabled.",
+              "name": "--charm-checkbox-unchecked-disabled-bg-color"
+            },
+            {
+              "description": "Background color when unchecked and hovered over.",
+              "name": "--charm-checkbox-unchecked-hover-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when unchecked and hovered over.",
+              "name": "--charm-checkbox-unchecked-hover-border-color"
             },
             {
               "description": "Determines the border of the control.",

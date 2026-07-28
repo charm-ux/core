@@ -13,8 +13,8 @@ token-backed fallback.
 export default css`
   .control {
     /* Themeable hook with a token-backed default. */
-    background-color: var(--charm-button-bg-color, ${component('button', 'bgColor')});
-    color: var(--charm-button-color, ${component('button', 'color')});
+    background-color: ${component('button', 'bgColor')};
+    color: ${component('button', 'color')};
   }
 `;
 ```

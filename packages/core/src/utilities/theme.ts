@@ -1,3 +1,4 @@
+import { type CSSResult } from 'lit';
 import {
   charmDefinition,
   createCssHelpers,
@@ -101,7 +102,8 @@ export function setThemeDefinition(definition: ResolvedTokenDefinition, prefix?:
 /**
  * Streamlined Lit CSS helpers for component styles.
  *
- * These are destructured from `tokens.lit` for convenience:
+ * These delegate through `tokens.lit` so they reflect runtime prefix changes
+ * made via `setThemePrefix()` / `setThemeDefinition()`.
  *
  * @example
  * ```ts
@@ -109,4 +111,12 @@ export function setThemeDefinition(definition: ResolvedTokenDefinition, prefix?:
  * css`background: ${component('button', 'bgColor')};`
  * ```
  */
-export const { primitive, semantic, component } = tokens.lit;
+export function primitive(...args: (string | number)[]): CSSResult {
+  return tokens.lit.primitive(...args);
+}
+export function semantic(...args: (string | number)[]): CSSResult {
+  return tokens.lit.semantic(...args);
+}
+export function component(...args: (string | number)[]): CSSResult {
+  return tokens.lit.component(...args);
+}

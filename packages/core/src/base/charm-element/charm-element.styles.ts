@@ -1,4 +1,5 @@
 import { css } from 'lit';
+import { semantic } from '../../utilities/theme.js';
 import { visuallyHiddenStyles } from '../../theme/styles/visually-hidden.js';
 
 export default css`
@@ -10,8 +11,9 @@ export default css`
   }
 
   *:focus-visible {
-    outline: var(--focus-outline);
-    outline-offset: var(--focus-outline-offset);
+    outline: ${semantic('focus', 'outlineSize')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   [hidden] {

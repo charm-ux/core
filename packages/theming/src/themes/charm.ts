@@ -466,7 +466,6 @@ const charmTokensBase = defineTokens(
         paddingX: primitive('spacing', 'lg'),
         paddingY: primitive('spacing', 'sm'),
         contentGap: primitive('spacing', 'sm'),
-        contentAlignment: 'center',
         iconSize: '20px',
         iconPaddingX: primitive('spacing', 'sm'),
         iconPaddingY: primitive('spacing', 'sm'),
@@ -716,6 +715,7 @@ const charmTokensBase = defineTokens(
           radio: {
             bgColor: semantic('surface', 'primary'),
             activeBgColor: semantic('action', 'primary'),
+            activeBorderColor: semantic('border', 'strong'),
             hoverBorderColor: semantic('border', 'strong'),
           },
         },
@@ -731,14 +731,10 @@ const charmTokensBase = defineTokens(
       popup: {
         arrowColor: semantic('surface', 'primary'),
         arrowSize: '8px',
-        arrowSizeDiagonal: '11px',
-        arrowPaddingOffset: '8px',
         dropShadow: primitive('shadow', 'lg'),
         showTransition: 'opacity 0.15s ease, transform 0.15s ease',
         hideTransition: 'opacity 0.1s ease, transform 0.1s ease',
         zIndex: primitive('zIndex', 'popover'),
-        autoSizeAvailableWidth: '100%',
-        autoSizeAvailableHeight: '100%',
       },
 
       // Progress Bar
@@ -833,7 +829,6 @@ const charmTokensBase = defineTokens(
       // Select
       select: {
         iconSize: '20px',
-        iconInset: primitive('spacing', 'sm'),
         optionBgColor: semantic('surface', 'primary'),
         optionFgColor: semantic('text', 'primary'),
       },
@@ -846,7 +841,6 @@ const charmTokensBase = defineTokens(
         minHeight: '16px',
         width: '100%',
         bgSize: '200% 100%',
-        animation: 'shimmer 1.5s infinite linear',
       },
 
       // Spinner

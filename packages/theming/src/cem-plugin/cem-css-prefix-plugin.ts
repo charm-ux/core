@@ -155,7 +155,7 @@ interface CssPrefixPluginOptions {
  * @returns {{ name: string, packageLinkPhase: (params: { customElementsManifest: CustomElementsManifest }) => void }}
  */
 export function cssPrefixPlugin(options: CssPrefixPluginOptions = {}) {
-  const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = ANY_PREFIX } = options;
+  const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = [DEFAULT_PREFIX] } = options;
 
   return {
     name: 'charm-css-prefix',

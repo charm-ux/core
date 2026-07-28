@@ -357,7 +357,7 @@ export function generateCss(
     if (colorSchemeVars.dark.length > 0) {
       lines.push('');
       if (config.useDataAttributes) {
-        lines.push('[data-theme="dark"] {');
+        lines.push(`${selector}[data-theme="dark"] {`);
         lines.push(...colorSchemeVars.dark);
         lines.push('}');
       } else {
@@ -389,7 +389,7 @@ export function generateCss(
     ) {
       lines.push('');
       if (config.useDataAttributes) {
-        lines.push('[data-theme="dark"] {');
+        lines.push(`${selector}[data-theme="dark"] {`);
         lines.push(...semanticVars.dark);
         lines.push(...componentVars.dark);
         lines.push(...colorOnVars.dark);

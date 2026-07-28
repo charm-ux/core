@@ -26,30 +26,30 @@ import styles from './checkbox.styles.js';
  * @csspart checkbox-label - The checkbox's label.
  * @csspart checkbox-visual-base - Part who parent's the rendered checkbox as a span and its label.
  *
- * @cssproperty --charm-checkbox-active-bg-color-checked - Background color when checked and active.
- * @cssproperty --charm-checkbox-active-bg-color-unchecked - Background color when unchecked and active.
  * @cssproperty --charm-checkbox-active-border-color - Border color of checkbox when active.
- * @cssproperty --charm-checkbox-active-border-color-checked - Border color of checkbox when checked and active.
- * @cssproperty --charm-checkbox-active-border-color-unchecked - Border color of checkbox when unchecked and active.
  * @cssproperty --charm-checkbox-active-fg-color - Font color of checkbox when active.
- * @cssproperty --charm-checkbox-bg-color-checked - The background color of the checkbox when checked.
- * @cssproperty --charm-checkbox-bg-color-unchecked - The background color of the checkbox when unchecked.
- * @cssproperty --charm-checkbox-border-color-checked - Border color of checkbox when checked.
  * @cssproperty --charm-checkbox-border-radius - The border radius of the checkbox.
- * @cssproperty --charm-checkbox-disabled-bg-color-checked - Background color of checkbox when checked and disabled.
- * @cssproperty --charm-checkbox-disabled-bg-color-unchecked - Background color of checkbox when unchecked and disabled.
+ * @cssproperty --charm-checkbox-checked-active-bg-color - Background color when checked and active.
+ * @cssproperty --charm-checkbox-checked-active-border-color - Border color of checkbox when checked and active.
+ * @cssproperty --charm-checkbox-checked-bg-color - The background color of the checkbox when checked.
+ * @cssproperty --charm-checkbox-checked-border-color - Border color of checkbox when checked.
+ * @cssproperty --charm-checkbox-checked-disabled-bg-color - Background color of checkbox when checked and disabled.
+ * @cssproperty --charm-checkbox-checked-fg-color - Font color of checkbox when checked.
+ * @cssproperty --charm-checkbox-checked-hover-bg-color - Background color when checked and hovered over.
+ * @cssproperty --charm-checkbox-checked-hover-border-color - Border color of checkbox when checked and hovered over.
  * @cssproperty --charm-checkbox-disabled-border-color - Border color of checkbox when disabled.
  * @cssproperty --charm-checkbox-disabled-fg-color - Font color of checkbox when disabled.
  * @cssproperty --charm-checkbox-fg-color - Font color of checkbox.
- * @cssproperty --charm-checkbox-fg-color-checked - Font color of checkbox when checked.
- * @cssproperty --charm-checkbox-hover-bg-color-checked - Background color when checked and hovered over.
- * @cssproperty --charm-checkbox-hover-bg-color-unchecked - Background color when unchecked and hovered over.
  * @cssproperty --charm-checkbox-hover-border-color - Border color of checkbox while being hovered over.
- * @cssproperty --charm-checkbox-hover-border-color-checked - Border color of checkbox when checked and hovered over.
- * @cssproperty --charm-checkbox-hover-border-color-unchecked - Border color of checkbox when unchecked and hovered over.
  * @cssproperty --charm-checkbox-hover-fg-color - Font color of checkbox when being hovered over.
  * @cssproperty --charm-checkbox-icon-size - The size of the checkbox's icon.
  * @cssproperty --charm-checkbox-size - The size of the checkbox.
+ * @cssproperty --charm-checkbox-unchecked-active-bg-color - Background color when unchecked and active.
+ * @cssproperty --charm-checkbox-unchecked-active-border-color - Border color of checkbox when unchecked and active.
+ * @cssproperty --charm-checkbox-unchecked-bg-color - The background color of the checkbox when unchecked.
+ * @cssproperty --charm-checkbox-unchecked-disabled-bg-color - Background color of checkbox when unchecked and disabled.
+ * @cssproperty --charm-checkbox-unchecked-hover-bg-color - Background color when unchecked and hovered over.
+ * @cssproperty --charm-checkbox-unchecked-hover-border-color - Border color of checkbox when unchecked and hovered over.
  *
  * @omit placeholder
  *

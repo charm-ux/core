@@ -52,12 +52,12 @@
     "access": "public"
   },
   "dependencies": {
+    "@charm-ux/theming": "workspace:*",
     "@floating-ui/dom": "^1.6.11",
     "composed-offset-position": "^0.0.6",
     "lit": "^3.2.1"
   },
   "devDependencies": {
-    "@charm-ux/theming": "workspace:*",
     "@custom-elements-manifest/analyzer": "^0.10.3",
     "@microsoft/applicationinsights-core-js": "^3.3.3",
     "@open-wc/lit-helpers": "^0.7.0",

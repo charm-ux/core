@@ -42,12 +42,14 @@ setThemeDefinition(myTokens.definition);
 
 ### Import Order Matters
 
-Component style files read `tokens.lit` once, when the style module first evaluates. If a component is imported before the theme is configured, that component's styles are locked to the default `charm` prefix — so your app's entry point must import `project-config.ts` **before** anything that imports a component:
+Component style files evaluate `tokens.lit` when the style module first evaluates. The `primitive`, `semantic`, and `component` helpers are live wrappers that delegate to the current theme configuration, so any call to `setThemePrefix()` or `setThemeDefinition()` before a component is imported is reflected in its styles.
+
+Your app's entry point must import `project-config.ts` **before** anything that imports a component:
 
 ```typescript
 // main.ts
 import './project-config.js'; // configures prefix and theme first
-import '@charm-ux/core/dist/components/button/index.js'; // components now pick up the configured theme
+import '@charm-ux/core/components/button/index.js'; // components pick up the configured theme
 ```
 
 ## Styling with Custom Properties
@@ -194,12 +196,12 @@ const value = getComputedStyle(element).getPropertyValue(
 #### Generating Theme CSS — `generateTheme`
 
 If you need to generate theme CSS at runtime (server-side rendering, build scripts, etc.),
-import from the dedicated path to avoid pulling the CSS generator into your main bundle:
+import directly from `@charm-ux/theming`:
 
 ```typescript
-import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+import { generateTheme } from '@charm-ux/theming';
 
-const { css, cssReset, cssUtilities } = generateTheme(myDefinition, 'fui');
+const { css, cssReset, cssUtilities } = generateTheme(myDefinition, { prefix: 'fui' });
 ```
 
 ## Creating New Components
