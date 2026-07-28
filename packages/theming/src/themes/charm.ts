@@ -979,7 +979,7 @@ const charmTokensBase = defineTokens(
       },
 
       // Textarea
-      textareaControl: {
+      textArea: {
         inputLineHeight: primitive('lineHeight', 'md'),
         inputMinHeight: '80px',
         inputMinWidth: '100%',

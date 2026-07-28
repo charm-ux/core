@@ -2243,8 +2243,8 @@
           "name": "CoreAccordion",
           "cssProperties": [
             {
-              "description": "Sets the border top color of the accordion.",
-              "name": "--accordion-top-border-color"
+              "description": "The border top color of the accordion.",
+              "name": "--charm-accordion-top-border-color"
             }
           ],
           "slots": [
@@ -23775,15 +23775,15 @@
           "cssProperties": [
             {
               "description": "The line-height of the textarea control input.",
-              "name": "--charm-textarea-control-input-line-height"
+              "name": "--charm-text-area-input-line-height"
             },
             {
               "description": "The min-height of the textarea control input.",
-              "name": "--charm-textarea-control-input-min-height"
+              "name": "--charm-text-area-input-min-height"
             },
             {
               "description": "The min-width of the textarea control input.",
-              "name": "--charm-textarea-control-input-min-width"
+              "name": "--charm-text-area-input-min-width"
             },
             {
               "description": "Determines the border of the control.",
