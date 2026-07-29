@@ -1,0 +1,123 @@
+name: Sync main to next
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Merge main into next
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout next
+        uses: actions/checkout@v4
+        with:
+          ref: next
+          fetch-depth: 0
+
+      - name: Fetch main
+        run: git fetch origin main
+
+      - name: Check if next is behind main
+        id: behind
+        run: |
+          COUNT=$(git rev-list --count next..origin/main 2>/dev/null || echo 0)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+          echo "next is behind main by $COUNT commit(s)"
+
+      - name: Nothing to sync
+        if: steps.behind.outputs.count == '0'
+        run: echo "next is already up to date with main — nothing to do"
+
+      - name: Attempt direct merge
+        if: steps.behind.outputs.count != '0'
+        id: merge
+        continue-on-error: true
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git merge origin/main --no-ff -m "chore: sync main into next" 2>&1
+
+      - name: Push clean merge
+        if: steps.merge.outcome == 'success'
+        run: git push
+
+      - name: Abort on conflict
+        if: steps.merge.outcome == 'failure'
+        run: git merge --abort
+
+      - name: Create or update sync PR on conflict
+        if: steps.merge.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'chore: merge main into next';
+            const body = [
+              'Auto-sync from `main` to `next` has a merge conflict.',
+              '',
+              '**Resolve locally:**',
+              '```',
+              'git checkout next',
+              'git merge main',
+              '# fix conflicts',
+              'git push',
+              '```',
+            ].join('\n');
+
+            // Look for an existing open sync PR
+            const { data: pulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: 'main',
+              base: 'next',
+              state: 'open',
+            });
+
+            if (pulls.length > 0) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pulls[0].number,
+                title,
+                body,
+              });
+              core.notice(`Updated existing PR #${pulls[0].number}`);
+              return;
+            }
+
+            // Check there's actually a diff
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'next',
+              head: 'main',
+            });
+
+            if (comparison.behind_by === 0 && comparison.ahead_by === 0) {
+              core.info('next is already up to date — no PR needed');
+              return;
+            }
+
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              head: 'main',
+              base: 'next',
+              body,
+              maintainer_can_modify: true,
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              labels: ['auto-sync'],
+            });
+
+            core.notice(`Created PR #${pr.number} for conflict resolution`);

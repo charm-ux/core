@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - next
     types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
