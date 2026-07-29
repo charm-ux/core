@@ -226,9 +226,11 @@ npm install @charm-ux/core@beta
 npm install @charm-ux/theming@beta
 ```
 
-> Changesets are consumed only in CI — they remain on the `next` branch and are
-> available for the stable release when `next` merges to `main`. No changeset is
-> required for the first push to `next` that already carries one from the PR.
+> The snapshot-versioning step deletes changeset files from the working tree,
+> but those deletions are **not committed** — the files remain in git on the
+> `next` branch and are available for the stable release when `next` merges
+> to `main`. No changeset is required for the first push to `next` that already
+> carries one from the PR.
 
 ### Keeping `next` in sync with `main`
 
@@ -239,19 +241,26 @@ that runs on every push to `main`:
 1. Checks if `next` is behind `main` — if not, exits
 2. Attempts a direct merge (`git merge origin/main --no-ff`)
 3. **No conflicts** → pushes the merge commit to `next`
-4. **Conflicts** → aborts the merge and creates/updates a PR (`main` → `next`) for
-   manual resolution. The PR is labelled `auto-sync`.
+4. **Conflicts** → aborts the merge, creates an `auto-sync/main-into-next` branch,
+   and creates/updates a PR (`auto-sync/main-into-next` → `next`) for manual
+   resolution. The PR is labelled `auto-sync`.
 
-Resolve conflicts via that PR, or locally:
+Resolve conflicts via that PR, or locally by re-doing the merge on the
+auto-sync branch:
 
 ```bash
-git checkout next
+git checkout auto-sync/main-into-next
+git reset --hard next
 git merge main
-# resolve conflicts
-git push
+# fix conflicts
+git add -A
+git merge --continue
+git push --force
 ```
 
-After resolving, delete the `auto-sync/main-into-next` branch if it was created.
+After resolution, the PR can be merged into `next`. Delete the
+`auto-sync/main-into-next` branch after merging (GitHub can do this
+automatically when the PR is merged).
 
 > **Direction**: always merge `main` _into_ `next`, never the reverse. When `next` is
 > ready for release, merge `next` _into_ `main` as a standard PR.

@@ -9,6 +9,8 @@ permissions:
   contents: write
   pull-requests: write
 
+concurrency: sync-main-to-next
+
 jobs:
   sync:
     name: Merge main into next
@@ -47,9 +49,16 @@ jobs:
         if: steps.merge.outcome == 'success'
         run: git push
 
-      - name: Abort on conflict
+      - name: Commit conflicted state to auto-sync branch
         if: steps.merge.outcome == 'failure'
-        run: git merge --abort
+        run: |
+          git add -A
+          git commit -m "chore: merge main into next (with conflicts)"
+          git push origin HEAD:refs/heads/auto-sync/main-into-next --force
+
+      - name: Restore next to clean state
+        if: steps.merge.outcome == 'failure'
+        run: git reset --hard origin/next
 
       - name: Create or update sync PR on conflict
         if: steps.merge.outcome == 'failure'
@@ -62,44 +71,49 @@ jobs:
               '',
               '**Resolve locally:**',
               '```',
-              'git checkout next',
+              'git checkout auto-sync/main-into-next',
+              'git reset --hard next',
               'git merge main',
               '# fix conflicts',
-              'git push',
+              'git add -A',
+              'git merge --continue',
+              'git push --force',
               '```',
             ].join('\n');
 
-            // Look for an existing open sync PR
+            // Look for an existing open sync PR by label
             const { data: pulls } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: 'main',
               base: 'next',
               state: 'open',
             });
+            const syncPr = pulls.find(pr =>
+              pr.labels.some(l => l.name === 'auto-sync')
+            );
 
-            if (pulls.length > 0) {
+            if (syncPr) {
               await github.rest.pulls.update({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: pulls[0].number,
+                pull_number: syncPr.number,
                 title,
                 body,
               });
-              core.notice(`Updated existing PR #${pulls[0].number}`);
+              core.notice(`Updated existing PR #${syncPr.number}`);
               return;
             }
 
-            // Check there's actually a diff
+            // Check the auto-sync branch has content
             const { data: comparison } = await github.rest.repos.compareCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
               base: 'next',
-              head: 'main',
+              head: 'auto-sync/main-into-next',
             });
 
             if (comparison.behind_by === 0 && comparison.ahead_by === 0) {
-              core.info('next is already up to date — no PR needed');
+              core.info('auto-sync branch has no diff — no PR needed');
               return;
             }
 
@@ -107,7 +121,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title,
-              head: 'main',
+              head: 'auto-sync/main-into-next',
               base: 'next',
               body,
               maintainer_can_modify: true,

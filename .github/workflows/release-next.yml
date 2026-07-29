@@ -54,10 +54,17 @@ jobs:
       - name: Build packages
         run: pnpm build
 
+      - name: Check for pending changesets
+        id: changesets
+        shell: bash
+        run: |
+          COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
       - name: Apply snapshot versions (beta)
+        if: steps.changesets.outputs.count != '0'
         run: pnpm changeset version --snapshot beta
 
       - name: Publish to npm (beta tag)
+        if: steps.changesets.outputs.count != '0'
         run: pnpm changeset publish --tag beta --no-git-tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
