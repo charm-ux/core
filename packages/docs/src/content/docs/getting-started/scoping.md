@@ -20,15 +20,15 @@ For example,
 
 ```html
 <script type="module">
-  import { createScope } from './node_modules/@charm-ux/core/dist/utilities/scope.js';
+  import { createScope } from '@charm-ux/core/utilities/scope';
   createScope({
     // adds suffix to tags to prevent version collisions with other teams
     suffix: 'support',
   });
 </script>
 <script type="module" defer>
-  import './node_modules/@charm-ux/core/dist/components/button/index.js';
-  import './node_modules/@charm-ux/core/dist/components/card/index.js';
+  import '@charm-ux/core/components/button/index.js';
+  import '@charm-ux/core/components/card/index.js';
 </script>
 
 <!-- Now you can use <ch-button_support> and <ch-card_support> in your HTML! -->

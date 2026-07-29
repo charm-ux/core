@@ -85,7 +85,7 @@ For instance, to create a button with a nested icon and variant attribute:
 ```typescript
 // shaped-button.ts
 import { property } from 'lit/decorators.js';
-import { CoreButton } from '@charm-ux/core/dist/components/button/button.js';
+import { CoreButton } from '@charm-ux/core/components/button/button.js';
 import styles from './shaped-button.styles.js';
 
 export class ShapedButton extends CoreButton {
@@ -222,7 +222,7 @@ Provide a comprehensive [JSDoc](https://jsdoc.app/) header above your component 
 import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { CharmElement } from '@charm-ux/core';
-import { CoreIcon } from '@charm-ux/core/dist/components/icon/icon.js';
+import { CoreIcon } from '@charm-ux/core/components/icon/icon.js';
 import styles from './tag.styles.js';
 
 /**

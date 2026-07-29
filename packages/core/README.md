@@ -144,7 +144,7 @@ setThemeDefinition(myTokens.definition);
 For convenience in component styles, the helpers are also exported directly:
 
 ```typescript
-import { component } f
+import { component } from '@charm-ux/core';
 ```
 
 ### Generating Theme CSS
@@ -152,7 +152,7 @@ import { component } f
 For runtime CSS generation (SSR, build scripts), import from the dedicated path:
 
 ```typescript
-import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+import { generateTheme } from '@charm-ux/core/utilities/generate-theme';
 const { css, cssReset } = generateTheme(definition, 'myapp');
 ```
 
