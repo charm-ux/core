@@ -25,25 +25,25 @@ import styles from './breadcrumb-item.styles.js';
  * @csspart content - The container for the default slot.
  * @csspart end - The container for the 'end' slot.
  *
- * @cssproperty --charm-breadcrumb-item-control-width - Determines the width of the control.
- * @cssproperty --charm-breadcrumb-item-gap - Determines margin around start/end slot and separator.
- * @cssproperty --charm-breadcrumb-item-padding - Determines the padding of the breadcrumb item.
- * @cssproperty --charm-breadcrumb-item-border-width - Determines the width of the breadcrumb item border.
- * @cssproperty --charm-breadcrumb-item-bg-color - Set the background color of the breadcrumb item.
- * @cssproperty --charm-breadcrumb-item-border-color - Set the border color of the breadcrumb item.
- * @cssproperty --charm-breadcrumb-item-fg-color - Set the foreground color of the breadcrumb item.
- * @cssproperty --charm-breadcrumb-item-hover-bg-color - Set the background color of the breadcrumb item when hover.
- * @cssproperty --charm-breadcrumb-item-hover-border-color - Set the border color of the breadcrumb item when hover.
- * @cssproperty --charm-breadcrumb-item-hover-fg-color - Set the foreground color of the breadcrumb item when hover.
- * @cssproperty --charm-breadcrumb-item-active-bg-color - Set the background color of the breadcrumb item when active.
- * @cssproperty --charm-breadcrumb-item-active-border-color - Set the border color of the breadcrumb item when active.
- * @cssproperty --charm-breadcrumb-item-active-fg-color - Set the foreground color of the breadcrumb item when active.
- * @cssproperty --charm-breadcrumb-item-focus-bg-color - Set the background color of the breadcrumb item when focus.
- * @cssproperty --charm-breadcrumb-item-focus-border-color - Set the border color of the breadcrumb item when focus.
- * @cssproperty --charm-breadcrumb-item-focus-fg-color - Set the foreground color of the breadcrumb item when focus.
- * @cssproperty --charm-breadcrumb-item-disabled-bg-color - Set the background color of the breadcrumb item when disabled.
- * @cssproperty --charm-breadcrumb-item-disabled-border-color - Set the border color of the breadcrumb item when disabled.
- * @cssproperty --charm-breadcrumb-item-disabled-fg-color - Set the foreground color of the breadcrumb item when disabled.
+ * @cssprop --charm-breadcrumb-item-control-width - Determines the width of the control.
+ * @cssprop --charm-breadcrumb-item-gap - Determines margin around start/end slot and separator.
+ * @cssprop --charm-breadcrumb-item-padding - Determines the padding of the breadcrumb item.
+ * @cssprop --charm-breadcrumb-item-border-width - Determines the width of the breadcrumb item border.
+ * @cssprop --charm-breadcrumb-item-bg-color - Set the background color of the breadcrumb item.
+ * @cssprop --charm-breadcrumb-item-border-color - Set the border color of the breadcrumb item.
+ * @cssprop --charm-breadcrumb-item-fg-color - Set the foreground color of the breadcrumb item.
+ * @cssprop --charm-breadcrumb-item-hover-bg-color - Set the background color of the breadcrumb item when hover.
+ * @cssprop --charm-breadcrumb-item-hover-border-color - Set the border color of the breadcrumb item when hover.
+ * @cssprop --charm-breadcrumb-item-hover-fg-color - Set the foreground color of the breadcrumb item when hover.
+ * @cssprop --charm-breadcrumb-item-active-bg-color - Set the background color of the breadcrumb item when active.
+ * @cssprop --charm-breadcrumb-item-active-border-color - Set the border color of the breadcrumb item when active.
+ * @cssprop --charm-breadcrumb-item-active-fg-color - Set the foreground color of the breadcrumb item when active.
+ * @cssprop --charm-breadcrumb-item-focus-bg-color - Set the background color of the breadcrumb item when focus.
+ * @cssprop --charm-breadcrumb-item-focus-border-color - Set the border color of the breadcrumb item when focus.
+ * @cssprop --charm-breadcrumb-item-focus-fg-color - Set the foreground color of the breadcrumb item when focus.
+ * @cssprop --charm-breadcrumb-item-disabled-bg-color - Set the background color of the breadcrumb item when disabled.
+ * @cssprop --charm-breadcrumb-item-disabled-border-color - Set the border color of the breadcrumb item when disabled.
+ * @cssprop --charm-breadcrumb-item-disabled-fg-color - Set the foreground color of the breadcrumb item when disabled.
  *
  * @dependency CoreIcon
  **/

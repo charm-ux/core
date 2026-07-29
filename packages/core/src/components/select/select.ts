@@ -33,11 +33,11 @@ type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
  * @csspart start - Container for the start slot content.
  * @csspart end - Container for the end slot content.
  *
- * @cssproperty --charm-select-icon-size - Determines the chevron size.
- * @cssproperty --charm-select-option-bg-color - Determines the background color of the options.
- * @cssproperty --charm-select-option-fg-color - Determines the foreground color of the options.
+ * @cssprop --charm-select-icon-size - Determines the chevron size.
+ * @cssprop --charm-select-option-bg-color - Determines the background color of the options.
+ * @cssprop --charm-select-option-fg-color - Determines the foreground color of the options.
  *
- * @dependency icon
+ * @dependency CoreIcon
  **/
 export class CoreSelect extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];

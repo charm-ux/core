@@ -3,6 +3,7 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { keys } from '../../utilities/key-map.js';
 // import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { CoreIcon } from '../icon/icon.js';
@@ -22,7 +23,7 @@ export interface DialogRequestCloseEvent {
  * @since 1.0.0
  * @status beta
  *
- * @dependency icon
+ * @dependency CoreIcon
  *
  * @slot - The dialog's body.
  * @slot actions - The dialog's header actions, usually a back button.
@@ -46,39 +47,39 @@ export interface DialogRequestCloseEvent {
  * @csspart dialog-toolbar - The component's toolbar which contains action slot and close button.
  * @csspart dialog-wrapper - The component's base wrapper.
  *
- * @cssproperty --charm-dialog-backdrop-color - determines dialog's backdrop background.
- * @cssproperty --charm-dialog-bg-color - determines dialog's background color.
- * @cssproperty --charm-dialog-border-color - border color of the dialog element.
- * @cssproperty --charm-dialog-border-radius - determines dialog's radius.
- * @cssproperty --charm-dialog-border-width - border width of the dialog element.
- * @cssproperty --charm-dialog-close-button-active-bg-color - determines close button active background color.
- * @cssproperty --charm-dialog-close-button-active-border-color - determines close button active border color.
- * @cssproperty --charm-dialog-close-button-active-fg-color - determines close button active foreground color.
- * @cssproperty --charm-dialog-close-button-bg-color - determines close button background color.
- * @cssproperty --charm-dialog-close-button-border-color - determines close button border color.
- * @cssproperty --charm-dialog-close-button-border-radius - determines close button's border radius.
- * @cssproperty --charm-dialog-close-button-border-width - determines close button border width.
- * @cssproperty --charm-dialog-close-button-fg-color - determines close button foreground color.
- * @cssproperty --charm-dialog-close-button-focus-bg-color - determines close button focus background color.
- * @cssproperty --charm-dialog-close-button-focus-border-color - determines close button focus border color.
- * @cssproperty --charm-dialog-close-button-focus-fg-color - determines close button focus foreground color.
- * @cssproperty --charm-dialog-close-button-hover-bg-color - determines close button hover background color.
- * @cssproperty --charm-dialog-close-button-hover-border-color - determines close button hover border color.
- * @cssproperty --charm-dialog-close-button-hover-fg-color - determines close button hover foreground color.
- * @cssproperty --charm-dialog-close-button-padding - determines close X button padding.
- * @cssproperty --charm-dialog-fg-color - determines dialog's foreground color.
- * @cssproperty --charm-dialog-footer-button-gap - determines gap between buttons in the footer slot.
- * @cssproperty --charm-dialog-header-toolbar-gap - determines gap between dialog header items.
- * @cssproperty --charm-dialog-margin-top - determines dialog's top margin when it has a header or footer.
- * @cssproperty --charm-dialog-max-height - determines dialog's max height.
- * @cssproperty --charm-dialog-max-width - determines dialog's max width.
- * @cssproperty --charm-dialog-padding-x - determines dialog's inline padding.
- * @cssproperty --charm-dialog-padding-y - determines dialog's block padding.
- * @cssproperty --charm-dialog-shadow - determines dialog's shadow.
- * @cssproperty --charm-dialog-size - determines dialog's size.
- * @cssproperty --charm-dialog-toolbar-button-gap - determines gap between buttons in the actions slot.
- * @cssproperty --charm-dialog-transition - determines dialog's transform.
- * @cssproperty --charm-dialog-position-transition - determines dialog's transform when position is set.
+ * @cssprop --charm-dialog-backdrop-color - determines dialog's backdrop background.
+ * @cssprop --charm-dialog-bg-color - determines dialog's background color.
+ * @cssprop --charm-dialog-border-color - border color of the dialog element.
+ * @cssprop --charm-dialog-border-radius - determines dialog's radius.
+ * @cssprop --charm-dialog-border-width - border width of the dialog element.
+ * @cssprop --charm-dialog-close-button-active-bg-color - determines close button active background color.
+ * @cssprop --charm-dialog-close-button-active-border-color - determines close button active border color.
+ * @cssprop --charm-dialog-close-button-active-fg-color - determines close button active foreground color.
+ * @cssprop --charm-dialog-close-button-bg-color - determines close button background color.
+ * @cssprop --charm-dialog-close-button-border-color - determines close button border color.
+ * @cssprop --charm-dialog-close-button-border-radius - determines close button's border radius.
+ * @cssprop --charm-dialog-close-button-border-width - determines close button border width.
+ * @cssprop --charm-dialog-close-button-fg-color - determines close button foreground color.
+ * @cssprop --charm-dialog-close-button-focus-bg-color - determines close button focus background color.
+ * @cssprop --charm-dialog-close-button-focus-border-color - determines close button focus border color.
+ * @cssprop --charm-dialog-close-button-focus-fg-color - determines close button focus foreground color.
+ * @cssprop --charm-dialog-close-button-hover-bg-color - determines close button hover background color.
+ * @cssprop --charm-dialog-close-button-hover-border-color - determines close button hover border color.
+ * @cssprop --charm-dialog-close-button-hover-fg-color - determines close button hover foreground color.
+ * @cssprop --charm-dialog-close-button-padding - determines close X button padding.
+ * @cssprop --charm-dialog-fg-color - determines dialog's foreground color.
+ * @cssprop --charm-dialog-footer-button-gap - determines gap between buttons in the footer slot.
+ * @cssprop --charm-dialog-header-toolbar-gap - determines gap between dialog header items.
+ * @cssprop --charm-dialog-margin-top - determines dialog's top margin when it has a header or footer.
+ * @cssprop --charm-dialog-max-height - determines dialog's max height.
+ * @cssprop --charm-dialog-max-width - determines dialog's max width.
+ * @cssprop --charm-dialog-padding-x - determines dialog's inline padding.
+ * @cssprop --charm-dialog-padding-y - determines dialog's block padding.
+ * @cssprop --charm-dialog-shadow - determines dialog's shadow.
+ * @cssprop --charm-dialog-size - determines dialog's size.
+ * @cssprop --charm-dialog-toolbar-button-gap - determines gap between buttons in the actions slot.
+ * @cssprop --charm-dialog-transition - determines dialog's transform.
+ * @cssprop --charm-dialog-position-transition - determines dialog's transform when position is set.
  **/
 export class CoreDialog extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
@@ -211,7 +212,7 @@ export class CoreDialog extends CharmDismissibleElement {
    */
   protected handleKeydown = (e: KeyboardEvent) => {
     switch (e.key) {
-      case 'Escape':
+      case keys.Escape:
         e.stopPropagation();
         e.preventDefault();
         this.requestClose('keyboard');

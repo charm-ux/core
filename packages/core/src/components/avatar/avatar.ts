@@ -22,15 +22,15 @@ import styles from './avatar.styles.js';
  * @csspart avatar-status-container - A wrapper for the status indicator.
  * @csspart avatar-initials - A wrapper for the user initials.
  *
- * @cssproperty --charm-avatar-bg-color - determine the background color.
- * @cssproperty --charm-avatar-size - determine the avatar size.
- * @cssproperty --charm-avatar-border-radius - determine a round or square shape of the avatar.
- * @cssproperty --charm-avatar-indicator-bg-color - determine the background color of the status indicator.
- * @cssproperty --charm-avatar-indicator-border-width - determine the border width of the status indicator.
- * @cssproperty --charm-avatar-indicator-border-color - determine the border color of the status indicator.
- * @cssproperty --charm-avatar-indicator-border-radius - determine the border radius of the status indicator.
- * @cssproperty --charm-avatar-indicator-color - determine the color of the status indicator.
- * @cssproperty --charm-avatar-indicator-size - determine the size of the status indicator.
+ * @cssprop --charm-avatar-bg-color - determine the background color.
+ * @cssprop --charm-avatar-size - determine the avatar size.
+ * @cssprop --charm-avatar-border-radius - determine a round or square shape of the avatar.
+ * @cssprop --charm-avatar-indicator-bg-color - determine the background color of the status indicator.
+ * @cssprop --charm-avatar-indicator-border-width - determine the border width of the status indicator.
+ * @cssprop --charm-avatar-indicator-border-color - determine the border color of the status indicator.
+ * @cssprop --charm-avatar-indicator-border-radius - determine the border radius of the status indicator.
+ * @cssprop --charm-avatar-indicator-color - determine the color of the status indicator.
+ * @cssprop --charm-avatar-indicator-size - determine the size of the status indicator.
  **/
 
 export class CoreAvatar extends CharmElement {

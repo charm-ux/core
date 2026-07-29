@@ -24,7 +24,7 @@ import styles from './radio-group.styles.js';
  * @event blur - Emitted when the radio group loses focus.
  * @event focus - Emitted when the radio group gains focus.
  *
- * @cssproperty --charm-radio-group-radio-gap - The gap between radio buttons.
+ * @cssprop --charm-radio-group-radio-gap - The gap between radio buttons.
  *
  * @csspart form-control-error-text - The control's error text's wrapper.
  * @csspart radio-group-base - The component's internal wrapper.
@@ -34,7 +34,7 @@ import styles from './radio-group.styles.js';
  *
  * @omit placeholder
  *
- * @dependency icon
+ * @dependency CoreIcon
  **/
 export class CoreRadioGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
@@ -208,7 +208,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
     const radios = this.radios.filter(radio => !radio.disabled);
     const checkedRadio = radios.find(radio => radio.checked) ?? radios[0];
-    const incr = event.key === ' ' ? 0 : ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : 1;
+    const incr = event.key === keys.Space ? 0 : [keys.ArrowUp, keys.ArrowLeft].includes(event.key) ? -1 : 1;
     let index = radios.indexOf(checkedRadio) + incr;
     if (index < 0) {
       index = radios.length - 1;

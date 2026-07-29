@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { html } from 'lit/static-html.js';
 import { getStorybookHelpers } from '@wc-toolkit/storybook-helpers';
+import CharmElement from '../../base/charm-element/charm-element.js';
+import { project } from '../../utilities/project.js';
 import '../button/index.js';
 import './index.js';
 import '../menu/index.js';
@@ -125,10 +126,10 @@ export const ChildWithTransition: Story = {
   },
 };
 
-@customElement('my-element-dialog')
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class MyElement extends LitElement {
-  public render() {
+class MyDialogWrapper extends CharmElement {
+  public static override baseName = 'dialog-wrapper';
+
+  protected override render() {
     return html`
       <ch-dialog id="dialog1">
         <span slot="heading">dialog heading</span>
@@ -150,9 +151,10 @@ class MyElement extends LitElement {
     `;
   }
 }
+project.scope.registerComponent(MyDialogWrapper);
 
 export const InsideWebComponent: Story = {
-  render: () => html`<my-element-dialog></my-element-dialog>`,
+  render: () => html`<ch-dialog-wrapper></ch-dialog-wrapper>`,
   args: {
     heading: 'Testing transitionend event inside a web component with slotted content with a transition',
   },

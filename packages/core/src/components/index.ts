@@ -15,7 +15,6 @@ export * from './divider/divider.js';
 export * from './menu/menu.js';
 export * from './icon/icon.js';
 export * from './input/input.js';
-export * from './menu/menu.js';
 export * from './menu-group/menu-group.js';
 export * from './menu-item/menu-item.js';
 export * from './overflow/overflow.js';

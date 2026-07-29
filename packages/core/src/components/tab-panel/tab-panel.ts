@@ -16,17 +16,17 @@ import type { CoreTab } from '../tab/tab.js';
  *
  * @csspart tab-panel-base - The component's internal wrapper.
  *
- * @cssproperty --charm-tab-panel-padding-x - The component's inline padding.
- * @cssproperty --charm-tab-panel-padding-y - The component's block padding.
- * @cssproperty --charm-tab-panel-transition - The transition when showing/hiding.
- * @cssproperty --charm-tab-panel-border-color - The border color of the tab panel.
- * @cssproperty --charm-tab-panel-border-width - The border width of the tab panel.
- * @cssproperty --charm-tab-panel-border-style - The border style of the tab panel.
- * @cssproperty --charm-tab-panel-border-radius - The border radius of the tab panel.
- * @cssproperty --charm-tab-panel-min-height - The minimum height of the tab panel.
- * @cssproperty --charm-tab-panel-box-shadow - The box shadow of the tab panel.
- * @cssproperty --charm-tab-panel-bg-color - The background color of the tab panel.
- * @cssproperty --charm-tab-panel-fg-color - The foreground color of the tab panel.
+ * @cssprop --charm-tab-panel-padding-x - The component's inline padding.
+ * @cssprop --charm-tab-panel-padding-y - The component's block padding.
+ * @cssprop --charm-tab-panel-transition - The transition when showing/hiding.
+ * @cssprop --charm-tab-panel-border-color - The border color of the tab panel.
+ * @cssprop --charm-tab-panel-border-width - The border width of the tab panel.
+ * @cssprop --charm-tab-panel-border-style - The border style of the tab panel.
+ * @cssprop --charm-tab-panel-border-radius - The border radius of the tab panel.
+ * @cssprop --charm-tab-panel-min-height - The minimum height of the tab panel.
+ * @cssprop --charm-tab-panel-box-shadow - The box shadow of the tab panel.
+ * @cssprop --charm-tab-panel-bg-color - The background color of the tab panel.
+ * @cssprop --charm-tab-panel-fg-color - The foreground color of the tab panel.
  *
  * @event tab-show - Emitted when the tab panel is shown.
  * @event tab-hide - Emitted when the tab panel is hidden.

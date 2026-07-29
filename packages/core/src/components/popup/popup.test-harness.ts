@@ -1,7 +1,7 @@
 import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
-import { type Placement } from '@floating-ui/dom';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CorePopup } from './index.js';
+import type { PopupPlacement } from './popup.js';
 
 export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
   public constructor() {
@@ -172,7 +172,7 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.open = true;
                   await elementUpdated(el); // these should match popup placement exactly
 
-                  const unchangedPositions: Array<Placement> = [
+                  const unchangedPositions: Array<PopupPlacement> = [
                     'top',
                     'top-start',
                     'top-end',
