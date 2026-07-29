@@ -1,6 +1,7 @@
 import { html } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
+import { keys } from '../../utilities/key-map.js';
 import { CorePopup, PopupPlacement } from '../popup/popup.js';
 import { CoreMenuItem } from '../menu-item/menu-item.js';
 import { CoreMenuGroup } from '../menu-group/menu-group.js';
@@ -36,18 +37,18 @@ let dropdownButtonId = 0;
  * @csspart menu-popup-base - The popup's internal container.
  * @csspart menu-popup - The popup's base wrapper.
  *
- * @cssproperty --charm-menu-bg-color - The background color of the menu.
- * @cssproperty --charm-menu-border-color - The border color of the menu.
- * @cssproperty --charm-menu-border-radius - The border radius of the menu.
- * @cssproperty --charm-menu-border-style - The border style of the menu.
- * @cssproperty --charm-menu-border-width - The border width of the menu.
- * @cssproperty --charm-menu-max-width - The maximum width of the menu.
- * @cssproperty --charm-menu-min-width - The minimum width of the menu.
- * @cssproperty --charm-menu-popup-padding - The padding to apply to the menu popup.
- * @cssproperty --charm-menu-shadow - The shadow of the menu.
- * @cssproperty --charm-menu-transition - The transition of the menu.
- * @cssproperty --charm-menu-width - The width of the menu.
- * @cssproperty --charm-menu-z-index - The z-index of the menu.
+ * @cssprop --charm-menu-bg-color - The background color of the menu.
+ * @cssprop --charm-menu-border-color - The border color of the menu.
+ * @cssprop --charm-menu-border-radius - The border radius of the menu.
+ * @cssprop --charm-menu-border-style - The border style of the menu.
+ * @cssprop --charm-menu-border-width - The border width of the menu.
+ * @cssprop --charm-menu-max-width - The maximum width of the menu.
+ * @cssprop --charm-menu-min-width - The minimum width of the menu.
+ * @cssprop --charm-menu-popup-padding - The padding to apply to the menu popup.
+ * @cssprop --charm-menu-shadow - The shadow of the menu.
+ * @cssprop --charm-menu-transition - The transition of the menu.
+ * @cssprop --charm-menu-width - The width of the menu.
+ * @cssprop --charm-menu-z-index - The z-index of the menu.
  *
  * @dependency CorePopup
  **/
@@ -165,7 +166,7 @@ export class CoreMenu extends CharmDismissibleElement {
     const parentGroup = currentItem.closest('[menu-group]') as CoreMenuGroup | null;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case keys.ArrowDown:
         if (!this.open) {
           await this.show();
           this.setFocus(this.items.length + 1);
@@ -177,7 +178,7 @@ export class CoreMenu extends CharmDismissibleElement {
         keyHandled = true;
         break;
 
-      case 'ArrowUp':
+      case keys.ArrowUp:
         if (!this.open) {
           await this.show();
           this.setFocus(this.items.length - 1);
@@ -189,18 +190,18 @@ export class CoreMenu extends CharmDismissibleElement {
         keyHandled = true;
         break;
 
-      case 'Home':
+      case keys.Home:
         this.setFocus(0);
         keyHandled = true;
         break;
 
-      case 'End':
+      case keys.End:
         this.setFocus(this.items.length - 1);
         keyHandled = true;
         break;
 
-      case 'Enter':
-      case ' ':
+      case keys.Enter:
+      case keys.Space:
         if (this.trigger?.matches(':focus') && !this.open) {
           e.preventDefault();
           await this.show();

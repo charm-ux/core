@@ -25,11 +25,11 @@ import styles from './text-area.styles.js';
  * @csspart textarea-control - The textarea control.
  * @csspart textarea-control-input - The textarea input.
  *
- * @cssproperty --charm-textarea-control-input-line-height - The line-height of the textarea control input.
- * @cssproperty --charm-textarea-control-input-min-height - The min-height of the textarea control input.
- * @cssproperty --charm-textarea-control-input-min-width - The min-width of the textarea control input.
+ * @cssprop --charm-textarea-control-input-line-height - The line-height of the textarea control input.
+ * @cssprop --charm-textarea-control-input-min-height - The min-height of the textarea control input.
+ * @cssprop --charm-textarea-control-input-min-width - The min-width of the textarea control input.
  *
- * @dependency icon
+ * @dependency CoreIcon
  **/
 export class CoreTextArea extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];

@@ -20,12 +20,12 @@ export interface SelectedMenuItem {
  *
  * @event {SelectedMenuItem} menu-group-select - Emitted when a menu item is selected in a group.
  *
- * @cssproperty --charm-menu-group-heading-padding-x - The x padding for the menu group header.
- * @cssproperty --charm-menu-group-heading-padding-y - The y padding for the menu group header.
- * @cssproperty --charm-menu-group-heading-weight - The font weight for the menu group header.
- * @cssproperty --charm-menu-group-heading-size - The font size for the menu group header.
- * @cssproperty --charm-menu-group-heading-line-height - The line height for the menu group header.
- * @cssproperty --charm-menu-group-heading-margin - The margin for the menu group header.
+ * @cssprop --charm-menu-group-heading-padding-x - The x padding for the menu group header.
+ * @cssprop --charm-menu-group-heading-padding-y - The y padding for the menu group header.
+ * @cssprop --charm-menu-group-heading-weight - The font weight for the menu group header.
+ * @cssprop --charm-menu-group-heading-size - The font size for the menu group header.
+ * @cssprop --charm-menu-group-heading-line-height - The line height for the menu group header.
+ * @cssprop --charm-menu-group-heading-margin - The margin for the menu group header.
  *
  * @csspart menu-group-base - The base wrapper for the menu group.
  * @csspart menu-group-heading - The heading element for the menu group.

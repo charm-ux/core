@@ -28,41 +28,41 @@ import styles from './button.styles.js';
  * @csspart content - The button's label.
  * @csspart end - The container that wraps the suffix.
  *
- * @cssproperty --charm-button-active-bg-color - Sets the background color of the button when active.
- * @cssproperty --charm-button-active-border-color - Sets the border color of the button when active.
- * @cssproperty --charm-button-active-fg-color - Sets button's text color when active.
- * @cssproperty --charm-button-active-shadow - Sets button's box-shadow when active.
- * @cssproperty --charm-button-bg-color - Sets the background color of the button.
- * @cssproperty --charm-button-border-color - Sets the border color of the button.
- * @cssproperty --charm-button-border-radius - Sets button's border-radius.
- * @cssproperty --charm-button-border-style - Sets the border style of the button.
- * @cssproperty --charm-button-border-width - Sets the border width of the button.
- * @cssproperty --charm-button-content-alignment - Sets the alignment of the button content.
- * @cssproperty --charm-button-content-gap - Determines the spacing between the slots.
- * @cssproperty --charm-button-disabled-bg-color - Sets the background color of the button when disabled.
- * @cssproperty --charm-button-disabled-border-color - Sets the border color of the button when disabled.
- * @cssproperty --charm-button-disabled-cursor - Sets the cursor style when disabled.
- * @cssproperty --charm-button-disabled-fg-color - Sets button's text color when disabled.
- * @cssproperty --charm-button-disabled-shadow - Sets button's box-shadow when disabled.
- * @cssproperty --charm-button-fg-color - Sets button's text color.
- * @cssproperty --charm-button-focus-bg-color - Sets the background color of the button when focused.
- * @cssproperty --charm-button-focus-border-color - Sets the border color of the button when focused.
- * @cssproperty --charm-button-focus-fg-color - Sets button's text color when focused.
- * @cssproperty --charm-button-focus-shadow - Sets button's box-shadow when focused.
- * @cssproperty --charm-button-font-weight - Sets the font weight of the button.
- * @cssproperty --charm-button-hover-bg-color - Sets the background color of the button when hovered.
- * @cssproperty --charm-button-hover-border-color - Sets the border color of the button when hovered.
- * @cssproperty --charm-button-hover-fg-color - Sets button's text color when hovered.
- * @cssproperty --charm-button-hover-shadow - Sets button's box-shadow when hovered.
- * @cssproperty --charm-button-icon-padding-x - Sets the horizontal padding for icon-only buttons.
- * @cssproperty --charm-button-icon-padding-y - Sets the vertical padding for icon-only buttons.
- * @cssproperty --charm-button-icon-size - Sets the height and width of the slotted icon and svg.
- * @cssproperty --charm-button-padding-x - Determines left and right padding.
- * @cssproperty --charm-button-padding-y - Determines top and bottom padding.
- * @cssproperty --charm-button-pressed-bg-color - Sets the background color of the button when toggled.
- * @cssproperty --charm-button-pressed-border-color - Sets the border color of the button when toggled.
- * @cssproperty --charm-button-pressed-fg-color - Sets button's text color when toggled.
- * @cssproperty --charm-button-shadow - Sets button's box-shadow.
+ * @cssprop --charm-button-active-bg-color - Sets the background color of the button when active.
+ * @cssprop --charm-button-active-border-color - Sets the border color of the button when active.
+ * @cssprop --charm-button-active-fg-color - Sets button's text color when active.
+ * @cssprop --charm-button-active-shadow - Sets button's box-shadow when active.
+ * @cssprop --charm-button-bg-color - Sets the background color of the button.
+ * @cssprop --charm-button-border-color - Sets the border color of the button.
+ * @cssprop --charm-button-border-radius - Sets button's border-radius.
+ * @cssprop --charm-button-border-style - Sets the border style of the button.
+ * @cssprop --charm-button-border-width - Sets the border width of the button.
+ * @cssprop --charm-button-content-alignment - Sets the alignment of the button content.
+ * @cssprop --charm-button-content-gap - Determines the spacing between the slots.
+ * @cssprop --charm-button-disabled-bg-color - Sets the background color of the button when disabled.
+ * @cssprop --charm-button-disabled-border-color - Sets the border color of the button when disabled.
+ * @cssprop --charm-button-disabled-cursor - Sets the cursor style when disabled.
+ * @cssprop --charm-button-disabled-fg-color - Sets button's text color when disabled.
+ * @cssprop --charm-button-disabled-shadow - Sets button's box-shadow when disabled.
+ * @cssprop --charm-button-fg-color - Sets button's text color.
+ * @cssprop --charm-button-focus-bg-color - Sets the background color of the button when focused.
+ * @cssprop --charm-button-focus-border-color - Sets the border color of the button when focused.
+ * @cssprop --charm-button-focus-fg-color - Sets button's text color when focused.
+ * @cssprop --charm-button-focus-shadow - Sets button's box-shadow when focused.
+ * @cssprop --charm-button-font-weight - Sets the font weight of the button.
+ * @cssprop --charm-button-hover-bg-color - Sets the background color of the button when hovered.
+ * @cssprop --charm-button-hover-border-color - Sets the border color of the button when hovered.
+ * @cssprop --charm-button-hover-fg-color - Sets button's text color when hovered.
+ * @cssprop --charm-button-hover-shadow - Sets button's box-shadow when hovered.
+ * @cssprop --charm-button-icon-padding-x - Sets the horizontal padding for icon-only buttons.
+ * @cssprop --charm-button-icon-padding-y - Sets the vertical padding for icon-only buttons.
+ * @cssprop --charm-button-icon-size - Sets the height and width of the slotted icon and svg.
+ * @cssprop --charm-button-padding-x - Determines left and right padding.
+ * @cssprop --charm-button-padding-y - Determines top and bottom padding.
+ * @cssprop --charm-button-pressed-bg-color - Sets the background color of the button when toggled.
+ * @cssprop --charm-button-pressed-border-color - Sets the border color of the button when toggled.
+ * @cssprop --charm-button-pressed-fg-color - Sets button's text color when toggled.
+ * @cssprop --charm-button-shadow - Sets button's box-shadow.
  **/
 export class CoreButton extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];

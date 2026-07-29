@@ -28,6 +28,16 @@ export class CoreAccordion extends CharmElement {
   /** Used to prevent multiple calls to the logic when updating the `open` attribute when `openSingle` is true */
   protected updating = false;
 
+  protected updateTimer?: number;
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.updateTimer) {
+      clearTimeout(this.updateTimer);
+      this.updateTimer = undefined;
+    }
+  }
+
   /** Ensures only one item is open at a time. */
   protected async handleOpenChange(event: Event) {
     if (!this.openSingle || this.updating) return;
@@ -44,7 +54,10 @@ export class CoreAccordion extends CharmElement {
     }
 
     // Allow the update to complete before resetting the updating flag
-    setTimeout(() => (this.updating = false));
+    this.updateTimer = window.setTimeout(() => {
+      this.updating = false;
+      this.updateTimer = undefined;
+    });
   }
 
   /** Generate the accordion template with declarative event handling. */

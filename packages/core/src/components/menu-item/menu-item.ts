@@ -2,6 +2,7 @@ import { nothing, PropertyValues } from 'lit';
 import { html, literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { keys } from '../../utilities/key-map.js';
 import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
@@ -38,32 +39,32 @@ import styles from './menu-item.styles.js';
  * @csspart menu-item-radio-indicator - The control's radio indicator.
  * @csspart menu-item-submenu-item-icon-expanded - The control's submenu icon when expanded.
  *
- * @cssproperty --charm-menu-item-active-bg-color - Determines the background color when active.
- * @cssproperty --charm-menu-item-active-border-color - Determines the border color when active.
- * @cssproperty --charm-menu-item-active-fg-color - Determines the foreground color when active.
- * @cssproperty --charm-menu-item-bg-color - Determines the background color.
- * @cssproperty --charm-menu-item-border-color - Determines the border color.
- * @cssproperty --charm-menu-item-border-radius - Determines the border radius of the menu item.
- * @cssproperty --charm-menu-item-disabled-bg-color - Determines the background color when disabled.
- * @cssproperty --charm-menu-item-disabled-border-color - Determines the border color when disabled.
- * @cssproperty --charm-menu-item-disabled-fg-color - Determines the foreground color when disabled.
- * @cssproperty --charm-menu-item-fg-color - Determines the foreground color.
- * @cssproperty --charm-menu-item-focus-outline-color - Determines the outline color when focused.
- * @cssproperty --charm-menu-item-focus-outline-offset - Determines the outline offset when focused.
- * @cssproperty --charm-menu-item-hover-bg-color - Determines the background color when hovered.
- * @cssproperty --charm-menu-item-hover-border-color - Determines the border color when hovered.
- * @cssproperty --charm-menu-item-hover-fg-color - Determines the foreground color when hovered.
- * @cssproperty --charm-menu-item-input-container-width - Determines the width of the input container.
- * @cssproperty --charm-menu-item-input-hover-bg-color - Determines the background color of the input container when hovered.
- * @cssproperty --charm-menu-item-input-size - Determines the size of the input (checkbox or radio).
- * @cssproperty --charm-menu-item-margin-x - Determines the inline margin of the menu item.
- * @cssproperty --charm-menu-item-padding-x - Determines list item's inline padding.
- * @cssproperty --charm-menu-item-padding-y - Determines list item's block padding.
- * @cssproperty --charm-menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
- * @cssproperty --charm-menu-item-radio-bg-color - Determines the background color of the radio indicator.
- * @cssproperty --charm-menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
- * @cssproperty --charm-menu-item-submenu-item-icon-rotation - Determines the rotation of the submenu icon on expanded.
- * @cssproperty --charm-menu-item-submenu-item-icon-size - Determines the size of the submenu icon.
+ * @cssprop --charm-menu-item-active-bg-color - Determines the background color when active.
+ * @cssprop --charm-menu-item-active-border-color - Determines the border color when active.
+ * @cssprop --charm-menu-item-active-fg-color - Determines the foreground color when active.
+ * @cssprop --charm-menu-item-bg-color - Determines the background color.
+ * @cssprop --charm-menu-item-border-color - Determines the border color.
+ * @cssprop --charm-menu-item-border-radius - Determines the border radius of the menu item.
+ * @cssprop --charm-menu-item-disabled-bg-color - Determines the background color when disabled.
+ * @cssprop --charm-menu-item-disabled-border-color - Determines the border color when disabled.
+ * @cssprop --charm-menu-item-disabled-fg-color - Determines the foreground color when disabled.
+ * @cssprop --charm-menu-item-fg-color - Determines the foreground color.
+ * @cssprop --charm-menu-item-focus-outline-color - Determines the outline color when focused.
+ * @cssprop --charm-menu-item-focus-outline-offset - Determines the outline offset when focused.
+ * @cssprop --charm-menu-item-hover-bg-color - Determines the background color when hovered.
+ * @cssprop --charm-menu-item-hover-border-color - Determines the border color when hovered.
+ * @cssprop --charm-menu-item-hover-fg-color - Determines the foreground color when hovered.
+ * @cssprop --charm-menu-item-input-container-width - Determines the width of the input container.
+ * @cssprop --charm-menu-item-input-hover-bg-color - Determines the background color of the input container when hovered.
+ * @cssprop --charm-menu-item-input-size - Determines the size of the input (checkbox or radio).
+ * @cssprop --charm-menu-item-margin-x - Determines the inline margin of the menu item.
+ * @cssprop --charm-menu-item-padding-x - Determines list item's inline padding.
+ * @cssprop --charm-menu-item-padding-y - Determines list item's block padding.
+ * @cssprop --charm-menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
+ * @cssprop --charm-menu-item-radio-bg-color - Determines the background color of the radio indicator.
+ * @cssprop --charm-menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
+ * @cssprop --charm-menu-item-submenu-item-icon-rotation - Determines the rotation of the submenu icon on expanded.
+ * @cssprop --charm-menu-item-submenu-item-icon-size - Determines the size of the submenu icon.
  *
  * @dependency CoreIcon
  * @dependency CoreMenu
@@ -260,15 +261,15 @@ export class CoreMenuItem extends CharmElement {
     let keyHandled = false;
 
     switch (e.key) {
-      case 'Enter':
-      case ' ':
+      case keys.Enter:
+      case keys.Space:
         if (!this.disabled) {
           this.click();
           keyHandled = true;
         }
         break;
 
-      case 'ArrowRight':
+      case keys.ArrowRight:
         if (this.hasSubmenu && !this.expanded) {
           this.expanded = true;
           await this.updateComplete;
@@ -277,7 +278,7 @@ export class CoreMenuItem extends CharmElement {
         }
         break;
 
-      case 'ArrowLeft':
+      case keys.ArrowLeft:
         if (this.hasSubmenu && this.expanded) {
           this.expanded = false;
           requestAnimationFrame(() => {

@@ -50,6 +50,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`
 - [CHARM-007](internal/CHARM-007.md) — Use the dual named + default export, class in its own `.ts`
 - [CHARM-008](internal/CHARM-008.md) — Register icons as inline SVG strings in the icon set, not asset files
+- [CHARM-009](internal/CHARM-009.md) — Use correct JSDoc annotation tags (`@cssprop`, not `@cssproperty`)
 
 ### COMP — component design (path-gated)
 
@@ -90,6 +91,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [STYLE-005](styling/STYLE-005.md) — Expose parts intentionally and avoid inline styles
 - [STYLE-006](styling/STYLE-006.md) — Toggle conditional classes with `classMap()`, not string concatenation
 - [STYLE-007](styling/STYLE-007.md) — Author theme tokens as a three-tier `defineTokens` set; alias with `ref()`, extend don't fork
+- [STYLE-008](styling/STYLE-008.md) — Set runtime-computed CSS custom properties with `this.style.setProperty()`
 
 ### A11Y — accessibility (always loaded)
 
@@ -128,6 +130,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CODE-003](code/CODE-003.md) — Order and sort imports
 - [CODE-004](code/CODE-004.md) — Respect the TS/Lit compiler contract (erasable syntax, type-only imports, decorators)
 - [CODE-005](code/CODE-005.md) — Respect module boundaries — never edit generated entrypoints, don't rely on deep imports
+- [CODE-006](code/CODE-006.md) — Re-export external dependency types through the owning module
 
 ### PROC — process (always loaded)
 
