@@ -47,7 +47,7 @@ Component style files read `tokens.lit` once, when the style module first evalua
 ```typescript
 // main.ts
 import './project-config.js'; // configures prefix and theme first
-import '@charm-ux/core/dist/components/button/index.js'; // components now pick up the configured theme
+import '@charm-ux/core/components/button/index.js'; // components now pick up the configured theme
 ```
 
 ## Styling with Custom Properties
@@ -83,7 +83,7 @@ For instance, to create a button with a nested icon and variant attribute:
 ```typescript
 // shaped-button.ts
 import { property } from 'lit/decorators.js';
-import { CoreButton } from '@charm-ux/core/dist/components/button/button.js';
+import { CoreButton } from '@charm-ux/core/components/button/button.js';
 import styles from './shaped-button.styles.js';
 
 export class ShapedButton extends CoreButton {
@@ -197,7 +197,7 @@ If you need to generate theme CSS at runtime (server-side rendering, build scrip
 import from the dedicated path to avoid pulling the CSS generator into your main bundle:
 
 ```typescript
-import { generateTheme } from '@charm-ux/core/dist/utilities/generate-theme.js';
+import { generateTheme } from '@charm-ux/core/utilities/generate-theme';
 
 const { css, cssReset, cssUtilities } = generateTheme(myDefinition, 'fui');
 ```
@@ -220,7 +220,7 @@ Provide a comprehensive [JSDoc](https://jsdoc.app/) header above your component 
 import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { CharmElement } from '@charm-ux/core';
-import { CoreIcon } from '@charm-ux/core/dist/components/icon/icon.js';
+import { CoreIcon } from '@charm-ux/core/components/icon/icon.js';
 import styles from './tag.styles.js';
 
 /**

@@ -16,7 +16,7 @@ Upgrade theming system with configurable project token prefix and streamlined he
 import { CoreButton } from '@charm-ux/core';
 
 // After
-import { CoreButton } from '@charm-ux/core/dist/components/button/button.js';
+import { CoreButton } from '@charm-ux/core/components/button/button.js';
 ```
 
 Utilities like `project`, `CharmElement`, and `CharmDismissibleElement` remain on the main entry point.
