@@ -1,5 +1,5 @@
 ---
-'@charm-ux/core': major
+'@charm-ux/core': minor
 '@charm-ux/theming': minor
 ---
 

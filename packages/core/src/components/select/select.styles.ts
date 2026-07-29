@@ -1,8 +1,6 @@
 import { css } from 'lit';
-import { tokens } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/index.js';
-
-const { component, semantic } = tokens.lit;
 
 export default css`
   :host([multiple]) .chevron {

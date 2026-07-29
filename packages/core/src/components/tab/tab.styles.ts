@@ -1,8 +1,6 @@
 import { css } from 'lit';
-import { tokens } from '../../utilities/theme.js';
+import { component } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
-
-const { component } = tokens.lit;
 
 export default css`
   :host {
