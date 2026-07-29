@@ -2439,6 +2439,14 @@
             },
             {
               "kind": "field",
+              "name": "updateTimer",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "updating",
               "type": {
                 "text": "boolean"
@@ -3247,7 +3255,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -5215,6 +5223,12 @@
             "name": "beta",
             "description": ""
           },
+          "dependencies": [
+            {
+              "name": "CoreDivider",
+              "description": ""
+            }
+          ],
           "cssParts": [
             {
               "description": "The component's base wrapper.",
@@ -8470,7 +8484,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -9385,7 +9399,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -11176,6 +11190,14 @@
             },
             {
               "kind": "field",
+              "name": "enterKeyTimer",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "errorMessage",
               "type": {
                 "text": "string"
@@ -12213,7 +12235,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -14638,19 +14660,19 @@
           },
           "dependencies": [
             {
-              "name": "Button",
+              "name": "CoreButton",
               "description": ""
             },
             {
-              "name": "Icon",
+              "name": "CoreIcon",
               "description": ""
             },
             {
-              "name": "Menu",
+              "name": "CoreMenu",
               "description": ""
             },
             {
-              "name": "MenuItem",
+              "name": "CoreMenuItem",
               "description": ""
             }
           ],
@@ -17101,7 +17123,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -18505,7 +18527,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -20771,7 +20793,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -22770,7 +22792,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -25266,7 +25288,7 @@
           },
           "dependencies": [
             {
-              "name": "icon",
+              "name": "CoreIcon",
               "description": ""
             }
           ],
@@ -26220,7 +26242,7 @@
           },
           "dependencies": [
             {
-              "name": "popup",
+              "name": "CorePopup",
               "description": ""
             }
           ],

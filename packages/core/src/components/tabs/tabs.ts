@@ -26,17 +26,17 @@ let charmTabsId = 0;
  *
  * @csspart tabs-tablist - The tab list container.
  *
- * @cssproperty --charm-tabs-align - The alignment of the tabs ('start', 'center', or 'end').
- * @cssproperty --charm-tabs-bg-color - The background color of the tabs container.
- * @cssproperty --charm-tabs-border-color - The border color of the tabs container.
- * @cssproperty --charm-tabs-border-radius - The border radius of the tabs container.
- * @cssproperty --charm-tabs-border-style - The border style of the tabs container.
- * @cssproperty --charm-tabs-border-width - The border width of the tabs container.
- * @cssproperty --charm-tabs-gap - The gap between each tab.
- * @cssproperty --charm-tabs-padding-x - The horizontal padding of the tabs container.
- * @cssproperty --charm-tabs-padding-y - The vertical padding of the tabs container.
- * @cssproperty --charm-tabs-tablist-spacing - The spacing between the tablist and tab panels.
- * @cssproperty --charm-tabs-vertical-min-width - The minimum width for tabs in vertical layout.
+ * @cssprop --charm-tabs-align - The alignment of the tabs ('start', 'center', or 'end').
+ * @cssprop --charm-tabs-bg-color - The background color of the tabs container.
+ * @cssprop --charm-tabs-border-color - The border color of the tabs container.
+ * @cssprop --charm-tabs-border-radius - The border radius of the tabs container.
+ * @cssprop --charm-tabs-border-style - The border style of the tabs container.
+ * @cssprop --charm-tabs-border-width - The border width of the tabs container.
+ * @cssprop --charm-tabs-gap - The gap between each tab.
+ * @cssprop --charm-tabs-padding-x - The horizontal padding of the tabs container.
+ * @cssprop --charm-tabs-padding-y - The vertical padding of the tabs container.
+ * @cssprop --charm-tabs-tablist-spacing - The spacing between the tablist and tab panels.
+ * @cssprop --charm-tabs-vertical-min-width - The minimum width for tabs in vertical layout.
  *
  * @event {TabsChangeEvent} tabs-change - Emitted when the active tab changes.
  *
@@ -116,15 +116,26 @@ export class CoreTabs extends CharmElement {
   /** Checks if the given key is invalid for the current layout. Don't handle horizontal keys if we're vertical and vice versa */
   protected isInvalidKeyForLayout(key: string) {
     return (
-      (this.layout == 'horizontal' && ['ArrowUp', 'ArrowDown'].includes(key)) ||
-      ((this.layout == 'vertical' || undefined) && ['ArrowRight', 'ArrowLeft'].includes(key))
+      (this.layout == 'horizontal' && [keys.ArrowUp, keys.ArrowDown].includes(key)) ||
+      ((this.layout == 'vertical' || undefined) && [keys.ArrowRight, keys.ArrowLeft].includes(key))
     );
   }
 
   /** Handles the keydown event on a tab. */
   protected handleTabKeyDown(e: KeyboardEvent) {
     // don't handle keys we don't care about
-    if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ', 'Enter'].includes(e.key)) {
+    if (
+      ![
+        keys.ArrowRight,
+        keys.ArrowLeft,
+        keys.ArrowUp,
+        keys.ArrowDown,
+        keys.Home,
+        keys.End,
+        keys.Space,
+        keys.Enter,
+      ].includes(e.key)
+    ) {
       return;
     }
 

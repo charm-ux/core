@@ -5,6 +5,7 @@ import { property, query, state } from 'lit/decorators.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
 import { parseDuration } from '../../internal/animations.js';
+import { keys } from '../../utilities/key-map.js';
 import styles from './tooltip.styles.js';
 
 /** Possible tooltip placements */
@@ -16,7 +17,7 @@ import styles from './tooltip.styles.js';
  * @since 1.0.0
  * @status beta
  *
- * @dependency popup
+ * @dependency CorePopup
  *
  * @slot - The element to anchor the tooltip to.
  * @slot content - The tooltip's content. You can also use the `content` attribute.
@@ -32,21 +33,21 @@ import styles from './tooltip.styles.js';
  * @csspart popup-arrow - The popup's `arrow` part. Use this to target the tooltip's arrow.
  * @csspart body - The tooltip's body.
  *
- * @cssproperty --charm-tooltip-arrow-border-color - The border color of the tooltip arrow
- * @cssproperty --charm-tooltip-arrow-size - The size of the tooltip arrow
- * @cssproperty --charm-tooltip-bg-color - The background color of the tooltip
- * @cssproperty --charm-tooltip-border-color - The border color of the tooltip
- * @cssproperty --charm-tooltip-border-radius - The border radius of the tooltip
- * @cssproperty --charm-tooltip-border-style - The border style of the tooltip
- * @cssproperty --charm-tooltip-border-width - The border width of the tooltip
- * @cssproperty --charm-tooltip-box-shadow - The box shadow of the tooltip
- * @cssproperty --charm-tooltip-fg-color - The foreground color of the tooltip
- * @cssproperty --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
- * @cssproperty --charm-tooltip-max-width - The maximum width of the tooltip.
- * @cssproperty --charm-tooltip-padding - The padding of the tooltip
- * @cssproperty --charm-tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
- * @cssproperty --charm-tooltip-show-transition - The transition effect when opening the tooltip
- * @cssproperty --charm-tooltip-show-transition - The transition effect when closing the tooltip
+ * @cssprop --charm-tooltip-arrow-border-color - The border color of the tooltip arrow
+ * @cssprop --charm-tooltip-arrow-size - The size of the tooltip arrow
+ * @cssprop --charm-tooltip-bg-color - The background color of the tooltip
+ * @cssprop --charm-tooltip-border-color - The border color of the tooltip
+ * @cssprop --charm-tooltip-border-radius - The border radius of the tooltip
+ * @cssprop --charm-tooltip-border-style - The border style of the tooltip
+ * @cssprop --charm-tooltip-border-width - The border width of the tooltip
+ * @cssprop --charm-tooltip-box-shadow - The box shadow of the tooltip
+ * @cssprop --charm-tooltip-fg-color - The foreground color of the tooltip
+ * @cssprop --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
+ * @cssprop --charm-tooltip-max-width - The maximum width of the tooltip.
+ * @cssprop --charm-tooltip-padding - The padding of the tooltip
+ * @cssprop --charm-tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
+ * @cssprop --charm-tooltip-show-transition - The transition effect when opening the tooltip
+ * @cssprop --charm-tooltip-show-transition - The transition effect when closing the tooltip
  */
 
 export class CoreTooltip extends CharmDismissibleElement {
@@ -217,6 +218,10 @@ export class CoreTooltip extends CharmDismissibleElement {
   public override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeListeners();
+    if (this.hoverTimeout) {
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = undefined;
+    }
   }
 
   /** Updates the trigger of the tooltip if the anchor is provided as a string. */
@@ -333,7 +338,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Handles keydown event on the popup */
   protected handleKeyDown(event: KeyboardEvent) {
     // Pressing escape when the target element has focus should dismiss the tooltip
-    if (this.open && event.key === 'Escape') {
+    if (this.open && event.key === keys.Escape) {
       event.stopPropagation();
       this.hide();
     }

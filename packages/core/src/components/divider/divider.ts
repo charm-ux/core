@@ -15,11 +15,11 @@ import styles from './divider.styles.js';
  * @csspart divider-line - The divider's line.
  * @csspart divider-text - The divider's text.
  *
- * @cssproperty --charm-divider-border - The border of the divider line.
- * @cssproperty --charm-divider-inset - The padding of the divider in the direction of the inset.
- * @cssproperty --charm-divider-text-gap - The gap between the divider and the text.
- * @cssproperty --charm-divider-text-offset - The amount of space to offset the text in the divider when it is aligned.
- * @cssproperty --charm-divider-vertical-min-height - The minimum height of the divider when it is vertical.
+ * @cssprop --charm-divider-border - The border of the divider line.
+ * @cssprop --charm-divider-inset - The padding of the divider in the direction of the inset.
+ * @cssprop --charm-divider-text-gap - The gap between the divider and the text.
+ * @cssprop --charm-divider-text-offset - The amount of space to offset the text in the divider when it is aligned.
+ * @cssprop --charm-divider-vertical-min-height - The minimum height of the divider when it is vertical.
  **/
 
 export class CoreDivider extends CharmElement {

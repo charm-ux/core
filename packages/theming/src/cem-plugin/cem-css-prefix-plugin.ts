@@ -1,7 +1,7 @@
 /**
  * Custom Elements Manifest tooling for normalizing the CSS custom property prefix.
  *
- * Components document their CSS custom properties via `@cssproperty` JSDoc tags, but
+ * Components document their CSS custom properties via `@cssprop`/`@cssproperty` JSDoc tags, but
  * those names are inconsistently prefixed in source. At runtime every variable is
  * emitted with the active theme prefix (default `--charm-`, see
  * `@charm-ux/theming` `cssVar.ts`). This module rewrites the `cssProperties[].name`

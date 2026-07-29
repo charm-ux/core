@@ -3,6 +3,7 @@ import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
+import { keys } from '../../utilities/key-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './switch.styles.js';
@@ -31,32 +32,32 @@ import styles from './switch.styles.js';
  * @csspart switch-thumb - The switch position indicator.
  * @csspart switch-unchecked-message - The message to display when the toggle is unchecked.
  *
- * @cssproperty --charm-switch-control-active-bg-color - The background color of the switch control when active.
- * @cssproperty --charm-switch-control-active-border-color - The border color of the switch control when active.
- * @cssproperty --charm-switch-control-bg-color - The background color of the switch control.
- * @cssproperty --charm-switch-control-border-color - The border color of the switch control.
- * @cssproperty --charm-switch-control-checked-active-bg-color - The background color of the switch control when checked and active.
- * @cssproperty --charm-switch-control-checked-active-border-color - The border color of the switch control when checked and active.
- * @cssproperty --charm-switch-control-checked-bg-color - The background color of the switch control when checked.
- * @cssproperty --charm-switch-control-checked-border-color - The border color of the switch control when checked.
- * @cssproperty --charm-switch-control-checked-hover-bg-color - The background color of the switch control when checked and hovered.
- * @cssproperty --charm-switch-control-checked-hover-border-color - The border color of the switch control when checked and hovered.
- * @cssproperty --charm-switch-control-hover-bg-color - The background color of the switch control when hovered.
- * @cssproperty --charm-switch-control-hover-border-color - The border color of the switch control when hovered.
- * @cssproperty --charm-switch-control-transition - The transition effect of the switch control.
- * @cssproperty --charm-switch-height - The height of the switch.
- * @cssproperty --charm-switch-thumb-active-bg-color - The background color of the switch thumb when active.
- * @cssproperty --charm-switch-thumb-bg-color - The background color of the switch thumb.
- * @cssproperty --charm-switch-thumb-checked-active-bg-color - The background color of the switch thumb when checked and active.
- * @cssproperty --charm-switch-thumb-checked-bg-color - The background color of the switch thumb when checked.
- * @cssproperty --charm-switch-thumb-checked-hover-bg-color - The background color of the switch thumb when checked and hovered.
- * @cssproperty --charm-switch-thumb-hover-bg-color - The background color of the switch thumb when hovered.
- * @cssproperty --charm-switch-thumb-size - The size of the thumb.
- * @cssproperty --charm-switch-thumb-transform - The shift of the thumb along the x-axis.
- * @cssproperty --charm-switch-thumb-transition - The transition effect of the switch thumb.
- * @cssproperty --charm-switch-width - The width of the switch.
+ * @cssprop --charm-switch-control-active-bg-color - The background color of the switch control when active.
+ * @cssprop --charm-switch-control-active-border-color - The border color of the switch control when active.
+ * @cssprop --charm-switch-control-bg-color - The background color of the switch control.
+ * @cssprop --charm-switch-control-border-color - The border color of the switch control.
+ * @cssprop --charm-switch-control-checked-active-bg-color - The background color of the switch control when checked and active.
+ * @cssprop --charm-switch-control-checked-active-border-color - The border color of the switch control when checked and active.
+ * @cssprop --charm-switch-control-checked-bg-color - The background color of the switch control when checked.
+ * @cssprop --charm-switch-control-checked-border-color - The border color of the switch control when checked.
+ * @cssprop --charm-switch-control-checked-hover-bg-color - The background color of the switch control when checked and hovered.
+ * @cssprop --charm-switch-control-checked-hover-border-color - The border color of the switch control when checked and hovered.
+ * @cssprop --charm-switch-control-hover-bg-color - The background color of the switch control when hovered.
+ * @cssprop --charm-switch-control-hover-border-color - The border color of the switch control when hovered.
+ * @cssprop --charm-switch-control-transition - The transition effect of the switch control.
+ * @cssprop --charm-switch-height - The height of the switch.
+ * @cssprop --charm-switch-thumb-active-bg-color - The background color of the switch thumb when active.
+ * @cssprop --charm-switch-thumb-bg-color - The background color of the switch thumb.
+ * @cssprop --charm-switch-thumb-checked-active-bg-color - The background color of the switch thumb when checked and active.
+ * @cssprop --charm-switch-thumb-checked-bg-color - The background color of the switch thumb when checked.
+ * @cssprop --charm-switch-thumb-checked-hover-bg-color - The background color of the switch thumb when checked and hovered.
+ * @cssprop --charm-switch-thumb-hover-bg-color - The background color of the switch thumb when hovered.
+ * @cssprop --charm-switch-thumb-size - The size of the thumb.
+ * @cssprop --charm-switch-thumb-transform - The shift of the thumb along the x-axis.
+ * @cssprop --charm-switch-thumb-transition - The transition effect of the switch thumb.
+ * @cssprop --charm-switch-width - The width of the switch.
  *
- * @dependency icon
+ * @dependency CoreIcon
  */
 
 export class CoreSwitch extends CharmFormControlElement {
@@ -118,10 +119,10 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the keydown event on the switch. */
   protected handleKeyDown(event: KeyboardEvent) {
     if (this.readonly || this.disabled) return;
-    if (event.key === 'ArrowLeft') {
+    if (event.key === keys.ArrowLeft) {
       this.handleArrowLeftKey(event);
     }
-    if (event.key === 'ArrowRight') {
+    if (event.key === keys.ArrowRight) {
       this.handleArrowRightKey(event);
     }
   }

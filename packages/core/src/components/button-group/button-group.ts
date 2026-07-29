@@ -1,6 +1,7 @@
 import { html } from 'lit/static-html.js';
 import { property, queryAssignedElements } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { keys } from '../../utilities/key-map.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import CoreButton from '../button/button.js';
 import CoreTooltip from '../tooltip/tooltip.js';
@@ -22,20 +23,20 @@ const BUTTON_CHILDREN = ['button'];
  *
  * @csspart button-group-base - The component's base wrapper.
  *
- * @cssproperty --charm-button-group-divider-color - Sets the divider color when the button is in a button group, defaults to --charm-button-fg-color.
- * @cssproperty --charm-button-group-divider-height - Sets the divider height when the button is in a button group, defaults to 100% for horizontal button groups, 1px for vertical groups.
- * @cssproperty --charm-button-group-divider-width - Sets the divider width when the button is in a button group, defaults to 100% for vertical button groups, 1px for horizontal groups.
- * @cssproperty --charm-button-group-gap - Sets the gap between each button.
- * @cssproperty --charm-button-pressed-bg-color - Sets the pressed background color of each button.
- * @cssproperty --charm-button-pressed-border - Sets the pressed border of each button.
- * @cssproperty --charm-button-bg-color - Sets the background color of the button group when split.
- * @cssproperty --charm-button-border-color - Sets the border color of the button group when split.
- * @cssproperty --charm-button-border-radius - Sets border radius for the button group when split.
- * @cssproperty --charm-button-border-size - Sets the border width of the button group when split.
- * @cssproperty --charm-button-border-style - Sets the border style of the button group when split.
- * @cssproperty --charm-button-focus-border-color - Sets the border color when focused and split.
- * @cssproperty --charm-button-hover-border-color - Sets the border color when hovered and split.
- * @cssproperty --charm-button-disabled-border-color - Sets the border color when disabled and split.
+ * @cssprop --charm-button-group-divider-color - Sets the divider color when the button is in a button group, defaults to --charm-button-fg-color.
+ * @cssprop --charm-button-group-divider-height - Sets the divider height when the button is in a button group, defaults to 100% for horizontal button groups, 1px for vertical groups.
+ * @cssprop --charm-button-group-divider-width - Sets the divider width when the button is in a button group, defaults to 100% for vertical button groups, 1px for horizontal groups.
+ * @cssprop --charm-button-group-gap - Sets the gap between each button.
+ * @cssprop --charm-button-pressed-bg-color - Sets the pressed background color of each button.
+ * @cssprop --charm-button-pressed-border - Sets the pressed border of each button.
+ * @cssprop --charm-button-bg-color - Sets the background color of the button group when split.
+ * @cssprop --charm-button-border-color - Sets the border color of the button group when split.
+ * @cssprop --charm-button-border-radius - Sets border radius for the button group when split.
+ * @cssprop --charm-button-border-size - Sets the border width of the button group when split.
+ * @cssprop --charm-button-border-style - Sets the border style of the button group when split.
+ * @cssprop --charm-button-focus-border-color - Sets the border color when focused and split.
+ * @cssprop --charm-button-hover-border-color - Sets the border color when hovered and split.
+ * @cssprop --charm-button-disabled-border-color - Sets the border color when disabled and split.
  **/
 export class CoreButtonGroup extends CharmElement {
   public static override styles = [...super.styles, styles];
@@ -136,7 +137,7 @@ export class CoreButtonGroup extends CharmElement {
    */
   protected handleKeyDown = (e: KeyboardEvent) => {
     {
-      if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      if (![keys.ArrowRight, keys.ArrowLeft, keys.ArrowUp, keys.ArrowDown].includes(e.key)) {
         return;
       }
 
@@ -147,14 +148,14 @@ export class CoreButtonGroup extends CharmElement {
       let nextIndex = -1;
 
       switch (e.key) {
-        case 'ArrowRight':
-        case 'ArrowDown': {
+        case keys.ArrowRight:
+        case keys.ArrowDown: {
           nextIndex = this.focusedIndex === this.slottedElements.length - 1 ? 0 : this.focusedIndex + 1;
           break;
         }
 
-        case 'ArrowLeft':
-        case 'ArrowUp': {
+        case keys.ArrowLeft:
+        case keys.ArrowUp: {
           nextIndex = this.focusedIndex === 0 ? this.slottedElements.length - 1 : this.focusedIndex - 1;
           break;
         }

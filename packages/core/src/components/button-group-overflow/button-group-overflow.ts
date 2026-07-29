@@ -14,6 +14,8 @@ import styles from './button-group-overflow.styles.js';
  * @status beta
  *
  * @slot - Elements to display in the button group with overflow capability.
+ *
+ * @dependency CoreDivider
  **/
 export class CoreButtonGroupOverflow extends CoreOverflow {
   public static override styles = [...super.styles, styles];

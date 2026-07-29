@@ -43,17 +43,17 @@ export type InputTypes =
  * @csspart input-label - The label.
  * @csspart start - Container for start slot.
  *
- * @cssproperty --charm-input-range-active-bg-color - The background color of the progress track and thumb when the input is active and the input type is `range`.
- * @cssproperty --charm-input-range-active-fg-color - The foreground color of the progress track and thumb when the input is active and the input type is `range`.
- * @cssproperty --charm-input-range-disabled-bg-color - The background color of the progress track and thumb when the input is disabled and the input type is `range`.
- * @cssproperty --charm-input-range-disabled-fg-color - The foreground color of the progress track and thumb when the input is disabled and the input type is `range`.
- * @cssproperty --charm-input-range-hover-bg-color - The background color of the progress track and thumb when the input is hovered and the input type is `range`.
- * @cssproperty --charm-input-range-hover-fg-color - The foreground color of the progress track and thumb when the input is hovered and the input type is `range`.
- * @cssproperty --charm-input-range-progress-color - The color of the slider's track that represents the selected range.
- * @cssproperty --charm-input-range-thumb-color - The color of the slider's thumb.
- * @cssproperty --charm-input-range-track-color - The color of the slider's track.
+ * @cssprop --charm-input-range-active-bg-color - The background color of the progress track and thumb when the input is active and the input type is `range`.
+ * @cssprop --charm-input-range-active-fg-color - The foreground color of the progress track and thumb when the input is active and the input type is `range`.
+ * @cssprop --charm-input-range-disabled-bg-color - The background color of the progress track and thumb when the input is disabled and the input type is `range`.
+ * @cssprop --charm-input-range-disabled-fg-color - The foreground color of the progress track and thumb when the input is disabled and the input type is `range`.
+ * @cssprop --charm-input-range-hover-bg-color - The background color of the progress track and thumb when the input is hovered and the input type is `range`.
+ * @cssprop --charm-input-range-hover-fg-color - The foreground color of the progress track and thumb when the input is hovered and the input type is `range`.
+ * @cssprop --charm-input-range-progress-color - The color of the slider's track that represents the selected range.
+ * @cssprop --charm-input-range-thumb-color - The color of the slider's thumb.
+ * @cssprop --charm-input-range-track-color - The color of the slider's track.
  *
- * @dependency icon
+ * @dependency CoreIcon
  **/
 export class CoreInput extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
@@ -122,6 +122,16 @@ export class CoreInput extends CharmFormControlElement {
 
   @state()
   protected options?: Array<HTMLOptionElement> = [];
+
+  protected enterKeyTimer?: number;
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.enterKeyTimer) {
+      clearTimeout(this.enterKeyTimer);
+      this.enterKeyTimer = undefined;
+    }
+  }
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -202,7 +212,8 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Handles the Enter key press event. */
   protected handleEnterKey(event: KeyboardEvent) {
-    setTimeout(() => {
+    this.enterKeyTimer = window.setTimeout(() => {
+      this.enterKeyTimer = undefined;
       const form = this.closest('form');
       if (event.defaultPrevented || !form) return;
       form.submit();

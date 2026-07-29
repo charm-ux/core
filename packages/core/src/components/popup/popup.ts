@@ -23,6 +23,7 @@ import { offsetParent } from 'composed-offset-position';
 import { html } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { keys } from '../../utilities/key-map.js';
 import { CharmDismissibleElement } from '../../base/index.js';
 import styles from './popup.styles.js';
 
@@ -64,14 +65,14 @@ export interface PopupRepositionEvent {
  * @csspart popup-base - The popup's container. Useful for setting a background color, box shadow, etc.
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
- * @cssproperty --charm-popup-arrow-color - The color of the arrow.
- * @cssproperty --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
- * @cssproperty --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssproperty --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
- * @cssproperty --charm-popup-hide-transition - animation when the overlay is hidden.
- * @cssproperty --charm-popup-show-transition - animation when the overlay is shown.
- * @cssproperty --charm-popup-z-index - controls the CSS z-index value for the overlay content.
+ * @cssprop --charm-popup-arrow-color - The color of the arrow.
+ * @cssprop --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
+ * @cssprop --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssprop --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssprop --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
+ * @cssprop --charm-popup-hide-transition - animation when the overlay is hidden.
+ * @cssprop --charm-popup-show-transition - animation when the overlay is shown.
+ * @cssprop --charm-popup-z-index - controls the CSS z-index value for the overlay content.
  */
 export class CorePopup extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
@@ -378,7 +379,7 @@ export class CorePopup extends CharmDismissibleElement {
       return;
     }
 
-    if (e.key === 'Escape') {
+    if (e.key === keys.Escape) {
       this.emitRequestClose('escape');
       this.anchorEl?.focus();
       e.stopPropagation();
@@ -408,7 +409,7 @@ export class CorePopup extends CharmDismissibleElement {
     };
 
     if (
-      e.key === 'Tab' &&
+      e.key === keys.Tab &&
       !e.shiftKey &&
       (lastFocusableElement === currentFocusableElement || this === currentFocusableElement)
     ) {
@@ -416,7 +417,7 @@ export class CorePopup extends CharmDismissibleElement {
       return;
     }
     if (
-      e.key === 'Tab' &&
+      e.key === keys.Tab &&
       e.shiftKey &&
       (firstFocusableElement === currentFocusableElement || this === currentFocusableElement)
     ) {

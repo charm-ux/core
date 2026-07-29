@@ -22,20 +22,20 @@ import styles from './progress-bar.styles.js';
  * @csspart progress-bar-label - The progress bar label.
  * @csspart progress-bar-track - The progress bar's track.
  *
- * @cssproperty --charm-form-control-invalid-border-color - Determines the error border color.
- * @cssproperty --charm-form-control-invalid-message-fg-color - Determines the error text color.
- * @cssproperty --charm-form-control-invalid-message-font-size - Determines the error message font size.
- * @cssproperty --charm-form-control-label-fg-color - Determines the label color.
- * @cssproperty --charm-form-control-label-font-size - Determines the label font size.
- * @cssproperty --charm-form-control-label-font-weight - Determines the label font weight.
- * @cssproperty --charm-form-control-label-gap - Determines the margin between label and the control.
- * @cssproperty --charm-progress-bar-animation - The animation for the indeterminate state.
- * @cssproperty --charm-progress-bar-border-radius - The border radius of the track.
- * @cssproperty --charm-progress-bar-height - The progress bar's track's height.
- * @cssproperty --charm-progress-bar-icon-color - The color of the icon in the default slot.
- * @cssproperty --charm-progress-bar-indicator-color - The background color of the indicator.
- * @cssproperty --charm-progress-bar-track-color - The track color.
- * @cssproperty --charm-progress-bar-transition - The transition for the indicator.
+ * @cssprop --charm-form-control-invalid-border-color - Determines the error border color.
+ * @cssprop --charm-form-control-invalid-message-fg-color - Determines the error text color.
+ * @cssprop --charm-form-control-invalid-message-font-size - Determines the error message font size.
+ * @cssprop --charm-form-control-label-fg-color - Determines the label color.
+ * @cssprop --charm-form-control-label-font-size - Determines the label font size.
+ * @cssprop --charm-form-control-label-font-weight - Determines the label font weight.
+ * @cssprop --charm-form-control-label-gap - Determines the margin between label and the control.
+ * @cssprop --charm-progress-bar-animation - The animation for the indeterminate state.
+ * @cssprop --charm-progress-bar-border-radius - The border radius of the track.
+ * @cssprop --charm-progress-bar-height - The progress bar's track's height.
+ * @cssprop --charm-progress-bar-icon-color - The color of the icon in the default slot.
+ * @cssprop --charm-progress-bar-indicator-color - The background color of the indicator.
+ * @cssprop --charm-progress-bar-track-color - The track color.
+ * @cssprop --charm-progress-bar-transition - The transition for the indicator.
  **/
 export class CoreProgressBar extends CharmElement {
   public static override styles = [...super.styles, formControlStyles, styles];

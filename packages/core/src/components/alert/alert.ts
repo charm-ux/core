@@ -21,7 +21,7 @@ type PolitenessType = (typeof politenessLevels)[number];
  * @slot heading - Optional heading for the alert.
  * @slot icon - Optional icon.
  *
- * @dependency icon
+ * @dependency CoreIcon
  *
  * @event alert-show - Emitted when the alert is opened.
  * @event alert-after-show - Emitted after the alert is opened and the transitions are complete.
@@ -35,24 +35,24 @@ type PolitenessType = (typeof politenessLevels)[number];
  * @csspart alert-icon - The icon of the alert.
  * @csspart alert-message - The base of the message portion of the alert.
  *
- * @cssproperty --charm-alert-actions-gap - The gap between the actions buttons.
- * @cssproperty --charm-alert-bg-color - The background color of the alert container.
- * @cssproperty --charm-alert-border - The border of the alert container.
- * @cssproperty --charm-alert-button-bg-color - The background color of the dismiss button.
- * @cssproperty --charm-alert-button-border - The border of the dismiss button.
- * @cssproperty --charm-alert-button-font-size - The font size of the dismiss button.
- * @cssproperty --charm-alert-button-padding - The padding of the dismiss button.
- * @cssproperty --charm-alert-fg-color - The foreground color of the alert container.
- * @cssproperty --charm-alert-font-size - The font size of the alert.
- * @cssproperty --charm-alert-font-weight - The font weight of the alert.
- * @cssproperty --charm-alert-heading-font-size - The font size of the heading.
- * @cssproperty --charm-alert-heading-font-weight - The font weight of the heading.
- * @cssproperty --charm-alert-icon-fg-color - The foreground color of the icon.
- * @cssproperty --charm-alert-icon-margin - The margin of the icon.
- * @cssproperty --charm-alert-icon-size - The size of the icon.
- * @cssproperty --charm-alert-message-margin - The margin of the alert's message container.
- * @cssproperty --charm-alert-padding - The padding of the alert container.
- * @cssproperty --charm-alert-transition - The transition of the alert.
+ * @cssprop --charm-alert-actions-gap - The gap between the actions buttons.
+ * @cssprop --charm-alert-bg-color - The background color of the alert container.
+ * @cssprop --charm-alert-border - The border of the alert container.
+ * @cssprop --charm-alert-button-bg-color - The background color of the dismiss button.
+ * @cssprop --charm-alert-button-border - The border of the dismiss button.
+ * @cssprop --charm-alert-button-font-size - The font size of the dismiss button.
+ * @cssprop --charm-alert-button-padding - The padding of the dismiss button.
+ * @cssprop --charm-alert-fg-color - The foreground color of the alert container.
+ * @cssprop --charm-alert-font-size - The font size of the alert.
+ * @cssprop --charm-alert-font-weight - The font weight of the alert.
+ * @cssprop --charm-alert-heading-font-size - The font size of the heading.
+ * @cssprop --charm-alert-heading-font-weight - The font weight of the heading.
+ * @cssprop --charm-alert-icon-fg-color - The foreground color of the icon.
+ * @cssprop --charm-alert-icon-margin - The margin of the icon.
+ * @cssprop --charm-alert-icon-size - The size of the icon.
+ * @cssprop --charm-alert-message-margin - The margin of the alert's message container.
+ * @cssprop --charm-alert-padding - The padding of the alert container.
+ * @cssprop --charm-alert-transition - The transition of the alert.
  **/
 export class CoreAlert extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
