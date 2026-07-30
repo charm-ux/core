@@ -125,14 +125,6 @@ export class CoreInput extends CharmFormControlElement {
 
   protected enterKeyTimer?: number;
 
-  public override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    if (this.enterKeyTimer) {
-      clearTimeout(this.enterKeyTimer);
-      this.enterKeyTimer = undefined;
-    }
-  }
-
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -182,6 +174,14 @@ export class CoreInput extends CharmFormControlElement {
     input.type = 'number';
     input.valueAsNumber = newValue;
     this.value = input.value;
+  }
+
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    if (this.enterKeyTimer) {
+      clearTimeout(this.enterKeyTimer);
+      this.enterKeyTimer = undefined;
+    }
   }
 
   public override connectedCallback(): void {
