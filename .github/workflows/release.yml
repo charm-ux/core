@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - next
 
 permissions:
   contents: write
@@ -62,7 +63,8 @@ jobs:
       # Publishing authenticates via OIDC trusted publishers configured on the
       # npm packages — deliberately no NPM_TOKEN/NODE_AUTH_TOKEN so npm cannot
       # fall back to token auth.
-      - name: Create Release Pull Request or Publish to npm
+      - name: Create Release Pull Request or Publish to npm (main)
+        if: github.ref_name == 'main'
         id: changesets
         uses: changesets/action@v1
         with:
@@ -72,3 +74,20 @@ jobs:
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # next branch: snapshot version and publish to beta tag
+      - name: Check for pending changesets (next)
+        if: github.ref_name == 'next'
+        id: changesets-next
+        shell: bash
+        run: |
+          COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l | tr -d ' ')
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Apply snapshot versions (beta)
+        if: github.ref_name == 'next' && steps.changesets-next.outputs.count != '0'
+        run: pnpm changeset version --snapshot beta
+
+      - name: Publish to npm (beta tag)
+        if: github.ref_name == 'next' && steps.changesets-next.outputs.count != '0'
+        run: pnpm changeset publish --tag beta --no-git-tag

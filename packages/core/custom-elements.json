@@ -7028,48 +7028,52 @@
           "name": "CoreCheckbox",
           "cssProperties": [
             {
+              "description": "Background color when checked and active.",
+              "name": "--charm-checkbox-active-bg-color-checked"
+            },
+            {
+              "description": "Background color when unchecked and active.",
+              "name": "--charm-checkbox-active-bg-color-unchecked"
+            },
+            {
               "description": "Border color of checkbox when active.",
               "name": "--charm-checkbox-active-border-color"
+            },
+            {
+              "description": "Border color of checkbox when checked and active.",
+              "name": "--charm-checkbox-active-border-color-checked"
+            },
+            {
+              "description": "Border color of checkbox when unchecked and active.",
+              "name": "--charm-checkbox-active-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when active.",
               "name": "--charm-checkbox-active-fg-color"
             },
             {
+              "description": "The background color of the checkbox when checked.",
+              "name": "--charm-checkbox-bg-color-checked"
+            },
+            {
+              "description": "The background color of the checkbox when unchecked.",
+              "name": "--charm-checkbox-bg-color-unchecked"
+            },
+            {
+              "description": "Border color of checkbox when checked.",
+              "name": "--charm-checkbox-border-color-checked"
+            },
+            {
               "description": "The border radius of the checkbox.",
               "name": "--charm-checkbox-border-radius"
             },
             {
-              "description": "Background color when checked and active.",
-              "name": "--charm-checkbox-checked-active-bg-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and active.",
-              "name": "--charm-checkbox-checked-active-border-color"
-            },
-            {
-              "description": "The background color of the checkbox when checked.",
-              "name": "--charm-checkbox-checked-bg-color"
-            },
-            {
-              "description": "Border color of checkbox when checked.",
-              "name": "--charm-checkbox-checked-border-color"
-            },
-            {
               "description": "Background color of checkbox when checked and disabled.",
-              "name": "--charm-checkbox-checked-disabled-bg-color"
+              "name": "--charm-checkbox-disabled-bg-color-checked"
             },
             {
-              "description": "Font color of checkbox when checked.",
-              "name": "--charm-checkbox-checked-fg-color"
-            },
-            {
-              "description": "Background color when checked and hovered over.",
-              "name": "--charm-checkbox-checked-hover-bg-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and hovered over.",
-              "name": "--charm-checkbox-checked-hover-border-color"
+              "description": "Background color of checkbox when unchecked and disabled.",
+              "name": "--charm-checkbox-disabled-bg-color-unchecked"
             },
             {
               "description": "Border color of checkbox when disabled.",
@@ -7084,8 +7088,28 @@
               "name": "--charm-checkbox-fg-color"
             },
             {
+              "description": "Font color of checkbox when checked.",
+              "name": "--charm-checkbox-fg-color-checked"
+            },
+            {
+              "description": "Background color when checked and hovered over.",
+              "name": "--charm-checkbox-hover-bg-color-checked"
+            },
+            {
+              "description": "Background color when unchecked and hovered over.",
+              "name": "--charm-checkbox-hover-bg-color-unchecked"
+            },
+            {
               "description": "Border color of checkbox while being hovered over.",
               "name": "--charm-checkbox-hover-border-color"
+            },
+            {
+              "description": "Border color of checkbox when checked and hovered over.",
+              "name": "--charm-checkbox-hover-border-color-checked"
+            },
+            {
+              "description": "Border color of checkbox when unchecked and hovered over.",
+              "name": "--charm-checkbox-hover-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when being hovered over.",
@@ -7098,30 +7122,6 @@
             {
               "description": "The size of the checkbox.",
               "name": "--charm-checkbox-size"
-            },
-            {
-              "description": "Background color when unchecked and active.",
-              "name": "--charm-checkbox-unchecked-active-bg-color"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and active.",
-              "name": "--charm-checkbox-unchecked-active-border-color"
-            },
-            {
-              "description": "The background color of the checkbox when unchecked.",
-              "name": "--charm-checkbox-unchecked-bg-color"
-            },
-            {
-              "description": "Background color of checkbox when unchecked and disabled.",
-              "name": "--charm-checkbox-unchecked-disabled-bg-color"
-            },
-            {
-              "description": "Background color when unchecked and hovered over.",
-              "name": "--charm-checkbox-unchecked-hover-bg-color"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and hovered over.",
-              "name": "--charm-checkbox-unchecked-hover-border-color"
             },
             {
               "description": "Determines the background color for the control.",
