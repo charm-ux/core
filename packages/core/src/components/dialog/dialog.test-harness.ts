@@ -118,16 +118,21 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                 description: 'should close when the toggles invoker is clicked',
                 test: async () => {
                   const toggleButton = document.createElement(project.scope.tagName('button'));
+                  const afterHideSpy = sinon.spy();
                   toggleButton.setAttribute('toggles', 'dialog-1');
+                  this.component.addEventListener('dialog-after-hide', afterHideSpy);
                   this.component.appendChild(toggleButton);
                   await elementUpdated(this.component);
                   this.component.open = true;
                   await elementUpdated(this.component);
                   await aTimeout(100);
                   toggleButton.click();
-                  await elementUpdated(this.component);
-                  await aTimeout(500);
-                  expect(this.component.open).to.be.false;
+                  await waitUntil(() => !this.component.open, 'dialog should close', {
+                    timeout: 2500,
+                  });
+                  await waitUntil(() => afterHideSpy.called, 'dialog-after-hide should fire', {
+                    timeout: 2500,
+                  });
                   const dialogElement = this.component.shadowRoot?.querySelector('dialog');
                   expect(dialogElement?.hasAttribute('open')).to.be.false;
                 },
