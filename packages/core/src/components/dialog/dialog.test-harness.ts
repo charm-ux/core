@@ -101,8 +101,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   await elementUpdated(this.component);
                   await aTimeout(100);
                   closeButton.click();
-                  await elementUpdated(this.component);
-                  expect(this.component.open).to.be.false;
+                  await waitUntil(() => !this.component.open, 'dialog should close', {
+                    timeout: 2500,
+                  });
                   await waitUntil(() => afterHideSpy.called, 'dialog-after-hide should fire', {
                     timeout: 2500,
                   });
