@@ -69,7 +69,7 @@ function stripKnownPrefix(body: string, defaultPrefix: DefaultPrefix): string {
  * @param {PrefixOptions} options
  * @returns {string}
  */
-export function rewriteCssVarName(name: string, { prefix, defaultPrefix = ANY_PREFIX }: PrefixOptions): string {
+export function rewriteCssVarName(name: string, { prefix, defaultPrefix = [DEFAULT_PREFIX] }: PrefixOptions): string {
   if (typeof name !== 'string' || !name.startsWith('--')) {
     return name;
   }
@@ -108,7 +108,7 @@ interface CustomElementsManifest {
  */
 export function applyThemePrefix(
   manifest: CustomElementsManifest | null | undefined,
-  { prefix, defaultPrefix = ANY_PREFIX }: PrefixOptions
+  { prefix, defaultPrefix = [DEFAULT_PREFIX] }: PrefixOptions
 ): number {
   if (!manifest || !Array.isArray(manifest.modules)) {
     return 0;
@@ -155,7 +155,7 @@ interface CssPrefixPluginOptions {
  * @returns {{ name: string, packageLinkPhase: (params: { customElementsManifest: CustomElementsManifest }) => void }}
  */
 export function cssPrefixPlugin(options: CssPrefixPluginOptions = {}) {
-  const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = ANY_PREFIX } = options;
+  const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = [DEFAULT_PREFIX] } = options;
 
   return {
     name: 'charm-css-prefix',

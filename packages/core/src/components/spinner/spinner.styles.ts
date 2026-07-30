@@ -1,8 +1,6 @@
 import { css } from 'lit';
-import { tokens } from '../../utilities/theme.js';
+import { component } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
-
-const { component } = tokens.lit;
 
 export default css`
   .spinner {
@@ -54,7 +52,7 @@ export default css`
     --indeterminate-chunk: calc(var(--radius) * 1.5);
     stroke: ${component('spinner', 'indicatorColor')};
     stroke-dasharray: var(--circumference) var(--circumference);
-    stroke-dashoffset: calc(var(--circumference) - var(--percentage) * var(--circumference));
+    stroke-dashoffset: calc(var(--circumference) - var(--percentage, 1) * var(--circumference));
   }
 
   .spinner-indicator {

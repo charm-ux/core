@@ -11,12 +11,12 @@ export default css`
   .form-control-base-input {
     padding: ${semantic('formControl', 'paddingY')} ${semantic('formControl', 'paddingX')};
     vertical-align: top;
-    line-height: ${component('textareaControl', 'inputLineHeight')};
+    line-height: ${component('textArea', 'inputLineHeight')};
     width: 100%;
-    min-width: ${component('textareaControl', 'inputMinWidth')};
+    min-width: ${component('textArea', 'inputMinWidth')};
     max-width: 100%;
     height: 100%;
-    min-height: ${component('textareaControl', 'inputMinHeight')};
+    min-height: ${component('textArea', 'inputMinHeight')};
     max-height: 100%;
     resize: none;
   }

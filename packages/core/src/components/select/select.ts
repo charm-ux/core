@@ -5,6 +5,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import { CoreIcon } from '../icon/icon.js';
+import { tokens } from '../../utilities/theme.js';
 import styles from './select.styles.js';
 
 type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
@@ -95,8 +96,9 @@ export class CoreSelect extends CharmFormControlElement {
     const startIconsWidth = this.shadowRoot?.querySelector('.start')?.clientWidth ?? 0;
     const endIconsWidth = this.shadowRoot?.querySelector('.end-icons')?.clientWidth ?? 0;
     if (this.input) {
-      this.input.style.paddingInlineStart = `calc( var(--form-control-padding-x) + ${startIconsWidth}px`;
-      this.input.style.paddingInlineEnd = `calc( var(--form-control-padding-x) + ${endIconsWidth}px`;
+      const paddingX = tokens.var.semantic('formControl', 'paddingX');
+      this.input.style.paddingInlineStart = `calc( ${paddingX} + ${startIconsWidth}px`;
+      this.input.style.paddingInlineEnd = `calc( ${paddingX} + ${endIconsWidth}px`;
     }
   }
 

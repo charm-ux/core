@@ -86,6 +86,21 @@ export class CharmDismissibleElement extends CharmElement {
       transitions.push(value);
     }
 
+    // Fallback: some browsers don't enumerate custom properties via item()
+    // (e.g. older Safari). Try a direct lookup on unprefixed candidates.
+    if (transitions.length === 0) {
+      const candidates = [
+        `--${baseName}-transition`,
+        `--${baseName}-show-transition`,
+        `--${baseName}-hide-transition`,
+        `--${baseName}-position-transition`,
+      ];
+      for (const candidate of candidates) {
+        const value = style.getPropertyValue(candidate).trim();
+        if (value && value !== 'none') transitions.push(value);
+      }
+    }
+
     return transitions;
   }
 

@@ -28,11 +28,11 @@ const BUTTON_CHILDREN = ['button'];
  * @cssprop --charm-button-group-divider-width - Sets the divider width when the button is in a button group, defaults to 100% for vertical button groups, 1px for horizontal groups.
  * @cssprop --charm-button-group-gap - Sets the gap between each button.
  * @cssprop --charm-button-pressed-bg-color - Sets the pressed background color of each button.
- * @cssprop --charm-button-pressed-border - Sets the pressed border of each button.
+ * @cssprop --charm-button-pressed-border-color - Sets the pressed border color of each button.
  * @cssprop --charm-button-bg-color - Sets the background color of the button group when split.
  * @cssprop --charm-button-border-color - Sets the border color of the button group when split.
  * @cssprop --charm-button-border-radius - Sets border radius for the button group when split.
- * @cssprop --charm-button-border-size - Sets the border width of the button group when split.
+ * @cssprop --charm-button-border-width - Sets the border width of the button group when split.
  * @cssprop --charm-button-border-style - Sets the border style of the button group when split.
  * @cssprop --charm-button-focus-border-color - Sets the border color when focused and split.
  * @cssprop --charm-button-hover-border-color - Sets the border color when hovered and split.

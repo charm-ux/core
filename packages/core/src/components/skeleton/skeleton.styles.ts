@@ -10,7 +10,7 @@ export default css`
 
   .skeleton {
     animation: var(--skeleton-animation);
-    background: var(--skeleton-bg-color, hsl(40 4.6% 87.3%));
+    background: ${component('skeleton', 'bgColor')};
     border-radius: var(--skeleton-border-radius);
     border: 1px solid transparent;
     display: flex;
@@ -24,9 +24,9 @@ export default css`
     background-size: ${component('skeleton', 'bgSize')};
     background-image: linear-gradient(
       to right,
-      var(--skeleton-bg-color, hsl(40 4.6% 87.3%)) 0%,
+      ${component('skeleton', 'bgColor')} 0%,
       ${component('skeleton', 'sheenColor')} 50%,
-      var(--skeleton-bg-color, hsl(40 4.6% 87.3%)) 100%
+      ${component('skeleton', 'bgColor')} 100%
     );
   }
 
@@ -39,11 +39,11 @@ export default css`
   }
 
   .skeleton-rect {
-    --skeleton-border-radius: var(--border-radius-md, 4px);
+    --skeleton-border-radius: ${component('skeleton', 'borderRadius')};
   }
 
   .skeleton-circle {
-    --skeleton-border-radius: var(--border-radius-circular, 100%);
+    --skeleton-border-radius: 100%;
     overflow: hidden;
   }
 

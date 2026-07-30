@@ -1,18 +1,17 @@
 import { css } from 'lit';
+import { semantic } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
 
+/* stylelint-disable-next-line no-empty-source */
 export default css`
   :host {
     display: block;
     width: 100%;
-    --form-control-range-track-size: 4px;
-    --form-control-range-thumb-size: 20px;
-    --form-control-range-track-margin-top: 3px;
   }
 
   .form-control {
     display: inline-grid;
-    font-size: var(--form-control-font-size);
+    font-size: ${semantic('formControl', 'fontSize')};
     grid-template-areas:
       'label .'
       'help  .'
@@ -23,12 +22,12 @@ export default css`
 
   /* Label */
   .form-control-label {
-    color: var(--form-control-label-fg-color);
+    color: ${semantic('formControl', 'label', 'fgColor')};
     padding: 0;
-    font-size: var(--form-control-label-font-size);
-    font-weight: var(--form-control-label-font-weight);
+    font-size: ${semantic('formControl', 'label', 'fontSize')};
+    font-weight: ${semantic('formControl', 'label', 'fontWeight')};
     grid-area: label;
-    margin-block-end: var(--form-control-label-gap);
+    margin-block-end: ${semantic('formControl', 'label', 'gap')};
     max-width: fit-content;
   }
 
@@ -41,7 +40,7 @@ export default css`
       'control label'
       '. help'
       '. error';
-    grid-column-gap: var(--form-control-label-gap);
+    grid-column-gap: ${semantic('formControl', 'label', 'gap')};
   }
 
   :host([label-position='start']) .form-control {
@@ -49,7 +48,7 @@ export default css`
       'label control'
       'help  .'
       'error .';
-    grid-column-gap: var(--form-control-label-gap);
+    grid-column-gap: ${semantic('formControl', 'label', 'gap')};
   }
 
   :host(:not([readonly]):not([disabled])) .form-control-label {
@@ -59,11 +58,11 @@ export default css`
   /** Input states */
 
   :host([required]) .required-indicator {
-    margin-inline-start: var(--form-control-label-required-indicator-gap);
+    margin-inline-start: ${semantic('formControl', 'label', 'requiredIndicatorGap')};
   }
 
   .required-indicator {
-    color: var(--form-control-invalid-message-fg-color);
+    color: ${semantic('formControl', 'invalid', 'message', 'fgColor')};
   }
 
   :host([disabled]) {
@@ -71,24 +70,24 @@ export default css`
   }
 
   :host([disabled]) .form-control-input {
-    background-color: var(--form-control-disabled-bg-color);
-    border-color: var(--form-control-disabled-border-color);
-    color: var(--form-control-disabled-fg-color);
-    opacity: var(--form-control-disabled-opacity);
+    background-color: ${semantic('formControl', 'disabled', 'bgColor')};
+    border-color: ${semantic('formControl', 'disabled', 'borderColor')};
+    color: ${semantic('formControl', 'disabled', 'fgColor')};
+    opacity: ${semantic('formControl', 'disabled', 'opacity')};
     cursor: not-allowed;
   }
 
   /* Help text */
   .form-control-help-text {
-    color: var(--form-control-help-text-fg-color);
-    font-size: var(--form-control-help-text-font-size);
-    font-weight: var(--form-control-help-text-font-weight);
+    color: ${semantic('formControl', 'helpText', 'fgColor')};
+    font-size: ${semantic('formControl', 'helpText', 'fontSize')};
+    font-weight: ${semantic('formControl', 'helpText', 'fontWeight')};
     grid-area: help;
   }
 
   .form-control-has-help-text .form-control-help-text {
     display: block;
-    margin-block-end: var(--form-control-help-text-gap);
+    margin-block-end: ${semantic('formControl', 'helpText', 'gap')};
   }
 
   /* Input */
@@ -97,27 +96,29 @@ export default css`
     align-items: center;
     justify-content: center;
     position: relative;
-    border: var(--default-border);
+    border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${semantic('defaultBorder', 'color')};
     width: 100%;
-    background-color: var(--form-control-bg-color);
-    height: var(--form-control-input-height);
-    padding: var(--form-control-padding-y) var(--form-control-padding-x);
+    background-color: ${semantic('formControl', 'bgColor')};
+    height: ${semantic('formControl', 'inputHeight')};
+    padding: ${semantic('formControl', 'paddingY')} ${semantic('formControl', 'paddingX')};
     grid-area: control;
-    border-radius: var(--form-control-border-radius);
+    border-radius: ${semantic('formControl', 'borderRadius')};
     line-height: 1;
   }
 
   :host(:not(type='range')) .form-control-input {
-    background-color: var(--form-control-bg-color);
-    border: var(--default-border);
-    border-radius: var(--form-control-border-radius);
-    color: var(--form-control-fg-color);
+    background-color: ${semantic('formControl', 'bgColor')};
+    border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${semantic('defaultBorder', 'color')};
+    border-radius: ${semantic('formControl', 'borderRadius')};
+    color: ${semantic('formControl', 'fgColor')};
     vertical-align: middle;
     overflow: hidden;
   }
 
   .form-control-input:focus-within {
-    border-color: var(--form-control-focus-border-color);
+    border-color: ${semantic('formControl', 'focus', 'borderColor')};
   }
 
   .form-control-input:focus-visible {
@@ -131,7 +132,7 @@ export default css`
 
   .form-control-base-input {
     flex: 1;
-    color: var(--form-control-fg-color);
+    color: ${semantic('formControl', 'fgColor')};
   }
 
   :host(:not([type='range'])) .form-control-base-input {
@@ -146,12 +147,12 @@ export default css`
   }
 
   slot[name='start']::slotted(*) {
-    margin-inline-end: var(--form-control-icon-gap);
+    margin-inline-end: ${semantic('formControl', 'iconGap')};
     display: inline-flex;
   }
 
   slot[name='end']::slotted(*) {
-    margin-inline-start: var(--form-control-icon-gap);
+    margin-inline-start: ${semantic('formControl', 'iconGap')};
     display: inline-flex;
   }
 
@@ -159,18 +160,18 @@ export default css`
   .form-control-error-text {
     display: none;
     margin-top: 4px;
-    color: var(--form-control-invalid-message-fg-color);
+    color: ${semantic('formControl', 'invalid', 'message', 'fgColor')};
     grid-area: error;
-    font-size: var(--form-control-invalid-message-font-size);
+    font-size: ${semantic('formControl', 'invalid', 'message', 'fontSize')};
   }
 
   .form-control-error-text-icon {
-    margin-inline-end: var(--form-control-icon-gap);
+    margin-inline-end: ${semantic('formControl', 'iconGap')};
   }
 
   :host([invalid]) .form-control-has-interaction .form-control-input {
-    border-color: var(--form-control-invalid-border-color);
-    outline-color: var(--form-control-invalid-border-color);
+    border-color: ${semantic('formControl', 'invalid', 'borderColor')};
+    outline-color: ${semantic('formControl', 'invalid', 'borderColor')};
   }
 
   :host([invalid]) .form-control-has-interaction .form-control-error-text {
@@ -179,7 +180,7 @@ export default css`
   }
 
   .form-control-base-input::placeholder {
-    color: var(--form-control-placeholder-color);
+    color: ${semantic('formControl', 'placeholderColor')};
   }
 
   /* Groups */
@@ -192,15 +193,15 @@ export default css`
 
   .form-control-group .form-control-label {
     cursor: default;
-    margin-block-end: var(--form-control-label-gap);
+    margin-block-end: ${semantic('formControl', 'label', 'gap')};
   }
 
   .form-control-group.form-control-has-label.form-control-has-help-text .form-control-label {
-    margin-block-end: var(--form-control-label-gap);
+    margin-block-end: ${semantic('formControl', 'label', 'gap')};
   }
 
   .form-control-group .form-control-help-text {
-    margin-block-end: var(--form-control-help-text-gap);
+    margin-block-end: ${semantic('formControl', 'helpText', 'gap')};
   }
 
   .form-control-group .form-control-error-text {
@@ -209,9 +210,9 @@ export default css`
 
   /* Group items */
   .form-control-group-item-label {
-    font-size: var(--form-control-label-font-size);
-    font-weight: var(--form-control-label-font-weight);
-    margin-inline-start: var(--form-control-label-gap);
+    font-size: ${semantic('formControl', 'label', 'fontSize')};
+    font-weight: ${semantic('formControl', 'label', 'fontWeight')};
+    margin-inline-start: ${semantic('formControl', 'label', 'gap')};
     user-select: none;
   }
 
@@ -223,10 +224,9 @@ export default css`
 
   :host([type='range']) .form-control-input {
     width: fit-content;
-  }
-
-  :host([type='range']) {
-    --form-control-input-height: calc(max(var(--form-control-range-track-size), var(--form-control-range-thumb-size)));
+    height: calc(
+      max(${semantic('formControl', 'range', 'trackSize')}, ${semantic('formControl', 'range', 'thumbSize')})
+    );
   }
 
   :host([type='range']) .form-control-input,
@@ -236,7 +236,7 @@ export default css`
 
   :host([type='range']) .form-control-base-input {
     width: 100%;
-    height: var(--form-control-range-track-size);
+    height: ${semantic('formControl', 'range', 'trackSize')};
     outline-color: transparent;
   }
 
@@ -245,19 +245,23 @@ export default css`
   }
 
   :host([type='range']) .form-control-base-input::-webkit-slider-thumb {
-    width: var(--form-control-range-thumb-size);
-    height: var(--form-control-range-thumb-size);
+    width: ${semantic('formControl', 'range', 'thumbSize')};
+    height: ${semantic('formControl', 'range', 'thumbSize')};
     position: relative;
     z-index: 1;
-    margin-top: calc((var(--form-control-range-thumb-size) - var(--form-control-range-track-size)) / 2 * -1);
+    margin-top: calc(
+      (${semantic('formControl', 'range', 'thumbSize')} - ${semantic('formControl', 'range', 'trackSize')}) / 2 * -1
+    );
   }
 
   :host([type='range']) .form-control-base-input::-moz-range-thumb {
-    width: var(--form-control-range-thumb-size);
-    height: var(--form-control-range-thumb-size);
+    width: ${semantic('formControl', 'range', 'thumbSize')};
+    height: ${semantic('formControl', 'range', 'thumbSize')};
     position: relative;
     z-index: 1;
-    margin-top: calc((var(--form-control-range-thumb-size) - var(--form-control-range-track-size)) / 2 * -1);
+    margin-top: calc(
+      (${semantic('formControl', 'range', 'thumbSize')} - ${semantic('formControl', 'range', 'trackSize')}) / 2 * -1
+    );
   }
 
   :host([type='range']:not([disabled])) .form-control-base-input::-webkit-slider-thumb {
@@ -270,16 +274,16 @@ export default css`
 
   :host([type='range']) .form-control-base-input::-webkit-slider-runnable-track {
     width: 100%;
-    height: var(--form-control-range-track-size);
-    border-radius: var(--form-control-border-radius);
-    margin-top: var(--form-control-range-track-margin-top);
+    height: ${semantic('formControl', 'range', 'trackSize')};
+    border-radius: ${semantic('formControl', 'borderRadius')};
+    margin-top: ${semantic('formControl', 'range', 'trackMarginTop')};
   }
 
   :host([type='range']) .form-control-base-input::-moz-range-track {
     width: 100%;
-    height: var(--form-control-range-track-size);
-    border-radius: var(--form-control-border-radius);
-    margin-top: var(--form-control-range-track-margin-top);
+    height: ${semantic('formControl', 'range', 'trackSize')};
+    border-radius: ${semantic('formControl', 'borderRadius')};
+    margin-top: ${semantic('formControl', 'range', 'trackMarginTop')};
   }
 
   @media screen and (forced-colors: active) {

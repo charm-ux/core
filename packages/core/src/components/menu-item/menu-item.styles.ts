@@ -1,6 +1,6 @@
 import { css } from 'lit';
 import { SystemColors } from '../../theme/index.js';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   :host {
@@ -11,7 +11,7 @@ export default css`
   .base {
     align-items: center;
     background-color: ${component('menu', 'item', 'bgColor')};
-    border: var(--default-border-size) solid ${component('menu', 'item', 'borderColor')};
+    border: ${semantic('defaultBorder', 'width')} solid ${component('menu', 'item', 'borderColor')};
     border-radius: ${component('menu', 'item', 'borderRadius')};
     color: ${component('menu', 'item', 'fgColor')};
     cursor: default;
@@ -49,7 +49,8 @@ export default css`
   }
 
   :host(:focus-visible) .base {
-    outline: var(--focus-outline-size) var(--focus-outline-style) ${component('menu', 'item', 'focus', 'outlineColor')};
+    outline: ${semantic('focus', 'outlineSize')} ${semantic('focus', 'outlineStyle')}
+      ${component('menu', 'item', 'focus', 'outlineColor')};
     outline-offset: ${component('menu', 'item', 'focus', 'outlineOffset')};
   }
 
@@ -57,7 +58,7 @@ export default css`
     cursor: not-allowed;
     background-color: ${component('menu', 'item', 'disabled', 'bgColor')};
     border-color: ${component('menu', 'item', 'disabled', 'borderColor')};
-    color: var(--menu-item-disabled-fg-color, ${component('menu', 'item', 'disabled', 'fgColor')});
+    color: ${component('menu', 'item', 'disabled', 'fgColor')};
   }
 
   :host([has-submenu]) .base {
@@ -102,7 +103,8 @@ export default css`
     display: flex;
     aspect-ratio: 1 / 1;
     background-color: ${component('menu', 'item', 'radio', 'bgColor')};
-    border: var(--default-border);
+    border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
+      ${semantic('defaultBorder', 'color')};
     border-radius: 50%;
     position: relative;
   }
@@ -112,7 +114,7 @@ export default css`
   }
 
   :host(:active) .radio {
-    border-color: var(--default-radio-active-border-color);
+    border-color: ${component('menu', 'item', 'radio', 'activeBorderColor')};
   }
 
   :host([aria-checked='true']) .radio-indicator {

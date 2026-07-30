@@ -25,9 +25,9 @@ import styles from './text-area.styles.js';
  * @csspart textarea-control - The textarea control.
  * @csspart textarea-control-input - The textarea input.
  *
- * @cssprop --charm-textarea-control-input-line-height - The line-height of the textarea control input.
- * @cssprop --charm-textarea-control-input-min-height - The min-height of the textarea control input.
- * @cssprop --charm-textarea-control-input-min-width - The min-width of the textarea control input.
+ * @cssprop --charm-text-area-input-line-height - The line-height of the textarea control input.
+ * @cssprop --charm-text-area-input-min-height - The min-height of the textarea control input.
+ * @cssprop --charm-text-area-input-min-width - The min-width of the textarea control input.
  *
  * @dependency CoreIcon
  **/

@@ -38,7 +38,7 @@ export default css`
     width: ${component('radio', 'controlSize')};
     height: ${component('radio', 'controlSize')};
     aspect-ratio: 1 / 1;
-    border: solid ${semantic('defaultBorder', 'width')} var(--radio-border-color, ${component('radio', 'borderColor')});
+    border: solid ${semantic('defaultBorder', 'width')} ${component('radio', 'borderColor')};
     border-radius: 50%;
     color: transparent;
     padding: 0;
@@ -67,7 +67,7 @@ export default css`
     position: absolute;
     width: ${component('radio', 'indicatorSize')};
     border-radius: 50%;
-    background-color: var(--radio-bg-color, ${component('radio', 'bgColor')});
+    background-color: ${component('radio', 'bgColor')};
   }
 
   /* Checked + Hover */

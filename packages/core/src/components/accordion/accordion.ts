@@ -13,7 +13,7 @@ import styles from './accordion.styles.js';
  *
  * @slot - The default slot where accordion items are placed.
  *
- * @cssprop --accordion-top-border-color - Sets the border top color of the accordion.
+ * @cssproperty --charm-accordion-top-border-color - The border top color of the accordion.
  *
  **/
 
