@@ -38,7 +38,7 @@ describe('defineTokens', () => {
       }),
     });
 
-    expect(tokens.definition.semantics?.action.main).toBe('var(--color-primary-500)');
+    expect(tokens.definition.semantics?.action.main).toBe('var(--charm-color-primary-500)');
   });
 
   it('resolves components using ref helper', () => {
@@ -64,8 +64,8 @@ describe('defineTokens', () => {
       }),
     });
 
-    expect(tokens.definition.components?.button.bgColor).toBe('var(--action-primary)');
-    expect(tokens.definition.components?.button.borderRadius).toBe('var(--border-radius-md)');
+    expect(tokens.definition.components?.button.bgColor).toBe('var(--charm-action-primary)');
+    expect(tokens.definition.components?.button.borderRadius).toBe('var(--charm-border-radius-md)');
   });
 
   it('applies prefix to CSS variables', () => {
@@ -159,7 +159,7 @@ describe('defineTokens', () => {
         },
       });
 
-      expect(extended.definition.semantics?.action.main).toBe('var(--color-primary-500)');
+      expect(extended.definition.semantics?.action.main).toBe('var(--charm-color-primary-500)');
     });
   });
 
@@ -187,7 +187,7 @@ describe('defineTokens', () => {
         },
       }));
 
-      expect(extended.definition.semantics?.action.main).toBe('var(--color-secondary-500)');
+      expect(extended.definition.semantics?.action.main).toBe('var(--charm-color-secondary-500)');
     });
 
     it('provides base semantics to factory', () => {
@@ -214,9 +214,9 @@ describe('defineTokens', () => {
         },
       }));
 
-      expect(extended.definition.semantics?.surface.primary).toBe('var(--color-primary-50)');
-      expect(extended.definition.semantics?.action.main).toBe('var(--color-primary-500)');
-      expect(extended.definition.semantics?.custom.value).toBe('var(--color-primary-700)');
+      expect(extended.definition.semantics?.surface.primary).toBe('var(--charm-color-primary-50)');
+      expect(extended.definition.semantics?.action.main).toBe('var(--charm-color-primary-500)');
+      expect(extended.definition.semantics?.custom.value).toBe('var(--charm-color-primary-700)');
     });
 
     it('deep-merges the delta into inherited semantics without spreading base', () => {
@@ -243,11 +243,11 @@ describe('defineTokens', () => {
       }));
 
       // Overridden leaf changed
-      expect(extended.definition.semantics?.surface.primary).toBe('var(--color-secondary-500)');
+      expect(extended.definition.semantics?.surface.primary).toBe('var(--charm-color-secondary-500)');
       // Sibling key within the same group preserved
-      expect(extended.definition.semantics?.surface.secondary).toBe('var(--color-primary-100)');
+      expect(extended.definition.semantics?.surface.secondary).toBe('var(--charm-color-primary-100)');
       // Untouched group preserved
-      expect(extended.definition.semantics?.action.main).toBe('var(--color-primary-500)');
+      expect(extended.definition.semantics?.action.main).toBe('var(--charm-color-primary-500)');
     });
   });
 
@@ -275,7 +275,7 @@ describe('defineTokens', () => {
         },
       }));
 
-      expect(extended.definition.components?.button.borderRadius).toBe('var(--border-radius-full)');
+      expect(extended.definition.components?.button.borderRadius).toBe('var(--charm-border-radius-full)');
     });
 
     it('allows adding new component tokens', () => {
@@ -299,8 +299,8 @@ describe('defineTokens', () => {
         },
       }));
 
-      expect(extended.definition.components?.button.padding).toBe('var(--spacing-sm)');
-      expect(extended.definition.components?.card.padding).toBe('var(--spacing-sm)');
+      expect(extended.definition.components?.button.padding).toBe('var(--charm-spacing-sm)');
+      expect(extended.definition.components?.card.padding).toBe('var(--charm-spacing-sm)');
     });
 
     it('deep-merges the delta into inherited components without spreading base', () => {
@@ -325,9 +325,9 @@ describe('defineTokens', () => {
       }));
 
       // Overridden leaf changed
-      expect(extended.definition.components?.button.borderRadius).toBe('var(--border-radius-full)');
+      expect(extended.definition.components?.button.borderRadius).toBe('var(--charm-border-radius-full)');
       // Sibling key within the same component preserved
-      expect(extended.definition.components?.button.padding).toBe('var(--spacing-sm)');
+      expect(extended.definition.components?.button.padding).toBe('var(--charm-spacing-sm)');
     });
   });
 
@@ -376,8 +376,8 @@ describe('defineTokens', () => {
         }));
 
       expect(extended.definition.primitives.color?.brand).toBe('#ff6600');
-      expect(extended.definition.semantics?.action.secondary).toBe('var(--color-brand-500)');
-      expect(extended.definition.components?.button.borderRadius).toBe('var(--border-radius-md)');
+      expect(extended.definition.semantics?.action.secondary).toBe('var(--charm-color-brand-500)');
+      expect(extended.definition.components?.button.borderRadius).toBe('var(--charm-border-radius-md)');
     });
   });
 
