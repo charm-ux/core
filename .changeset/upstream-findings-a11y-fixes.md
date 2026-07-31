@@ -15,12 +15,12 @@
 - **`ch-disclosure` / `ch-push-pane`**: closed content is now `inert` (removed from the tab order and a11y tree); `ch-disclosure` links the toggle to the panel via `aria-controls`.
 - **`ch-icon`**: labeled icons render with `role="img"` + `aria-label`; unlabeled icons are `aria-hidden="true"`.
 - **`ch-avatar`**: the initials fallback only gets `role="img"` when there is no image (no duplicate img role when an image is present).
-- **`ch-menu`**: `popup-request-close` now closes the menu; `ch-menu-item` moves `aria-disabled` onto the host (which carries `role="menuitem"`) instead of the inner control, and syncs `aria-checked` when the role changes.
-- **`ch-dialog`**: reflects `alert` instead of rendering a redundant `alertdialog` role, and body-scroll-lock is now reference-counted so stacked/nested dialogs restore overflow correctly.
+- **`ch-menu`**: `popup-request-close` now closes the menu; `ch-menu-item` moves `aria-disabled` onto the host (which carries `role="menuitem"`) instead of the inner control, and syncs `aria-checked` when the role changes (normalized to `"true"`/`"false"`).
+- **`ch-dialog`**: reflects `alert` instead of rendering a redundant `alertdialog` role, body-scroll-lock is now reference-counted so stacked/nested dialogs restore overflow correctly, and the native `<dialog>` is closed when the hide transition settles (not just on `transitionend`).
 - **`ch-divider`**: renders `role="separator"` with `aria-orientation` by default; `presentation` role omits them.
 - **`ch-scoped-styles`**: failed stylesheet loads are now counted (via `onerror`) so `writeStyle()` isn't stuck waiting on links that errored, and `:root` replacement no longer double-replaces already-minified rules.
 - **Theming**: `defineTokens()` and `createCssHelpers()` now default to the `charm` prefix (matching `cssVar()`/`createCssHelpers()`), so token helpers without an explicit prefix produce consistent variable names. `ch` utilities now import from `@charm-ux/theming/themes` and `@charm-ux/theming/lit` subpaths (with a local `toKebabCase`) instead of the root barrel, and tag prefixes are validated as lowercase-alphanumeric tokens.
 
 ### Tests
 
-- Added regression tests across the affected components: switch/checkbox/radio-group form submission, tabs/button-group roving navigation with disabled items, progress-bar meter semantics, disclosure/push-pane `inert`, icon/avatar roles, menu close on popup-request, dialog alert role + nested body-scroll-lock, divider separator role, tab `aria-disabled` on re-enable, and breadcrumb-item button/anchor rendering.
+- Added regression tests across the affected components: switch/checkbox/radio-group form submission, tabs/button-group roving navigation with disabled items, progress-bar meter semantics, disclosure/push-pane `inert`, icon/avatar roles, menu close on popup-request, dialog alert role + nested body-scroll-lock, divider separator role, tab `aria-disabled` on re-enable, and breadcrumb-item button/anchor rendering. Updated menu-group tests to assert unchecked `menuitemradio` items expose `aria-checked="false"` and menu-item tests to assert `aria-disabled` on the host.

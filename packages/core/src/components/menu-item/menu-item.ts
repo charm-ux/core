@@ -188,7 +188,7 @@ export class CoreMenuItem extends CharmElement {
     }
 
     if ((changedProperties.has('checked') || changedProperties.has('role')) && this.role?.startsWith('menuitem')) {
-      this.setAttribute('aria-checked', String(this.checked));
+      this.setAttribute('aria-checked', String(!!this.checked));
     }
   }
 

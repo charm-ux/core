@@ -196,6 +196,13 @@ export class CoreDialog extends CharmDismissibleElement {
     }
   }
 
+  protected override settleTransition(waitId: number) {
+    if (!this.open) {
+      this.dialog?.close();
+    }
+    super.settleTransition(waitId);
+  }
+
   /**
    * Emits the dialog-request-close event.
    * @param {DialogCloseSource} source - The source of the close request.
