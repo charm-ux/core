@@ -1,7 +1,9 @@
-import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, oneEvent } from '@open-wc/testing';
+import { html, unsafeStatic } from 'lit/static-html.js';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { project } from '../../utilities/index.js';
 import { CoreButton } from './index.js';
 
 export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> {
@@ -166,6 +168,46 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   const el = this.component;
                   el.focus();
                   expect(document.activeElement).to.equal(el);
+                },
+              },
+              submitValid: {
+                description: 'submits the form when the form is valid',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <input type="text" name="field" value="filled" />
+                      <${unsafeStatic(tag)} type="submit">Submit</${unsafeStatic(tag)}>
+                    </form>
+                  `);
+                  const submitSpy = sinon.spy();
+                  form.addEventListener('submit', (e: Event) => {
+                    e.preventDefault();
+                    submitSpy();
+                  });
+                  (form.querySelector(tag)?.shadowRoot?.querySelector('button') as HTMLButtonElement).click();
+                  await aTimeout(0);
+                  expect(submitSpy).to.have.been.callCount(1);
+                },
+              },
+              submitInvalid: {
+                description: 'does not submit a form that fails constraint validation',
+                test: async () => {
+                  const tag = project.scope.tagName('button');
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <input type="text" name="field" required />
+                      <${unsafeStatic(tag)} type="submit">Submit</${unsafeStatic(tag)}>
+                    </form>
+                  `);
+                  const submitSpy = sinon.spy();
+                  form.addEventListener('submit', (e: Event) => {
+                    e.preventDefault();
+                    submitSpy();
+                  });
+                  (form.querySelector(tag)?.shadowRoot?.querySelector('button') as HTMLButtonElement).click();
+                  await aTimeout(50);
+                  expect(submitSpy).to.have.been.callCount(0);
                 },
               },
             },

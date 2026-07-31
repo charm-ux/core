@@ -216,7 +216,7 @@ export class CoreInput extends CharmFormControlElement {
       this.enterKeyTimer = undefined;
       const form = this.closest('form');
       if (event.defaultPrevented || !form) return;
-      form.submit();
+      form.requestSubmit();
     });
   }
 
@@ -255,6 +255,9 @@ export class CoreInput extends CharmFormControlElement {
       <input
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
         autocomplete=${ifDefined(this.type === 'password' ? 'off' : this.autocomplete) as any}
+        aria-describedby=${ifDefined(this.describedBy)}
+        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
+        aria-invalid=${this.invalid}
         class="form-control-base-input"
         enterkeyhint=${ifDefined(this.enterkeyhint)}
         id="input"

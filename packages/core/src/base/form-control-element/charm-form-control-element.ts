@@ -126,6 +126,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
     return this.internals.validationMessage;
   }
 
+  /** Computes the `aria-describedby` value for the native control, referencing the help text when present. */
+  protected get describedBy(): string | undefined {
+    return this.hasHelpText ? 'help-text' : undefined;
+  }
+
   /** The input's error message. */
   @property({ attribute: 'error-message' })
   public set errorMessage(message: string) {
@@ -190,6 +195,17 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.value = this.initialValue;
   }
 
+  /** Restores the control's value when the browser restores form state (bfcache navigation or autofill). */
+  protected formStateRestoreCallback(state: string | File | FormData | null) {
+    if (typeof state !== 'string') return;
+    this.value = state;
+  }
+
+  /** Reflects the disabled state when the control is disabled via a parent `<fieldset>`. */
+  protected formDisabledCallback(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
   /** Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid. */
   protected updateValidity() {
     this.updateComplete.then(() => {
@@ -235,7 +251,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
         'form-control-help-text': true,
         'visually-hidden': this.hideLabel,
       })}
-      aria-hidden=${this.hasHelpText ? 'true' : 'false'}
+      aria-hidden=${!this.hasHelpText}
     >
       <slot name="help-text">${this.helpText}</slot>
     </div>`;

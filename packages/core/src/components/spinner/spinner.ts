@@ -57,7 +57,9 @@ export class CoreSpinner extends CharmElement {
   /** Generates the template for the label. */
   protected labelTemplate() {
     return html`<div id="spinner-label" class="label">
-      <span class="spinner-label" part="spinner-label"> ${this.label ? this.label : html`<slot></slot>`} </span>
+      <span class="spinner-label" part="spinner-label">
+        ${this.label ? this.label : html`<slot><span class="visually-hidden">Loading</span></slot>`}
+      </span>
     </div>`;
   }
 

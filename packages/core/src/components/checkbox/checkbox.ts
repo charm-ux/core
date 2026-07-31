@@ -143,8 +143,8 @@ export class CoreCheckbox extends CharmFormControlElement {
       >
         <label class="checkbox form-control-label" part="checkbox">
           <input
-            aria-describedby="help-text"
-            aria-errormessage="error-text"
+            aria-describedby=${ifDefined(this.describedBy)}
+            aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
             aria-invalid=${this.invalid}
             class="input"
             id=${ifDefined(this.name)}

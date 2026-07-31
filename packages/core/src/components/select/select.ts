@@ -160,8 +160,8 @@ export class CoreSelect extends CharmFormControlElement {
         ${this.startTemplate()}
         <select
           aria-label=${ifDefined(this.label)}
-          aria-describedby="help-text"
-          aria-errormessage="error-text"
+          aria-describedby=${ifDefined(this.describedBy)}
+          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
           class="input-control form-control-base-input"
           id="input"

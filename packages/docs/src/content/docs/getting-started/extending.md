@@ -131,6 +131,16 @@ export * from './shaped-button.js';
 project.scope.registerComponent(button);
 ```
 
+> **Don't use `@customElement()` / `customElements.define()` for Charm components.**
+> Charm components must be registered through the project scope so the tag picks up the
+> configured prefix/suffix and nested dependencies are wired. Registering one with the bare
+> decorator throws a descriptive error at construction, because the tag isn't backed by a
+> scope.
+>
+> Import the component class from its class module (`.../button/button.js`) when
+> subclassing, rather than the barrel (`.../button/index.js`) — the barrel registers
+> `<ch-button>` as a side effect, which you may not want when defining your own tag.
+
 ### Tokens API
 
 The `tokens` object exposes three namespaces for accessing design tokens, each suited to a different context:

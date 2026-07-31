@@ -18,6 +18,13 @@ export class CharmElement extends LitElement {
   public constructor() {
     super();
     this.scope = getScope(this);
+    if (!this.scope) {
+      throw new Error(
+        `"${this.tagName}" is not registered with a Charm scope. ` +
+          'Register the component with project.scope.registerComponent() (import it from its index.ts barrel) ' +
+          'instead of using @customElement() / customElements.define().'
+      );
+    }
     // @ts-ignore
     this.constructor.dependencies?.forEach(component => this.scope.registerComponent(component));
   }
