@@ -56,7 +56,7 @@ export default {
       // Suppress Floating UI warnings
       window.process = { env: { NODE_ENV: "development" } };
 
-      // Disable Lit dev mode warning
+      // Disable Lit dev mode warning (keep as-is; we'll also silence messages from tests)
       window.litDisableDevModeWarning = true;
 
 			// This is a benign error that seems to be caused by components that use anchored region. We'll suppress it
@@ -70,6 +70,10 @@ export default {
 			}
 			});
 		</script>
+
+    <!-- Load our test setup module first to patch console and error handling -->
+    <script type="module" src="/test/test-setup.ts"></script>
+
 		<script type="module" src="${testFramework}"></script>
 		</body>
 	</html>

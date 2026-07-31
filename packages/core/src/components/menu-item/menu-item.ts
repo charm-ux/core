@@ -169,6 +169,13 @@ export class CoreMenuItem extends CharmElement {
     }
   }
 
+  public override willUpdate(props: PropertyValues) {
+    // aria-disabled belongs on the host (which carries role="menuitem"), not the inner control.
+    if (props.has('disabled')) {
+      this.setAttribute('aria-disabled', String(!!this.disabled));
+    }
+  }
+
   public override updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
 
@@ -180,8 +187,8 @@ export class CoreMenuItem extends CharmElement {
       this.requestUpdate();
     }
 
-    if (changedProperties.has('checked') && this.role?.startsWith('menuitem')) {
-      this.setAttribute('aria-checked', String(this.checked));
+    if ((changedProperties.has('checked') || changedProperties.has('role')) && this.role?.startsWith('menuitem')) {
+      this.setAttribute('aria-checked', String(!!this.checked));
     }
   }
 
@@ -398,7 +405,6 @@ export class CoreMenuItem extends CharmElement {
         class="base"
         part="menu-item-base"
         aria-current=${ifDefined(isLink && this.current ? 'page' : undefined)}
-        aria-disabled=${this.disabled}
         href=${ifDefined(isLink && !this.disabled ? this.href : undefined)}
         target=${ifDefined(isLink && !this.disabled ? this.target : undefined)}
         tabindex=${ifDefined(isLink ? '-1' : undefined)}

@@ -169,15 +169,21 @@ export class CoreMenuGroupTests<T extends CoreMenuGroup> extends CharmElementTes
                   el.appendChild(menuItem2);
 
                   await elementUpdated(el);
+                  await menuItem1.updateComplete;
+                  await menuItem2.updateComplete;
 
                   menuItem1.click();
                   await elementUpdated(el);
+                  await menuItem1.updateComplete;
+                  await menuItem2.updateComplete;
 
                   expect(menuItem1.getAttribute('aria-checked')).to.equal('true');
-                  expect(menuItem2.hasAttribute('aria-checked')).to.be.false;
+                  expect(menuItem2.getAttribute('aria-checked')).to.equal('false');
 
                   menuItem2.click();
                   await elementUpdated(el);
+                  await menuItem1.updateComplete;
+                  await menuItem2.updateComplete;
 
                   expect(menuItem1.getAttribute('aria-checked')).to.equal('false');
                   expect(menuItem2.getAttribute('aria-checked')).to.equal('true');

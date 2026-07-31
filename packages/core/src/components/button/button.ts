@@ -280,7 +280,7 @@ export class CoreButton extends CharmFocusableElement {
     }
 
     if (this.type === 'submit') {
-      this._internals?.form?.submit();
+      this._internals?.form?.requestSubmit();
     }
 
     if (this.type === 'reset') {

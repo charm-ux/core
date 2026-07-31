@@ -117,6 +117,9 @@ export class CoreMenu extends CharmDismissibleElement {
     this.addEventListener('click', this.handleRadioMenuItemSelection);
     this.addEventListener('menu-item-change', this.handleMenuItemSelection);
     this.addEventListener('menu-group-select', this.handleMenuItemSelection);
+    // Keep the menu's open state in sync when the popup closes itself (e.g. Escape inside the popup,
+    // which stops propagation before reaching the menu's own keydown handler).
+    this.addEventListener('popup-request-close', this.handlePopupRequestClose);
   }
 
   public override disconnectedCallback() {
@@ -127,12 +130,23 @@ export class CoreMenu extends CharmDismissibleElement {
     this.removeEventListener('click', this.handleRadioMenuItemSelection);
     this.removeEventListener('menu-item-change', this.handleMenuItemSelection);
     this.removeEventListener('menu-group-select', this.handleMenuItemSelection);
+    this.removeEventListener('popup-request-close', this.handlePopupRequestClose);
 
     // Clean up item event listeners
     this.items?.forEach(item => {
       item.removeEventListener('focus', this.handleItemFocus);
     });
   }
+
+  /** Syncs the menu's open state when the popup requests to close itself (e.g. Escape or Tab-trap close). */
+  protected handlePopupRequestClose = (e: Event) => {
+    const event = e as CustomEvent;
+    if (event.defaultPrevented) return;
+    if (this.open) {
+      event.stopPropagation();
+      this.requestClose('keyboard');
+    }
+  };
 
   protected override onOpenChange(open: boolean) {
     super.onOpenChange(open);
@@ -232,6 +246,13 @@ export class CoreMenu extends CharmDismissibleElement {
         this.items[this.focusIndex].setAttribute('tabindex', '-1');
         this.items[0].setAttribute('tabindex', '0');
         this.focusIndex = 0;
+        break;
+
+      case keys.Escape:
+        if (this.open) {
+          this.requestClose('keyboard');
+          keyHandled = true;
+        }
         break;
     }
 

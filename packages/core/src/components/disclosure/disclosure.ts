@@ -7,6 +7,9 @@ import styles from './disclosure.styles.js';
 // id for slotted trigger (will only be added if one doesn't exist)
 let disclosureButtonId = 0;
 
+// id for the expandable content region (used by the trigger's aria-controls)
+let disclosureContentId = 0;
+
 /**
  * Disclosure is used for composing collapsible components
  *
@@ -45,6 +48,9 @@ export class CoreDisclosure extends CharmDismissibleElement {
 
   /** Query for the trigger element */
   protected trigger?: HTMLElement;
+
+  /** Stable id for the expandable content region, referenced by the trigger's `aria-controls`. */
+  protected contentId = `disclosure-content-${++disclosureContentId}`;
 
   /*
    * Initializes the component.
@@ -88,6 +94,7 @@ export class CoreDisclosure extends CharmDismissibleElement {
   protected setAriaLabels() {
     if (!this.trigger) return;
     this.trigger.setAttribute('aria-expanded', this.open.toString());
+    this.trigger.setAttribute('aria-controls', this.contentId);
 
     if (!this.trigger.id) {
       this.trigger.id = `disclosure-button-${++disclosureButtonId}`;
@@ -108,11 +115,13 @@ export class CoreDisclosure extends CharmDismissibleElement {
     // aria-labelled-by, we need the trigger id
     return html`
       <div
+        id=${this.contentId}
         aria-hidden=${!this.open}
         aria-labelledby=${ifDefined(this.trigger?.id)}
         class="disclosure-content"
         role="region"
         part="disclosure-content"
+        ?inert=${!this.open}
         @transitionend=${this.handleTransitionEnd}
       >
         <slot></slot>

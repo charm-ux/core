@@ -24,6 +24,17 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
                   expect(getComputedStyle(button).display).to.equal('');
                 },
               },
+              inertWhenClosed: {
+                description: 'makes the pane inert when closed',
+                test: async () => {
+                  const el = this.component;
+                  const base = el.shadowRoot?.querySelector('[part="push-pane-base"]') as HTMLElement;
+                  expect(base.inert).to.be.true;
+                  el.show();
+                  await elementUpdated(el);
+                  expect(base.inert).to.be.false;
+                },
+              },
             },
           },
 

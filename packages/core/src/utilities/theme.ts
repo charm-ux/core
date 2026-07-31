@@ -1,11 +1,13 @@
 import { type CSSResult } from 'lit';
-import {
-  charmDefinition,
-  createCssHelpers,
-  type CssHelpers,
-  type ResolvedTokenDefinition,
-  toKebabCase,
-} from '@charm-ux/theming';
+import { charmDefinition } from '@charm-ux/theming/themes';
+import { createCssHelpers, type CssHelpers } from '@charm-ux/theming/lit';
+import type { ResolvedTokenDefinition } from '@charm-ux/theming';
+
+// Local copy to avoid pulling in the `@charm-ux/theming` root barrel (and its culori-based generator)
+// from component style modules. Matches `helpers/toKebabCase` in the theming package.
+function toKebabCase(value: string): string {
+  return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
 
 function varName(prefix: string, ...segments: (string | number)[]): string {
   const parts = segments.map(s => toKebabCase(String(s)));
@@ -16,9 +18,24 @@ let _themePrefix = 'charm';
 let _themeDefinition: ResolvedTokenDefinition = charmDefinition;
 let _themeHelpers = createCssHelpers(_themeDefinition, _themePrefix);
 
+// Flips once any component style module has evaluated `tokens.lit`. Because Lit
+// `css` templates bake their interpolations at module load, a prefix or definition
+// change made after that point cannot affect already-imported components.
+let _stylesEvaluated = false;
+
 function rebuild() {
   _themeHelpers = createCssHelpers(_themeDefinition, _themePrefix);
   tokens.lit = _themeHelpers;
+}
+
+function warnIfStylesEvaluated(operation: string) {
+  if (!_stylesEvaluated) return;
+  console.warn(
+    `[charm-ux] ${operation}() was called after component styles were already evaluated. ` +
+      'Component styles bake CSS custom-property names at module load, so this change will not apply to ' +
+      `components that were already imported. Call ${operation}() before importing any @charm-ux/core ` +
+      'component modules.'
+  );
 }
 
 const _varProxy = {
@@ -71,7 +88,17 @@ export const tokens: {
     semantic: (...segments: (string | number)[]) => string;
     component: (...segments: (string | number)[]) => string;
   };
-} = { lit: _themeHelpers, var: _varProxy, prop: _propProxy };
+} = {
+  get lit(): CssHelpers {
+    _stylesEvaluated = true;
+    return _themeHelpers;
+  },
+  set lit(helpers: CssHelpers) {
+    _themeHelpers = helpers;
+  },
+  var: _varProxy,
+  prop: _propProxy,
+};
 
 /**
  * Set the CSS variable prefix for all theme tokens.
@@ -81,6 +108,7 @@ export const tokens: {
  * @param prefix - The prefix to use (e.g. `'fui'` → `--fui-button-bg-color`)
  */
 export function setThemePrefix(prefix: string) {
+  warnIfStylesEvaluated('setThemePrefix');
   _themePrefix = prefix;
   rebuild();
 }
@@ -94,6 +122,7 @@ export function setThemePrefix(prefix: string) {
  * @param prefix - Optional CSS variable prefix (defaults to the current prefix)
  */
 export function setThemeDefinition(definition: ResolvedTokenDefinition, prefix?: string) {
+  warnIfStylesEvaluated('setThemeDefinition');
   _themeDefinition = definition;
   if (prefix !== undefined) _themePrefix = prefix;
   rebuild();

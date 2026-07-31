@@ -75,6 +75,18 @@ export class CoreTabTests<T extends CoreTab> extends CharmElementTests<T> {
                   expect(el.getAttribute('aria-disabled')).to.equal('true');
                 },
               },
+              ariaDisabledRemoved: {
+                description: 'removes aria-disabled when the tab is re-enabled',
+                test: async () => {
+                  const el = this.component;
+                  el.disabled = true;
+                  await elementUpdated(el);
+                  expect(el.getAttribute('aria-disabled')).to.equal('true');
+                  el.disabled = false;
+                  await elementUpdated(el);
+                  expect(el.getAttribute('aria-disabled')).to.equal(null);
+                },
+              },
             },
           },
         },

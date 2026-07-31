@@ -51,8 +51,13 @@ export class CoreTabPanel extends CharmElement {
     super.connectedCallback();
     this.setAttribute('role', 'tabpanel');
     this.setAttribute('slot', 'tabpanel');
-    this.addEventListener('transitionend', (e: TransitionEvent) => this.handleTransitionEnd(e));
+    this.addEventListener('transitionend', this.handleTransitionEnd);
     this.hidden = true; // initially hidden
+  }
+
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('transitionend', this.handleTransitionEnd);
   }
 
   /** Handles the `transitionend` event. */

@@ -1,6 +1,7 @@
 import { html } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import CoreIcon from '../icon/icon.js';
@@ -79,7 +80,7 @@ export class CoreAlert extends CharmDismissibleElement {
     return [CoreIcon];
   }
 
-  /** If set, it will add the `aria-live` attribute with the value on the element where `role="alert"` is set. */
+  /** Controls how the alert is announced to assistive technology. `polite` renders `role="status"`, `assertive` renders `role="alert"`, and `off` renders neither. */
   @property()
   public get politeness(): PolitenessType {
     return this._politeness;
@@ -115,6 +116,13 @@ export class CoreAlert extends CharmDismissibleElement {
     if (this.dismissible && !this.transition) {
       this.hidden = !open;
     }
+  }
+
+  /** The role implied by the current politeness. `polite` and `assertive` map to `status` and `alert` respectively. */
+  protected politenessRole(): 'alert' | 'status' | undefined {
+    if (this.politeness === 'assertive') return 'alert';
+    if (this.politeness === 'polite') return 'status';
+    return undefined;
   }
 
   /**
@@ -186,8 +194,8 @@ export class CoreAlert extends CharmDismissibleElement {
             alert: true,
             'has-actions': this.hasSlotController.test('action'),
           })}
-          role="alert"
-          aria-live=${this.politeness}
+          role=${ifDefined(this.politenessRole())}
+          aria-live=${ifDefined(this.politeness === 'off' ? undefined : this.politeness)}
         >
           ${this.contentTemplate()}
         </div>

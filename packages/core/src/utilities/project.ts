@@ -73,7 +73,7 @@ export default class CharmProject {
     }
   }
 
-  protected isValidTagPrefix = (prefix?: string) => /^([a-z0-9\-_]+)?/.test(prefix || '');
+  protected isValidTagPrefix = (prefix?: string) => /^[a-z][a-z0-9]*$/.test(prefix || '');
 }
 
 /** Default Charm project instance */

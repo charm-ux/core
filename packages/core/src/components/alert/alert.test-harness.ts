@@ -1,4 +1,4 @@
-import { expect, oneEvent, waitUntil } from '@open-wc/testing';
+import { elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreAlert } from './index.js';
@@ -249,13 +249,29 @@ export class CoreAlertTests<T extends CoreAlert> extends CharmElementTests<T> {
                 },
               },
               accessibility: {
-                description: 'should have role="alert" and correct aria-live',
+                description: 'should derive role from politeness and set aria-live',
                 test: async () => {
                   const el = this.component;
                   await el.show();
-                  const alert = el.shadowRoot?.querySelector('.alert');
-                  expect(alert?.getAttribute('role')).to.equal('alert');
-                  expect(['polite', 'assertive', 'off']).to.include(alert?.getAttribute('aria-live'));
+                  const getAlert = () => el.shadowRoot?.querySelector('.alert');
+
+                  // polite (default) -> role="status"
+                  el.politeness = 'polite';
+                  await elementUpdated(el);
+                  expect(getAlert()?.getAttribute('role')).to.equal('status');
+                  expect(getAlert()?.getAttribute('aria-live')).to.equal('polite');
+
+                  // assertive -> role="alert"
+                  el.politeness = 'assertive';
+                  await elementUpdated(el);
+                  expect(getAlert()?.getAttribute('role')).to.equal('alert');
+                  expect(getAlert()?.getAttribute('aria-live')).to.equal('assertive');
+
+                  // off -> neither
+                  el.politeness = 'off';
+                  await elementUpdated(el);
+                  expect(getAlert()?.hasAttribute('role')).to.be.false;
+                  expect(getAlert()?.hasAttribute('aria-live')).to.be.false;
                 },
               },
             },

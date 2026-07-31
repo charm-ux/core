@@ -60,8 +60,8 @@ export class CoreAvatar extends CharmElement {
               <div
                 class="initials"
                 part="avatar-initials"
-                role=${ifDefined(this.label ? 'img' : undefined)}
-                aria-label=${ifDefined(this.label)}
+                role=${ifDefined(!this.image && this.label ? 'img' : undefined)}
+                aria-label=${ifDefined(!this.image ? this.label : undefined)}
               >
                 ${this.initials}
               </div>

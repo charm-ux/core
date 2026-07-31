@@ -137,8 +137,8 @@ export class CoreTextArea extends CharmFormControlElement {
     return html`
       <div class="form-control-input" part="textarea-control">
         <textarea
-          aria-describedby="help-text"
-          aria-errormessage="error-text"
+          aria-describedby=${ifDefined(this.describedBy)}
+          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
           autocapitalize=${ifDefined(this.autocapitalize)}
           autocomplete=${ifDefined(this.autocomplete)}

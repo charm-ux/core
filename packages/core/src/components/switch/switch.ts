@@ -5,6 +5,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 import { keys } from '../../utilities/key-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
+import { HasSlotController } from '../../controller/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './switch.styles.js';
 
@@ -69,6 +70,8 @@ export class CoreSwitch extends CharmFormControlElement {
   protected usesArrowKeys = true;
   protected _checked: boolean = false;
 
+  protected override readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -81,7 +84,6 @@ export class CoreSwitch extends CharmFormControlElement {
 
   public set checked(val: boolean) {
     this._checked = val;
-    this.updateValidity();
     this.requestUpdate('checked');
   }
 
@@ -90,9 +92,30 @@ export class CoreSwitch extends CharmFormControlElement {
     this.input?.click();
   }
 
-  protected override firstUpdated() {
+  public override connectedCallback(): void {
+    super.connectedCallback();
+    // The base class syncs the form value from `value` on (re)connection, which
+    // would clobber the checked-dependent form value. Re-apply it.
+    this.internals.setFormValue(this.checked ? this.value || 'on' : null);
+  }
+
+  protected override firstUpdated(): void {
     super.firstUpdated();
-    this.updateValidity();
+    this.initialValue = this.checked ? this.value || 'on' : '';
+  }
+
+  protected override formResetCallback(): void {
+    this.checked = this.initialValue === 'on';
+  }
+
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+    if (changedProperties.has('checked')) {
+      this.updateValidity();
+      // Set the form value after updateValidity() so the base class' form-value sync
+      // (which uses `value`) doesn't clobber the checked-dependent value.
+      this.internals.setFormValue(this.checked ? this.value || 'on' : null);
+    }
   }
 
   /** Handles the click event on the switch. Toggles the checked state and emits a 'change' event. */
@@ -137,8 +160,10 @@ export class CoreSwitch extends CharmFormControlElement {
         value=${ifDefined(this.value)}
         .checked=${live(this.checked ?? false)}
         role="switch"
-        aria-invalid=${this.invalid && this.hadFocus}
         aria-checked=${this.checked ? 'true' : 'false'}
+        aria-describedby=${ifDefined(this.describedBy)}
+        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
+        aria-invalid=${this.invalid}
         ?autofocus=${this.autofocus}
         ?checked=${live(this.checked ?? false)}
         ?disabled=${this.disabled}
@@ -219,7 +244,7 @@ export class CoreSwitch extends CharmFormControlElement {
         class=${classMap({
           'form-control': true,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': this.label || !!this.querySelector('slot[name="label"]')?.hasChildNodes(),
+          'form-control-has-label': this.label || this.hasSlotController.hasNamedSlot('label'),
           'form-control-has-help-text': this.hasHelpText,
         })}
       >

@@ -3,7 +3,7 @@ import { property, queryAssignedElements, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { keys } from '../../utilities/key-map.js';
-import { asyncTimeout } from '../../utilities/helpers.js';
+import { asyncTimeout, findNextEnabledIndex } from '../../utilities/helpers.js';
 import styles from './tabs.styles.js';
 import type { CoreTab } from '../tab/tab.js';
 import type { CoreTabPanel } from '../tab-panel/tab-panel.js';
@@ -121,6 +121,11 @@ export class CoreTabs extends CharmElement {
     );
   }
 
+  /** Finds the index of the next non-disabled tab, wrapping around the tab list. */
+  protected findNextTabIndex(startIndex: number, direction: 1 | -1): number {
+    return findNextEnabledIndex(this.tabs, startIndex, direction, tab => !tab.disabled);
+  }
+
   /** Handles the keydown event on a tab. */
   protected handleTabKeyDown(e: KeyboardEvent) {
     // don't handle keys we don't care about
@@ -148,23 +153,23 @@ export class CoreTabs extends CharmElement {
     switch (e.key) {
       case keys.ArrowRight:
       case keys.ArrowDown: {
-        nextIndex = this.focusedIndex === this.tabs.length - 1 ? 0 : this.focusedIndex + 1;
+        nextIndex = this.findNextTabIndex(this.focusedIndex, 1);
         break;
       }
 
       case keys.ArrowLeft:
       case keys.ArrowUp: {
-        nextIndex = this.focusedIndex === 0 ? this.tabs.length - 1 : this.focusedIndex - 1;
+        nextIndex = this.findNextTabIndex(this.focusedIndex, -1);
         break;
       }
 
       case keys.Home: {
-        nextIndex = 0;
+        nextIndex = this.findNextTabIndex(-1, 1);
         break;
       }
 
       case keys.End: {
-        nextIndex = this.tabs.length - 1;
+        nextIndex = this.findNextTabIndex(this.tabs.length, -1);
         break;
       }
 
@@ -173,6 +178,10 @@ export class CoreTabs extends CharmElement {
         this.selectTab(e.target as CoreTab);
         return;
       }
+    }
+
+    if (nextIndex === -1) {
+      return;
     }
 
     this.setFocus(this.focusedIndex, nextIndex);

@@ -41,8 +41,7 @@ export class CoreSkeleton extends CharmElement {
           'skeleton-circle': this.shape === 'circle',
           'skeleton-rect': !this.shape || this.shape === 'rect',
         })}
-        aria-busy="true"
-        aria-live="polite"
+        aria-hidden="true"
         part="skeleton-base"
       ></div>
     `;

@@ -40,11 +40,18 @@ export class CoreRadioGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'radio-group';
 
+  /**
+   * The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus
+   * and hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,
+   * find none, and silently drop the `focus()` call.
+   */
+  public static override shadowRootOptions = { ...super.shadowRootOptions, delegatesFocus: false };
+
   /** How the radio items are laid out in the group.*/
   @property({ reflect: true }) public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
   protected radios: CoreRadio[] = [];
-  protected readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
+  protected override readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
   private previouslyDisabledRadios: Set<CoreRadio> = new Set();
 
   public constructor() {
@@ -77,7 +84,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
       tooShort: false,
       typeMismatch: false,
       valid: hasMissingData || hasCustomError ? false : true,
-      valueMissing: !hasMissingData,
+      valueMissing: hasMissingData,
     };
   }
 
@@ -89,11 +96,20 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this._errorMessage = this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage());
     this.invalid = !validity.valid;
 
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      this._errorMessage
+    );
+
     return !this.invalid;
   }
 
   public override async connectedCallback() {
     super.connectedCallback();
+    // The base class syncs the form value on every connect, which registers an empty string for a group with no
+    // selection. Native radios submit nothing when none is checked, so re-apply the value-dependent form value here
+    // (`firstUpdated` doesn't run again when the group is moved between forms).
+    this.internals.setFormValue(this.value || null);
     this.setAttribute('tabindex', '0');
     this.addEventListener('focus', this.handleHostFocus);
     this.addEventListener('blur', this.handleHostBlur);
@@ -109,6 +125,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected override firstUpdated() {
     super.firstUpdated();
+    this.internals.setFormValue(this.value || null);
     this.invalid = !this.checkValidity();
   }
 
@@ -164,6 +181,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
   protected handleValueChange() {
     if (!this.hasUpdated) return;
     this.updateCheckedRadio();
+    this.internals.setFormValue(this.value || null);
     this.reportValidity();
   }
 
@@ -265,11 +283,9 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   /** Focuses on the first focusable element. */
   protected focusOnFirstFocusableElement() {
-    const focusableElements = this.shadowRoot?.querySelectorAll('input[tabindex="0"]');
-    if (focusableElements && focusableElements.length > 0) {
-      const firstFocusableElement = focusableElements[0] as HTMLElement;
-      firstFocusableElement.focus();
-    }
+    const radios = this.radios.length ? this.radios : this.getAllRadios();
+    const firstFocusable = radios.find(radio => radio.tabIndex === 0) ?? radios[0];
+    firstFocusable?.focus();
   }
 
   /** Generates the HTML template for the label. */
@@ -326,8 +342,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
       <fieldset
         part="radio-group-base"
         role="radiogroup"
-        aria-describedby="help-text"
-        aria-errormessage="${ifDefined(this.invalid ? 'error-message' : undefined)}"
+        aria-describedby=${ifDefined(this.describedBy)}
+        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid="${this.invalid}"
         aria-required="${this.required}"
         class=${classMap({

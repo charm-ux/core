@@ -1,4 +1,4 @@
-import { expect } from '@open-wc/testing';
+import { elementUpdated, expect } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreBreadcrumbItem } from './index.js';
 
@@ -29,6 +29,22 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
                   expect(el.shadowRoot?.querySelector('[aria-current="page"]')).to.be.null;
                   await el.setAttribute('current', 'page');
                   expect(el.shadowRoot?.querySelector('[aria-current="page"]')).not.to.be.null;
+                },
+              },
+              buttonWithoutHref: {
+                description: 'renders a button control when no href is set',
+                test: async () => {
+                  const el = this.component;
+                  expect(el.shadowRoot?.querySelector('.control')?.tagName).to.equal('BUTTON');
+                },
+              },
+              anchorWithHref: {
+                description: 'renders an anchor control when href is set',
+                test: async () => {
+                  const el = this.component;
+                  el.href = 'https://example.com';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('.control')?.tagName).to.equal('A');
                 },
               },
             },

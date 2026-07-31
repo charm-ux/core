@@ -44,13 +44,13 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
                 },
               },
               ariaDisabledWhenDisabled: {
-                description: 'should set the "aria-disabled" attribute when "disabled" is provided',
+                description: 'should set the "aria-disabled" attribute on the host when "disabled" is provided',
                 test: async () => {
                   const el = this.component;
                   el.disabled = true;
                   await elementUpdated(this.component);
 
-                  expect(el.shadowRoot?.querySelector('[aria-disabled="true"]')).to.not.be.null;
+                  expect(el.getAttribute('aria-disabled')).to.equal('true');
                 },
               },
               link: {

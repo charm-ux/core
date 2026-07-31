@@ -32,6 +32,25 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                   expect(el.shadowRoot?.querySelector('.question')).to.not.be.null;
                 },
               },
+              roleImgWhenLabel: {
+                description: 'sets role="img" and aria-label on the icon base when a label is provided',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'Close';
+                  await elementUpdated(el);
+                  const base = el.shadowRoot?.querySelector('[part="icon-base"]');
+                  expect(base?.getAttribute('role')).to.equal('img');
+                  expect(base?.getAttribute('aria-label')).to.equal('Close');
+                },
+              },
+              ariaHiddenWithoutLabel: {
+                description: 'marks the icon base as aria-hidden when no label is provided',
+                test: async () => {
+                  const el = this.component;
+                  const base = el.shadowRoot?.querySelector('[part="icon-base"]');
+                  expect(base?.getAttribute('aria-hidden')).to.equal('true');
+                },
+              },
             },
           },
           events: {

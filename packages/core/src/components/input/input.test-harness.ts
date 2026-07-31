@@ -1,4 +1,4 @@
-import { elementUpdated, expect, fixture } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture } from '@open-wc/testing';
 import { html, unsafeStatic } from 'lit/static-html.js';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
@@ -64,6 +64,42 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
               },
             },
           },
+          accessibility: {
+            description: 'accessibility',
+            tests: {
+              invalidState: {
+                description: 'reflects invalid state via aria-invalid and errormessage',
+                test: async () => {
+                  const getInput = () => this.component.shadowRoot?.querySelector('input');
+
+                  this.component.errorMessage = 'Required';
+                  await elementUpdated(this.component);
+                  expect(getInput()?.getAttribute('aria-invalid')).to.equal('true');
+                  expect(getInput()?.getAttribute('aria-errormessage')).to.equal('error-text');
+                  expect(getInput()?.getAttribute('aria-describedby')).to.be.null;
+
+                  this.component.errorMessage = '';
+                  await elementUpdated(this.component);
+                  expect(getInput()?.getAttribute('aria-invalid')).to.equal('false');
+                  expect(getInput()?.getAttribute('aria-errormessage')).to.be.null;
+                },
+              },
+              helpText: {
+                description: 'describes the field with the help text when present',
+                test: async () => {
+                  const getInput = () => this.component.shadowRoot?.querySelector('input');
+
+                  this.component.helpText = 'Some help';
+                  await elementUpdated(this.component);
+                  expect(getInput()?.getAttribute('aria-describedby')).to.contain('help-text');
+
+                  this.component.helpText = '';
+                  await elementUpdated(this.component);
+                  expect(getInput()?.getAttribute('aria-describedby')).to.be.null;
+                },
+              },
+            },
+          },
           interactions: {
             description: 'form',
             tests: {
@@ -75,6 +111,28 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                     <form><${unsafeStatic(tag)} required value=""></${unsafeStatic(tag)}><button type="submit">Submit</button></form>
                   `);
                   expect(form.reportValidity()).to.be.false;
+                },
+              },
+              enterKeyInvalid: {
+                description: 'does not submit an invalid form when Enter is pressed',
+                test: async () => {
+                  const tag = project.scope.tagName('input');
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <${unsafeStatic(tag)} required value=""></${unsafeStatic(tag)}>
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  const submitSpy = sinon.spy();
+                  form.addEventListener('submit', (e: Event) => {
+                    e.preventDefault();
+                    submitSpy();
+                  });
+                  const innerInput = form.querySelector(tag)?.shadowRoot?.querySelector('input') as HTMLInputElement;
+                  innerInput.focus();
+                  await sendKeys({ press: 'Enter' });
+                  await aTimeout(50);
+                  expect(submitSpy).to.have.been.callCount(0);
                 },
               },
             },

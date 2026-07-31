@@ -119,6 +119,30 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   expect(ariaLabel).to.equal(labelValue);
                 },
               },
+              initialsLabeledWithoutImage: {
+                description: 'labels the initials as an image when no real image is shown',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'User';
+                  el.initials = 'JD';
+                  await elementUpdated(el);
+                  const initials = el.shadowRoot?.querySelector('[part="avatar-initials"]');
+                  expect(initials?.getAttribute('role')).to.equal('img');
+                  expect(initials?.getAttribute('aria-label')).to.equal('User');
+                },
+              },
+              imageShownNoDuplicateImgRole: {
+                description: 'does not label the initials as an image when a real image is shown',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'User';
+                  el.image = 'https://via.placeholder.com/32x32';
+                  await elementUpdated(el);
+                  const initials = el.shadowRoot?.querySelector('[part="avatar-initials"]');
+                  expect(initials?.getAttribute('role')).to.equal(null);
+                  expect(initials?.getAttribute('aria-label')).to.equal(null);
+                },
+              },
               altText: {
                 description: 'sets label property as alt attribute in the img element',
                 test: async () => {

@@ -240,7 +240,7 @@ export function createCssHelpers<
   S extends SemanticTokens = SemanticTokens,
   C extends ComponentTokens = ComponentTokens,
 >(definition: ResolvedTokenDefinition<P, S, C>, prefix?: string): CssHelpers<P, S, C> {
-  const resolvedPrefix = prefix ?? definition.prefix ?? '';
+  const resolvedPrefix = prefix ?? definition.prefix ?? 'charm';
 
   /**
    * Create a CSSResult from a CSS variable reference.

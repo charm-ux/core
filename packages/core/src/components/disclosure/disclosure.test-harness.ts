@@ -118,6 +118,31 @@ export class CoreDisclosureTests<T extends CoreDisclosure> extends CharmElementT
                   expect(el.hasAttribute('open')).to.be.false;
                 },
               },
+              ariaControls: {
+                description: 'sets aria-controls on the trigger pointing to the content region',
+                test: async () => {
+                  const el = this.component;
+                  const slot = el.shadowRoot?.querySelector<HTMLSlotElement>('slot[name="trigger"]');
+                  const buttonElement = slot?.assignedNodes()[0] as HTMLButtonElement;
+                  const content = el.shadowRoot?.querySelector('.disclosure-content') as HTMLElement;
+
+                  expect(buttonElement.getAttribute('aria-controls')).to.equal(content.id);
+                },
+              },
+              inertWhenClosed: {
+                description: 'makes the content region inert when closed',
+                test: async () => {
+                  const el = this.component;
+                  const content = el.shadowRoot?.querySelector('.disclosure-content') as HTMLElement;
+
+                  expect(content.inert).to.be.true;
+
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  expect(content.inert).to.be.false;
+                },
+              },
             },
           },
           customMaxHeightClosed: {

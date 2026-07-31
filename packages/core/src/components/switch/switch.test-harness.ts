@@ -1,4 +1,4 @@
-import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { elementUpdated, expect, fixture, html, oneEvent, waitUntil } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { isSafari } from '@microsoft/applicationinsights-core-js';
@@ -36,6 +36,19 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   if (!isSafari) {
                     expect(inputHandler).to.have.been.callCount(1);
                   }
+                },
+              },
+              formReset: {
+                description: 'resets the switch to its initial state when the form is reset',
+                test: async () => {
+                  const el = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  el.checked = true;
+                  await elementUpdated(el);
+                  expect(el.checked).to.be.true;
+                  form.reset();
+                  await elementUpdated(el);
+                  expect(el.checked).to.be.false;
                 },
               },
             },
@@ -76,6 +89,15 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
                   expect(input.disabled).to.be.true;
                   expect(input.readOnly).to.be.true;
+                },
+              },
+              describedBy: {
+                description: 'references the help text via aria-describedby when help text is present',
+                test: async () => {
+                  const el = this.component;
+                  el.helpText = 'Helper';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot!.querySelector('input')!.getAttribute('aria-describedby')).to.equal('help-text');
                 },
               },
             },
@@ -180,6 +202,83 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   await el.updateComplete;
                   el.checked = false;
                   await el.updateComplete;
+                },
+              },
+              submitFormValue: {
+                description: 'submits the switch value when checked in a form',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'switch';
+                  el.value = 'yes';
+                  el.checked = true;
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      ${el}
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  let formData: FormData;
+                  const button = form.querySelector('button');
+                  const submitHandler = sinon.spy(evt => {
+                    formData = new FormData(form);
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+                  });
+                  form.addEventListener('click', submitHandler);
+                  button?.click();
+                  await waitUntil(() => submitHandler.calledOnce);
+                  expect(formData!.get('switch')).to.equal('yes');
+                },
+              },
+              submitDefaultOn: {
+                description: 'submits "on" when checked and no value is provided',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'switch';
+                  el.checked = true;
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      ${el}
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  let formData: FormData;
+                  const button = form.querySelector('button');
+                  const submitHandler = sinon.spy(evt => {
+                    formData = new FormData(form);
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+                  });
+                  form.addEventListener('click', submitHandler);
+                  button?.click();
+                  await waitUntil(() => submitHandler.calledOnce);
+                  expect(formData!.get('switch')).to.equal('on');
+                },
+              },
+              submitUnchecked: {
+                description: 'does not submit a value when unchecked',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'switch';
+                  el.value = 'yes';
+                  el.checked = false;
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      ${el}
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  let formData: FormData;
+                  const button = form.querySelector('button');
+                  const submitHandler = sinon.spy(evt => {
+                    formData = new FormData(form);
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+                  });
+                  form.addEventListener('click', submitHandler);
+                  button?.click();
+                  await waitUntil(() => submitHandler.calledOnce);
+                  expect(formData!.get('switch')).to.be.null;
                 },
               },
             },

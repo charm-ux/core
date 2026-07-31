@@ -48,3 +48,30 @@ export function minifyCssString(css: string) {
 export function asyncTimeout(ms = 0) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Finds the index of the next item in a wrap-around list starting from `startIndex` that
+ * satisfies `isEnabled`, walking in the given direction. Returns `-1` when no item qualifies
+ * (e.g. every item is disabled) or the list is empty. Used by roving-tabindex widgets
+ * (tabs, button-group) to skip disabled items during arrow/Home/End navigation.
+ *
+ * @param items the list to search.
+ * @param startIndex index to search from (not included in the first step).
+ * @param direction `1` to walk forward, `-1` to walk backward.
+ * @param isEnabled predicate deciding whether an item may be focused.
+ * @returns the index of the next enabled item, or `-1`.
+ */
+export function findNextEnabledIndex<T>(
+  items: readonly T[],
+  startIndex: number,
+  direction: 1 | -1,
+  isEnabled: (item: T) => boolean
+): number {
+  const count = items.length;
+  if (!count) return -1;
+  for (let i = 0; i < count; i++) {
+    const idx = (((startIndex + direction * (i + 1)) % count) + count) % count;
+    if (isEnabled(items[idx])) return idx;
+  }
+  return -1;
+}

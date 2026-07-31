@@ -3,6 +3,7 @@ import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../focusable-element/charm-focusable-element.js';
+import { HasSlotController } from '../../controller/slot.js';
 import styles from './form-control.styles.js';
 
 /**
@@ -95,6 +96,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
 
+  protected readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
+
   public constructor() {
     super();
     this.internals = this.attachInternals();
@@ -124,6 +127,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Gets the current validation message, if one exists. */
   public get validationMessage() {
     return this.internals.validationMessage;
+  }
+
+  /** Computes the `aria-describedby` value for the native control, referencing the help text when present. */
+  protected get describedBy(): string | undefined {
+    return this.hasHelpText ? 'help-text' : undefined;
   }
 
   /** The input's error message. */
@@ -190,6 +198,17 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.value = this.initialValue;
   }
 
+  /** Restores the control's value when the browser restores form state (bfcache navigation or autofill). */
+  protected formStateRestoreCallback(state: string | File | FormData | null) {
+    if (typeof state !== 'string') return;
+    this.value = state;
+  }
+
+  /** Reflects the disabled state when the control is disabled via a parent `<fieldset>`. */
+  protected formDisabledCallback(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
   /** Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid. */
   protected updateValidity() {
     this.updateComplete.then(() => {
@@ -235,7 +254,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
         'form-control-help-text': true,
         'visually-hidden': this.hideLabel,
       })}
-      aria-hidden=${this.hasHelpText ? 'true' : 'false'}
+      aria-hidden=${!this.hasHelpText}
     >
       <slot name="help-text">${this.helpText}</slot>
     </div>`;
@@ -263,8 +282,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   protected override willUpdate(_changedProperties: Map<string | number | symbol, unknown>): void {
-    this.hasLabel = !!(this.label || this.querySelector('slot[name="label"]')?.hasChildNodes());
-    this.hasHelpText = !!(this.helpText || this.querySelector('slot[name="help-text"]')?.hasChildNodes());
+    this.hasLabel = !!(this.label || this.hasSlotController.hasNamedSlot('label'));
+    this.hasHelpText = !!(this.helpText || this.hasSlotController.hasNamedSlot('help-text'));
   }
 
   protected override firstUpdated(): void {
