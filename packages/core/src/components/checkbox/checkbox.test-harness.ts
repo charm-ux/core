@@ -55,6 +55,49 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                   expect(el.invalid).to.be.false;
                 },
               },
+              indeterminateSync: {
+                description: 'keeps the input indeterminate property in sync with the property',
+                test: async () => {
+                  const el = this.component;
+                  const input = el.shadowRoot!.querySelector('input')!;
+                  el.indeterminate = true;
+                  await elementUpdated(el);
+                  expect(input.indeterminate).to.be.true;
+                  el.indeterminate = false;
+                  await elementUpdated(el);
+                  expect(input.indeterminate).to.be.false;
+                },
+              },
+              describedBy: {
+                description: 'references the help text via aria-describedby when help text is present',
+                test: async () => {
+                  const el = this.component;
+                  el.helpText = 'Helper';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot!.querySelector('input')!.getAttribute('aria-describedby')).to.equal('help-text');
+                },
+              },
+              slottedLabel: {
+                description: 'adds the form-control-has-label class when a label is provided via the default slot',
+                test: async () => {
+                  const el = this.component;
+                  el.removeAttribute('label');
+                  el.innerHTML = '<span>My Label</span>';
+                  await elementUpdated(el);
+                  const formControl = el.shadowRoot!.querySelector('.form-control') as HTMLElement;
+                  expect(formControl.classList.contains('form-control-has-label')).to.be.true;
+                },
+              },
+              noLabelWithoutContent: {
+                description: 'omits the form-control-has-label class when no label is present',
+                test: async () => {
+                  const el = this.component;
+                  el.removeAttribute('label');
+                  await elementUpdated(el);
+                  const formControl = el.shadowRoot!.querySelector('.form-control') as HTMLElement;
+                  expect(formControl.classList.contains('form-control-has-label')).to.be.false;
+                },
+              },
             },
           },
           // event tests

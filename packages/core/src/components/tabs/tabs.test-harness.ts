@@ -341,6 +341,36 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                       expect(el.activeId).to.equal('tab-1');
                     },
                   },
+                  arrowSkipsDisabledTabs: {
+                    description: 'skips disabled tabs when navigating with arrow keys',
+                    test: async () => {
+                      const el = this.component;
+                      const tabTwo = el.querySelector('#tab-2') as CoreTab;
+                      tabTwo.disabled = true;
+
+                      await sendKeys({ press: 'Tab' });
+                      await sendKeys({ press: 'ArrowRight' });
+
+                      await elementUpdated(el);
+
+                      expect(el.activeId).to.equal('tab-3');
+                    },
+                  },
+                  endSkipsDisabledLastTab: {
+                    description: 'skips disabled tabs when End is pressed',
+                    test: async () => {
+                      const el = this.component;
+                      const tabSix = el.querySelector('#tab-6') as CoreTab;
+                      tabSix.disabled = true;
+
+                      await sendKeys({ press: 'Tab' });
+                      await sendKeys({ press: 'End' });
+
+                      await elementUpdated(el);
+
+                      expect(el.activeId).to.equal('tab-5');
+                    },
+                  },
                 },
               },
             },
@@ -517,18 +547,20 @@ export class CoreDisabledTabsTests<T extends CoreTabs> extends CharmElementTests
                 description: 'selected tab',
                 tests: {
                   disabledItemFocus: {
-                    description: 'allows to focus on a disabled item, but does not trigger selection',
+                    description: 'skips a disabled item when navigating with arrow keys',
                     test: async () => {
                       const el = this.component;
                       const tabOne = el.querySelector('#tab-1') as CoreTab;
+                      const tabSix = el.querySelector('#tab-6') as CoreTab;
 
                       await sendKeys({ press: 'Tab' });
                       await sendKeys({ press: 'ArrowLeft' });
 
                       await elementUpdated(el);
 
-                      expect(tabOne!.getAttribute('tabindex')).to.equal('0');
-                      expect(tabOne!.getAttribute('aria-selected')).to.equal('false');
+                      expect(tabSix!.getAttribute('tabindex')).to.equal('0');
+                      expect(tabSix!.getAttribute('aria-selected')).to.equal('true');
+                      expect(tabOne!.getAttribute('tabindex')).to.equal('-1');
                     },
                   },
                 },

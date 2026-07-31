@@ -68,6 +68,40 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
                   expect(el.shadowRoot?.querySelector('.progress-bar-label')).to.have.class('visually-hidden');
                 },
               },
+              meter: {
+                description: 'reflects the meter attribute and uses the meter role',
+                test: async () => {
+                  const el = this.component;
+                  el.meter = true;
+                  await elementUpdated(el);
+                  expect(el.hasAttribute('meter')).to.be.true;
+                  expect(el.shadowRoot?.querySelector('[part="progress-bar-track"]')?.getAttribute('role')).to.equal(
+                    'meter'
+                  );
+                },
+              },
+              indeterminateOmitsAriaValueNow: {
+                description: 'omits aria-valuenow when indeterminate',
+                test: async () => {
+                  const el = this.component;
+                  el.indeterminate = true;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('[part="progress-bar-track"]')?.hasAttribute('aria-valuenow')).to
+                    .be.false;
+                },
+              },
+              labelledByOnlyWhenLabel: {
+                description: 'sets aria-labelledby only when a label is present',
+                test: async () => {
+                  const el = this.component;
+                  const track = el.shadowRoot?.querySelector('[part="progress-bar-track"]');
+                  expect(track?.getAttribute('aria-labelledby')).to.equal('label');
+                  el.removeAttribute('label');
+                  el.innerHTML = '';
+                  await elementUpdated(el);
+                  expect(track?.hasAttribute('aria-labelledby')).to.be.false;
+                },
+              },
             },
           },
         },

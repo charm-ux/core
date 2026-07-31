@@ -1,6 +1,7 @@
 import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import formControlStyles from '../../base/form-control-element/form-control.styles.js';
 import { HasSlotController } from '../../controller/index.js';
@@ -61,9 +62,19 @@ export class CoreProgressBar extends CharmElement {
   @property({ attribute: 'help-text' }) public helpText?: string;
 
   /** Update the role of the progress bar from 'progressbar' to 'meter' to indicate that it measures a specific value instead of progress towards a specific task. */
-  @property({ type: Boolean }) public meter?: boolean;
+  @property({ type: Boolean, reflect: true }) public meter?: boolean;
 
-  protected readonly hasSlotController = new HasSlotController(this, '[label], [help-text]');
+  protected readonly hasSlotController = new HasSlotController(this, '[default]', 'help-text');
+
+  /** Whether a label is present via the `label` attribute or the default slot. */
+  protected get hasLabel(): boolean {
+    return !!this.label || this.hasSlotController.hasDefaultSlot();
+  }
+
+  /** Whether help text is present via the `help-text` attribute or the `help-text` slot. */
+  protected get hasHelpText(): boolean {
+    return !!this.helpText || this.hasSlotController.hasNamedSlot('help-text');
+  }
 
   protected override async willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
@@ -81,6 +92,9 @@ export class CoreProgressBar extends CharmElement {
 
   /** Generates the template for the label. */
   protected labelTemplate() {
+    if (!this.hasLabel) {
+      return html``;
+    }
     return html`
       <div
         id="label"
@@ -98,7 +112,7 @@ export class CoreProgressBar extends CharmElement {
 
   /** Generates the template for form control help text */
   protected helpTextTemplate() {
-    const hasHelpText = this.hasSlotController.hasNamedSlot('help-text') || this.helpText;
+    const hasHelpText = this.hasHelpText;
     return html`<div
       part="progress-bar-help-text"
       id="help-text"
@@ -120,10 +134,11 @@ export class CoreProgressBar extends CharmElement {
         part="progress-bar-track"
         class="progress-bar-track"
         role=${this.meter ? 'meter' : 'progressbar'}
-        aria-labelledby="label"
+        aria-labelledby=${ifDefined(this.hasLabel ? 'label' : undefined)}
+        aria-describedby=${ifDefined(this.hasHelpText ? 'help-text' : undefined)}
         aria-valuemin="0"
         aria-valuemax=${this.max ?? 100}
-        aria-valuenow=${this.indeterminate ? 0 : (this.value ?? 0)}
+        aria-valuenow=${ifDefined(this.indeterminate ? undefined : this.value)}
       >
         <div part="progress-bar-indicator" class="progress-bar-indicator"></div>
       </div>

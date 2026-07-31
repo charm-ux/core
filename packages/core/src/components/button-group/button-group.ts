@@ -2,6 +2,7 @@ import { html } from 'lit/static-html.js';
 import { property, queryAssignedElements } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
+import { findNextEnabledIndex } from '../../utilities/helpers.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import CoreButton from '../button/button.js';
 import CoreTooltip from '../tooltip/tooltip.js';
@@ -110,9 +111,22 @@ export class CoreButtonGroup extends CharmElement {
 
   public override attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     super.attributeChangedCallback(name, oldValue, newValue);
-    // Need to add keydown listener when toolbar  is set because it might be propagated from a parent button group
-    if (name === 'toolbar' && newValue !== null) {
-      this.addEventListener('keydown', this.handleKeyDown);
+    // Need to add keydown listener when toolbar is set because it might be propagated from a parent button group.
+    // Remove it again when toolbar is turned off so the listener isn't left behind.
+    if (name === 'toolbar') {
+      if (newValue !== null) {
+        this.addEventListener('keydown', this.handleKeyDown);
+      } else {
+        this.removeEventListener('keydown', this.handleKeyDown);
+      }
+    }
+    // The change listener for selection must be wired whenever `select` changes, not just at connect time.
+    if (name === 'select') {
+      if (newValue !== null) {
+        this.addEventListener('change', this.handleToggleChange);
+      } else {
+        this.removeEventListener('change', this.handleToggleChange);
+      }
     }
   }
 
@@ -130,6 +144,14 @@ export class CoreButtonGroup extends CharmElement {
       });
     }
   };
+
+  /** Finds the index of the next non-disabled slotted element, wrapping around the group. */
+  protected findNextFocusableIndex(startIndex: number, direction: 1 | -1): number {
+    return findNextEnabledIndex(this.slottedElements, startIndex, direction, el => {
+      const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true';
+      return !isDisabled;
+    });
+  }
 
   /**
    * Handles the 'keydown' event on button-group
@@ -150,15 +172,19 @@ export class CoreButtonGroup extends CharmElement {
       switch (e.key) {
         case keys.ArrowRight:
         case keys.ArrowDown: {
-          nextIndex = this.focusedIndex === this.slottedElements.length - 1 ? 0 : this.focusedIndex + 1;
+          nextIndex = this.findNextFocusableIndex(this.focusedIndex, 1);
           break;
         }
 
         case keys.ArrowLeft:
         case keys.ArrowUp: {
-          nextIndex = this.focusedIndex === 0 ? this.slottedElements.length - 1 : this.focusedIndex - 1;
+          nextIndex = this.findNextFocusableIndex(this.focusedIndex, -1);
           break;
         }
+      }
+
+      if (nextIndex === -1) {
+        return;
       }
 
       this.setFocus(this.focusedIndex, nextIndex);

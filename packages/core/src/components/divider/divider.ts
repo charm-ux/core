@@ -44,15 +44,13 @@ export class CoreDivider extends CharmElement {
 
   protected readonly hasSlotController = new HasSlotController(this, '[default]');
 
-  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
-    if (changedProperties.has('orientation') || changedProperties.has('presentation')) {
-      if (this.presentation) {
-        this.setAttribute('role', 'presentation');
-        this.removeAttribute('aria-orientation');
-      } else {
-        this.setAttribute('role', 'separator');
-        this.setAttribute('aria-orientation', this.orientation ? this.orientation : 'horizontal');
-      }
+  protected override willUpdate() {
+    if (this.presentation) {
+      this.setAttribute('role', 'presentation');
+      this.removeAttribute('aria-orientation');
+    } else {
+      this.setAttribute('role', 'separator');
+      this.setAttribute('aria-orientation', this.orientation ? this.orientation : 'horizontal');
     }
   }
 

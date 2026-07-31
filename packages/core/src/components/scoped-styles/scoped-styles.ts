@@ -31,6 +31,9 @@ export class CoreScopedStyles extends CharmElement {
   /** A unique identifier for the styles. */
   protected name: string = this.generateRandomString(5);
 
+  /** Links that have either loaded or errored. */
+  protected processedLinks = new Set<HTMLLinkElement>();
+
   private _css: string | string[] = [];
   private _loadedStylesheets: string[] = [];
 
@@ -72,16 +75,18 @@ export class CoreScopedStyles extends CharmElement {
   /** Setup link element stylesheets. */
   protected applyStylesheets(stylesheets: HTMLLinkElement[]) {
     this.loadedStylesheets = [];
+    this.processedLinks.clear();
 
     stylesheets.forEach(stylesheet => {
       stylesheet.onload = () => this.handleStylesheetLoad(stylesheet);
+      stylesheet.onerror = () => this.handleStylesheetLoad(stylesheet);
       stylesheet.disabled = false;
     });
   }
 
   /** Remove previous styles and create new <style> if all stylesheets are loaded. */
   protected writeStyle() {
-    if (this.loadedStylesheets.length === this.slottedLinks.length && this.loadedCss.length === this.cssLength) {
+    if (this.processedLinks.size === this.slottedLinks.length && this.loadedCss.length === this.cssLength) {
       this.querySelectorAll('style').forEach(style => style.remove());
 
       if (this.loadedCss.length > 0 || this.loadedStylesheets.length > 0) {
@@ -97,17 +102,19 @@ export class CoreScopedStyles extends CharmElement {
   protected scopeStyles(styles: string[]): string {
     const scope = `${this.tagName.toLowerCase()}[name="${this.name}"]`;
     this.setAttribute('name', this.name);
-    const minifiedStyles = minifyCssString(styles.map(style => style.replace(':root', '&')).join('\n'));
+    const minifiedStyles = minifyCssString(styles.map(style => style.replace(/:root/g, '&')).join('\n'));
     return `${scope} {${minifiedStyles}}`;
   }
 
   /** When stylesheet is loaded, saves the styles and disables the stylesheet. */
   protected handleStylesheetLoad(stylesheet: HTMLLinkElement) {
+    this.processedLinks.add(stylesheet);
     if (stylesheet.sheet) {
       const styles = [...stylesheet.sheet.cssRules].map(rule => `${rule.cssText}`).join('');
       this.loadedStylesheets = [...this.loadedStylesheets, styles];
     }
     stylesheet.disabled = true;
+    this.writeStyle();
   }
 
   /** Handle changes to the `stylesheets` slot. */

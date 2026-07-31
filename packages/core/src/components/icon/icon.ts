@@ -1,5 +1,6 @@
 import { html } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { project } from '../../utilities/project.js';
@@ -87,11 +88,11 @@ export class CoreIcon extends CharmElement {
           this.svg = svgEl.outerHTML;
           this.emit('icon-load');
         } else {
-          this.svg = '';
+          this.svg = this.defaultIcon;
           this.emit('icon-error', { detail: { status: file.status } });
         }
       } else {
-        this.svg = '';
+        this.svg = this.defaultIcon;
         this.emit('icon-error', { detail: { status: file.status } });
       }
     } catch (e) {
@@ -129,8 +130,9 @@ export class CoreIcon extends CharmElement {
   /** Generates the icon template. */
   protected iconTemplate() {
     return html`
-      <span class="visually-hidden">${this.label}</span>
-      <span part="icon-base" aria-hidden="true"> ${unsafeSVG(this.svg)} </span>
+      ${this.label
+        ? html` <span part="icon-base" role="img" aria-label=${ifDefined(this.label)}> ${unsafeSVG(this.svg)} </span> `
+        : html` <span part="icon-base" aria-hidden="true"> ${unsafeSVG(this.svg)} </span> `}
     `;
   }
 }

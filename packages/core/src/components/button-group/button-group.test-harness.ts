@@ -524,6 +524,35 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   toolbar: '',
                 },
               },
+              rovingSkipsDisabledButton: {
+                description: 'should skip disabled buttons during roving tabindex navigation',
+                test: async () => {
+                  const el = this.component;
+                  const itemOne = el.children[0] as CoreButton;
+                  const itemTwo = el.children[1] as CoreButton;
+                  const itemThree = el.children[2] as CoreButton;
+
+                  itemOne.setAttribute('tabindex', '0');
+                  itemTwo.setAttribute('disabled', '');
+                  itemThree.setAttribute('tabindex', '-1');
+
+                  itemOne.focus();
+
+                  const arrowKeyEvent = new KeyboardEvent('keydown', {
+                    key: 'ArrowRight',
+                    bubbles: true,
+                    composed: true,
+                  });
+                  el.dispatchEvent(arrowKeyEvent);
+                  await el.updateComplete;
+
+                  expect(itemThree.getAttribute('tabindex')).to.equal('0');
+                  expect(itemOne.getAttribute('tabindex')).to.equal('-1');
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
               verticalNavigationAttribute: {
                 description: 'should add vertical attribute to buttons when vertical is set on button-group',
                 test: async () => {

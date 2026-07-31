@@ -82,6 +82,8 @@ export class CoreTab extends CharmElement {
         if (this.tabPanel) {
           this.tabPanel.visible = false;
         }
+      } else {
+        this.removeAttribute('aria-disabled');
       }
     }
 

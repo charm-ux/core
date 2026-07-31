@@ -56,6 +56,14 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(dialogElement?.getAttribute('role')).to.be.null;
                 },
               },
+              alertReflects: {
+                description: 'should reflect the alert property to the host attribute',
+                test: async () => {
+                  this.component.alert = true;
+                  await elementUpdated(this.component);
+                  expect(this.component.hasAttribute('alert')).to.be.true;
+                },
+              },
               alertRole: {
                 description: 'should have role "alertdialog" when alert is set',
                 test: async () => {
@@ -174,6 +182,39 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   this.component.toggle();
                   await elementUpdated(this.component);
                   expect(this.component.open).to.be.false;
+                },
+              },
+              bodyScrollLockNested: {
+                description: 'keeps the body scroll locked until all nested dialogs are closed',
+                test: async () => {
+                  const el = this.component;
+                  const previous = document.body.style.overflow;
+
+                  el.open = true;
+                  await elementUpdated(el);
+                  await aTimeout(50);
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  const nested = document.createElement(project.scope.tagName('dialog')) as CoreDialog;
+                  document.body.appendChild(nested);
+                  await elementUpdated(nested);
+                  nested.open = true;
+                  await elementUpdated(nested);
+                  await aTimeout(50);
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  nested.open = false;
+                  await elementUpdated(nested);
+                  await aTimeout(50);
+                  // Still locked by the outer dialog
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  el.open = false;
+                  await elementUpdated(el);
+                  await aTimeout(50);
+                  expect(document.body.style.overflow).to.equal(previous);
+
+                  nested.remove();
                 },
               },
             },

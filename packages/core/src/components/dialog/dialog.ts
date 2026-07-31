@@ -86,6 +86,10 @@ export class CoreDialog extends CharmDismissibleElement {
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'dialog';
 
+  /** Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock. */
+  protected static bodyScrollLockCount = 0;
+  protected static previousBodyOverflow = '';
+
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
   public closeButtonLabel: string = 'close';
@@ -107,7 +111,7 @@ export class CoreDialog extends CharmDismissibleElement {
   public noHeader?: boolean;
 
   /** Indicates whether the dialog can only be closed programmatically or by clicking the close button. */
-  @property({ attribute: 'alert', type: Boolean })
+  @property({ attribute: 'alert', type: Boolean, reflect: true })
   public alert?: boolean;
 
   @state()
@@ -137,6 +141,9 @@ export class CoreDialog extends CharmDismissibleElement {
   public override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('keydown', this.handleKeydown);
+    if (this.open) {
+      this.unlockBodyScrolling();
+    }
   }
 
   public override hide() {
@@ -174,12 +181,19 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Lock body scrolling. */
   protected lockBodyScrolling() {
-    document.body.style.overflow = 'hidden';
+    if (CoreDialog.bodyScrollLockCount === 0) {
+      CoreDialog.previousBodyOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
+    CoreDialog.bodyScrollLockCount += 1;
   }
 
   /** Unlock body scrolling. */
   protected unlockBodyScrolling() {
-    document.body.style.removeProperty('overflow');
+    CoreDialog.bodyScrollLockCount = Math.max(0, CoreDialog.bodyScrollLockCount - 1);
+    if (CoreDialog.bodyScrollLockCount === 0) {
+      document.body.style.overflow = CoreDialog.previousBodyOverflow;
+    }
   }
 
   /**

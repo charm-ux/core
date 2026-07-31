@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
 import { project } from '../../utilities/index.js';
@@ -28,6 +28,18 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await expect(radios[0].tabIndex).to.equal(0);
                     await expect(radios[1].tabIndex).to.equal(-1);
                     await expect(radios[2].tabIndex).to.equal(-1);
+                  },
+                },
+                focusSelectedRadio: {
+                  description: 'moves focus to the selected radio when the group is focused',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    el.value = '2';
+                    await elementUpdated(el);
+                    el.focus();
+                    await elementUpdated(el);
+                    expect(document.activeElement).to.equal(radios[1]);
                   },
                 },
               },
@@ -175,7 +187,7 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                       ''
                     );
                     expect(el.shadowRoot?.querySelector('fieldset')?.getAttribute('aria-errormessage')).to.equal(
-                      'error-message'
+                      'error-text'
                     );
 
                     el.value = '1';
@@ -237,6 +249,54 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     const event = (await oneEvent(el, 'change')) as CustomEvent;
                     expect(event.target).to.equal(el);
                     expect(el.value).to.equal('1');
+                  },
+                },
+                formValue: {
+                  description: 'submits the selected radio value in a form',
+                  test: async () => {
+                    const el = this.component;
+                    el.value = '2';
+                    await elementUpdated(el);
+                    const form = await fixture<HTMLFormElement>(html`
+                      <form>
+                        ${el}
+                        <button type="submit">Submit</button>
+                      </form>
+                    `);
+                    let formData: FormData;
+                    const button = form.querySelector('button');
+                    const submitHandler = sinon.spy(evt => {
+                      formData = new FormData(form);
+                      evt.preventDefault();
+                      evt.stopImmediatePropagation();
+                    });
+                    form.addEventListener('click', submitHandler);
+                    button?.click();
+                    await waitUntil(() => submitHandler.calledOnce);
+                    expect(formData!.get('radio-group')).to.equal('2');
+                  },
+                },
+                formValueWhenNoneSelected: {
+                  description: 'does not submit a value when no radio is selected',
+                  test: async () => {
+                    const el = this.component;
+                    const form = await fixture<HTMLFormElement>(html`
+                      <form>
+                        ${el}
+                        <button type="submit">Submit</button>
+                      </form>
+                    `);
+                    let formData: FormData;
+                    const button = form.querySelector('button');
+                    const submitHandler = sinon.spy(evt => {
+                      formData = new FormData(form);
+                      evt.preventDefault();
+                      evt.stopImmediatePropagation();
+                    });
+                    form.addEventListener('click', submitHandler);
+                    button?.click();
+                    await waitUntil(() => submitHandler.calledOnce);
+                    expect(formData!.get('radio-group')).to.be.null;
                   },
                 },
               },

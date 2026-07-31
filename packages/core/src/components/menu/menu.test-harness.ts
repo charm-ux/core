@@ -323,6 +323,20 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                   expect(el.open).to.be.false;
                 },
               },
+              popupRequestClose: {
+                description: 'should set "open" to false when the popup requests a close',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+                  await elementUpdated(el);
+                  expect(el.open).to.be.true;
+
+                  el.dispatchEvent(new CustomEvent('popup-request-close'));
+                  await elementUpdated(el);
+
+                  expect(el.open).to.be.false;
+                },
+              },
             },
           },
         },

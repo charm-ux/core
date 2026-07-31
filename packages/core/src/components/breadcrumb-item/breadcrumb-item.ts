@@ -99,26 +99,39 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   /** @internal Handles the click event on the control. */
   public override click() {
     super.click();
-    this.shadowRoot?.querySelector<HTMLAnchorElement>('a.control')?.click();
+    this.shadowRoot?.querySelector<HTMLElement>('.control')?.click();
   }
 
-  /** Generates the HTML template for the control. */
+  /** Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible. */
   protected breadcrumbItemControlTemplate() {
-    return html`
-      <a
-        class="control"
-        href=${ifDefined(this.href)}
-        target=${ifDefined(this.target)}
-        rel=${ifDefined(this.target ? 'noreferrer noopener' : undefined)}
-        referrerpolicy=${ifDefined(this.referrerPolicy)}
-        aria-current=${ifDefined(this.current)}
-        part="breadcrumb-item-control"
-        @focus=${this.handleFocus}
-        @blur=${this.handleBlur}
-      >
-        ${startContentEndTemplate()}
-      </a>
-    `;
+    return this.href
+      ? html`
+          <a
+            class="control"
+            href=${this.href}
+            target=${ifDefined(this.target)}
+            rel=${ifDefined(this.target ? 'noreferrer noopener' : undefined)}
+            referrerpolicy=${ifDefined(this.referrerPolicy)}
+            aria-current=${ifDefined(this.current)}
+            part="breadcrumb-item-control"
+            @focus=${this.handleFocus}
+            @blur=${this.handleBlur}
+          >
+            ${startContentEndTemplate()}
+          </a>
+        `
+      : html`
+          <button
+            class="control"
+            type="button"
+            aria-current=${ifDefined(this.current)}
+            part="breadcrumb-item-control"
+            @focus=${this.handleFocus}
+            @blur=${this.handleBlur}
+          >
+            ${startContentEndTemplate()}
+          </button>
+        `;
   }
 
   /** Generates the HTML template for the separator. */

@@ -231,10 +231,10 @@ export function defineTokens<
   S extends SemanticTokens = SemanticTokens,
   C extends ComponentTokens = ComponentTokens,
 >(input: DefineTokensInput<P, S, C>, options: CreateHelpersOptions = {}): DefinedTokens<P, S, C> {
-  // Unlike the lower-level `cssVar()` helper (which defaults to a 'charm'
-  // prefix), `defineTokens()` defaults to no prefix unless the caller opts
-  // into one - either via `options.prefix` or `input.prefix`.
-  const resolvedPrefix = options.prefix ?? input.prefix ?? '';
+  // Match the default prefix of the lower-level `cssVar()`/`createCssHelpers()`
+  // helpers so that `defineTokens()` without a prefix produces the same variable
+  // names as the rest of the package.
+  const resolvedPrefix = options.prefix ?? input.prefix ?? 'charm';
   const resolvedOptions: CreateHelpersOptions = {
     ...options,
     prefix: resolvedPrefix,

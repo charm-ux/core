@@ -47,7 +47,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CHARM-003](internal/CHARM-003.md) — Declare nested components in `static dependencies`
 - [CHARM-004](internal/CHARM-004.md) — Theme through the theming package, never hardcode
 - [CHARM-005](internal/CHARM-005.md) — Keep the custom-elements manifest accurate with JSDoc
-- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`
+- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`; re-apply checked-dependent form values
 - [CHARM-007](internal/CHARM-007.md) — Use the dual named + default export, class in its own `.ts`
 - [CHARM-008](internal/CHARM-008.md) — Register icons as inline SVG strings in the icon set, not asset files
 - [CHARM-009](internal/CHARM-009.md) — Use correct JSDoc annotation tags (`@cssprop`, not `@cssproperty`)
@@ -104,6 +104,8 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-007](accessibility/A11Y-007.md) — Use roving tabindex for composite widgets
 - [A11Y-008](accessibility/A11Y-008.md) — Compare `event.key` against the shared `keys` map, not string literals
 - [A11Y-009](accessibility/A11Y-009.md) — Honor `prefers-reduced-motion` (aspirational)
+- [A11Y-010](accessibility/A11Y-010.md) — Reflect disabled state with `aria-disabled` on the widget host, and keep it in sync
+- [A11Y-011](accessibility/A11Y-011.md) — Make closed or off-screen content `inert`
 
 ### I18N — internationalization (path-gated)
 

@@ -230,6 +230,7 @@ export class CorePushPane extends CharmDismissibleElement {
       part="push-pane-base"
       class="base"
       aria-labelledby="push-pane-heading"
+      ?inert=${!this.open}
       @transitionend=${this.handleTransitionEnd}
     >
       ${this.noHeader ? this.closeButtonTemplate() : this.pushPaneHeaderTemplate()} ${this.bodyTemplate()}

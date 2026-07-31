@@ -1,8 +1,10 @@
 import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { live } from 'lit/directives/live.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
+import { HasSlotController } from '../../controller/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './checkbox.styles.js';
 
@@ -69,6 +71,8 @@ export class CoreCheckbox extends CharmFormControlElement {
 
   @query('.input')
   protected override input?: HTMLInputElement;
+
+  protected override readonly hasSlotController = new HasSlotController(this, '[default]', 'help-text');
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -137,7 +141,7 @@ export class CoreCheckbox extends CharmFormControlElement {
           'form-control': true,
           'form-control-has-error': this.invalid,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': !this.label && !this.querySelector('slot[name="default"]')?.hasChildNodes(),
+          'form-control-has-label': !!(this.label || this.hasSlotController.hasDefaultSlot()),
         })}
         part="checkbox-base"
       >
@@ -156,7 +160,7 @@ export class CoreCheckbox extends CharmFormControlElement {
             ?disabled=${this.disabled}
             ?readonly=${this.readonly}
             ?required=${this.required}
-            ?indeterminate=${this.indeterminate}
+            .indeterminate=${live(this.indeterminate ?? false)}
             @click=${this.handleClick}
             @invalid=${(e: Event) => e.preventDefault()}
           />

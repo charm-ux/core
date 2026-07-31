@@ -3,6 +3,7 @@ import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../focusable-element/charm-focusable-element.js';
+import { HasSlotController } from '../../controller/slot.js';
 import styles from './form-control.styles.js';
 
 /**
@@ -94,6 +95,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
+
+  protected readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
 
   public constructor() {
     super();
@@ -279,8 +282,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   protected override willUpdate(_changedProperties: Map<string | number | symbol, unknown>): void {
-    this.hasLabel = !!(this.label || this.querySelector('slot[name="label"]')?.hasChildNodes());
-    this.hasHelpText = !!(this.helpText || this.querySelector('slot[name="help-text"]')?.hasChildNodes());
+    this.hasLabel = !!(this.label || this.hasSlotController.hasNamedSlot('label'));
+    this.hasHelpText = !!(this.helpText || this.hasSlotController.hasNamedSlot('help-text'));
   }
 
   protected override firstUpdated(): void {

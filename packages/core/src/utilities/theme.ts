@@ -1,11 +1,13 @@
 import { type CSSResult } from 'lit';
-import {
-  charmDefinition,
-  createCssHelpers,
-  type CssHelpers,
-  type ResolvedTokenDefinition,
-  toKebabCase,
-} from '@charm-ux/theming';
+import { charmDefinition } from '@charm-ux/theming/themes';
+import { createCssHelpers, type CssHelpers } from '@charm-ux/theming/lit';
+import type { ResolvedTokenDefinition } from '@charm-ux/theming';
+
+// Local copy to avoid pulling in the `@charm-ux/theming` root barrel (and its culori-based generator)
+// from component style modules. Matches `helpers/toKebabCase` in the theming package.
+function toKebabCase(value: string): string {
+  return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
 
 function varName(prefix: string, ...segments: (string | number)[]): string {
   const parts = segments.map(s => toKebabCase(String(s)));

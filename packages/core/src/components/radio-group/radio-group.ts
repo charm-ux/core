@@ -44,7 +44,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
   @property({ reflect: true }) public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
   protected radios: CoreRadio[] = [];
-  protected readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
+  protected override readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
   private previouslyDisabledRadios: Set<CoreRadio> = new Set();
 
   public constructor() {
@@ -89,6 +89,11 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this._errorMessage = this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage());
     this.invalid = !validity.valid;
 
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      this._errorMessage
+    );
+
     return !this.invalid;
   }
 
@@ -109,6 +114,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected override firstUpdated() {
     super.firstUpdated();
+    this.internals.setFormValue(this.value || null);
     this.invalid = !this.checkValidity();
   }
 
@@ -164,6 +170,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
   protected handleValueChange() {
     if (!this.hasUpdated) return;
     this.updateCheckedRadio();
+    this.internals.setFormValue(this.value || null);
     this.reportValidity();
   }
 
@@ -265,11 +272,9 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   /** Focuses on the first focusable element. */
   protected focusOnFirstFocusableElement() {
-    const focusableElements = this.shadowRoot?.querySelectorAll('input[tabindex="0"]');
-    if (focusableElements && focusableElements.length > 0) {
-      const firstFocusableElement = focusableElements[0] as HTMLElement;
-      firstFocusableElement.focus();
-    }
+    const radios = this.radios.length ? this.radios : this.getAllRadios();
+    const firstFocusable = radios.find(radio => radio.tabIndex === 0) ?? radios[0];
+    firstFocusable?.focus();
   }
 
   /** Generates the HTML template for the label. */
@@ -326,8 +331,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
       <fieldset
         part="radio-group-base"
         role="radiogroup"
-        aria-describedby="help-text"
-        aria-errormessage="${ifDefined(this.invalid ? 'error-message' : undefined)}"
+        aria-describedby=${ifDefined(this.describedBy)}
+        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid="${this.invalid}"
         aria-required="${this.required}"
         class=${classMap({
