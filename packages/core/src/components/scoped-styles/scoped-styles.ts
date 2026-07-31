@@ -111,7 +111,9 @@ export class CoreScopedStyles extends CharmElement {
     this.processedLinks.add(stylesheet);
     if (stylesheet.sheet) {
       const styles = [...stylesheet.sheet.cssRules].map(rule => `${rule.cssText}`).join('');
-      this.loadedStylesheets = [...this.loadedStylesheets, styles];
+      // Write to the backing field rather than the setter. The setter writes styles itself, so going through it here
+      // would emit "styles-loaded" once before the link is disabled and again from the call below.
+      this._loadedStylesheets = [...this._loadedStylesheets, styles];
     }
     stylesheet.disabled = true;
     this.writeStyle();

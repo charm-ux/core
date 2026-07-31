@@ -1,4 +1,4 @@
-import { elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreScopedStyles } from './index.js';
@@ -248,8 +248,9 @@ export class CoreScopedStylesTests<T extends CoreScopedStyles> extends CharmElem
                   this.component.addEventListener('styles-loaded', spy);
                   this.component.css = `--custom-color: magenta;`;
                   await waitUntil(() => spy.called);
+                  await aTimeout(100);
 
-                  expect(spy).to.have.been.calledOnce;
+                  expect(spy.callCount).to.equal(1);
                 },
               },
               slottedStylesLoaded: {
@@ -261,8 +262,11 @@ export class CoreScopedStylesTests<T extends CoreScopedStyles> extends CharmElem
                     <link disabled slot="stylesheets" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap-reboot.min.css" rel="stylesheet" crossorigin="anonymous">
                   `;
                   await waitUntil(() => spy.called);
+                  await aTimeout(100); // let any extra emit land so an over-emit fails here instead of in a later test
 
-                  expect(spy).to.have.been.calledOnce;
+                  // Assert on the count, not `calledOnce`. On failure sinon-chai formats the recorded arguments, and
+                  // deep-formatting a CustomEvent whose target holds the injected stylesheet crashes the browser tab.
+                  expect(spy.callCount).to.equal(1);
                 },
               },
             },
