@@ -40,6 +40,13 @@ export class CoreRadioGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'radio-group';
 
+  /**
+   * The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus
+   * and hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,
+   * find none, and silently drop the `focus()` call.
+   */
+  public static override shadowRootOptions = { ...super.shadowRootOptions, delegatesFocus: false };
+
   /** How the radio items are laid out in the group.*/
   @property({ reflect: true }) public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
@@ -77,7 +84,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
       tooShort: false,
       typeMismatch: false,
       valid: hasMissingData || hasCustomError ? false : true,
-      valueMissing: !hasMissingData,
+      valueMissing: hasMissingData,
     };
   }
 
@@ -99,6 +106,10 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   public override async connectedCallback() {
     super.connectedCallback();
+    // The base class syncs the form value on every connect, which registers an empty string for a group with no
+    // selection. Native radios submit nothing when none is checked, so re-apply the value-dependent form value here
+    // (`firstUpdated` doesn't run again when the group is moved between forms).
+    this.internals.setFormValue(this.value || null);
     this.setAttribute('tabindex', '0');
     this.addEventListener('focus', this.handleHostFocus);
     this.addEventListener('blur', this.handleHostBlur);
