@@ -29,7 +29,7 @@ import styles from './avatar.styles.js';
  * @cssprop --charm-avatar-indicator-border-width - determine the border width of the status indicator.
  * @cssprop --charm-avatar-indicator-border-color - determine the border color of the status indicator.
  * @cssprop --charm-avatar-indicator-border-radius - determine the border radius of the status indicator.
- * @cssprop --charm-avatar-indicator-color - determine the color of the status indicator.
+ * @cssprop --charm-avatar-indicator-fg-color - determine the color of the status indicator.
  * @cssprop --charm-avatar-indicator-size - determine the size of the status indicator.
  **/
 

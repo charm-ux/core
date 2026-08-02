@@ -41,8 +41,10 @@ const myTokens = charmTokens
   })
   .extendSemantics(({ primitive }) => ({
     action: {
-      primary: primitive('color', 'brand', 500),
-      primaryHover: primitive('color', 'brand', 600),
+      primary: {
+        color: primitive('color', 'brand', 500),
+        hover: { color: primitive('color', 'brand', 600) },
+      },
     },
   }))
   .extendComponents(({ primitive }) => ({
@@ -87,12 +89,12 @@ const myTokens = defineTokens(
         primary: { light: '#ffffff', dark: '#18181b' },
       },
       action: {
-        primary: primitive('color', 'primary', 500),
+        primary: { color: primitive('color', 'primary', 500) },
       },
     }),
     components: ({ semantic, primitive }) => ({
       button: {
-        bgColor: semantic('action', 'primary'),
+        bgColor: semantic('action', 'primary', 'color'),
         borderRadius: primitive('borderRadius', 'md'),
       },
     }),
@@ -157,8 +159,10 @@ semantics: ({ primitive }) => ({
     },
   },
   action: {
-    primary: primitive('color', 'primary', 500),
-    primaryHover: primitive('color', 'primary', 600),
+    primary: {
+      color: primitive('color', 'primary', 500),
+      hover: { color: primitive('color', 'primary', 600) },
+    },
   },
   text: {
     primary: { light: '#18181b', dark: '#fafafa' },
@@ -175,11 +179,11 @@ Component-specific tokens:
 ```typescript
 components: ({ primitive, semantic }) => ({
   button: {
-    bgColor: semantic('action', 'primary'),
+    bgColor: semantic('action', 'primary', 'color'),
     fgColor: semantic('text', 'inverse'),
     borderRadius: primitive('borderRadius', 'md'),
     hover: {
-      bgColor: semantic('action', 'primaryHover'),
+      bgColor: semantic('action', 'primary', 'hover', 'color'),
     },
   },
 });

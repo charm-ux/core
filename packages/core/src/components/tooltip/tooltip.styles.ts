@@ -16,7 +16,7 @@ export default css`
   }
 
   .tooltip::part(popup-base) {
-    box-shadow: ${component('tooltip', 'boxShadow')};
+    box-shadow: ${component('tooltip', 'shadow')};
     border-radius: ${component('tooltip', 'borderRadius')};
     z-index: 1000;
   }

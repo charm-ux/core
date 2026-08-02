@@ -18,16 +18,16 @@ import styles from './form-control.styles.js';
  * @cssprop --charm-form-control-fg-color - Determines the control text color.
  * @cssprop --charm-form-control-focus-border-color - Determines the focused control border color.
  * @cssprop --charm-form-control-font-size - Determines the font size.
- * @cssprop --charm-form-control-help-text-fg-color - Determines the help text color.
+ * @cssprop --charm-form-control-help-text-color - Determines the help text color.
  * @cssprop --charm-form-control-help-text-font-size - Determines the help text font size.
  * @cssprop --charm-form-control-help-text-font-weight - Determines the help text font weight.
  * @cssprop --charm-form-control-help-text-gap - Determines the margin after help text.
  * @cssprop --charm-form-control-icon-gap - Determines the margin between start/end icons and the input.
  * @cssprop --charm-form-control-input-height - Determines the input height.
  * @cssprop --charm-form-control-invalid-border-color - Determines the error border color.
- * @cssprop --charm-form-control-invalid-message-fg-color - Determines the error text color.
+ * @cssprop --charm-form-control-invalid-message-color - Determines the error text color.
  * @cssprop --charm-form-control-invalid-message-font-size - Determines the error message font size.
- * @cssprop --charm-form-control-label-fg-color - Determines the label color.
+ * @cssprop --charm-form-control-label-color - Determines the label color.
  * @cssprop --charm-form-control-label-font-size - Determines the label font size.
  * @cssprop --charm-form-control-label-font-weight - Determines the label font weight.
  * @cssprop --charm-form-control-label-gap - Determines the margin between label and the control.

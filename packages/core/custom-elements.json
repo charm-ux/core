@@ -713,7 +713,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color"
+              "name": "--charm-form-control-help-text-color"
             },
             {
               "description": "Determines the help text font size.",
@@ -741,7 +741,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color"
+              "name": "--charm-form-control-invalid-message-color"
             },
             {
               "description": "Determines the error message font size.",
@@ -749,7 +749,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color"
+              "name": "--charm-form-control-label-color"
             },
             {
               "description": "Determines the label font size.",
@@ -918,6 +918,16 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -1010,8 +1020,36 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`."
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill)."
             },
             {
               "kind": "method",
@@ -1097,6 +1135,13 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, 'label', 'help-text')"
             },
             {
               "kind": "field",
@@ -2506,7 +2551,7 @@
             },
             {
               "description": "The foreground color of the icon.",
-              "name": "--charm-alert-icon-fg-color"
+              "name": "--charm-alert-icon-color"
             },
             {
               "description": "The margin of the icon.",
@@ -2948,11 +2993,22 @@
                 "text": "PolitenessType"
               },
               "privacy": "public",
-              "description": "If set, it will add the `aria-live` attribute with the value on the element where `role=\"alert\"` is set.",
+              "description": "Controls how the alert is announced to assistive technology. `polite` renders `role=\"status\"`, `assertive` renders `role=\"alert\"`, and `off` renders neither.",
               "attribute": "politeness",
               "parsedType": {
                 "text": "'off' | 'polite' | 'assertive'"
               }
+            },
+            {
+              "kind": "method",
+              "name": "politenessRole",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "'alert' | 'status' | undefined"
+                }
+              },
+              "description": "The role implied by the current politeness. `polite` and `assertive` map to `status` and `alert` respectively."
             },
             {
               "kind": "field",
@@ -3152,7 +3208,7 @@
               "type": {
                 "text": "PolitenessType"
               },
-              "description": "If set, it will add the `aria-live` attribute with the value on the element where `role=\"alert\"` is set.",
+              "description": "Controls how the alert is announced to assistive technology. `polite` renders `role=\"status\"`, `assertive` renders `role=\"alert\"`, and `off` renders neither.",
               "fieldName": "politeness",
               "parsedType": {
                 "text": "'off' | 'polite' | 'assertive'"
@@ -3240,7 +3296,7 @@
             },
             {
               "description": "determine the color of the status indicator.",
-              "name": "--charm-avatar-indicator-color"
+              "name": "--charm-avatar-indicator-fg-color"
             },
             {
               "description": "determine the size of the status indicator.",
@@ -3892,7 +3948,7 @@
               "kind": "method",
               "name": "breadcrumbItemControlTemplate",
               "privacy": "protected",
-              "description": "Generates the HTML template for the control."
+              "description": "Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible."
             },
             {
               "kind": "method",
@@ -5486,6 +5542,31 @@
               }
             },
             {
+              "kind": "method",
+              "name": "findNextFocusableIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "startIndex",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "1 | -1"
+                  }
+                }
+              ],
+              "description": "Finds the index of the next non-disabled slotted element, wrapping around the group."
+            },
+            {
               "kind": "field",
               "name": "focusedIndex",
               "type": {
@@ -6677,7 +6758,7 @@
             },
             {
               "description": "Sets the border width for the card.",
-              "name": "--charm-card-border-size"
+              "name": "--charm-card-border-width"
             },
             {
               "description": "Sets the border style for the card.",
@@ -6685,7 +6766,7 @@
             },
             {
               "description": "Sets the style of the shadowing for the card.",
-              "name": "--charm-card-box-shadow"
+              "name": "--charm-card-shadow"
             },
             {
               "description": "Determines the spacing between the slots.",
@@ -7028,52 +7109,56 @@
           "name": "CoreCheckbox",
           "cssProperties": [
             {
-              "description": "Background color when checked and active.",
-              "name": "--charm-checkbox-active-bg-color-checked"
-            },
-            {
-              "description": "Background color when unchecked and active.",
-              "name": "--charm-checkbox-active-bg-color-unchecked"
-            },
-            {
               "description": "Border color of checkbox when active.",
               "name": "--charm-checkbox-active-border-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and active.",
-              "name": "--charm-checkbox-active-border-color-checked"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and active.",
-              "name": "--charm-checkbox-active-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when active.",
               "name": "--charm-checkbox-active-fg-color"
             },
             {
-              "description": "The background color of the checkbox when checked.",
-              "name": "--charm-checkbox-bg-color-checked"
+              "description": "The background color of the checkbox.",
+              "name": "--charm-checkbox-bg-color"
             },
             {
-              "description": "The background color of the checkbox when unchecked.",
-              "name": "--charm-checkbox-bg-color-unchecked"
-            },
-            {
-              "description": "Border color of checkbox when checked.",
-              "name": "--charm-checkbox-border-color-checked"
+              "description": "Border color of checkbox.",
+              "name": "--charm-checkbox-border-color"
             },
             {
               "description": "The border radius of the checkbox.",
               "name": "--charm-checkbox-border-radius"
             },
             {
-              "description": "Background color of checkbox when checked and disabled.",
-              "name": "--charm-checkbox-disabled-bg-color-checked"
+              "description": "Background color when checked and active.",
+              "name": "--charm-checkbox-checked-active-bg-color"
             },
             {
-              "description": "Background color of checkbox when unchecked and disabled.",
-              "name": "--charm-checkbox-disabled-bg-color-unchecked"
+              "description": "Border color of checkbox when checked and active.",
+              "name": "--charm-checkbox-checked-active-border-color"
+            },
+            {
+              "description": "The background color of the checkbox when checked.",
+              "name": "--charm-checkbox-checked-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when checked.",
+              "name": "--charm-checkbox-checked-border-color"
+            },
+            {
+              "description": "Font color of checkbox when checked.",
+              "name": "--charm-checkbox-checked-fg-color"
+            },
+            {
+              "description": "Background color when checked and hovered over.",
+              "name": "--charm-checkbox-checked-hover-bg-color"
+            },
+            {
+              "description": "Border color of checkbox when checked and hovered over.",
+              "name": "--charm-checkbox-checked-hover-border-color"
+            },
+            {
+              "description": "Background color of checkbox when disabled.",
+              "name": "--charm-checkbox-disabled-bg-color"
             },
             {
               "description": "Border color of checkbox when disabled.",
@@ -7088,28 +7173,8 @@
               "name": "--charm-checkbox-fg-color"
             },
             {
-              "description": "Font color of checkbox when checked.",
-              "name": "--charm-checkbox-fg-color-checked"
-            },
-            {
-              "description": "Background color when checked and hovered over.",
-              "name": "--charm-checkbox-hover-bg-color-checked"
-            },
-            {
-              "description": "Background color when unchecked and hovered over.",
-              "name": "--charm-checkbox-hover-bg-color-unchecked"
-            },
-            {
               "description": "Border color of checkbox while being hovered over.",
               "name": "--charm-checkbox-hover-border-color"
-            },
-            {
-              "description": "Border color of checkbox when checked and hovered over.",
-              "name": "--charm-checkbox-hover-border-color-checked"
-            },
-            {
-              "description": "Border color of checkbox when unchecked and hovered over.",
-              "name": "--charm-checkbox-hover-border-color-unchecked"
             },
             {
               "description": "Font color of checkbox when being hovered over.",
@@ -7197,7 +7262,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -7253,7 +7318,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -7269,7 +7334,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -7580,6 +7645,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -7696,6 +7775,24 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
               "return": {
@@ -7703,6 +7800,24 @@
                   "text": "void"
                 }
               },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -7802,6 +7917,17 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, '[default]', 'help-text')",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -8654,7 +8780,8 @@
               },
               "privacy": "public",
               "description": "Indicates whether the dialog can only be closed programmatically or by clicking the close button.",
-              "attribute": "alert"
+              "attribute": "alert",
+              "reflects": true
             },
             {
               "kind": "field",
@@ -8669,6 +8796,17 @@
                 "module": "src/base/charm-element/charm-element.ts"
               },
               "default": "'dialog'"
+            },
+            {
+              "kind": "field",
+              "name": "bodyScrollLockCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "static": true,
+              "default": "0",
+              "description": "Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock."
             },
             {
               "kind": "field",
@@ -9014,6 +9152,16 @@
               "description": "Position of the dialog.",
               "attribute": "position",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "previousBodyOverflow",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "static": true,
+              "default": "''"
             },
             {
               "kind": "method",
@@ -9372,11 +9520,11 @@
             },
             {
               "description": "Transition for the content when opening.",
-              "name": "--charm-disclosure-open-transition"
+              "name": "--charm-disclosure-show-transition"
             },
             {
-              "description": "Transition for the content when closing,",
-              "name": "--charm-disclosure-close-transition"
+              "description": "Transition for the content when closing.",
+              "name": "--charm-disclosure-hide-transition"
             }
           ],
           "cssParts": [
@@ -9454,6 +9602,13 @@
               "description": "Controls the expand direction of the component.",
               "attribute": "content-below",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "contentId",
+              "privacy": "protected",
+              "default": "`disclosure-content-${++disclosureContentId}`",
+              "description": "Stable id for the expandable content region, referenced by the trigger's `aria-controls`."
             },
             {
               "kind": "method",
@@ -9920,8 +10075,16 @@
           "name": "CoreDivider",
           "cssProperties": [
             {
-              "description": "The border of the divider line.",
-              "name": "--charm-divider-border"
+              "description": "The color of the divider line.",
+              "name": "--charm-divider-border-color"
+            },
+            {
+              "description": "The style of the divider line.",
+              "name": "--charm-divider-border-style"
+            },
+            {
+              "description": "The width of the divider line.",
+              "name": "--charm-divider-border-width"
             },
             {
               "description": "The padding of the divider in the direction of the inset.",
@@ -10604,7 +10767,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -10660,7 +10823,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -10676,7 +10839,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -11014,6 +11177,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -11149,8 +11326,44 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -11324,6 +11537,17 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, 'label', 'help-text')",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -12583,11 +12807,11 @@
             },
             {
               "description": "Determines the rotation of the submenu icon on expanded.",
-              "name": "--charm-menu-item-submenu-item-icon-rotation"
+              "name": "--charm-menu-item-submenu-icon-rotation"
             },
             {
               "description": "Determines the size of the submenu icon.",
-              "name": "--charm-menu-item-submenu-item-icon-size"
+              "name": "--charm-menu-item-submenu-icon-size"
             }
           ],
           "cssParts": [
@@ -13445,6 +13669,12 @@
               "name": "handlePageClick",
               "privacy": "protected",
               "description": "Handle page click to close the menu"
+            },
+            {
+              "kind": "field",
+              "name": "handlePopupRequestClose",
+              "privacy": "protected",
+              "description": "Syncs the menu's open state when the popup requests to close itself (e.g. Escape or Tab-trap close)."
             },
             {
               "kind": "method",
@@ -15812,7 +16042,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color"
+              "name": "--charm-form-control-invalid-message-color"
             },
             {
               "description": "Determines the error message font size.",
@@ -15820,7 +16050,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color"
+              "name": "--charm-form-control-label-color"
             },
             {
               "description": "Determines the label font size.",
@@ -15852,7 +16082,7 @@
             },
             {
               "description": "The background color of the indicator.",
-              "name": "--charm-progress-bar-indicator-color"
+              "name": "--charm-progress-bar-indicator-bg-color"
             },
             {
               "description": "The track color.",
@@ -15961,10 +16191,30 @@
             },
             {
               "kind": "field",
+              "name": "hasHelpText",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether help text is present via the `help-text` attribute or the `help-text` slot.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "hasLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether a label is present via the `label` attribute or the default slot.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[label], [help-text]')"
+              "default": "new HasSlotController(this, '[default]', 'help-text')"
             },
             {
               "kind": "field",
@@ -16039,7 +16289,8 @@
               },
               "privacy": "public",
               "description": "Update the role of the progress bar from 'progressbar' to 'meter' to indicate that it measures a specific value instead of progress towards a specific task.",
-              "attribute": "meter"
+              "attribute": "meter",
+              "reflects": true
             },
             {
               "kind": "method",
@@ -17136,7 +17387,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -17192,7 +17443,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -17208,7 +17459,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -17506,6 +17757,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -17628,8 +17893,44 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -17804,7 +18105,11 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'help-text', 'label')"
+              "default": "new HasSlotController(this, 'help-text', 'label')",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -18105,11 +18410,12 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true }",
+              "default": "{ ...super.shadowRootOptions, delegatesFocus: false }",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
+              },
+              "description": "The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus\nand hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,\nfind none, and silently drop the `focus()` call."
             },
             {
               "kind": "method",
@@ -18460,19 +18766,23 @@
             },
             {
               "description": "The border color of the checked radio control when active.",
-              "name": "--charm-radio-active-border-color-checked"
+              "name": "--charm-radio-checked-active-border-color"
             },
             {
               "description": "The border color of the unchecked radio control when active.",
-              "name": "--charm-radio-active-border-color-unchecked"
+              "name": "--charm-radio-unchecked-active-border-color"
             },
             {
-              "description": "The color of the icon inside radio control when the radio is checked.",
+              "description": "The background color of the radio control.",
               "name": "--charm-radio-bg-color"
             },
             {
               "description": "The border color of the radio control.",
               "name": "--charm-radio-border-color"
+            },
+            {
+              "description": "The color of the checked indicator inside the radio control.",
+              "name": "--charm-radio-checked-bg-color"
             },
             {
               "description": "The border color of the radio control when the radio is checked.",
@@ -18496,11 +18806,11 @@
             },
             {
               "description": "The border color of the checked radio control when hovered.",
-              "name": "--charm-radio-hover-border-color-checked"
+              "name": "--charm-radio-checked-hover-border-color"
             },
             {
               "description": "The border color of the unchecked radio control when hovered.",
-              "name": "--charm-radio-hover-border-color-unchecked"
+              "name": "--charm-radio-unchecked-hover-border-color"
             },
             {
               "description": "The size of the checked indicator inside radio control.",
@@ -18508,15 +18818,15 @@
             },
             {
               "description": "The color of the radio label when active.",
-              "name": "--charm-radio-label-active-fg-color"
+              "name": "--charm-radio-label-active-color"
             },
             {
               "description": "The color of the radio label when the radio is checked.",
-              "name": "--charm-radio-label-checked-fg-color"
+              "name": "--charm-radio-label-checked-color"
             },
             {
               "description": "The color of the radio label when the radio is checked and hovered.",
-              "name": "--charm-radio-label-checked-hover-fg-color"
+              "name": "--charm-radio-label-checked-hover-color"
             },
             {
               "description": "The color of the radio label when disabled.",
@@ -18524,7 +18834,7 @@
             },
             {
               "description": "The color of the radio label when the radio is unchecked and hovered.",
-              "name": "--charm-radio-label-unchecked-hover-fg-color"
+              "name": "--charm-radio-label-unchecked-hover-color"
             }
           ],
           "cssParts": [
@@ -19149,6 +19459,13 @@
             },
             {
               "kind": "field",
+              "name": "processedLinks",
+              "privacy": "protected",
+              "default": "new Set<HTMLLinkElement>()",
+              "description": "Links that have either loaded or errored."
+            },
+            {
+              "kind": "field",
               "name": "scope",
               "type": {
                 "text": "any"
@@ -19369,7 +19686,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -19425,7 +19742,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -19441,7 +19758,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -19761,6 +20078,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -19883,8 +20214,44 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20023,6 +20390,17 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, 'label', 'help-text')",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20952,7 +21330,7 @@
             },
             {
               "description": "Color of the shaded in track.",
-              "name": "--charm-spinner-indicator-color"
+              "name": "--charm-spinner-indicator-fg-color"
             },
             {
               "description": "Font color of the label text.",
@@ -21394,7 +21772,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -21450,7 +21828,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -21466,7 +21844,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -21822,6 +22200,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -21938,8 +22330,49 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -22081,6 +22514,17 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, 'label', 'help-text')",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -22737,7 +23181,7 @@
             },
             {
               "description": "The box shadow of the tab panel.",
-              "name": "--charm-tab-panel-box-shadow"
+              "name": "--charm-tab-panel-shadow"
             },
             {
               "description": "The background color of the tab panel.",
@@ -23307,7 +23751,7 @@
             },
             {
               "description": "The spacing between the tablist and tab panels.",
-              "name": "--charm-tabs-tablist-spacing"
+              "name": "--charm-tabs-tablist-gap"
             },
             {
               "description": "The minimum width for tabs in vertical layout.",
@@ -23402,6 +23846,31 @@
                 }
               ],
               "description": "Emits the tabs-change event with the provided detail."
+            },
+            {
+              "kind": "method",
+              "name": "findNextTabIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "startIndex",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "1 | -1"
+                  }
+                }
+              ],
+              "description": "Finds the index of the next non-disabled tab, wrapping around the tab list."
             },
             {
               "kind": "field",
@@ -23833,7 +24302,7 @@
             },
             {
               "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-fg-color",
+              "name": "--charm-form-control-help-text-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -23889,7 +24358,7 @@
             },
             {
               "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-fg-color",
+              "name": "--charm-form-control-invalid-message-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -23905,7 +24374,7 @@
             },
             {
               "description": "Determines the label color.",
-              "name": "--charm-form-control-label-fg-color",
+              "name": "--charm-form-control-label-color",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -24217,6 +24686,20 @@
             },
             {
               "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "type": {
                 "text": "'ltr' | 'rtl' | 'auto'"
@@ -24344,8 +24827,44 @@
             },
             {
               "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -24454,6 +24973,17 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasSlotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this, 'label', 'help-text')",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -25221,7 +25751,7 @@
             },
             {
               "description": "The box shadow of the tooltip",
-              "name": "--charm-tooltip-box-shadow"
+              "name": "--charm-tooltip-shadow"
             },
             {
               "description": "The foreground color of the tooltip",

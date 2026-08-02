@@ -15,7 +15,7 @@ import styles from './spinner.styles.js';
  * @cssprop --charm-spinner-gap - Gap between the ring and the label.
  * @cssprop --charm-spinner-image-animation - Animation for the spinner ring.
  * @cssprop --charm-spinner-indicator-animation - Animation for the spinner indicator.
- * @cssprop --charm-spinner-indicator-color - Color of the shaded in track.
+ * @cssprop --charm-spinner-indicator-fg-color - Color of the shaded in track.
  * @cssprop --charm-spinner-label-color - Font color of the label text.
  * @cssprop --charm-spinner-label-font-size -  Font size of the label text.
  * @cssprop --charm-spinner-label-font-weight - Font weight of the label text.

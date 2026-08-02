@@ -40,7 +40,7 @@ import styles from './tooltip.styles.js';
  * @cssprop --charm-tooltip-border-radius - The border radius of the tooltip
  * @cssprop --charm-tooltip-border-style - The border style of the tooltip
  * @cssprop --charm-tooltip-border-width - The border width of the tooltip
- * @cssprop --charm-tooltip-box-shadow - The box shadow of the tooltip
+ * @cssprop --charm-tooltip-shadow - The box shadow of the tooltip
  * @cssprop --charm-tooltip-fg-color - The foreground color of the tooltip
  * @cssprop --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
  * @cssprop --charm-tooltip-max-width - The maximum width of the tooltip.

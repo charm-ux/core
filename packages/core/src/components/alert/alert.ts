@@ -48,7 +48,7 @@ type PolitenessType = (typeof politenessLevels)[number];
  * @cssprop --charm-alert-font-weight - The font weight of the alert.
  * @cssprop --charm-alert-heading-font-size - The font size of the heading.
  * @cssprop --charm-alert-heading-font-weight - The font weight of the heading.
- * @cssprop --charm-alert-icon-fg-color - The foreground color of the icon.
+ * @cssprop --charm-alert-icon-color - The foreground color of the icon.
  * @cssprop --charm-alert-icon-margin - The margin of the icon.
  * @cssprop --charm-alert-icon-size - The size of the icon.
  * @cssprop --charm-alert-message-margin - The margin of the alert's message container.

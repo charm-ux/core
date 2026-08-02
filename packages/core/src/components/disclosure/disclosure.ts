@@ -30,8 +30,8 @@ let disclosureContentId = 0;
  * @cssprop --charm-disclosure-fg-color - controls the text color of the expanded region.
  * @cssprop --charm-disclosure-closed-max-height - controls the height of the collapsed region when it's closed (default is 0).
  * @cssprop --charm-disclosure-opened-max-height - controls the height of the collapsed region when it's opened.
- * @cssprop --charm-disclosure-open-transition - Transition for the content when opening.
- * @cssprop --charm-disclosure-close-transition - Transition for the content when closing,
+ * @cssprop --charm-disclosure-show-transition - Transition for the content when opening.
+ * @cssprop --charm-disclosure-hide-transition - Transition for the content when closing.
  *
  * @event disclosure-show - Emitted when the disclosure begins to show.
  * @event disclosure-after-show - Emitted after the disclosure has shown and all animations are complete.

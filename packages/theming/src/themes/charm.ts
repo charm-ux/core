@@ -21,7 +21,7 @@ const charmTokensBase = defineTokens(
       spacing: {
         none: '0',
         '3xs': '1px',
-        xxs: '2px',
+        '2xs': '2px',
         xs: '4px',
         sm: '8px',
         md: '12px',
@@ -136,12 +136,16 @@ const charmTokensBase = defineTokens(
 
       // Action tokens - colors for interactive elements
       action: {
-        primary: primitive('color', 'brand', 500),
-        primaryHover: { light: primitive('color', 'brand', 600), dark: primitive('color', 'brand', 400) },
-        primaryActive: { light: primitive('color', 'brand', 700), dark: primitive('color', 'brand', 300) },
-        secondary: { light: primitive('color', 'neutral', 200), dark: primitive('color', 'neutral', 700) },
-        secondaryHover: { light: primitive('color', 'neutral', 300), dark: primitive('color', 'neutral', 600) },
-        secondaryActive: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) },
+        primary: {
+          color: primitive('color', 'brand', 500),
+          hover: { color: { light: primitive('color', 'brand', 600), dark: primitive('color', 'brand', 400) } },
+          active: { color: { light: primitive('color', 'brand', 700), dark: primitive('color', 'brand', 300) } },
+        },
+        secondary: {
+          color: { light: primitive('color', 'neutral', 200), dark: primitive('color', 'neutral', 700) },
+          hover: { color: { light: primitive('color', 'neutral', 300), dark: primitive('color', 'neutral', 600) } },
+          active: { color: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) } },
+        },
       },
 
       // Indicator tokens - colors for status and feedback
@@ -194,14 +198,6 @@ const charmTokensBase = defineTokens(
           fgColor: { light: primitive('color', 'accent', 600), dark: primitive('color', 'accent', 400) },
           decoration: 'underline',
         },
-      },
-
-      // Focus outline tokens
-      focusOutline: {
-        color: primitive('color', 'brand', 500),
-        width: primitive('borderWidth', 'medium'),
-        style: 'solid',
-        offset: primitive('spacing', 'xxs'),
       },
 
       // Default border tokens
@@ -303,7 +299,7 @@ const charmTokensBase = defineTokens(
           placeholderColor: { light: primitive('color', 'danger', 300), dark: primitive('color', 'danger', 700) },
           shadow: primitive('shadow', 'none'),
           message: {
-            fgColor: primitive('color', 'danger', 500),
+            color: primitive('color', 'danger', 500),
             fontSize: primitive('fontSize', 'xs'),
             fontWeight: primitive('fontWeight', 'normal'),
             gap: primitive('spacing', 'xs'),
@@ -311,15 +307,15 @@ const charmTokensBase = defineTokens(
         },
         // Label
         label: {
-          fgColor: { light: primitive('color', 'neutral', 900), dark: primitive('color', 'neutral', 50) },
+          color: { light: primitive('color', 'neutral', 900), dark: primitive('color', 'neutral', 50) },
           fontSize: primitive('fontSize', 'sm'),
           fontWeight: primitive('fontWeight', 'medium'),
           gap: primitive('spacing', 'xs'),
-          requiredIndicatorGap: primitive('spacing', 'xxs'),
+          requiredIndicatorGap: primitive('spacing', '2xs'),
         },
         // Help text
         helpText: {
-          fgColor: { light: primitive('color', 'neutral', 600), dark: primitive('color', 'neutral', 400) },
+          color: { light: primitive('color', 'neutral', 600), dark: primitive('color', 'neutral', 400) },
           fontSize: primitive('fontSize', 'xs'),
           fontWeight: primitive('fontWeight', 'normal'),
           gap: primitive('spacing', 'xs'),
@@ -334,9 +330,9 @@ const charmTokensBase = defineTokens(
 
       focus: {
         outlineColor: primitive('color', 'brand', 500),
-        outlineOffset: primitive('spacing', 'xxs'),
-        outlineSize: primitive('borderWidth', 'medium'),
+        outlineWidth: primitive('borderWidth', 'medium'),
         outlineStyle: 'solid',
+        outlineOffset: primitive('spacing', '2xs'),
       },
     }),
 
@@ -383,13 +379,13 @@ const charmTokensBase = defineTokens(
         actionsGap: primitive('spacing', 'sm'),
         headingFontSize: primitive('fontSize', 'md'),
         headingFontWeight: primitive('fontWeight', 'semibold'),
-        iconFgColor: semantic('text', 'secondary'),
+        iconColor: semantic('text', 'secondary'),
         iconSize: '24px',
         iconMargin: primitive('spacing', 'md'),
         messageMargin: primitive('spacing', 'sm'),
         buttonBgColor: semantic('surface', 'secondary'),
         buttonHoverBgColor: semantic('surface', 'tertiary'),
-        buttonActiveBgColor: semantic('action', 'secondaryActive'),
+        buttonActiveBgColor: semantic('action', 'secondary', 'active', 'color'),
         buttonBorder: 'none',
         buttonFontSize: primitive('fontSize', 'xs'),
         buttonPadding: `${primitive('spacing', 'xs')} ${primitive('spacing', 'sm')}`,
@@ -401,7 +397,7 @@ const charmTokensBase = defineTokens(
         size: '40px',
         borderRadius: primitive('borderRadius', 'full'),
         indicatorBgColor: semantic('indicator', 'success'),
-        indicatorColor: primitive('color', 'white'),
+        indicatorFgColor: primitive('color', 'white'),
         indicatorSize: '12px',
         indicatorBorderColor: primitive('color', 'white'),
         indicatorBorderWidth: '2px',
@@ -416,7 +412,7 @@ const charmTokensBase = defineTokens(
         borderRadius: primitive('borderRadius', 'full'),
         borderStyle: 'solid',
         borderWidth: primitive('borderWidth', 'thin'),
-        padding: `${primitive('spacing', 'xxs')} ${primitive('spacing', 'sm')}`,
+        padding: `${primitive('spacing', '2xs')} ${primitive('spacing', 'sm')}`,
         size: '20px',
       },
 
@@ -476,7 +472,7 @@ const charmTokensBase = defineTokens(
           shadow: primitive('shadow', 'sm'),
         },
         active: {
-          bgColor: semantic('action', 'secondaryActive'),
+          bgColor: semantic('action', 'secondary', 'active', 'color'),
           fgColor: semantic('text', 'primary'),
           borderColor: semantic('border', 'strong'),
           shadow: primitive('shadow', 'none'),
@@ -495,7 +491,7 @@ const charmTokensBase = defineTokens(
           cursor: 'not-allowed',
         },
         pressed: {
-          bgColor: semantic('action', 'secondaryActive'),
+          bgColor: semantic('action', 'secondary', 'active', 'color'),
           fgColor: semantic('text', 'primary'),
           borderColor: semantic('border', 'strong'),
         },
@@ -513,9 +509,9 @@ const charmTokensBase = defineTokens(
         fgColor: semantic('text', 'primary'),
         borderColor: semantic('border', 'primary'),
         borderRadius: primitive('borderRadius', 'lg'),
-        borderSize: primitive('borderWidth', 'thin'),
+        borderWidth: primitive('borderWidth', 'thin'),
         borderStyle: 'solid',
-        boxShadow: primitive('shadow', 'md'),
+        shadow: primitive('shadow', 'md'),
         padding: primitive('spacing', 'lg'),
         contentGap: primitive('spacing', 'md'),
         headingGap: primitive('spacing', 'xs'),
@@ -553,16 +549,16 @@ const charmTokensBase = defineTokens(
           borderColor: semantic('disabled', 'borderColor'),
         },
         checked: {
-          bgColor: semantic('action', 'primary'),
+          bgColor: semantic('action', 'primary', 'color'),
           fgColor: primitive('color', 'white'),
-          borderColor: semantic('action', 'primary'),
+          borderColor: semantic('action', 'primary', 'color'),
           hover: {
-            bgColor: semantic('action', 'primaryHover'),
-            borderColor: semantic('action', 'primaryHover'),
+            bgColor: semantic('action', 'primary', 'hover', 'color'),
+            borderColor: semantic('action', 'primary', 'hover', 'color'),
           },
           active: {
-            bgColor: semantic('action', 'primaryActive'),
-            borderColor: semantic('action', 'primaryActive'),
+            bgColor: semantic('action', 'primary', 'active', 'color'),
+            borderColor: semantic('action', 'primary', 'active', 'color'),
           },
         },
       },
@@ -573,9 +569,9 @@ const charmTokensBase = defineTokens(
         fgColor: semantic('text', 'primary'),
         backdropColor: 'rgba(0, 0, 0, 0.5)',
         borderColor: semantic('border', 'primary'),
+        borderStyle: 'solid',
         borderRadius: primitive('borderRadius', 'lg'),
         borderWidth: primitive('borderWidth', 'thin'),
-        border: `1px solid ${semantic('border', 'primary')}`,
         shadow: primitive('shadow', 'xl'),
         paddingX: primitive('spacing', 'xl'),
         paddingY: primitive('spacing', 'lg'),
@@ -633,7 +629,9 @@ const charmTokensBase = defineTokens(
 
       // Divider
       divider: {
-        border: `1px solid ${semantic('border', 'primary')}`,
+        borderColor: semantic('border', 'primary'),
+        borderStyle: 'solid',
+        borderWidth: '1px',
         fgColor: semantic('text', 'secondary'),
         inset: '0',
         textGap: primitive('spacing', 'md'),
@@ -644,7 +642,7 @@ const charmTokensBase = defineTokens(
       // Input Range
       inputRange: {
         trackColor: semantic('surface', 'tertiary'),
-        progressColor: semantic('action', 'primary'),
+        progressColor: semantic('action', 'primary', 'color'),
         thumbColor: semantic('surface', 'primary'),
         hover: {
           bgColor: semantic('surface', 'secondary'),
@@ -677,9 +675,9 @@ const charmTokensBase = defineTokens(
         groupHeadingSize: primitive('fontSize', 'xxs'),
         groupHeadingWeight: primitive('fontWeight', 'semibold'),
         groupHeadingLineHeight: primitive('lineHeight', 'sm'),
-        groupHeadingMargin: `${primitive('spacing', 'sm')} 0 ${primitive('spacing', 'xxs')}`,
+        groupHeadingMargin: `${primitive('spacing', 'sm')} 0 ${primitive('spacing', '2xs')}`,
         groupHeadingPaddingX: primitive('spacing', 'sm'),
-        groupHeadingPaddingY: primitive('spacing', 'xxs'),
+        groupHeadingPaddingY: primitive('spacing', '2xs'),
         item: {
           bgColor: 'transparent',
           fgColor: semantic('text', 'primary'),
@@ -687,12 +685,18 @@ const charmTokensBase = defineTokens(
           borderRadius: primitive('borderRadius', 'sm'),
           paddingX: primitive('spacing', 'sm'),
           paddingY: primitive('spacing', 'sm'),
-          marginX: primitive('spacing', 'xxs'),
+          marginX: primitive('spacing', '2xs'),
           inputContainerWidth: '20px',
           inputSize: '16px',
-          submenuItemIconSize: '16px',
-          submenuItemIconRotation: '-90deg',
-          inputHoverBgColor: semantic('surface', 'tertiary'),
+          submenu: {
+            iconSize: '16px',
+            iconRotation: '-90deg',
+          },
+          input: {
+            hover: {
+              bgColor: semantic('surface', 'tertiary'),
+            },
+          },
           hover: {
             bgColor: semantic('surface', 'secondary'),
             fgColor: semantic('text', 'primary'),
@@ -714,9 +718,13 @@ const charmTokensBase = defineTokens(
           },
           radio: {
             bgColor: semantic('surface', 'primary'),
-            activeBgColor: semantic('action', 'primary'),
-            activeBorderColor: semantic('border', 'strong'),
-            hoverBorderColor: semantic('border', 'strong'),
+            active: {
+              bgColor: semantic('action', 'primary', 'color'),
+              borderColor: semantic('border', 'strong'),
+            },
+            hover: {
+              borderColor: semantic('border', 'strong'),
+            },
           },
         },
       },
@@ -742,7 +750,7 @@ const charmTokensBase = defineTokens(
         height: '8px',
         borderRadius: primitive('borderRadius', 'full'),
         trackColor: semantic('surface', 'tertiary'),
-        indicatorColor: semantic('action', 'primary'),
+        indicatorBgColor: semantic('action', 'primary', 'color'),
         iconColor: semantic('text', 'secondary'),
         animation: 'none',
         transition: 'width 0.3s ease',
@@ -801,28 +809,51 @@ const charmTokensBase = defineTokens(
         indicatorSize: '8px',
         groupRadioGap: primitive('spacing', 'md'),
         checked: {
-          borderColor: semantic('action', 'primary'),
+          bgColor: semantic('action', 'primary', 'color'),
+          borderColor: semantic('action', 'primary', 'color'),
+          hover: {
+            borderColor: semantic('action', 'primary', 'hover', 'color'),
+          },
+          active: {
+            borderColor: semantic('action', 'primary', 'active', 'color'),
+          },
+        },
+        unchecked: {
+          hover: {
+            borderColor: semantic('border', 'strong'),
+          },
+          active: {
+            borderColor: semantic('border', 'strong'),
+          },
         },
         hover: {
           bgColor: semantic('surface', 'secondary'),
-          borderColorChecked: semantic('action', 'primaryHover'),
-          borderColorUnchecked: semantic('border', 'strong'),
         },
         active: {
           bgColor: semantic('surface', 'tertiary'),
-          borderColorChecked: semantic('action', 'primaryActive'),
-          borderColorUnchecked: semantic('border', 'strong'),
         },
         disabled: {
           bgColor: semantic('disabled', 'bgColor'),
           borderColor: semantic('disabled', 'borderColor'),
         },
         label: {
-          checkedFgColor: semantic('text', 'primary'),
-          checkedHoverFgColor: semantic('text', 'primary'),
-          uncheckedHoverFgColor: semantic('text', 'secondary'),
-          activeFgColor: semantic('text', 'primary'),
-          disabledColor: semantic('disabled', 'fgColor'),
+          checked: {
+            color: semantic('text', 'primary'),
+            hover: {
+              color: semantic('text', 'primary'),
+            },
+          },
+          unchecked: {
+            hover: {
+              color: semantic('text', 'secondary'),
+            },
+          },
+          active: {
+            color: semantic('text', 'primary'),
+          },
+          disabled: {
+            color: semantic('disabled', 'fgColor'),
+          },
         },
       },
 
@@ -845,7 +876,7 @@ const charmTokensBase = defineTokens(
 
       // Spinner
       spinner: {
-        indicatorColor: semantic('action', 'primary'),
+        indicatorFgColor: semantic('action', 'primary', 'color'),
         trackColor: semantic('surface', 'tertiary'),
         trackWidth: '3px',
         ringSize: '32px',
@@ -892,19 +923,19 @@ const charmTokensBase = defineTokens(
             borderColor: semantic('border', 'strong'),
           },
           active: {
-            bgColor: semantic('action', 'secondaryActive'),
-            borderColor: semantic('action', 'secondaryActive'),
+            bgColor: semantic('action', 'secondary', 'active', 'color'),
+            borderColor: semantic('action', 'secondary', 'active', 'color'),
           },
           checked: {
-            bgColor: semantic('action', 'primary'),
-            borderColor: semantic('action', 'primary'),
+            bgColor: semantic('action', 'primary', 'color'),
+            borderColor: semantic('action', 'primary', 'color'),
             hover: {
-              bgColor: semantic('action', 'primaryHover'),
-              borderColor: semantic('action', 'primaryHover'),
+              bgColor: semantic('action', 'primary', 'hover', 'color'),
+              borderColor: semantic('action', 'primary', 'hover', 'color'),
             },
             active: {
-              bgColor: semantic('action', 'primaryActive'),
-              borderColor: semantic('action', 'primaryActive'),
+              bgColor: semantic('action', 'primary', 'active', 'color'),
+              borderColor: semantic('action', 'primary', 'active', 'color'),
             },
           },
         },
@@ -920,6 +951,7 @@ const charmTokensBase = defineTokens(
         paddingX: '0',
         paddingY: '0',
         gap: '0',
+        tablistGap: primitive('spacing', 'md'),
         align: 'flex-start',
         verticalMinWidth: '160px',
       },
@@ -948,7 +980,7 @@ const charmTokensBase = defineTokens(
         active: {
           bgColor: 'transparent',
           fgColor: semantic('text', 'primary'),
-          borderColor: semantic('action', 'primary'),
+          borderColor: semantic('action', 'primary', 'color'),
           fontWeight: primitive('fontWeight', 'semibold'),
         },
         focus: {
@@ -971,7 +1003,7 @@ const charmTokensBase = defineTokens(
         borderRadius: primitive('borderRadius', 'md'),
         borderStyle: 'solid',
         borderWidth: primitive('borderWidth', 'thin'),
-        boxShadow: 'none',
+        shadow: 'none',
         paddingX: primitive('spacing', 'lg'),
         paddingY: primitive('spacing', 'lg'),
         minHeight: '160px',
@@ -993,7 +1025,7 @@ const charmTokensBase = defineTokens(
         borderRadius: primitive('borderRadius', 'sm'),
         borderStyle: 'solid',
         borderWidth: '0',
-        boxShadow: primitive('shadow', 'md'),
+        shadow: primitive('shadow', 'md'),
         padding: `${primitive('spacing', 'xs')} ${primitive('spacing', 'sm')}`,
         maxWidth: '320px',
         arrowSize: '8px',
@@ -1004,15 +1036,7 @@ const charmTokensBase = defineTokens(
     }),
   },
   { prefix: 'charm' }
-).extendRawCss({
-  // Global focus-visible ring, injected into the generated reset stylesheet.
-  // Plain-object form: each bucket is appended after the base output (nothing
-  // is inherited here since charm is the base theme).
-  reset: `:where(:focus-visible) {
-  outline: 2px solid var(--charm-color-brand-500);
-  outline-offset: 2px;
-}`,
-});
+);
 
 /** The resolved token definition for the charm theme */
 export const charmDefinition = charmTokensBase.definition;

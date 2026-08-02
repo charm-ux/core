@@ -143,9 +143,9 @@ export default css`
 
   /* Focus */
   .switch:has(.switch-input:focus-visible) {
-    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')}
-      ${semantic('focusOutline', 'color')};
-    outline-offset: ${semantic('focusOutline', 'offset')};
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   /* Disabled */

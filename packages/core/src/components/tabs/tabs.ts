@@ -35,7 +35,7 @@ let charmTabsId = 0;
  * @cssprop --charm-tabs-gap - The gap between each tab.
  * @cssprop --charm-tabs-padding-x - The horizontal padding of the tabs container.
  * @cssprop --charm-tabs-padding-y - The vertical padding of the tabs container.
- * @cssprop --charm-tabs-tablist-spacing - The spacing between the tablist and tab panels.
+ * @cssprop --charm-tabs-tablist-gap - The spacing between the tablist and tab panels.
  * @cssprop --charm-tabs-vertical-min-width - The minimum width for tabs in vertical layout.
  *
  * @event {TabsChangeEvent} tabs-change - Emitted when the active tab changes.

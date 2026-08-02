@@ -1,15 +1,11 @@
 import { css } from 'lit';
-import { SystemColors } from '../../theme/index.js';
+import { relocateFocusRing, SystemColors } from '../../theme/index.js';
 import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   :host {
     display: block;
     width: fit-content;
-  }
-
-  :host(:focus-visible) {
-    outline: none;
   }
 
   .radio {
@@ -40,6 +36,7 @@ export default css`
     aspect-ratio: 1 / 1;
     border: solid ${semantic('defaultBorder', 'width')} ${component('radio', 'borderColor')};
     border-radius: 50%;
+    background-color: ${component('radio', 'bgColor')};
     color: transparent;
     padding: 0;
     align-self: flex-start;
@@ -57,9 +54,12 @@ export default css`
   }
 
   /* Checked */
-  :host([checked]:not([disabled])) {
-    --form-control-label-fg-color: ${component('radio', 'label', 'checkedFgColor')};
-    --radio-border-color: ${component('radio', 'checked', 'borderColor')};
+  :host([checked]:not([disabled])) .radio-control {
+    border-color: ${component('radio', 'checked', 'borderColor')};
+  }
+
+  :host([checked]:not([disabled])) .radio-label {
+    color: ${component('radio', 'label', 'checked', 'color')};
   }
 
   .radio-check {
@@ -67,75 +67,96 @@ export default css`
     position: absolute;
     width: ${component('radio', 'indicatorSize')};
     border-radius: 50%;
-    background-color: ${component('radio', 'bgColor')};
+    background-color: ${component('radio', 'checked', 'bgColor')};
   }
 
   /* Checked + Hover */
-  :host([checked]:not([disabled])) .radio:hover {
-    --form-control-label-fg-color: ${component('radio', 'label', 'checkedHoverFgColor')};
-    --radio-bg-color: ${component('radio', 'hover', 'bgColor')};
-    --radio-border-color: ${component('radio', 'hover', 'borderColorChecked')};
+  :host([checked]:not([disabled])) .radio:hover .radio-control {
+    background-color: ${component('radio', 'hover', 'bgColor')};
+    border-color: ${component('radio', 'checked', 'hover', 'borderColor')};
+  }
+
+  :host([checked]:not([disabled])) .radio:hover .radio-label {
+    color: ${component('radio', 'label', 'checked', 'hover', 'color')};
   }
 
   /* UnChecked + Hover */
-  :host(:not([checked]):not([disabled])) .radio:hover {
-    --form-control-label-fg-color: ${component('radio', 'label', 'uncheckedHoverFgColor')};
-    --radio-border-color: ${component('radio', 'hover', 'borderColorUnchecked')};
+  :host(:not([checked]):not([disabled])) .radio:hover .radio-control {
+    border-color: ${component('radio', 'unchecked', 'hover', 'borderColor')};
   }
+
+  :host(:not([checked]):not([disabled])) .radio:hover .radio-label {
+    color: ${component('radio', 'label', 'unchecked', 'hover', 'color')};
+  }
+
+  /* Focus */
+  ${relocateFocusRing({ target: '.radio' })}
 
   /* Active */
-  :host(:focus-visible) .radio {
-    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')} ${semantic('focusOutline', 'color')};
-    outline-offset: ${semantic('focusOutline', 'offset')};
+  :host([checked]:not([disabled])) .radio:active .radio-control {
+    background-color: ${component('radio', 'active', 'bgColor')};
+    border-color: ${component('radio', 'checked', 'active', 'borderColor')};
   }
 
-  .radio:active {
-    --form-control-label-fg-color: ${component('radio', 'label', 'activeFgColor')};
-    --radio-bg-color: ${component('radio', 'active', 'bgColor')};
-    --radio-border-color: ${component('radio', 'active', 'borderColorUnchecked')};
+  :host(:not([checked]):not([disabled])) .radio:active .radio-control {
+    background-color: ${component('radio', 'active', 'bgColor')};
+    border-color: ${component('radio', 'unchecked', 'active', 'borderColor')};
   }
 
-  :host([checked]) .radio:active {
-    --radio-border-color: ${component('radio', 'active', 'borderColorChecked')};
+  .radio:active .radio-label {
+    color: ${component('radio', 'label', 'active', 'color')};
   }
 
   /* Disabled */
   :host([disabled]) .radio {
     cursor: not-allowed;
-    --form-control-label-fg-color: ${component('radio', 'label', 'disabledColor')};
-    --radio-bg-color: ${component('radio', 'disabled', 'bgColor')};
-    --radio-checked-disabled-bg-color: ${component('radio', 'disabled', 'borderColor')};
   }
 
-    /* High contrast */
-    @media screen and (forced-colors: active) {
-    :host {
-      --radio-border-color: ${SystemColors.ButtonText};
-      --radio-bg-color: ${SystemColors.ButtonFace};
+  :host([disabled]) .radio-control {
+    background-color: ${component('radio', 'disabled', 'bgColor')};
+    border-color: ${component('radio', 'disabled', 'borderColor')};
+  }
+
+  :host([disabled]) .radio-check {
+    background-color: ${component('radio', 'disabled', 'borderColor')};
+  }
+
+  :host([disabled]) .radio-label {
+    color: ${component('radio', 'label', 'disabled', 'color')};
+  }
+
+  /* High contrast */
+  @media screen and (forced-colors: active) {
+    .radio-control {
+      background-color: ${SystemColors.ButtonFace};
+      border-color: ${SystemColors.ButtonText};
     }
 
     /* Hover */
-    :host([checked]:not([disabled])) .radio:hover,
-    :host(:not([checked]):not([disabled])) .radio:hover{
-      --focus-outline: ${SystemColors.ButtonText} solid 2px;
+    :host([checked]:not([disabled])) .radio:hover .radio-control,
+    :host(:not([checked]):not([disabled])) .radio:hover .radio-control {
+      outline: ${SystemColors.ButtonText} solid 2px;
     }
 
     /* Checked */
-    :host([checked]:not([disabled])) {
-      --radio-border-color: ${SystemColors.Highlight};
-      --radio-bg-color: ${SystemColors.HighlightText};
+    :host([checked]:not([disabled])) .radio-control {
+      background-color: ${SystemColors.HighlightText};
+      border-color: ${SystemColors.Highlight};
     }
 
     /* Disabled */
-    :host([disabled]) .radio {
-      --form-control-label-fg-color: ${SystemColors.GrayText};
-      --radio-border-color: ${SystemColors.GrayText};
-      --radio-bg-color: ${SystemColors.Canvas};
+    :host([disabled]) .radio-control {
+      background-color: ${SystemColors.Canvas};
+      border-color: ${SystemColors.GrayText};
+    }
+
+    :host([disabled]) .radio-label {
+      color: ${SystemColors.GrayText};
     }
 
     /* Checked + Disabled */
-    :host([disabled][checked]) .radio{
-      --radio-checked-disabled-bg-color: ${SystemColors.GrayText};
-      --radio-bg-color: ${SystemColors.Canvas};
+    :host([disabled][checked]) .radio-check {
+      background-color: ${SystemColors.GrayText};
     }
+  }
 `;
