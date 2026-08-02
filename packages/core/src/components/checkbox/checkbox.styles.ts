@@ -142,8 +142,8 @@ export default css`
 
   /* Focus */
   :host(:not([disabled])) .input:focus-visible ~ .control-label-wrapper {
-    outline: ${semantic('focusOutline', 'width')} ${semantic('focusOutline', 'style')}
-      ${semantic('focusOutline', 'color')};
-    outline-offset: ${semantic('focusOutline', 'offset')};
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 `;

@@ -22,7 +22,7 @@ export default css`
 
   /* Label */
   .form-control-label {
-    color: ${semantic('formControl', 'label', 'fgColor')};
+    color: ${semantic('formControl', 'label', 'color')};
     padding: 0;
     font-size: ${semantic('formControl', 'label', 'fontSize')};
     font-weight: ${semantic('formControl', 'label', 'fontWeight')};
@@ -62,7 +62,7 @@ export default css`
   }
 
   .required-indicator {
-    color: ${semantic('formControl', 'invalid', 'message', 'fgColor')};
+    color: ${semantic('formControl', 'invalid', 'message', 'color')};
   }
 
   :host([disabled]) {
@@ -79,7 +79,7 @@ export default css`
 
   /* Help text */
   .form-control-help-text {
-    color: ${semantic('formControl', 'helpText', 'fgColor')};
+    color: ${semantic('formControl', 'helpText', 'color')};
     font-size: ${semantic('formControl', 'helpText', 'fontSize')};
     font-weight: ${semantic('formControl', 'helpText', 'fontWeight')};
     grid-area: help;
@@ -160,7 +160,7 @@ export default css`
   .form-control-error-text {
     display: none;
     margin-top: 4px;
-    color: ${semantic('formControl', 'invalid', 'message', 'fgColor')};
+    color: ${semantic('formControl', 'invalid', 'message', 'color')};
     grid-area: error;
     font-size: ${semantic('formControl', 'invalid', 'message', 'fontSize')};
   }

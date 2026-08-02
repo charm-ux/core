@@ -15,7 +15,9 @@ import styles from './divider.styles.js';
  * @csspart divider-line - The divider's line.
  * @csspart divider-text - The divider's text.
  *
- * @cssprop --charm-divider-border - The border of the divider line.
+ * @cssprop --charm-divider-border-color - The color of the divider line.
+ * @cssprop --charm-divider-border-style - The style of the divider line.
+ * @cssprop --charm-divider-border-width - The width of the divider line.
  * @cssprop --charm-divider-inset - The padding of the divider in the direction of the inset.
  * @cssprop --charm-divider-text-gap - The gap between the divider and the text.
  * @cssprop --charm-divider-text-offset - The amount of space to offset the text in the divider when it is aligned.

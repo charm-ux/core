@@ -9,12 +9,12 @@ export default css`
   .base {
     display: flex;
     flex-direction: column;
-    border: ${component('card', 'borderSize')} ${component('card', 'borderStyle')} ${component('card', 'borderColor')};
+    border: ${component('card', 'borderWidth')} ${component('card', 'borderStyle')} ${component('card', 'borderColor')};
     border-radius: ${component('card', 'borderRadius')};
     gap: ${component('card', 'contentGap')};
     color: ${component('card', 'fgColor')};
     background-color: ${component('card', 'bgColor')};
-    box-shadow: ${component('card', 'boxShadow')};
+    box-shadow: ${component('card', 'shadow')};
     padding: ${component('card', 'padding')};
     height: 100%;
   }

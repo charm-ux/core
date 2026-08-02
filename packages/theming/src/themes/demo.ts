@@ -103,15 +103,17 @@ export const demoTokens = charmTokens
     },
 
     action: {
-      primary: primitive('color', 'brand', 500),
-      primaryHover: { light: primitive('color', 'brand', 600), dark: primitive('color', 'brand', 400) },
-      primaryActive: { light: primitive('color', 'brand', 700), dark: primitive('color', 'brand', 300) },
+      primary: {
+        color: primitive('color', 'brand', 500),
+        hover: { color: { light: primitive('color', 'brand', 600), dark: primitive('color', 'brand', 400) } },
+        active: { color: { light: primitive('color', 'brand', 700), dark: primitive('color', 'brand', 300) } },
+      },
     },
   }))
   .extendRawCss(({ primitive, semantic }, base) => ({
-    // The factory return *replaces* the raw CSS inherited from charm, so spread
-    // `base` to keep the inherited buckets (the focus-ring reset) and
-    // interpolate `base?.theme` to append after — rather than drop — it.
+    // The factory return *replaces* the raw CSS inherited from charm. Spread
+    // `base` to keep any inherited buckets and interpolate `base?.theme` to
+    // append after — rather than drop — them.
     ...base,
     theme: `${base?.theme ?? ''}
 :root {

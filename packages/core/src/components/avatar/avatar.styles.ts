@@ -50,7 +50,7 @@ export default css`
     background-color: ${component('avatar', 'indicatorBgColor')};
     border: ${component('avatar', 'indicatorBorderWidth')} solid ${component('avatar', 'indicatorBorderColor')};
     border-radius: ${component('avatar', 'indicatorBorderRadius')};
-    color: ${component('avatar', 'indicatorColor')};
+    color: ${component('avatar', 'indicatorFgColor')};
   }
 
   ::slotted([slot='image']) {

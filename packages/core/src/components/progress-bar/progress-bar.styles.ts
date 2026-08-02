@@ -33,7 +33,7 @@ export default css`
   .progress-bar-indicator {
     width: var(--progress-percent);
     height: 100%;
-    background: ${component('progressBar', 'indicatorColor')};
+    background: ${component('progressBar', 'indicatorBgColor')};
     line-height: ${component('progressBar', 'height')};
     text-align: center;
     white-space: nowrap;

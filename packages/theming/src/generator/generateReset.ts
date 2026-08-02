@@ -63,8 +63,8 @@ body {
   font-size: var(--${prefix}-body-font-size, 1rem);
   font-weight: var(--${prefix}-body-font-weight, 400);
   line-height: var(--${prefix}-body-line-height, 1.5);
-  color: var(--${prefix}-body-foreground-color, inherit);
-  background-color: var(--${prefix}-body-background-color, inherit);
+  color: var(--${prefix}-body-fg-color, inherit);
+  background-color: var(--${prefix}-body-bg-color, inherit);
 }
 
 img,
@@ -124,7 +124,7 @@ a:active {
   color: var(--${prefix}-link-active-foreground-color, inherit);
 }
 
-:focus-visible {
+:where(:focus-visible) {
   outline: var(--${prefix}-focus-outline-width, 2px) var(--${prefix}-focus-outline-style, solid) var(--${prefix}-focus-outline-color, currentColor);
   outline-offset: var(--${prefix}-focus-outline-offset, 2px);
 }

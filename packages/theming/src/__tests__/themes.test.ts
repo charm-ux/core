@@ -89,6 +89,12 @@ describe('charmTheme', () => {
     expect(charmTheme.cssReset).toContain('box-sizing');
   });
 
+  it('reset focus ring is token-driven, not a hardcoded palette literal', () => {
+    expect(charmTheme.cssReset).toContain('--charm-focus-outline-color');
+    expect(charmTheme.cssReset).toContain('--charm-focus-outline-width');
+    expect(charmTheme.cssReset).not.toContain('--charm-color-brand-500');
+  });
+
   it('has utility classes', () => {
     expect(charmTheme.cssUtilities).toBeDefined();
     expect(charmTheme.cssUtilities).toContain('.p-');

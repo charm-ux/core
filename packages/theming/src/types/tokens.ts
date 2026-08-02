@@ -549,10 +549,10 @@ export type SemanticTokenValue = string | TokenWithMetadata<string>;
  * @example
  * ```ts
  * // Single value (same in both modes)
- * backgroundColor: ref('color', 'primary', 500)
+ * bgColor: ref('color', 'primary', 500)
  *
  * // Light/dark variants
- * backgroundColor: {
+ * bgColor: {
  *   light: ref('color', 'neutral', 50),
  *   dark: ref('color', 'neutral', 900),
  * }
@@ -670,8 +670,8 @@ export type SurfaceTokens = {
 
 /** Body/document semantic tokens */
 export type BodySemanticTokens = {
-  backgroundColor: SemanticColorValue;
-  foregroundColor: SemanticColorValue;
+  bgColor: SemanticColorValue;
+  fgColor: SemanticColorValue;
   fontFamily: SemanticTokenValue;
   fontSize: SemanticTokenValue;
   fontWeight: SemanticTokenValue;
@@ -679,16 +679,16 @@ export type BodySemanticTokens = {
 };
 
 /** Focus outline semantic tokens */
-export type FocusOutlineSemanticTokens = {
-  color: SemanticColorValue;
-  width: SemanticTokenValue;
-  style: SemanticTokenValue;
-  offset: SemanticTokenValue;
+export type FocusSemanticTokens = {
+  outlineColor: SemanticColorValue;
+  outlineWidth: SemanticTokenValue;
+  outlineStyle: SemanticTokenValue;
+  outlineOffset: SemanticTokenValue;
 };
 
 /** Heading semantic tokens */
 export type HeadingSemanticTokens = {
-  foregroundColor?: SemanticColorValue;
+  fgColor?: SemanticColorValue;
   fontFamily?: SemanticTokenValue;
   fontWeight: SemanticTokenValue;
   lineHeight: SemanticTokenValue;
@@ -696,18 +696,13 @@ export type HeadingSemanticTokens = {
 
 /** Link semantic tokens */
 export type LinkSemanticTokens = {
-  foregroundColor: SemanticColorValue;
+  fgColor: SemanticColorValue;
   decoration: SemanticTokenValue;
-  hoverForegroundColor?: SemanticColorValue;
-  hoverDecoration?: SemanticTokenValue;
-  activeForegroundColor?: SemanticColorValue;
-  activeDecoration?: SemanticTokenValue;
-  focusForegroundColor?: SemanticColorValue;
-  focusDecoration?: SemanticTokenValue;
-  visitedForegroundColor?: SemanticColorValue;
-  visitedDecoration?: SemanticTokenValue;
-  disabledForegroundColor?: SemanticColorValue;
-  disabledDecoration?: SemanticTokenValue;
+  hover?: { fgColor?: SemanticColorValue; decoration?: SemanticTokenValue };
+  active?: { fgColor?: SemanticColorValue; decoration?: SemanticTokenValue };
+  visited?: { fgColor?: SemanticColorValue; decoration?: SemanticTokenValue };
+  focus?: { fgColor?: SemanticColorValue; decoration?: SemanticTokenValue };
+  disabled?: { fgColor?: SemanticColorValue; decoration?: SemanticTokenValue };
 };
 
 /** Border defaults semantic tokens */
@@ -729,8 +724,8 @@ export type DefaultButtonSemanticTokens = SurfaceStates & {
 
 /** Form container semantic tokens */
 export type FormSemanticTokens = {
-  backgroundColor?: SemanticColorValue;
-  foregroundColor?: SemanticColorValue;
+  bgColor?: SemanticColorValue;
+  fgColor?: SemanticColorValue;
   borderColor?: SemanticColorValue;
   borderWidth?: SemanticTokenValue;
   borderStyle?: SemanticTokenValue;
@@ -762,7 +757,7 @@ export type FormControlSemanticTokens = SurfaceStates & {
 };
 
 export type FormControlTextSemanticTokens = {
-  foregroundColor?: SemanticColorValue;
+  color?: SemanticColorValue;
   fontSize?: SemanticTokenValue;
   fontWeight?: SemanticTokenValue;
   gap?: SemanticTokenValue;
@@ -796,7 +791,7 @@ export type TypographySemanticTokens = {
 /** Base semantic tokens used by the CSS reset */
 export type BaseSemanticTokens = {
   body?: Partial<BodySemanticTokens>;
-  focusOutline?: Partial<FocusOutlineSemanticTokens>;
+  focus?: Partial<FocusSemanticTokens>;
   heading?: Partial<HeadingSemanticTokens>;
   link?: Partial<LinkSemanticTokens>;
   border?: Partial<BorderSemanticTokens>;

@@ -10,7 +10,8 @@ export default css`
     max-width: ${component('dialog', 'maxWidth')};
     max-height: ${component('dialog', 'maxHeight')};
     background: none;
-    border: ${component('dialog', 'border')};
+    border: ${component('dialog', 'borderWidth')} ${component('dialog', 'borderStyle')}
+      ${component('dialog', 'borderColor')};
     overflow: hidden;
     opacity: 0;
     transition: ${component('dialog', 'transition')};

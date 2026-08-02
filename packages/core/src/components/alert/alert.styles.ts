@@ -89,7 +89,7 @@ export default css`
   }
 
   ::slotted([slot='icon'][icon]) {
-    color: ${component('alert', 'iconFgColor')};
+    color: ${component('alert', 'iconColor')};
   }
 
   .alert-heading {

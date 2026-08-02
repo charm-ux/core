@@ -92,6 +92,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [STYLE-006](styling/STYLE-006.md) — Toggle conditional classes with `classMap()`, not string concatenation
 - [STYLE-007](styling/STYLE-007.md) — Author theme tokens as a three-tier `defineTokens` set; alias with `ref()`, extend don't fork
 - [STYLE-008](styling/STYLE-008.md) — Set runtime-computed CSS custom properties with `this.style.setProperty()`
+- [STYLE-009](styling/STYLE-009.md) — Follow the ADR-0001 token naming grammar (`gap`/`bgColor`/`fgColor`, slot ordering)
 
 ### A11Y — accessibility (always loaded)
 

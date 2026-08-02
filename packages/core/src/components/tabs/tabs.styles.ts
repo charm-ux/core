@@ -10,6 +10,7 @@ export default css`
     padding: ${component('tabs', 'paddingY')} ${component('tabs', 'paddingX')};
     border: ${component('tabs', 'borderWidth')} ${component('tabs', 'borderStyle')} ${component('tabs', 'borderColor')};
     border-radius: ${component('tabs', 'borderRadius')};
+    row-gap: ${component('tabs', 'tablistGap')};
   }
 
   ::slotted([role='tab']) {
@@ -37,6 +38,7 @@ export default css`
   :host([layout='vertical']) {
     grid-template-columns: auto 1fr;
     justify-content: start;
+    column-gap: ${component('tabs', 'tablistGap')};
   }
 
   :host([layout='vertical']) .tablist {

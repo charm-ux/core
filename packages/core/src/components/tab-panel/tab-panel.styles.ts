@@ -7,7 +7,7 @@ export default css`
     transition: ${component('tabPanel', 'transition')};
     opacity: 0;
     min-height: ${component('tabPanel', 'minHeight')};
-    box-shadow: ${component('tabPanel', 'boxShadow')};
+    box-shadow: ${component('tabPanel', 'shadow')};
     position: absolute;
     top: 0;
   }

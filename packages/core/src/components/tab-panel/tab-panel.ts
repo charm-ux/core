@@ -24,7 +24,7 @@ import type { CoreTab } from '../tab/tab.js';
  * @cssprop --charm-tab-panel-border-style - The border style of the tab panel.
  * @cssprop --charm-tab-panel-border-radius - The border radius of the tab panel.
  * @cssprop --charm-tab-panel-min-height - The minimum height of the tab panel.
- * @cssprop --charm-tab-panel-box-shadow - The box shadow of the tab panel.
+ * @cssprop --charm-tab-panel-shadow - The box shadow of the tab panel.
  * @cssprop --charm-tab-panel-bg-color - The background color of the tab panel.
  * @cssprop --charm-tab-panel-fg-color - The foreground color of the tab panel.
  *

@@ -49,4 +49,4 @@ components: () => ({ button: { bgColor: '#0265dc' } }),
 export const charmDarkTokens = defineTokens({ /* ...whole set again... */ });
 ```
 
-See also: [STYLE-002](./STYLE-002.md), [CHARM-004](../internal/CHARM-004.md)
+See also: [STYLE-002](./STYLE-002.md), [STYLE-009](./STYLE-009.md) (token naming grammar), [CHARM-004](../internal/CHARM-004.md)

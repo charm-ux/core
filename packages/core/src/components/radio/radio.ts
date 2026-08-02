@@ -27,23 +27,24 @@ import styles from './radio.styles.js';
  * @csspart radio-label - The radio label.
  *
  * @cssprop --charm-radio-active-bg-color - The background color of the radio control when active.
- * @cssprop --charm-radio-active-border-color-checked - The border color of the checked radio control when active.
- * @cssprop --charm-radio-active-border-color-unchecked - The border color of the unchecked radio control when active.
- * @cssprop --charm-radio-bg-color - The color of the icon inside radio control when the radio is checked.
+ * @cssprop --charm-radio-checked-active-border-color - The border color of the checked radio control when active.
+ * @cssprop --charm-radio-unchecked-active-border-color - The border color of the unchecked radio control when active.
+ * @cssprop --charm-radio-bg-color - The background color of the radio control.
  * @cssprop --charm-radio-border-color - The border color of the radio control.
+ * @cssprop --charm-radio-checked-bg-color - The color of the checked indicator inside the radio control.
  * @cssprop --charm-radio-checked-border-color - The border color of the radio control when the radio is checked.
  * @cssprop --charm-radio-control-size - The size of the radio button.
  * @cssprop --charm-radio-disabled-bg-color - The background color of the radio control when disabled.
  * @cssprop --charm-radio-disabled-border-color - The border color of the radio control when disabled.
  * @cssprop --charm-radio-hover-bg-color - The background color of the radio control when hovered.
- * @cssprop --charm-radio-hover-border-color-checked - The border color of the checked radio control when hovered.
- * @cssprop --charm-radio-hover-border-color-unchecked - The border color of the unchecked radio control when hovered.
+ * @cssprop --charm-radio-checked-hover-border-color - The border color of the checked radio control when hovered.
+ * @cssprop --charm-radio-unchecked-hover-border-color - The border color of the unchecked radio control when hovered.
  * @cssprop --charm-radio-indicator-size - The size of the checked indicator inside radio control.
- * @cssprop --charm-radio-label-active-fg-color - The color of the radio label when active.
- * @cssprop --charm-radio-label-checked-fg-color - The color of the radio label when the radio is checked.
- * @cssprop --charm-radio-label-checked-hover-fg-color - The color of the radio label when the radio is checked and hovered.
+ * @cssprop --charm-radio-label-active-color - The color of the radio label when active.
+ * @cssprop --charm-radio-label-checked-color - The color of the radio label when the radio is checked.
+ * @cssprop --charm-radio-label-checked-hover-color - The color of the radio label when the radio is checked and hovered.
  * @cssprop --charm-radio-label-disabled-color - The color of the radio label when disabled.
- * @cssprop --charm-radio-label-unchecked-hover-fg-color - The color of the radio label when the radio is unchecked and hovered.
+ * @cssprop --charm-radio-label-unchecked-hover-color - The color of the radio label when the radio is unchecked and hovered.
  */
 
 export class CoreRadio extends CharmElement {

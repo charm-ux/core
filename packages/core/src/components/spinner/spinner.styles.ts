@@ -50,7 +50,7 @@ export default css`
   .spinner-indicator {
     --circumference: calc(var(--radius) * 2 * 3.141592654);
     --indeterminate-chunk: calc(var(--radius) * 1.5);
-    stroke: ${component('spinner', 'indicatorColor')};
+    stroke: ${component('spinner', 'indicatorFgColor')};
     stroke-dasharray: var(--circumference) var(--circumference);
     stroke-dashoffset: calc(var(--circumference) - var(--percentage, 1) * var(--circumference));
   }

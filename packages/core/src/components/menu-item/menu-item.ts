@@ -63,8 +63,8 @@ import styles from './menu-item.styles.js';
  * @cssprop --charm-menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
  * @cssprop --charm-menu-item-radio-bg-color - Determines the background color of the radio indicator.
  * @cssprop --charm-menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
- * @cssprop --charm-menu-item-submenu-item-icon-rotation - Determines the rotation of the submenu icon on expanded.
- * @cssprop --charm-menu-item-submenu-item-icon-size - Determines the size of the submenu icon.
+ * @cssprop --charm-menu-item-submenu-icon-rotation - Determines the rotation of the submenu icon on expanded.
+ * @cssprop --charm-menu-item-submenu-icon-size - Determines the size of the submenu icon.
  *
  * @dependency CoreIcon
  * @dependency CoreMenu

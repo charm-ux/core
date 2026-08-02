@@ -16,7 +16,8 @@ export default css`
   .line {
     width: 100%;
     height: 0;
-    border-top: ${component('divider', 'border')};
+    border-top: ${component('divider', 'borderWidth')} ${component('divider', 'borderStyle')}
+      ${component('divider', 'borderColor')};
   }
 
   .text {
@@ -30,7 +31,8 @@ export default css`
   }
 
   :host([orientation='vertical']) .line {
-    border-inline-start: ${component('divider', 'border')};
+    border-inline-start: ${component('divider', 'borderWidth')} ${component('divider', 'borderStyle')}
+      ${component('divider', 'borderColor')};
     flex-grow: 1;
     height: 100%;
     width: 0;

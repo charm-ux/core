@@ -1,5 +1,5 @@
 import { css } from 'lit';
-import { SystemColors } from '../../theme/index.js';
+import { relocateFocusRing, SystemColors } from '../../theme/index.js';
 import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
@@ -44,15 +44,11 @@ export default css`
     color: ${component('menu', 'item', 'active', 'fgColor')};
   }
 
-  :host(:focus-visible) {
-    outline: none;
-  }
-
-  :host(:focus-visible) .base {
-    outline: ${semantic('focus', 'outlineSize')} ${semantic('focus', 'outlineStyle')}
-      ${component('menu', 'item', 'focus', 'outlineColor')};
-    outline-offset: ${component('menu', 'item', 'focus', 'outlineOffset')};
-  }
+  ${relocateFocusRing({
+    target: '.base',
+    outlineColor: component('menu', 'item', 'focus', 'outlineColor'),
+    outlineOffset: component('menu', 'item', 'focus', 'outlineOffset'),
+  })}
 
   :host([disabled]) .base {
     cursor: not-allowed;
@@ -72,14 +68,14 @@ export default css`
 
   .submenu-item-icon,
   .submenu-item-icon-expanded {
-    font-size: ${component('menu', 'item', 'submenuItemIconSize')};
+    font-size: ${component('menu', 'item', 'submenu', 'iconSize')};
     margin-inline-start: auto;
     color: ${component('menu', 'item', 'fgColor')};
     transform: rotate(-90deg);
   }
 
   .submenu-item-icon-expanded {
-    transform: rotate(${component('menu', 'item', 'submenuItemIconRotation')});
+    transform: rotate(${component('menu', 'item', 'submenu', 'iconRotation')});
   }
 
   .input-container {
@@ -110,11 +106,11 @@ export default css`
   }
 
   :host(:hover) .radio {
-    border-color: ${component('menu', 'item', 'radio', 'hoverBorderColor')};
+    border-color: ${component('menu', 'item', 'radio', 'hover', 'borderColor')};
   }
 
   :host(:active) .radio {
-    border-color: ${component('menu', 'item', 'radio', 'activeBorderColor')};
+    border-color: ${component('menu', 'item', 'radio', 'active', 'borderColor')};
   }
 
   :host([aria-checked='true']) .radio-indicator {
@@ -129,11 +125,11 @@ export default css`
   }
 
   :host([aria-checked='true']:hover) .radio-indicator {
-    background: ${component('menu', 'item', 'inputHoverBgColor')};
+    background: ${component('menu', 'item', 'input', 'hover', 'bgColor')};
   }
 
   :host([aria-checked='true']:active) .radio-indicator {
-    background-color: ${component('menu', 'item', 'radio', 'activeBgColor')};
+    background-color: ${component('menu', 'item', 'radio', 'active', 'bgColor')};
   }
 
   ::slotted([slot='radio-indicator']) {

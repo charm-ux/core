@@ -11,7 +11,7 @@ export default css`
   }
 
   *:focus-visible {
-    outline: ${semantic('focus', 'outlineSize')} ${semantic('focus', 'outlineStyle')}
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
       ${semantic('focus', 'outlineColor')};
     outline-offset: ${semantic('focus', 'outlineOffset')};
   }
