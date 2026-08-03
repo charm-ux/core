@@ -75,4 +75,22 @@ export default css`
       border-color: GrayText;
     }
   }
+
+  /*
+   * Wave is a 300% background sweep across the full width of the element, which
+   * is exactly the large-area movement reduced motion is meant to suppress, so
+   * it falls back to the pulse keyframes. Pulse is an opacity loop with no
+   * movement, so it only needs slowing.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    :host([animation='wave']) .skeleton {
+      --skeleton-animation: pulse 1.5s linear infinite;
+    }
+
+    :host([animation='wave']) .skeleton,
+    :host([animation='pulse']) .skeleton {
+      animation-duration: 1.5s !important;
+      animation-iteration-count: infinite !important;
+    }
+  }
 `;

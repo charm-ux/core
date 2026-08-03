@@ -20,7 +20,6 @@ export default css`
 
   .base::details-content {
     block-size: 0;
-    transition-behavior: allow-discrete;
   }
 
   .base[open]::details-content {
@@ -61,12 +60,19 @@ export default css`
     outline: none;
   }
 
+  /*
+   * Longhands rather than the transition shorthand. transition-behavior is one
+   * of that shorthand's longhands, so declaring transition here - or in any
+   * subclass stylesheet that appends after this one - resets allow-discrete to
+   * normal. content-visibility is discrete, so without allow-discrete it flips
+   * to hidden the instant the item closes and the block-size collapse animates
+   * an already-invisible box, making the close look instant.
+   */
   :host([animated]) .base::details-content {
-    transition:
-      block-size ${component('accordionItem', 'animation', 'duration')}
-        ${component('accordionItem', 'animation', 'timingFunction')},
-      content-visibility ${component('accordionItem', 'animation', 'duration')}
-        ${component('accordionItem', 'animation', 'timingFunction')};
+    transition-property: block-size, content-visibility;
+    transition-duration: ${component('accordionItem', 'animation', 'duration')};
+    transition-timing-function: ${component('accordionItem', 'animation', 'timingFunction')};
+    transition-behavior: allow-discrete;
   }
 
   :host([disabled]) {

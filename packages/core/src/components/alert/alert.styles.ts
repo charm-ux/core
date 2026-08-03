@@ -17,6 +17,18 @@ export default css`
     opacity: 0;
   }
 
+  /*
+   * Entry transition. onOpenChange clears the host's hidden attribute in the
+   * same update that reflects [open], so .alert-wrapper is rendered for the
+   * first time already at opacity 1 - the alert appeared instantly and only
+   * faded out.
+   */
+  @starting-style {
+    :host([open]) .alert-wrapper {
+      opacity: 0;
+    }
+  }
+
   .alert {
     position: relative;
     display: flex;

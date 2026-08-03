@@ -5,10 +5,10 @@ export default css`
   dialog {
     display: none;
     position: fixed;
-    inset: ${component('dialog', 'inset')};
+    inset: var(--dialog-inset, ${component('dialog', 'inset')});
     width: ${component('dialog', 'size')};
     max-width: ${component('dialog', 'maxWidth')};
-    max-height: ${component('dialog', 'maxHeight')};
+    max-height: var(--dialog-max-height, ${component('dialog', 'maxHeight')});
     background: none;
     border: ${component('dialog', 'borderWidth')} ${component('dialog', 'borderStyle')}
       ${component('dialog', 'borderColor')};
@@ -24,6 +24,22 @@ export default css`
   :host([open]) dialog {
     opacity: 1;
     transition: ${component('dialog', 'transition')};
+  }
+
+  /*
+   * Entry transition. showModal() flips the dialog from display:none to
+   * display:flex in the same frame that [open] lands on the host, so the box is
+   * rendered for the first time already at its open style and there is no
+   * before-change value to interpolate from - the dialog snapped in and only
+   * faded out. @starting-style supplies that value.
+   *
+   * The backdrop does not need this: it is gated on .base--visible, which
+   * dialog.ts sets a frame later, so it already has a real prior style.
+   */
+  @starting-style {
+    :host([open]) dialog {
+      opacity: 0;
+    }
   }
 
   .dialog-wrapper {
@@ -164,9 +180,35 @@ export default css`
 
   /* Styles for drawer */
   :host([position]) {
-    --dialog-position-transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
-    /* Override dialog-transition only for positioned dialogs */
-    --dialog-transition: ${component('dialog', 'positionTransition')};
+    /*
+     * Declared as a custom property rather than inlined below because
+     * CharmDismissibleElement decides whether a transition is running at all by
+     * scanning the host's computed style for
+     * --{prefix}-{baseName}-(show|hide|position)-transition, and dialog closes
+     * itself from transitionend. The unprefixed spelling is one of the forms
+     * that scan accepts.
+     *
+     * The --dialog-transition declaration that used to sit here is gone: nothing
+     * read it. Consumers read component('dialog', 'transition'), which resolves
+     * to the prefixed --{prefix}-dialog-transition, a different property.
+     */
+    --dialog-position-transition: ${component('dialog', 'positionTransition')};
+  }
+
+  :host([position]) dialog {
+    /*
+     * Drawers slide rather than fade in place, so they get their own timing.
+     * Without this the value above was declared and never used, leaving drawers
+     * on the centre dialog's transition.
+     */
+    transition: var(--dialog-position-transition);
+
+    /*
+     * The UA stylesheet gives dialog margin:auto, which is what centres the
+     * default dialog inside inset:0. A drawer needs to sit flush against its
+     * edge, so the auto margins have to go.
+     */
+    margin: 0;
   }
 
   :host([position='start']) dialog {
@@ -185,9 +227,40 @@ export default css`
     transform: translateY(100%);
   }
 
-  :host([position][open]) dialog,
-  :host([position]) .base--visible dialog {
+  /*
+   * The second selector here used to be :host([position]) .base--visible dialog,
+   * which never matched anything: base--visible is a class on the dialog itself,
+   * so that asked for a dialog nested inside a dialog. Dropped rather than
+   * corrected - :host([position][open]) dialog already covers every frame the
+   * class is present.
+   */
+  :host([position][open]) dialog {
     transform: translate(0, 0);
+  }
+
+  /*
+   * Slide-in start points, for the same reason as the opacity block near the top
+   * of this file. These repeat the closed-state transforms because the rule
+   * above starts winning the moment [open] is added, before the box has ever
+   * been rendered. Each selector is more specific than the rule it provides a
+   * start for, and comes after it.
+   */
+  @starting-style {
+    :host([position='start'][open]) dialog {
+      transform: translateX(-100%);
+    }
+
+    :host([position='end'][open]) dialog {
+      transform: translateX(100%);
+    }
+
+    :host([position='top'][open]) dialog {
+      transform: translateY(-100%);
+    }
+
+    :host([position='bottom'][open]) dialog {
+      transform: translateY(100%);
+    }
   }
 
   :host([position='start']) dialog,

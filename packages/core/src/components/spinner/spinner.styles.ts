@@ -112,4 +112,17 @@ export default css`
       stroke: ${SystemColors.Highlight};
     }
   }
+
+  /*
+   * Opts back out of the base reduced-motion rule. Slowed rather than stopped:
+   * a spinner is a status indicator, and freezing it mid-arc reads as a hang.
+   * Rotation at this scale is not the vestibular risk the base rule guards.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .spinner-indicator,
+    .spinner-image {
+      animation-duration: 2s !important;
+      animation-iteration-count: infinite !important;
+    }
+  }
 `;
