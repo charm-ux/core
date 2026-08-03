@@ -98,23 +98,6 @@ export default css`
     opacity: 1;
   }
 
-  /*
-   * Entry transition. onOpenChange clears the body's hidden attribute in the
-   * same update that adds .tooltip--visible, so the box is rendered for the
-   * first time already at opacity 1 - the tooltip snapped in and only faded out.
-   * The comment in onOpenChange about transitions not working until the popup is
-   * rendered is describing exactly this, and this is the fix for it.
-   *
-   * Same selectors as the rule above and placed after it, which is what lets
-   * these values win the starting-style pass.
-   */
-  @starting-style {
-    .tooltip--visible .body,
-    .tooltip--visible::part(popup-arrow) {
-      opacity: 0;
-    }
-  }
-
   @media (forced-colors: active) {
     .tooltip::part(popup-base) {
       border: ${component('tooltip', 'borderWidth')} solid transparent;

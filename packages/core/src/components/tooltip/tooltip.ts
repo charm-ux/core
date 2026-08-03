@@ -265,13 +265,17 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (open && this.disabled) return;
 
     if (open) {
-      // after a render when popup open state is set we can transition in
-      // this generates a warning in Lit, but is necessary because transitions will not work until popup is rendered
+      // Make the popup content accessible immediately, then activate the visible
+      // class on the next render so the initial open transition can reliably
+      // animate from the closed state instead of snapping in.
       if (this.body) this.body.hidden = false;
       if (this.popup) this.popup.open = true;
-      // Set visible to true to start the transition
-      this.visible = true;
-      // this activates popup, this.visible transition state will happen after render
+      this.visible = false;
+      this.updateComplete.then(() => {
+        if (this.open) {
+          this.visible = true;
+        }
+      });
       this.announceTooltip();
     } else {
       // trigger transition; hide side effects are applied when transition settles
