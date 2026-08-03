@@ -22,8 +22,12 @@ import { charmTokens } from '@charm-ux/theming';
 // Configure the project prefix early
 project.updateProject({ prefix: 'vel', tokenPrefix: 'vel' });
 
-// Create your custom theme by extending charm
+// Create your custom theme by extending charm. `updatePrefix()` must match the
+// project's `tokenPrefix`: it re-resolves the inherited semantic and component
+// values so their `var()` references land on --vel-* too. The extend* methods
+// inherit the prefix, so it only has to be stated once.
 const myTokens = charmTokens
+  .updatePrefix('vel')
   .extendPrimitives({
     color: {
       brand: '#ff6600',
@@ -38,6 +42,15 @@ const myTokens = charmTokens
 
 // Configure the theme definition — prefix already set by project
 setThemeDefinition(myTokens.definition);
+```
+
+Generate the stylesheet from the same definition, so the variables it declares are the ones the components reference:
+
+```typescript
+import { generateThemeSync } from '@charm-ux/theming';
+
+const theme = generateThemeSync(myTokens.definition, { dryRun: true });
+// theme.css declares --vel-* — inject it once at the document level
 ```
 
 ### Import Order Matters

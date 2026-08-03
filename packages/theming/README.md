@@ -271,6 +271,24 @@ const customTokens = charmTokens
   .extendRawCss(({ semantic }, base) => ({ ...base /* raw CSS replaces; spread to keep */ }));
 ```
 
+### `.updatePrefix(prefix)`
+
+Changes the CSS variable prefix of a derived theme. The `extend*()` methods inherit the prefix — this is the only way to change it:
+
+```typescript
+const myTokens = charmTokens.updatePrefix('my').extendPrimitives({
+  color: { brand: '#1a4fd6' },
+});
+
+generateTheme(myTokens.definition); // emits --my-* (the definition carries the prefix)
+```
+
+Resolving a theme bakes the prefix into every `var()` reference its semantic and component values hold, so `updatePrefix()` re-resolves the inherited layers rather than renaming declarations alone — `--zd-button-bg-color` points at `--zd-surface-secondary`, not at the `--charm-*` variable it was derived from.
+
+The call is order-independent: `charmTokens.updatePrefix('zd').extendPrimitives({...})` and `charmTokens.extendPrimitives({...}).updatePrefix('zd')` produce the same definition.
+
+> Passing `prefix` to `generateTheme()`/`generateThemeSync()` instead only renames the **declarations**. A theme whose semantics were already resolved (any of the pre-built themes) keeps its original references, leaving every semantic and component token pointing at a variable that no longer exists. Use `updatePrefix()` for inherited themes; the `generateTheme()` option is for definitions whose factories are still unresolved.
+
 ## Generated Outputs
 
 `generateTheme()` returns:
@@ -414,7 +432,7 @@ Notes:
 
 Creates a token definition with typed helpers and extension methods.
 
-Returns: `{ definition, helpers, extendPrimitives, extendSemantics, extendComponents, extendRawCss }`
+Returns: `{ definition, helpers, semantic, component, updatePrefix, extendPrimitives, extendSemantics, extendComponents, extendRawCss }`
 
 ### `generateTheme(definition, options?)`
 
