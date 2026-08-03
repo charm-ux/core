@@ -647,4 +647,99 @@ describe('defineTokens', () => {
       expect(extended.definition.primitives.color?.secondary).toBe('#9333ea');
     });
   });
+
+  describe('updatePrefix', () => {
+    const makeBase = () =>
+      defineTokens({
+        primitives: {
+          color: { primary: '#3b82f6' },
+          spacing: { md: '1rem' },
+        },
+        semantics: ({ primitive }) => ({
+          surface: { primary: primitive('color', 'primary', 500) },
+        }),
+        components: ({ primitive, semantic }) => ({
+          button: {
+            bgColor: semantic('surface', 'primary'),
+            padding: primitive('spacing', 'md'),
+          },
+        }),
+      });
+
+    it('re-prefixes the definition', () => {
+      const tokens = makeBase().updatePrefix('app');
+
+      expect(tokens.definition.prefix).toBe('app');
+    });
+
+    it('re-prefixes the references inside inherited semantic and component values', () => {
+      const tokens = makeBase().updatePrefix('app');
+
+      expect(tokens.definition.semantics?.surface.primary).toBe('var(--app-color-primary-500)');
+      expect(tokens.definition.components?.button.bgColor).toBe('var(--app-surface-primary)');
+      expect(tokens.definition.components?.button.padding).toBe('var(--app-spacing-md)');
+    });
+
+    it('re-prefixes the helpers', () => {
+      const tokens = makeBase().updatePrefix('app');
+
+      expect(tokens.helpers.color('primary', 500)).toBe('var(--app-color-primary-500)');
+    });
+
+    it('leaves the theme it was called on untouched', () => {
+      const base = makeBase();
+      base.updatePrefix('app');
+
+      expect(base.definition.prefix).toBe('charm');
+      expect(base.definition.semantics?.surface.primary).toBe('var(--charm-color-primary-500)');
+    });
+
+    it('propagates the prefix to themes derived afterwards', () => {
+      const tokens = makeBase()
+        .updatePrefix('app')
+        .extendPrimitives({ color: { secondary: '#9333ea' } })
+        .extendSemantics(({ primitive }) => ({
+          text: { primary: primitive('color', 'secondary', 500) },
+        }));
+
+      expect(tokens.definition.prefix).toBe('app');
+      expect(tokens.definition.semantics?.text.primary).toBe('var(--app-color-secondary-500)');
+      // Inherited from before the extensions - must be re-prefixed too.
+      expect(tokens.definition.semantics?.surface.primary).toBe('var(--app-color-primary-500)');
+      expect(tokens.definition.components?.button.bgColor).toBe('var(--app-surface-primary)');
+    });
+
+    it('is order-independent within a chain', () => {
+      const before = makeBase()
+        .updatePrefix('app')
+        .extendSemantics(({ primitive }) => ({
+          text: { primary: primitive('color', 'primary', 900) },
+        }));
+
+      const after = makeBase()
+        .extendSemantics(({ primitive }) => ({
+          text: { primary: primitive('color', 'primary', 900) },
+        }))
+        .updatePrefix('app');
+
+      expect(after.definition).toEqual(before.definition);
+    });
+
+    it('passes the re-prefixed base to an extendSemantics factory', () => {
+      const tokens = makeBase()
+        .updatePrefix('app')
+        .extendSemantics((_helpers, base) => ({
+          surface: { raised: base?.surface.primary ?? '' },
+        }));
+
+      expect(tokens.definition.semantics?.surface.raised).toBe('var(--app-color-primary-500)');
+    });
+
+    it('keeps the prefix when extending without it', () => {
+      const tokens = makeBase().extendPrimitives({ color: { secondary: '#9333ea' } });
+
+      expect(tokens.definition.prefix).toBe('charm');
+      expect(tokens.definition.semantics?.surface.primary).toBe('var(--charm-color-primary-500)');
+    });
+  });
 });

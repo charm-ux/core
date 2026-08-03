@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { generateCss } from '../generator/index.js';
 import { charmTheme, charmTokens, demoTheme, demoTokens } from '../themes/index.js';
 
 describe('charmTokens', () => {
@@ -70,6 +71,33 @@ describe('charmTokens', () => {
       expect(extended.definition.components?.customComponent?.padding).toBe('var(--charm-spacing-md)');
       // Original components should be preserved
       expect(extended.definition.components?.button).toBeDefined();
+    });
+
+    it('updatePrefix re-prefixes the whole inherited theme', () => {
+      const rebranded = charmTokens.updatePrefix('zd').extendPrimitives({
+        color: { brand: '#1a4fd6' },
+      });
+
+      // `surface.primary` is a light/dark pair, `button.bgColor` a plain ref.
+      expect(rebranded.definition.semantics?.surface.primary).toEqual({
+        light: 'var(--zd-color-white)',
+        dark: 'var(--zd-color-neutral-950)',
+      });
+      expect(rebranded.definition.components?.button.bgColor).toBe('var(--zd-surface-secondary)');
+      expect(JSON.stringify(rebranded.definition.semantics)).not.toContain('--charm-');
+      expect(JSON.stringify(rebranded.definition.components)).not.toContain('--charm-');
+    });
+
+    it('updatePrefix generates CSS with no references left on the old prefix', () => {
+      const css = generateCss(charmTokens.updatePrefix('zd').definition);
+
+      const declared = new Set([...css.matchAll(/^\s*(--[\w-]+)\s*:/gm)].map(match => match[1]));
+      const referenced = [...css.matchAll(/var\((--[\w-]+)/g)].map(match => match[1]);
+      const dangling = referenced.filter(name => !declared.has(name));
+
+      expect(css).toContain('--zd-');
+      expect(css).not.toContain('--charm-');
+      expect(dangling).toEqual([]);
     });
   });
 });

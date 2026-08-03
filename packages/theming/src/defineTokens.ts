@@ -81,7 +81,31 @@ export type DefinedTokens<
   component: ComponentNamespace<C>;
 
   /**
+   * Re-prefix this theme, returning a new theme whose CSS variable names - and
+   * the `var()` references inside its semantic and component values - all use
+   * `prefix`.
+   *
+   * The `extend*()` methods deliberately inherit the prefix, so that a chain of
+   * extensions stays on one prefix; this is the only way to change it. The call
+   * is order-independent: it re-resolves the layers it inherited, and the new
+   * prefix propagates to every theme derived from the result.
+   *
+   * @example
+   * ```ts
+   * const myTokens = charmTokens.updatePrefix('my').extendPrimitives({
+   *   color: { brand: '#1a4fd6' },
+   * });
+   *
+   * myTokens.definition.semantics?.surface.primary; // 'var(--my-color-white)'
+   * ```
+   */
+  updatePrefix: (prefix: string) => DefinedTokens<P, S, C>;
+
+  /**
    * Extend this theme with primitive overrides, returning a new theme.
+   *
+   * The CSS variable prefix is inherited - use {@link DefinedTokens.updatePrefix}
+   * to change it.
    *
    * @example
    * ```ts
@@ -274,68 +298,70 @@ export function defineTokens<
     ...(input.rawCss && { rawCss: input.rawCss }),
   };
 
+  // Derived themes inherit the *factories*, not the resolved snapshots above.
+  // Resolving bakes the prefix into every `var(--{prefix}-...)` reference a
+  // semantic or component value holds, so handing a child the snapshot would
+  // pin it to this theme's prefix forever - the child could rename its own
+  // declarations but not the references pointing at them. Keeping the factories
+  // lets a child re-resolve them against its own helpers.
+  const inheritedSemantics = input.semantics;
+  const inheritedComponents = input.components;
+
+  /** Re-resolve the inherited semantics against a child theme's helpers. */
+  const resolveInheritedSemantics = (h: SemanticFactoryHelpers<P>): S | undefined => inheritedSemantics?.(h);
+
+  /** Re-resolve the inherited components against a child theme's helpers. */
+  const resolveInheritedComponents = (h: ComponentFactoryHelpers<P>): C | undefined => inheritedComponents?.(h);
+
   return {
     definition,
     helpers,
     semantic: semanticHelpers as SemanticNamespace<S>,
     component: componentHelpers as ComponentNamespace<C>,
 
+    updatePrefix: (prefix: string): DefinedTokens<P, S, C> =>
+      defineTokens<P, S, C>({ ...input, prefix }, { ...options, prefix }),
+
     extendPrimitives: (overrides?: Partial<PrimitiveTokens>): DefinedTokens<P, S, C> => {
       const mergedPrimitives = overrides ? (deepMerge(input.primitives, overrides) as P) : input.primitives;
 
-      return defineTokens(
-        {
-          prefix: resolvedPrefix,
-          primitives: mergedPrimitives,
-          semantics:
-            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
-          components:
-            components !== undefined
-              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
-              : undefined,
-          rawCss: input.rawCss,
-        },
-        { prefix: resolvedPrefix }
+      return defineTokens<P, S, C>(
+        { ...input, prefix: resolvedPrefix, primitives: mergedPrimitives },
+        { ...options, prefix: resolvedPrefix }
       );
     },
 
     extendSemantics: <NewS extends SemanticTokens>(
       factory: (helpers: SemanticFactoryHelpers<P>, base: S | undefined) => NewS
     ): DefinedTokens<P, S & NewS, C> => {
-      return defineTokens(
+      return defineTokens<P, S & NewS, C>(
         {
+          ...input,
           prefix: resolvedPrefix,
-          primitives: input.primitives,
           semantics: h => {
-            const delta = factory(h, semantics);
-            return (semantics ? deepMerge<SemanticTokens>(semantics, delta) : delta) as S & NewS;
+            const base = resolveInheritedSemantics(h);
+            const delta = factory(h, base);
+            return (base ? deepMerge<SemanticTokens>(base, delta) : delta) as S & NewS;
           },
-          components:
-            components !== undefined
-              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
-              : undefined,
-          rawCss: input.rawCss,
         },
-        { prefix: resolvedPrefix }
+        { ...options, prefix: resolvedPrefix }
       );
     },
 
     extendComponents: <NewC extends ComponentTokens>(
       factory: (helpers: ComponentFactoryHelpers<P>, base: C | undefined) => NewC
     ): DefinedTokens<P, S, C & NewC> => {
-      return defineTokens(
+      return defineTokens<P, S, C & NewC>(
         {
+          ...input,
           prefix: resolvedPrefix,
-          primitives: input.primitives,
-          semantics:
-            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
           components: h => {
-            const delta = factory(h, components);
-            return (components ? deepMerge<ComponentTokens>(components, delta) : delta) as C & NewC;
+            const base = resolveInheritedComponents(h);
+            const delta = factory(h, base);
+            return (base ? deepMerge<ComponentTokens>(base, delta) : delta) as C & NewC;
           },
-          rawCss: input.rawCss,
         },
-        { prefix: resolvedPrefix }
+        { ...options, prefix: resolvedPrefix }
       );
     },
 
@@ -354,19 +380,9 @@ export function defineTokens<
               utilities: concatCss(input.rawCss?.utilities, additions.utilities),
             };
 
-      return defineTokens(
-        {
-          prefix: resolvedPrefix,
-          primitives: input.primitives,
-          semantics:
-            semantics !== undefined ? ((() => semantics) as unknown as (h: SemanticFactoryHelpers<P>) => S) : undefined,
-          components:
-            components !== undefined
-              ? ((() => components) as unknown as (h: ComponentFactoryHelpers<P>) => C)
-              : undefined,
-          rawCss: mergedRawCss,
-        },
-        { prefix: resolvedPrefix }
+      return defineTokens<P, S, C>(
+        { ...input, prefix: resolvedPrefix, rawCss: mergedRawCss },
+        { ...options, prefix: resolvedPrefix }
       );
     },
   };
