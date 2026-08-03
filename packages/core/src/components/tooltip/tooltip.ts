@@ -271,7 +271,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       if (this.body) this.body.hidden = false;
       if (this.popup) this.popup.open = true;
       this.visible = false;
-      this.updateComplete.then(() => {
+      requestAnimationFrame(() => {
         if (this.open) {
           this.visible = true;
         }
