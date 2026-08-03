@@ -14,6 +14,15 @@ export default css`
 
   .popup {
     opacity: 1;
+    /*
+     * Moved up from the :host([open] .popup) rule that used to sit further down,
+     * which was invalid: :host() only accepts a compound selector for the host
+     * itself, so the descendant combinator made the browser discard the whole
+     * rule. Ungated on purpose - the popup is at opacity 0 when closed, so the
+     * [open] gate bought nothing and would have made the shadow pop off on close
+     * rather than fade with everything else.
+     */
+    filter: ${component('popup', 'dropShadow')};
     position: absolute;
     isolation: isolate;
     max-width: var(--popup-auto-size-available-width, none);
@@ -34,6 +43,24 @@ export default css`
     transition: ${component('popup', 'hideTransition')};
   }
 
+  /*
+   * Entry transition. The popup is display:none while closed - the hidden
+   * attribute is set imperatively once the exit transition settles - so on open
+   * the box is rendered for the first time with [open] already on the host.
+   * Opacity computes straight to 1 and there is no before-change value to
+   * interpolate from, which is why the popup faded out but snapped in.
+   * @starting-style supplies that value. Same selector as the .popup rule above
+   * and placed after it, which is what lets it win the starting-style pass.
+   *
+   * Reopening mid-fade-out is unaffected: the box is still rendered then, so no
+   * starting style applies and the transition simply reverses from where it is.
+   */
+  @starting-style {
+    :host([open]) .popup {
+      opacity: 0;
+    }
+  }
+
   .arrow {
     position: absolute;
     width: calc(var(--popup-arrow-size-diagonal) * 2);
@@ -41,10 +68,6 @@ export default css`
     transform: rotate(45deg);
     background: ${component('popup', 'arrowColor')};
     z-index: -1;
-  }
-
-  :host([open] .popup) {
-    filter: ${component('popup', 'dropShadow')};
   }
 
   .popup-hover-bridge {

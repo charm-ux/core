@@ -439,6 +439,13 @@ export class CorePopup extends CharmDismissibleElement {
 
   protected override firstUpdated() {
     super.firstUpdated();
+    // Hide a popup that starts closed. setPopupPosition does this too, but only
+    // once the positioner has run, which needs an anchor and happens async, so
+    // without this a closed popup spends its first frames rendered at opacity 0:
+    // invisible, but hit-testable and still in the accessibility tree. Doing it
+    // here is also what lets a consumer stop hiding its own slotted content -
+    // which is what was costing consumers their exit transition.
+    if (this.popup) this.popup.hidden = !this.open;
     this.start();
   }
 

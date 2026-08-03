@@ -34,8 +34,9 @@ let dropdownButtonId = 0;
  * @event menu-after-hide - Emitted after the menu content closes and transitions are complete.
  * @event {MenuRequestCloseEvent} menu-request-close - Emitted when the user attempts to close the menu.
  *
- * @csspart menu-popup-base - The popup's internal container.
- * @csspart menu-popup - The popup's base wrapper.
+ * @csspart menu-popup - The popup element that positions the menu.
+ * @csspart menu-popup-base - The menu panel: background, border and shadow.
+ * @csspart menu-popup-dialog - The popup's own positioned container.
  *
  * @cssprop --charm-menu-bg-color - The background color of the menu.
  * @cssprop --charm-menu-border-color - The border color of the menu.
@@ -450,16 +451,30 @@ export class CoreMenu extends CharmDismissibleElement {
     return html` <slot id="anchor" name="trigger" @slotchange=${this.handleTriggerSlotChange}></slot> `;
   }
 
-  /** Template for the popup element */
+  /**
+   * Template for the popup element.
+   *
+   * The menu panel deliberately carries no hidden binding. It used to, and
+   * because open reflects synchronously the panel - which is what holds the
+   * background, border and shadow - vanished before popup had a chance to fade
+   * it, so every menu close was a snap. popup hides its own dialog once the exit
+   * transition settles, and from first render when it starts closed, so the menu
+   * items stay out of the accessibility tree either way.
+   *
+   * The exportparts entry forwards popup's popup-base part as
+   * menu-popup-dialog. It used to read base:popup-base, which forwarded nothing
+   * at all - popup has no part named base, and the two parts consumers actually
+   * reach (menu-popup, menu-popup-base) come from menu's own part attributes
+   * below, not from forwarding. popup-arrow is deliberately not forwarded: menu
+   * never sets the arrow attribute, so no such part exists to forward.
+   */
   protected popupTemplate() {
     return html`
     <${this.scope.tag('popup')}
     anchor="anchor"
     auto-size="both"
     class="popup"
-    exportparts="
-      base:popup-base
-      "
+    exportparts="popup-base:menu-popup-dialog"
     flip
     part="menu-popup"
     placement=${this.placement}
@@ -470,7 +485,7 @@ export class CoreMenu extends CharmDismissibleElement {
     @transitionend=${this.handleTransitionEnd}
     @focusout=${this.handleFocusOut}
   >
-  <div role="menu" class="popup-base" part="menu-popup-base" ?hidden=${!this.open}>
+  <div role="menu" class="popup-base" part="menu-popup-base">
     <slot @slotchange=${this.handleDefaultSlotChange}></slot>
   </div>
   </${this.scope.tag('popup')}>

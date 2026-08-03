@@ -622,7 +622,9 @@ const charmTokensBase = defineTokens(
         contentBorder: '1px solid transparent',
         contentBorderRadius: primitive('borderRadius', 'md'),
         closedMaxHeight: '0',
-        openedMaxHeight: 'none',
+        // max-content, not none: `none` cannot be interpolated even with
+        // interpolate-size, so `none` makes showTransition/hideTransition inert.
+        openedMaxHeight: 'max-content',
         showTransition: 'max-height 0.3s ease-in',
         hideTransition: 'max-height 0.2s ease-out',
       },
@@ -752,7 +754,10 @@ const charmTokensBase = defineTokens(
         trackColor: semantic('surface', 'tertiary'),
         indicatorBgColor: semantic('action', 'primary', 'color'),
         iconColor: semantic('text', 'secondary'),
-        animation: 'none',
+        // Drives the documented indeterminate state via the @keyframes of the
+        // same name in progress-bar.styles.ts. Was 'none', which left the
+        // indeterminate bar static.
+        animation: 'indeterminate 1.5s ease-in-out infinite',
         transition: 'width 0.3s ease',
       },
 
@@ -885,8 +890,13 @@ const charmTokensBase = defineTokens(
         labelFontWeight: primitive('fontWeight', 'normal'),
         labelLineHeight: primitive('lineHeight', 'md'),
         gap: primitive('spacing', 'sm'),
-        indicatorAnimation: 'spin 1s linear infinite',
-        imageAnimation: 'pulse 2s ease-in-out infinite',
+        // These must match @keyframes defined in spinner.styles.ts. Keyframes are
+        // scoped to the shadow tree that declares them, so a name from another
+        // component's stylesheet does not resolve here. 'spin' matched nothing at
+        // all, and 'pulse' is skeleton's opacity loop - the rotation this wants is
+        // spin-image, which was already defined and unreferenced.
+        indicatorAnimation: 'spin-infinite 1s linear infinite',
+        imageAnimation: 'spin-image 2s linear infinite',
       },
 
       // Switch

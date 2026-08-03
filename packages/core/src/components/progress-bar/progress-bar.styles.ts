@@ -72,4 +72,12 @@ export default css`
       color: ${SystemColors.HighlightText};
     }
   }
+
+  /* Status indicator - see the spinner's note. Slowed, not stopped. */
+  @media (prefers-reduced-motion: reduce) {
+    :host([indeterminate]) .progress-bar-indicator {
+      animation-duration: 2.5s !important;
+      animation-iteration-count: infinite !important;
+    }
+  }
 `;
