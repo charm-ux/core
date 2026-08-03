@@ -1,3 +1,33 @@
+<script>
+  // Make JSON.stringify resilient inside Storybook preview to avoid "Converting circular structure to JSON"
+  // This is Storybook-only and prevents PostMessageTransport from throwing when addons log complex objects.
+  (function () {
+    const nativeStringify = JSON.stringify;
+    JSON.stringify = function (value, replacer, space) {
+      try {
+        return nativeStringify(value, replacer, space);
+      } catch (e) {
+        if (e instanceof TypeError) {
+          const seen = new WeakSet();
+          return nativeStringify(
+            value,
+            function (k, v) {
+              if (typeof v === 'object' && v !== null) {
+                if (seen.has(v)) return '[Circular]';
+                seen.add(v);
+              }
+              if (typeof v === 'function') return undefined;
+              if (k === '__STORYBOOK_MODULE_GLOBAL__') return undefined;
+              return v;
+            },
+            space
+          );
+        }
+        throw e;
+      }
+    };
+  })();
+</script>
 <script type="module">
   window.global = window;
 </script>
