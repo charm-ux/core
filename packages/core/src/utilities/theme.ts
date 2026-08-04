@@ -14,7 +14,15 @@ function varName(prefix: string, ...segments: (string | number)[]): string {
   return `--${prefix}-${parts.join('-')}`;
 }
 
-let _themePrefix = 'charm';
+/**
+ * The prefix that Lit `css` templates bake into custom-property names at module-evaluation time.
+ *
+ * `CharmElement` rewrites these to the configured prefix when the render root is created, which is
+ * why component styles can be re-prefixed even after they have been imported.
+ */
+export const DEFAULT_THEME_PREFIX = 'charm';
+
+let _themePrefix: string = DEFAULT_THEME_PREFIX;
 let _themeDefinition: ResolvedTokenDefinition = charmDefinition;
 let _themeHelpers = createCssHelpers(_themeDefinition, _themePrefix);
 
@@ -32,7 +40,7 @@ function warnIfStylesEvaluated(operation: string) {
   if (!_stylesEvaluated) return;
   console.warn(
     `[charm-ux] ${operation}() was called after component styles were already evaluated. ` +
-      'Component styles bake CSS custom-property names at module load, so this change will not apply to ' +
+      'Component styles bake token values at module load, so this change will not apply to ' +
       `components that were already imported. Call ${operation}() before importing any @charm-ux/core ` +
       'component modules.'
   );
@@ -101,14 +109,24 @@ export const tokens: {
 };
 
 /**
+ * Get the CSS variable prefix currently configured for theme tokens.
+ *
+ * @returns The active prefix (e.g. `'charm'` → `--charm-button-bg-color`)
+ */
+export function getThemePrefix(): string {
+  return _themePrefix;
+}
+
+/**
  * Set the CSS variable prefix for all theme tokens.
  *
- * Must be called before any component styles are evaluated.
+ * Safe to call after components have been imported: `CharmElement` rewrites the baked
+ * `--charm-*` names in each component's styles when its render root is created. Only elements
+ * created after this call pick up the new prefix, so call it during app bootstrap.
  *
  * @param prefix - The prefix to use (e.g. `'fui'` → `--fui-button-bg-color`)
  */
 export function setThemePrefix(prefix: string) {
-  warnIfStylesEvaluated('setThemePrefix');
   _themePrefix = prefix;
   rebuild();
 }

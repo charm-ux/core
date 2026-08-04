@@ -1,5 +1,4 @@
 import { property, query, state } from 'lit/decorators.js';
-import { html } from 'lit/static-html.js';
 import { repeat } from 'lit/directives/repeat.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
@@ -366,24 +365,24 @@ export class CoreOverflow extends CharmElement {
    * Generates the button template that triggers the overflow menu.
    */
   protected overflowMenuTriggerTemplate() {
-    return html`
-      <${this.scope.tag('button')}
+    return this.html`
+      <scoped-button
         slot="trigger"
         part="overflow-trigger"
         class="overflow-trigger"
         icon-only
         @click=${this.generateOverflowMenu}
       >
-        <${this.scope.tag('icon')} name="more" label=${this.label}></${this.scope.tag('icon')}>
-      </${this.scope.tag('button')}>
+        <scoped-icon name="more" label=${this.label}></scoped-icon>
+      </scoped-button>
     `;
   }
 
   /**
    * Generates the menu template that contains overflowed items.
    */
-  protected overflowMenuItemListTemplate(overflowMenuItems: OverflowMenuItem[]) {
-    return html`
+  protected overflowMenuItemListTemplate(overflowMenuItems: OverflowMenuItem[]): ReturnType<typeof this.html> {
+    return this.html`
       ${repeat(
         overflowMenuItems,
         overflowItem => overflowItem.id,
@@ -395,9 +394,9 @@ export class CoreOverflow extends CharmElement {
   /**
    * Generates the menu item template.
    */
-  protected overflowMenuItemTemplate(overFlowItem: OverflowMenuItem): ReturnType<typeof html> {
-    return html`
-      <${this.scope.tag('menu-item')}
+  protected overflowMenuItemTemplate(overFlowItem: OverflowMenuItem): ReturnType<typeof this.html> {
+    return this.html`
+      <scoped-menu-item
         part="overflow-menu-item"
         class="overflow-menu-item"
         ?fixed-placement=${this.fixedPlacement}
@@ -406,14 +405,11 @@ export class CoreOverflow extends CharmElement {
       >
         ${repeat(
           overFlowItem.icons,
-          icon =>
-            html` <${this.scope.tag('icon')} slot="${icon.slot || 'start'}" name=${icon.name}></${this.scope.tag(
-              'icon'
-            )}> `
+          icon => this.html` <scoped-icon slot="${icon.slot || 'start'}" name=${icon.name}></scoped-icon> `
         )}
         ${overFlowItem.text}
         ${overFlowItem.subMenuItems.length > 0 ? this.overflowMenuItemListTemplate(overFlowItem.subMenuItems) : ''}
-      </${this.scope.tag('menu-item')}>
+      </scoped-menu-item>
     `;
   }
 
@@ -421,16 +417,16 @@ export class CoreOverflow extends CharmElement {
    * Generates the menu template that contains the overflow menu list.
    */
   protected overflowMenuTemplate() {
-    return html`
+    return this.html`
       <slot name="menu">
-        <${this.scope.tag('menu')}
+        <scoped-menu
           fixed-placement
           part="overflow-menu"
           class="overflow-menu"
         >
           ${this.overflowMenuTriggerTemplate()}
           ${this.overflowMenuItemListTemplate(this.overflowMenuItems)}
-        </${this.scope.tag('menu')}>
+        </scoped-menu>
       </slot>
     `;
   }
@@ -439,7 +435,7 @@ export class CoreOverflow extends CharmElement {
    * Generates the overflow template.
    */
   protected overflowTemplate() {
-    return html`<span class="collapsing-container" part="overflow-base">
+    return this.html`<span class="collapsing-container" part="overflow-base">
       <span class="collapsing-content" part="overflow-content" role="group">
         ${this.startTemplate()} ${this.menuPosition === 'start' && this.hasOverflow ? this.overflowMenuTemplate() : ''}
         <slot @slotchange=${this.handleSlotChange}></slot>

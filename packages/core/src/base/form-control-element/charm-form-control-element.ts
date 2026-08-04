@@ -1,5 +1,4 @@
 import { property, state } from 'lit/decorators.js';
-import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../focusable-element/charm-focusable-element.js';
@@ -234,20 +233,20 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Generates the template for the required asterisk */
   protected requiredTemplate() {
-    return html`<span class="required-indicator" aria-hidden="true">*</span>`;
+    return this.html`<span class="required-indicator" aria-hidden="true">*</span>`;
   }
 
   /** Generates the template for form control labels */
   protected labelContentTemplate(labelSlot = true) {
-    return html`
-      ${this.label || html`<slot name="${ifDefined(labelSlot ? 'label' : undefined)}"></slot>`}
+    return this.html`
+      ${this.label || this.html`<slot name="${ifDefined(labelSlot ? 'label' : undefined)}"></slot>`}
       ${this.required ? this.requiredTemplate() : ''}
     `;
   }
 
   /** Generates the template for form control help text */
   protected helpTextTemplate() {
-    return html`<div
+    return this.html`<div
       part="form-control-help-text"
       id="help-text"
       class=${classMap({
@@ -263,7 +262,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Generates the template for form control error message */
   protected errorMessageTemplate() {
     const errorText = this.customErrorMessage || this.errorMessage;
-    return html`
+    return this.html`
       <div
         part="form-control-error-text"
         id="error-text"
@@ -271,11 +270,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
         aria-live="assertive"
         role="alert"
       >
-       <${this.scope.tag('icon')}
+       <scoped-icon
           part="form-control-error-text-icon"
           class="form-control-error-text-icon"
           name="error-circle"
-        ></${this.scope.tag('icon')}>
+        ></scoped-icon>
         <span part="form-control-error-text-message" class="form-control-error-text-message">${errorText}</span>
       </div>
     `;
