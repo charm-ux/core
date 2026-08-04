@@ -1,4 +1,5 @@
 import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
+import { unsafeStatic } from 'lit/static-html.js';
 import { createScope } from '../../../utilities/scope.js';
 import icon from '../../../components/icon/icon.js';
 import { project } from '../../../utilities/project.js';
@@ -24,6 +25,21 @@ class ScopedTemplateHost extends CharmElement {
 
 project.scope.registerComponent(ScopedTemplateHost);
 
+class ScopedTemplateWithDynamicTag extends CharmElement {
+  public static override baseName = 'scoped-template-dynamic-host';
+
+  public static override get dependencies() {
+    return [icon];
+  }
+
+  protected override render() {
+    const tag = unsafeStatic('span');
+    return this.html`<${tag}><scoped-icon name="check"></scoped-icon><span>Hello</span></${tag}>`;
+  }
+}
+
+project.scope.registerComponent(ScopedTemplateWithDynamicTag);
+
 describe('CharmElement scoped template tag', () => {
   it('rewrites <scoped-*> tags to the scope tag name', async () => {
     const el = await fixture<ScopedTemplateHost>(html`<ch-scoped-template-host></ch-scoped-template-host>`);
@@ -48,6 +64,17 @@ describe('CharmElement scoped template tag', () => {
 
     expect(el.shadowRoot?.querySelector('ch-icon_sfx')).to.not.be.null;
     expect(el.shadowRoot?.querySelector('ch-icon')).to.be.null;
+  });
+
+  it('supports dynamic tag names alongside scoped tag rewrites', async () => {
+    const el = await fixture<ScopedTemplateWithDynamicTag>(
+      html`<ch-scoped-template-dynamic-host></ch-scoped-template-dynamic-host>`
+    );
+    await elementUpdated(el);
+
+    expect(el.shadowRoot?.querySelector('span')).to.not.be.null;
+    expect(el.shadowRoot?.querySelector('ch-icon')).to.not.be.null;
+    expect(el.shadowRoot?.querySelector('scoped-icon')).to.be.null;
   });
 
   it('returns a stable strings array per call site so Lit can reuse its compiled template', async () => {

@@ -1,4 +1,5 @@
-import { type CSSResultOrNative, LitElement, html as litHtml, type TemplateResult } from 'lit';
+import { type CSSResultOrNative, LitElement, type TemplateResult } from 'lit';
+import { html as staticHtml } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { DEFAULT_THEME_PREFIX, getScope, getThemePrefix } from '../../utilities/index.js';
 import styles from './charm-element.styles.js';
@@ -149,8 +150,8 @@ export class CharmElement extends LitElement {
    * scope created with `suffix: 'support'`.
    *
    * Nested components must still be declared in `static dependencies` so they get registered in the
-   * host's scope. For polymorphic tags (`<a>` vs `<button>`), keep using `static-html` + `literal`
-   * per COMP-003 — this tag builds plain `html` templates and can't take `StaticValue`s.
+   * host's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/
+   * `unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.
    *
    * @example
    * ```ts
@@ -183,7 +184,7 @@ export class CharmElement extends LitElement {
       byScope.set(scopeKey, scoped);
     }
 
-    return litHtml(scoped, ...values);
+    return staticHtml(scoped, ...values);
   }
 
   /** @internal Emits a custom event with more convenient defaults. */
