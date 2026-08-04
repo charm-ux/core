@@ -58,6 +58,31 @@
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot."
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten."
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -264,6 +289,35 @@
               "name": "hide",
               "privacy": "public",
               "description": "Hides/closes the component."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -566,6 +620,35 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -1170,6 +1253,35 @@
               "description": "Hides the input label and help text.",
               "attribute": "hide-label",
               "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -1974,6 +2086,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "iconTemplate",
               "privacy": "protected",
               "description": "Returns the template for the open/close indicator."
@@ -2377,6 +2518,35 @@
                 }
               ],
               "description": "Ensures only one item is open at a time."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -2887,6 +3057,35 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -3423,6 +3622,35 @@
               "default": "new HasSlotController(this, 'status-indicator', 'image')"
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "image",
               "type": {
@@ -3692,6 +3920,35 @@
                 }
               ],
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4089,6 +4346,35 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "referrerPolicy",
               "type": {
@@ -4399,6 +4685,35 @@
               "name": "handleSlotChange",
               "privacy": "protected",
               "description": "Handles changes in the default slot."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -4837,6 +5152,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "isOverflowing",
               "privacy": "public",
               "description": "This method can be used to determine whether content is currently overflowing.",
@@ -4938,6 +5282,11 @@
               "kind": "method",
               "name": "overflowMenuItemListTemplate",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof this.html>"
+                }
+              },
               "parameters": [
                 {
                   "name": "overflowMenuItems",
@@ -4972,7 +5321,7 @@
               "privacy": "protected",
               "return": {
                 "type": {
-                  "text": "ReturnType<typeof html>"
+                  "text": "ReturnType<typeof this.html>"
                 }
               },
               "parameters": [
@@ -5627,6 +5976,35 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -6321,6 +6699,35 @@
               "attribute": "href"
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "iconOnly",
               "type": {
@@ -6973,6 +7380,35 @@
               "privacy": "public",
               "description": "Provides a heading for the card.",
               "attribute": "heading"
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -7971,6 +8407,35 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -9050,6 +9515,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "lightDismiss",
               "privacy": "protected",
               "parameters": [
@@ -9774,6 +10268,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "onOpenChange",
               "privacy": "protected",
               "parameters": [
@@ -10214,6 +10737,35 @@
               "default": "new HasSlotController(this, '[default]')"
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "inset",
               "type": {
@@ -10460,6 +11012,35 @@
                 }
               ],
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11594,6 +12175,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "initialValue",
               "type": {
@@ -12554,6 +13164,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "menuGroupTemplate",
               "privacy": "protected",
               "description": "Template for the menu group component."
@@ -13088,6 +13727,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "menuItemTemplate",
               "privacy": "protected",
               "description": "Generates a template for a menu item."
@@ -13415,12 +14083,16 @@
           ],
           "cssParts": [
             {
-              "description": "The popup's base wrapper.",
+              "description": "The popup element that positions the menu.",
               "name": "menu-popup"
             },
             {
-              "description": "The popup's internal container.",
+              "description": "The menu panel: background, border and shadow.",
               "name": "menu-popup-base"
+            },
+            {
+              "description": "The popup's own positioned container.",
+              "name": "menu-popup-dialog"
             }
           ],
           "slots": [
@@ -13739,6 +14411,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "initializeItems",
               "privacy": "protected",
@@ -13856,7 +14557,7 @@
               "kind": "method",
               "name": "popupTemplate",
               "privacy": "protected",
-              "description": "Template for the popup element"
+              "description": "Template for the popup element.\n\nThe menu panel deliberately carries no hidden binding. It used to, and\nbecause open reflects synchronously the panel - which is what holds the\nbackground, border and shadow - vanished before popup had a chance to fade\nit, so every menu close was a snap. popup hides its own dialog once the exit\ntransition settles, and from first render when it starts closed, so the menu\nitems stay out of the accessibility tree either way.\n\nThe exportparts entry forwards popup's popup-base part as\nmenu-popup-dialog. It used to read base:popup-base, which forwarded nothing\nat all - popup has no part named base, and the two parts consumers actually\nreach (menu-popup, menu-popup-base) come from menu's own part attributes\nbelow, not from forwarding. popup-arrow is deliberately not forwarded: menu\nnever sets the arrow attribute, so no such part exists to forward."
             },
             {
               "kind": "method",
@@ -14440,6 +15141,35 @@
             },
             {
               "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "isOverflowing",
               "privacy": "public",
               "description": "This method can be used to determine whether content is currently overflowing."
@@ -14513,6 +15243,11 @@
               "kind": "method",
               "name": "overflowMenuItemListTemplate",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "ReturnType<typeof this.html>"
+                }
+              },
               "parameters": [
                 {
                   "name": "overflowMenuItems",
@@ -14539,7 +15274,7 @@
               "privacy": "protected",
               "return": {
                 "type": {
-                  "text": "ReturnType<typeof html>"
+                  "text": "ReturnType<typeof this.html>"
                 }
               },
               "parameters": [
@@ -15393,6 +16128,35 @@
               "description": "Generates the template for the hover bridge."
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -16244,6 +17008,35 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "indeterminate",
               "type": {
@@ -16909,6 +17702,35 @@
               "description": "Hides the close button when it is not focused.",
               "attribute": "hide-close-button",
               "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -18152,6 +18974,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "initialValue",
               "type": {
@@ -19029,6 +19880,35 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -19428,6 +20308,35 @@
               "name": "handleStylesheetSlotChange",
               "privacy": "protected",
               "description": "Handle changes to the `stylesheets` slot."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -20447,6 +21356,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "initialValue",
               "type": {
@@ -21201,6 +22139,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -21458,6 +22425,35 @@
                 }
               ],
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -22571,6 +23567,35 @@
               }
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "initialValue",
               "type": {
@@ -23289,6 +24314,35 @@
               "description": "Emits event after the `transitionend` event."
             },
             {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -23592,6 +24646,35 @@
                 }
               ],
               "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23955,6 +25038,35 @@
               "name": "handleTabsSlotChange",
               "privacy": "protected",
               "description": "Handles the change in the tab panels slot."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -25027,6 +26139,35 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -26242,6 +27383,35 @@
                 "text": "number | undefined"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",

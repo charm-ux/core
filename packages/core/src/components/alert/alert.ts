@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -139,14 +138,14 @@ export class CoreAlert extends CharmDismissibleElement {
 
   /** Generates the template for the icon. */
   protected iconTemplate() {
-    return html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.hasSlotController.hasNamedSlot('icon')}>
+    return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.hasSlotController.hasNamedSlot('icon')}>
       <slot name="icon"></slot>
     </div>`;
   }
 
   /** Generates the template for the text in the content. */
   protected textTemplate() {
-    return html` <div part="alert-message" class="alert-message-container">
+    return this.html` <div part="alert-message" class="alert-message-container">
       <div class="alert-message-inner-container" tabindex="-1">
         <h3 class="alert-heading" ?hidden=${!(this.hasSlotController.hasNamedSlot('heading') || this.heading)}>
           <slot name="heading">${this.heading}</slot>
@@ -158,35 +157,37 @@ export class CoreAlert extends CharmDismissibleElement {
 
   /** Generates the template for the close button. */
   protected dismissibleButtonTemplate() {
-    return html` ${this.dismissible
-      ? html`
+    return this.html` ${
+      this.dismissible
+        ? this.html`
         <button
         class="dismiss-button"
           part="alert-dismiss-button"
           @click=${this.hide}
         >
-          <${this.scope.tag('icon')} name="dismiss" label=${this.closeLabel}>
-          </${this.scope.tag('icon')}>
+          <scoped-icon name="dismiss" label=${this.closeLabel}>
+          </scoped-icon>
         </button>
       `
-      : ''}`;
+        : ''
+    }`;
   }
 
   /** Generates the template for the action slot. */
   protected actionTemplate() {
-    return html`<div class="alert-actions" part="alert-actions"><slot name="action"></slot></div>`;
+    return this.html`<div class="alert-actions" part="alert-actions"><slot name="action"></slot></div>`;
   }
 
   /** Generates the template for the content. */
   protected contentTemplate() {
-    return html` <div part="alert-content" class="alert-content">
+    return this.html` <div part="alert-content" class="alert-content">
       ${this.iconTemplate()} ${this.textTemplate()} ${this.actionTemplate()} ${this.dismissibleButtonTemplate()}
     </div>`;
   }
 
   /** Generates the template for the alert. */
   protected alertTemplate() {
-    return html`
+    return this.html`
       <div class="alert-wrapper" @transitionend=${this.handleTransitionEnd}>
         <div
           part="alert-base"

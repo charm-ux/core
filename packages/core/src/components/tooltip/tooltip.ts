@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
@@ -387,8 +386,8 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Generates the template for the tooltip */
   protected tooltipTemplate() {
-    return html`
-      <${this.scope.tag('popup')}
+    return this.html`
+      <scoped-popup
         part="tooltip-base"
         exportparts="
           tooltip-base:tooltip-base,
@@ -412,20 +411,21 @@ export class CoreTooltip extends CharmDismissibleElement {
       >
         <slot slot="anchor" @slotchange=${this.handleSlotChange}></slot>
         ${this.tooltipBodyTemplate()}
-      </${this.scope.tag('popup')}>
+      </scoped-popup>
       ${this.liveRegionTemplate()}
     `;
   }
 
   /** Generates the template for the tooltip body and contents */
   protected tooltipBodyTemplate() {
-    return html` <div class="body" id="tooltip" part="body" @transitionend=${this.handleTransitionEnd}>
+    return this.html` <div class="body" id="tooltip" part="body" @transitionend=${this.handleTransitionEnd}>
       <slot name="content">${this.content}</slot>
     </div>`;
   }
 
   protected liveRegionTemplate() {
-    return html` <div aria-live="polite" aria-atomic="true" class="visually-hidden">${this.announceContent}</div> `;
+    return this
+      .html` <div aria-live="polite" aria-atomic="true" class="visually-hidden">${this.announceContent}</div> `;
   }
 
   protected override render() {

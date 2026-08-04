@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -122,7 +121,7 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Generates the template for the select component */
   protected selectTemplate() {
-    return html` <div
+    return this.html` <div
       class=${classMap({
         'form-control': true,
         'form-control-has-error': this.invalid,
@@ -138,7 +137,7 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Generates the template for the select label. The `for` attribute must match the id of the textarea control for appropriate accessibility */
   protected labelTemplate() {
-    return html`
+    return this.html`
       <label
         aria-hidden=${this.label ? 'false' : 'true'}
         class=${classMap({
@@ -155,7 +154,7 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Generates the template for the select control. Ensure that the id present matches the `for` attribute of the label  */
   protected controlTemplate() {
-    return html`
+    return this.html`
       <div class="form-control-input" part="select-control-wrapper">
         ${this.startTemplate()}
         <select
@@ -196,7 +195,7 @@ export class CoreSelect extends CharmFormControlElement {
 
   protected renderOptionNode(node: SelectChildElement) {
     if (node instanceof HTMLOptGroupElement) {
-      return html`
+      return this.html`
         <optgroup label=${node.label} ?disabled=${node.disabled}>
           ${Array.from(node.children)
             .filter((child): child is HTMLOptionElement => child instanceof HTMLOptionElement)
@@ -209,16 +208,16 @@ export class CoreSelect extends CharmFormControlElement {
   }
 
   protected renderOption(option: HTMLOptionElement) {
-    return html`<option .value=${option.value} ?selected=${option.selected} ?disabled=${option.disabled}>
+    return this.html`<option .value=${option.value} ?selected=${option.selected} ?disabled=${option.disabled}>
       ${option.textContent}
     </option>`;
   }
 
   /** Generates the end slot template */
   protected endTemplate() {
-    return html`
+    return this.html`
       <div class="end-icons">
-        <${this.scope.tag('icon')} class="chevron" name="chevron-down" part="select-icon"></${this.scope.tag('icon')}>
+        <scoped-icon class="chevron" name="chevron-down" part="select-icon"></scoped-icon>
         ${endTemplate()}
       </div>
     `;

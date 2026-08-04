@@ -1,5 +1,5 @@
 import { nothing, PropertyValues } from 'lit';
-import { html, literal } from 'lit/static-html.js';
+import { literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
@@ -337,18 +337,20 @@ export class CoreMenuItem extends CharmElement {
   /** Generates and returns a template for rendering the checkbox indicator within a menu item, conditional on the menu item's role being 'menuitemcheckbox'. */
   protected checkboxIndicatorTemplate() {
     return this.role === 'menuitemcheckbox'
-      ? html`
+      ? this.html`
           <span class="input-container" part="menu-item-checkbox-container">
             <span class="checkbox" part="menu-item-checkbox">
-              ${this.checked
-                ? html`
+              ${
+                this.checked
+                  ? this.html`
                     <slot name="checkbox-indicator">
-                      <${this.scope.tag('icon')}
+                      <scoped-icon
                           name="checkmark"
                           class="checkbox-icon"
                           part="menu-item-checkbox-icon"
-                      ></${this.scope.tag('icon')}></slot>`
-                : nothing}
+                      ></scoped-icon></slot>`
+                  : nothing
+              }
             </span>
           </span>
         `
@@ -360,13 +362,15 @@ export class CoreMenuItem extends CharmElement {
     const hasRadioIndicator = this.hasSlotController.hasNamedSlot('radio-indicator');
 
     return this.role === 'menuitemradio'
-      ? html`
+      ? this.html`
           <span class="input-container" part="menu-item-radio-container">
-            ${!hasRadioIndicator
-              ? html` <span class="radio" part="menu-item-radio">
+            ${
+              !hasRadioIndicator
+                ? this.html` <span class="radio" part="menu-item-radio">
                   <span class="radio-indicator" part="menu-item-radio-indicator"></span>
                 </span>`
-              : nothing}
+                : nothing
+            }
             <slot name="radio-indicator"></slot>
           </span>
         `
@@ -377,19 +381,19 @@ export class CoreMenuItem extends CharmElement {
   protected submenuIconTemplate() {
     return this.hasSubmenu
       ? this.expanded
-        ? html` 
-        <${this.scope.tag('icon')}
+        ? this.html` 
+        <scoped-icon
           class="submenu-item-icon-expanded"
           part="menu-item-submenu-item-icon-expanded"
           name="chevron-down"
-        ></${this.scope.tag('icon')}>
+        ></scoped-icon>
         `
-        : html`
-        <${this.scope.tag('icon')}
+        : this.html`
+        <scoped-icon
           class='submenu-item-icon'
           part="menu-item-submenu-item-icon"
           name="chevron-down"
-          ></${this.scope.tag('icon')}>
+          ></scoped-icon>
         `
       : nothing;
   }
@@ -399,7 +403,7 @@ export class CoreMenuItem extends CharmElement {
     const isLink = !!this.href;
     const tag = isLink ? literal`a` : literal`span`;
 
-    return html`
+    return this.html`
       <${tag}
         slot=${ifDefined(this.hasSubmenu ? 'anchor' : undefined)}
         class="base"
@@ -419,8 +423,8 @@ export class CoreMenuItem extends CharmElement {
 
   /** Generates a template for a popup menu item. */
   protected popupSubmenuItemTemplate() {
-    return html`
-          <${this.scope.tag('menu')}
+    return this.html`
+          <scoped-menu
             class="submenu"
             placement=${this.subMenuPlacement}
             strategy=${this.submenuFixedPlacement ? 'fixed' : 'absolute'}
@@ -429,7 +433,7 @@ export class CoreMenuItem extends CharmElement {
           <div slot="trigger">
             ${this.menuItemTemplate()}
           </div>
-          </${this.scope.tag('menu')}>
+          </scoped-menu>
         `;
   }
 

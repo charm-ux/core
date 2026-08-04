@@ -1,4 +1,4 @@
-import { html, unsafeStatic } from 'lit/static-html.js';
+import { unsafeStatic } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
@@ -120,17 +120,17 @@ export class CoreAccordionItem extends CharmDismissibleElement {
 
   /** Returns the template for the open/close indicator. */
   protected iconTemplate() {
-    return html`
+    return this.html`
       <span class="icon" part="accordion-item-icon">
         <slot name="${this.open ? 'collapse-icon' : 'expand-icon'}">
-          <${this.scope.tag('icon')}
+          <scoped-icon
             class=${classMap({
               chevron: true,
               'chevron-rtl': this.dir === 'rtl',
             })}
             part="accordion-item-chevron"
             name="chevron-down"
-          ></${this.scope.tag('icon')}>
+          ></scoped-icon>
         </slot>
       </span>
   `;
@@ -139,18 +139,18 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   /** Returns the template for the header.*/
   protected headerTemplate() {
     if (!this.headingLevel) {
-      return html`<slot name="heading">${this.heading}</slot>`;
+      return this.html`<slot name="heading">${this.heading}</slot>`;
     }
 
     const headingTag = unsafeStatic(`h${this.headingLevel}`);
-    return html`<${headingTag}>
+    return this.html`<${headingTag}>
       <slot name="heading">${this.heading}</slot>
     </${headingTag}>`;
   }
 
   /** Returns the template for the summary. */
   protected summaryTemplate() {
-    return html`
+    return this.html`
       <summary class="summary" part="accordion-item-summary" role="button" @click=${this.handleSummaryClick}>
         ${this.iconTemplate()} ${startTemplate('accordion-item-start')} ${this.headerTemplate()}
         ${endTemplate('accordion-item-end')}
@@ -160,7 +160,7 @@ export class CoreAccordionItem extends CharmDismissibleElement {
 
   /** Returns the template for the details. */
   protected detailsTemplate() {
-    return html`
+    return this.html`
       <details class="base" part="accordion-item-base" ?open=${this.open} @toggle=${this.handleToggle}>
         ${this.summaryTemplate()}
         <slot></slot>

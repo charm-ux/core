@@ -1,5 +1,4 @@
 import { LitElement } from 'lit';
-import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
@@ -272,7 +271,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the dialog header. */
   protected dialogHeaderTemplate() {
-    return html`<div
+    return this.html`<div
       class=${classMap({
         'header-base': true,
         'header-base--no-actions': !this.hasSlotController.hasNamedSlot('actions'),
@@ -285,7 +284,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the toolbar. */
   protected toolbarTemplate() {
-    return html`
+    return this.html`
       <div class="toolbar" part="dialog-toolbar">
         <span class="dialog-actions" part="dialog-actions">
           <slot name="actions"></slot>
@@ -297,7 +296,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the dialog title. */
   protected titleTemplate() {
-    return html`
+    return this.html`
       <h2 class="dialog-title" id="header" part="dialog-header">
         <slot name="heading"> ${this.heading} </slot>
       </h2>
@@ -306,23 +305,23 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generate the close button in the header. */
   protected closeButtonTemplate() {
-    const button = html`
+    const button = this.html`
       <button
         class="close-btn"
         part="dialog-close-button"
         aria-label=${this.closeButtonLabel}
         @click=${() => this.requestClose('close-button')}
       >
-        <${this.scope.tag('icon')} name="dismiss" part="dialog-close-button-icon"></${this.scope.tag('icon')}>
+        <scoped-icon name="dismiss" part="dialog-close-button-icon"></scoped-icon>
       </button>
     `;
 
-    return this.hideCloseButton || this.noHeader ? html`<div class="visually-hidden">${button}</div>` : button;
+    return this.hideCloseButton || this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
   }
 
   /** Generates the HTML template for the dialog body. */
   protected dialogBodyTemplate() {
-    return html`
+    return this.html`
       <div
         class=${classMap({
           'dialog-body': true,
@@ -337,7 +336,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the dialog footer. */
   protected dialogFooterTemplate() {
-    return html`
+    return this.html`
       <div
         class=${classMap({
           'dialog-footer': true,
@@ -352,7 +351,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the dialog. */
   protected dialogTemplate() {
-    return html`<dialog
+    return this.html`<dialog
       class=${classMap({
         base: true,
         'base--visible': this.visible,

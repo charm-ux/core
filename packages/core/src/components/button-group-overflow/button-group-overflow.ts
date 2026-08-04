@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { queryAssignedElements } from 'lit/decorators.js';
 
 import CoreOverflow, { type OverflowMenuItem } from '../overflow/overflow.js';
@@ -38,7 +37,7 @@ export class CoreButtonGroupOverflow extends CoreOverflow {
 
   protected override overflowMenuItemTemplate(overFlowItem: OverflowMenuItem) {
     if (overFlowItem.tagName === this.scope.tagName('divider').toUpperCase()) {
-      return html`<${this.scope.tag('divider')}></${this.scope.tag('divider')}>`;
+      return this.html`<scoped-divider></scoped-divider>`;
     }
     // Use parent template for regular items
     return super.overflowMenuItemTemplate(overFlowItem);

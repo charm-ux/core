@@ -3,7 +3,7 @@
 `@floating-ui/dom` (and the `composed-offset-position` shadow-DOM polyfill) is imported in
 exactly one place — `popup.ts`. Every other overlay (tooltip, menu, dropdown, etc.) delegates
 positioning to `ch-popup`: it declares `CorePopup` in `static dependencies`, renders through
-`this.scope.tag('popup')`, and forwards parts with `exportparts`. This keeps the
+`this.html` with a `<scoped-popup>` tag, and forwards parts with `exportparts`. This keeps the
 shadow-DOM/`offsetParent` workarounds and the idempotent positioner lifecycle in one place.
 
 **Do:**
@@ -13,14 +13,14 @@ shadow-DOM/`offsetParent` workarounds and the idempotent positioner lifecycle in
 public static override dependencies = [CorePopup];
 
 protected renderPopup() {
-  return html`
-    <${this.scope.tag('popup')}
+  return this.html`
+    <scoped-popup
       ?active=${this.open}
       placement=${this.placement}
       exportparts="popup:tooltip__popup"
     >
       <slot></slot>
-    </${this.scope.tag('popup')}>
+    </scoped-popup>
   `;
 }
 ```

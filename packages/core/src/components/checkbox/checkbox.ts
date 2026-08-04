@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 import { property, query } from 'lit/decorators.js';
@@ -121,17 +120,17 @@ export class CoreCheckbox extends CharmFormControlElement {
 
   /** Generates the HTML template for the checkbox'S checked icon and indeterminate icon. */
   protected iconTemplate() {
-    return html`<span class="control" part="checkbox-control">
-      <${this.scope.tag('icon')}
+    return this.html`<span class="control" part="checkbox-control">
+      <scoped-icon
         class="icon icon-checked"
         name="${this.indeterminate ? 'square' : 'checkmark'}"
-      ></${this.scope.tag('icon')}> 
+      ></scoped-icon> 
     </span>`;
   }
 
   /** Generates the HTML template for the checkbox. */
   protected checkboxTemplate() {
-    return html`
+    return this.html`
       <div
         class=${classMap({
           'form-control': true,
@@ -183,7 +182,7 @@ export class CoreCheckbox extends CharmFormControlElement {
   }
 
   protected override render() {
-    return html`${this.checkboxTemplate()}`;
+    return this.html`${this.checkboxTemplate()}`;
   }
 }
 

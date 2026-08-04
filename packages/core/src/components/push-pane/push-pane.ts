@@ -1,5 +1,4 @@
 import { LitElement } from 'lit';
-import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -152,14 +151,14 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Generates the template for the footer. */
   protected footerTemplate() {
-    return html`<footer part="push-pane-footer" class="footer">
+    return this.html`<footer part="push-pane-footer" class="footer">
       <slot name="footer"></slot>
     </footer>`;
   }
 
   /** Generates the template for the close button within the header. */
   protected closeButtonTemplate() {
-    const button = html`
+    const button = this.html`
       <button
         class="close-button"
         part="push-pane-close-button"
@@ -167,16 +166,16 @@ export class CorePushPane extends CharmDismissibleElement {
         @click=${() => this.requestClose('close-button')}
         tabindex=${this.open ? 0 : -1}
       >
-        <${this.scope.tag('icon')} name="dismiss" label="close-icon"></${this.scope.tag('icon')}>
+        <scoped-icon name="dismiss" label="close-icon"></scoped-icon>
       </button>
   `;
 
-    return this.hideCloseButton || this.noHeader ? html`<div class="visually-hidden">${button}</div>` : button;
+    return this.hideCloseButton || this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
   }
 
   /** Generates the templates for the body content. */
   protected bodyTemplate() {
-    return html`
+    return this.html`
       <div
         class=${classMap({
           body: true,
@@ -191,7 +190,7 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Generates the template for the toolbar that contains the actions slot and the close button. */
   protected toolbarTemplate() {
-    return html`
+    return this.html`
       <div class="toolbar" part="push-pane-toolbar">
         <span class="push-pane-actions" part="push-pane-actions">
           <slot name="actions"></slot>
@@ -203,7 +202,7 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Generates the template for the push pane title. */
   protected titleTemplate() {
-    return html`
+    return this.html`
       <h2>
         <slot name="heading" part="push-pane-heading" class="heading" id="push-pane-heading">${this.heading}</slot>
       </h2>
@@ -212,7 +211,7 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Generates the template for the push pane header. */
   protected pushPaneHeaderTemplate() {
-    return html` <header
+    return this.html` <header
       class=${classMap({
         'header-base': true,
         'header-base--no-actions': !this.hasSlotController.hasNamedSlot('actions'),
@@ -225,7 +224,7 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Generates the template for the push pane itself. */
   protected paneTemplate() {
-    return html`<aside
+    return this.html`<aside
       aria-hidden=${this.open ? 'false' : 'true'}
       part="push-pane-base"
       class="base"

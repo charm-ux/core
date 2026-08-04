@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { keys } from '../../utilities/key-map.js';
@@ -448,7 +447,7 @@ export class CoreMenu extends CharmDismissibleElement {
 
   /** Template for the trigger slot */
   protected triggerSlotTemplate() {
-    return html` <slot id="anchor" name="trigger" @slotchange=${this.handleTriggerSlotChange}></slot> `;
+    return this.html` <slot id="anchor" name="trigger" @slotchange=${this.handleTriggerSlotChange}></slot> `;
   }
 
   /**
@@ -469,8 +468,8 @@ export class CoreMenu extends CharmDismissibleElement {
    * never sets the arrow attribute, so no such part exists to forward.
    */
   protected popupTemplate() {
-    return html`
-    <${this.scope.tag('popup')}
+    return this.html`
+    <scoped-popup
     anchor="anchor"
     auto-size="both"
     class="popup"
@@ -488,13 +487,13 @@ export class CoreMenu extends CharmDismissibleElement {
   <div role="menu" class="popup-base" part="menu-popup-base">
     <slot @slotchange=${this.handleDefaultSlotChange}></slot>
   </div>
-  </${this.scope.tag('popup')}>
+  </scoped-popup>
     `;
   }
 
   /** Template for the menu component */
   protected menuTemplate() {
-    return html` ${this.triggerSlotTemplate()} ${this.popupTemplate()} `;
+    return this.html` ${this.triggerSlotTemplate()} ${this.popupTemplate()} `;
   }
 
   protected override render() {

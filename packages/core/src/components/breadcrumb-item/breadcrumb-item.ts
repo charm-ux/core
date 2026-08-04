@@ -1,4 +1,3 @@
-import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { startContentEndTemplate } from '../../templates/start-content-end.js';
@@ -105,7 +104,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   /** Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible. */
   protected breadcrumbItemControlTemplate() {
     return this.href
-      ? html`
+      ? this.html`
           <a
             class="control"
             href=${this.href}
@@ -120,7 +119,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
             ${startContentEndTemplate()}
           </a>
         `
-      : html`
+      : this.html`
           <button
             class="control"
             type="button"
@@ -137,16 +136,16 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   /** Generates the HTML template for the separator. */
   protected breadcrumbItemSeparatorTemplate() {
     return this.separator
-      ? html`<span part="breadcrumb-item-separator" class="separator"><slot name="separator"> <${this.scope.tag('icon')}
+      ? this.html`<span part="breadcrumb-item-separator" class="separator"><slot name="separator"> <scoped-icon
     class="icon"
     name="chevron-right"
-></${this.scope.tag('icon')}> </slot></span>`
-      : html``;
+></scoped-icon> </slot></span>`
+      : this.html``;
   }
 
   /** Generates the HTML template for the breadcrumb item. */
   protected breadcrumbItemTemplate() {
-    return html`
+    return this.html`
       <div class="base" role="listitem" part="breadcrumb-item-base">
         ${this.breadcrumbItemControlTemplate()} ${this.breadcrumbItemSeparatorTemplate()}
       </div>
