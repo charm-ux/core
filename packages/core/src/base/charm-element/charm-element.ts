@@ -1,4 +1,4 @@
-import { type CSSResultOrNative, html as litHtml, LitElement, type TemplateResult } from 'lit';
+import { type CSSResultOrNative, LitElement, html as litHtml, type TemplateResult } from 'lit';
 import { property } from 'lit/decorators.js';
 import { DEFAULT_THEME_PREFIX, getScope, getThemePrefix } from '../../utilities/index.js';
 import styles from './charm-element.styles.js';
