@@ -43,12 +43,9 @@ For example,
 
 When authoring Charm components, use the scoped tag form whenever your template references another custom element. In practice, that means writing `<scoped-*>` tags inside `this.html` templates instead of interpolating `${this.scope.tag('...')}` for each nested component.
 
-```ts
-protected override render() {
-  return this.html`
-    <scoped-icon name="check"></scoped-icon>
-    <scoped-button>Click me</scoped-button>
-  `;
+```text
+render() {
+  return this.html`<scoped-icon ... /><scoped-button>Click me</scoped-button>`;
 }
 ```
 
