@@ -39,6 +39,26 @@ For example,
 </ch-card_support>
 ```
 
+### Authoring components
+
+When authoring Charm components, use the scoped tag form whenever your template references another custom element. In practice, that means writing `<scoped-*>` tags inside `this.html` templates instead of interpolating `${this.scope.tag('...')}` for each nested component.
+
+```ts
+protected override render() {
+  return this.html`
+    <scoped-icon name="check"></scoped-icon>
+    <scoped-button>Click me</scoped-button>
+  `;
+}
+```
+
+This pattern is important for two reasons:
+
+- When extending a component library, it keeps your component templates aligned with the host scope automatically. That prevents hard-coded tag names from bypassing the scope registry and makes the component work correctly in scoped environments.
+- When creating suffixes for scoped components within an existing system, it ensures nested components resolve to the same scoped tag name as the host component. That keeps a component tree consistent even when multiple versions of Charm coexist on the page.
+
+For polymorphic tags such as `<a>` versus `<button>`, keep using `literal` or `unsafeStatic` from `lit/static-html.js` alongside `this.html`.
+
 ## Theme
 
 To ensure your components are using the correct version of theme css, use the [scoped-styles component](/components/scoped-styles/) to wrap them.

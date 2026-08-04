@@ -26,7 +26,7 @@ project.configuration = {
 };
 
 // usage
-html`<${this.scope.tag('icon')} name="chevron-down"></${this.scope.tag('icon')}>`;
+this.html`<scoped-icon name="chevron-down"></scoped-icon>`;
 ```
 
 **Don't:**

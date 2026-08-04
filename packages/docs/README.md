@@ -13,6 +13,8 @@ The package name is `docs` (unscoped); the libraries it documents are `@charm-ux
 - Testing guide — [Testing](./src/content/docs/overview/testing.md)
 - Versioning & changelogs — [Version Management](./src/content/docs/contributing/version-management.mdx)
 
+> Authoring note: when a component template references another custom element, use the scoped tag form (`<scoped-*>`) inside `this.html` so the template stays aligned with the current scope.
+
 ## Local development
 
 From the repository root:
