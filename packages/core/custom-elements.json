@@ -8196,6 +8196,13 @@
             },
             {
               "kind": "field",
+              "name": "focusTrapController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new FocusTrapController(this)"
+            },
+            {
+              "kind": "field",
               "name": "handleKeydown",
               "privacy": "protected",
               "description": "Handles the 'keydown' event, specifically for the 'Escape' key.",
