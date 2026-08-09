@@ -47,7 +47,7 @@ export default css`
   }
 
   .alert-icon {
-    flex: 0;
+    flex: none;
     font-size: ${component('alert', 'iconSize')};
     min-width: ${component('alert', 'iconSize')};
     min-height: ${component('alert', 'iconSize')};
@@ -77,7 +77,7 @@ export default css`
   }
 
   .alert-actions {
-    flex: 0;
+    flex: none;
     display: flex;
     gap: ${component('alert', 'actionsGap')};
     align-items: center;
@@ -108,7 +108,6 @@ export default css`
     margin: 0;
     font-size: ${component('alert', 'headingFontSize')};
     font-weight: ${component('alert', 'headingFontWeight')};
-    display: contents;
   }
 
   /* High contrast */

@@ -394,6 +394,7 @@ const charmTokensBase = defineTokens(
       // Avatar
       avatar: {
         bgColor: semantic('surface', 'tertiary'),
+        fgColor: semantic('text', 'primary'),
         size: '40px',
         borderRadius: primitive('borderRadius', 'full'),
         indicatorBgColor: semantic('indicator', 'success'),

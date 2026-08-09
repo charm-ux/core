@@ -2,7 +2,18 @@ import { css } from 'lit';
 import { component } from '../../utilities/theme.js';
 
 export default css`
+  /*
+   * Ensure the dialog inherits color-scheme from the document. Without this,
+   * Firefox and WebKit don't properly resolve light-dark() CSS values inside
+   * the native <dialog> element when the document's color-scheme is changed
+   * dynamically.
+   */
+  :host {
+    color-scheme: inherit;
+  }
+
   dialog {
+    color-scheme: inherit;
     display: none;
     position: fixed;
     inset: var(--dialog-inset, ${component('dialog', 'inset')});

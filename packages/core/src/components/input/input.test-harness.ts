@@ -98,6 +98,27 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(getInput()?.getAttribute('aria-describedby')).to.be.null;
                 },
               },
+              slottedLabelName: {
+                description: 'keeps a slotted label in the accessibility tree',
+                test: async () => {
+                  const getLabel = () => this.component.shadowRoot?.querySelector('label');
+
+                  this.component.removeAttribute('label');
+                  this.component.innerHTML = '<span slot="label">First name</span>';
+                  // `aTimeout` lets the slotchange that recomputes `hasLabel` land before
+                  // waiting on the render it schedules.
+                  await aTimeout(0);
+                  await elementUpdated(this.component);
+                  // The label element is the control's only accessible name, so hiding it
+                  // when the text arrives through the slot leaves the input nameless.
+                  expect(getLabel()?.getAttribute('aria-hidden')).to.equal('false');
+
+                  this.component.innerHTML = '';
+                  await aTimeout(0);
+                  await elementUpdated(this.component);
+                  expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
+                },
+              },
             },
           },
           interactions: {

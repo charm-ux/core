@@ -23,6 +23,7 @@ import styles from './avatar.styles.js';
  * @csspart avatar-initials - A wrapper for the user initials.
  *
  * @cssprop --charm-avatar-bg-color - determine the background color.
+ * @cssprop --charm-avatar-fg-color - determine the initials text color.
  * @cssprop --charm-avatar-size - determine the avatar size.
  * @cssprop --charm-avatar-border-radius - determine a round or square shape of the avatar.
  * @cssprop --charm-avatar-indicator-bg-color - determine the background color of the status indicator.

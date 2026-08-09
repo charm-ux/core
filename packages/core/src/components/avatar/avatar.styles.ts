@@ -30,6 +30,7 @@ export default css`
   .initials {
     text-transform: capitalize;
     white-space: nowrap;
+    color: ${component('avatar', 'fgColor')};
   }
 
   .image {
