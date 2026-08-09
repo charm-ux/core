@@ -119,7 +119,7 @@ export class CoreTextArea extends CharmFormControlElement {
   protected labelTemplate() {
     return html`
       <label
-        aria-hidden=${this.label ? 'false' : 'true'}
+        aria-hidden=${!this.hasLabel}
         part="textarea-label"
         class=${classMap({
           'form-control-label': true,

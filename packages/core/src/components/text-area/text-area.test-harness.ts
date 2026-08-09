@@ -1,4 +1,4 @@
-import { expect } from '@open-wc/testing';
+import { aTimeout, expect } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
@@ -112,6 +112,28 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
 
                     expect(labelElement).to.exist;
                     expect(labelElement?.textContent?.trim()).to.equal(label);
+                  },
+                },
+                slottedLabelName: {
+                  description: 'keeps a slotted label in the accessibility tree',
+                  test: async () => {
+                    const el = this.component;
+                    const getLabel = () => el.shadowRoot?.querySelector('label');
+
+                    el.removeAttribute('label');
+                    el.innerHTML = '<span slot="label">Notes</span>';
+                    // `aTimeout` lets the slotchange that recomputes `hasLabel` land before
+                    // waiting on the render it schedules.
+                    await aTimeout(0);
+                    await el.updateComplete;
+                    // The label element is the control's only accessible name, so hiding it
+                    // when the text arrives through the slot leaves the field nameless.
+                    expect(getLabel()?.getAttribute('aria-hidden')).to.equal('false');
+
+                    el.innerHTML = '';
+                    await aTimeout(0);
+                    await el.updateComplete;
+                    expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
                   },
                 },
               },

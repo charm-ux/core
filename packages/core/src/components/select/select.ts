@@ -139,7 +139,7 @@ export class CoreSelect extends CharmFormControlElement {
   protected labelTemplate() {
     return this.html`
       <label
-        aria-hidden=${this.label ? 'false' : 'true'}
+        aria-hidden=${!this.hasLabel}
         class=${classMap({
           'form-control-label': true,
           'visually-hidden': this.hideLabel,
@@ -158,7 +158,6 @@ export class CoreSelect extends CharmFormControlElement {
       <div class="form-control-input" part="select-control-wrapper">
         ${this.startTemplate()}
         <select
-          aria-label=${ifDefined(this.label)}
           aria-describedby=${ifDefined(this.describedBy)}
           aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}

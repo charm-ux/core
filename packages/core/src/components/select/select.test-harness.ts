@@ -1,4 +1,4 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreSelect } from './index.js';
@@ -18,6 +18,24 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
               el.disabled = true;
 
               await elementUpdated(el);
+              await expect(el).to.be.accessible();
+            },
+          },
+          slottedLabelName: {
+            description: 'keeps a slotted label in the accessibility tree',
+            test: async () => {
+              const el = this.component;
+              const getLabel = () => el.shadowRoot?.querySelector('label');
+
+              el.removeAttribute('label');
+              el.innerHTML = '<span slot="label">Reason for visit</span><option value="1">Option One</option>';
+              // `aTimeout` lets the slotchange that recomputes `hasLabel` land before
+              // waiting on the render it schedules.
+              await aTimeout(0);
+              await elementUpdated(el);
+              // The label element is the control's only accessible name, so hiding it when
+              // the text arrives through the slot leaves the select nameless.
+              expect(getLabel()?.getAttribute('aria-hidden')).to.equal('false');
               await expect(el).to.be.accessible();
             },
           },
@@ -88,15 +106,19 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
                 },
               },
               ariaLabel: {
-                description: 'renders the aria-label provided for the select',
+                description: 'names the select through its label element rather than an aria-label',
                 test: async () => {
                   const el = this.component;
                   el.label = 'TEST LABEL';
                   await elementUpdated(el);
 
-                  const select = await el.shadowRoot?.querySelector('select');
+                  const select = el.shadowRoot?.querySelector('select');
 
-                  expect(select?.getAttribute('aria-label')).to.equal('TEST LABEL');
+                  // An `aria-label` would name the control too, but browser translation
+                  // cannot reach an attribute, so the `<label for="input">` carries the name
+                  // on its own.
+                  expect(select).to.not.have.attribute('aria-label');
+                  await expect(el).to.be.accessible();
                 },
               },
               invalid: {

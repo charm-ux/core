@@ -331,7 +331,7 @@ export class CoreInput extends CharmFormControlElement {
       })}
     >
       <label
-        aria-hidden=${this.label ? 'false' : 'true'}
+        aria-hidden=${!this.hasLabel}
         part="input-label"
         class=${classMap({
           'form-control-label': true,
