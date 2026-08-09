@@ -124,7 +124,7 @@ export class CoreMenuGroup extends CharmElement {
         <div id="heading" part="menu-group-heading" class="heading">
           <slot name="heading">${this.heading}</slot>
         </div>
-        <div role="group" aria-labelledby="heading">
+        <div role="group" aria-labelledby="heading" class="group-content">
           <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>

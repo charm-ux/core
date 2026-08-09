@@ -51,23 +51,7 @@ export default css`
 
   .label {
     line-height: ${component('checkbox', 'size')};
-  }
-
-  :host(:not([checked])) .label {
-    background-color: ${component('checkbox', 'bgColor')};
-    color: ${component('checkbox', 'fgColor')};
-  }
-
-  :host(:not([checked])) .control-label-wrapper:hover .label {
-    color: ${component('checkbox', 'hover', 'fgColor')};
-  }
-
-  :host(:not([checked])) .control-label-wrapper:active .label {
-    color: ${component('checkbox', 'active', 'fgColor')};
-  }
-
-  :host([checked]) .control-label-wrapper:active .label {
-    color: ${component('checkbox', 'active', 'fgColor')};
+    color: ${semantic('formControl', 'label', 'color')};
   }
 
   :host(:not([checked])) .control-label-wrapper:hover .control {
@@ -129,11 +113,6 @@ export default css`
   :host([checked]) .control,
   :host([indeterminate]) .control {
     border-color: ${component('checkbox', 'checked', 'borderColor')};
-  }
-
-  :host([indeterminate]) .label,
-  :host([checked]) .label {
-    color: ${component('checkbox', 'checked', 'fgColor')};
   }
 
   :host([checked][disabled]) .control-label-wrapper:hover .control {

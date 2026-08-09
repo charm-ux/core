@@ -11,7 +11,6 @@ export default css`
   }
 
   .heading {
-    width: 100%;
     text-align: start;
   }
 
@@ -24,7 +23,7 @@ export default css`
     margin: ${component('menu', 'groupHeadingMargin')};
   }
 
-  ::slotted(menu-item) {
+  .group-content {
     width: 100%;
   }
 `;
