@@ -157,9 +157,10 @@ export class CoreDialog extends CharmDismissibleElement {
       this.dialog?.showModal();
 
       requestAnimationFrame(() => {
+        if (!this.open) return;
         this.visible = true;
+        this.focusTrapController.activate();
       });
-      this.focusTrapController.activate();
       this.lockBodyScrolling();
     } else {
       this.visible = false;
