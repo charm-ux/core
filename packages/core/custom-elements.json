@@ -1683,6 +1683,14 @@
               "name": "--charm-accordion-item-animation-timing-function"
             },
             {
+              "description": "The transition applied to the content when the item opens.",
+              "name": "--charm-accordion-item-show-transition"
+            },
+            {
+              "description": "The transition applied to the content when the item closes.",
+              "name": "--charm-accordion-item-hide-transition"
+            },
+            {
               "description": "Sets background color.",
               "name": "--charm-accordion-item-bg-color"
             },
@@ -2025,7 +2033,7 @@
                   }
                 }
               ],
-              "description": "Handles the `details` element toggle event."
+              "description": "Handles the `details` element toggle event. Keeps `open` and the native element's open state in\nsync; the base class emits the standardized `show` / `hide` / `after-show` / `after-hide` events."
             },
             {
               "kind": "method",
@@ -2300,8 +2308,20 @@
           ],
           "events": [
             {
-              "description": "Dispatched when the accordion item is expanded or collapsed.",
-              "name": "accordion-item-open-change"
+              "description": "Emitted after the accordion item has hidden and all animations are complete.",
+              "name": "accordion-item-after-hide"
+            },
+            {
+              "description": "Emitted after the accordion item has shown and all animations are complete.",
+              "name": "accordion-item-after-show"
+            },
+            {
+              "description": "Emitted when the accordion item begins to hide.",
+              "name": "accordion-item-hide"
+            },
+            {
+              "description": "Emitted when the accordion item begins to show.",
+              "name": "accordion-item-show"
             },
             {
               "description": "Emitted when the component is ready.",
@@ -2571,24 +2591,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "updateTimer",
-              "type": {
-                "text": "number | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
-              "name": "updating",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false",
-              "description": "Used to prevent multiple calls to the logic when updating the `open` attribute when `openSingle` is true"
             }
           ],
           "attributes": [
@@ -3468,6 +3470,10 @@
             {
               "description": "determine the background color.",
               "name": "--charm-avatar-bg-color"
+            },
+            {
+              "description": "determine the initials text color.",
+              "name": "--charm-avatar-fg-color"
             },
             {
               "description": "determine the avatar size.",

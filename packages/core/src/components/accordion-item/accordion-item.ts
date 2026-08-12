@@ -24,7 +24,10 @@ export type HeadingLevel = (typeof headingLevels)[number];
  * @slot expand-icon - Custom expand icon. If no icon is provided, a default icon will be used.
  * @slot collapse-icon - Custom collapse icon. If no icon is provided, a default icon will be used.
  *
- * @event accordion-item-open-change - Dispatched when the accordion item is expanded or collapsed.
+ * @event accordion-item-show - Emitted when the accordion item begins to show.
+ * @event accordion-item-after-show - Emitted after the accordion item has shown and all animations are complete.
+ * @event accordion-item-hide - Emitted when the accordion item begins to hide.
+ * @event accordion-item-after-hide - Emitted after the accordion item has hidden and all animations are complete.
  *
  * @csspart accordion-item-base - The wrapper element.
  * @csspart accordion-item-summary - The summary element.
@@ -36,6 +39,8 @@ export type HeadingLevel = (typeof headingLevels)[number];
  *
  * @cssprop --charm-accordion-item-animation-duration - The duration of the accordion item animation.
  * @cssprop --charm-accordion-item-animation-timing-function - The timing function of the accordion item animation.
+ * @cssprop --charm-accordion-item-show-transition - The transition applied to the content when the item opens.
+ * @cssprop --charm-accordion-item-hide-transition - The transition applied to the content when the item closes.
  * @cssprop --charm-accordion-item-bg-color - Sets background color.
  * @cssprop --charm-accordion-item-border-color - Sets border color.
  * @cssprop --charm-accordion-item-border-width - Sets border width.
@@ -110,12 +115,12 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   }
 
   /**
-   * Handles the `details` element toggle event.
+   * Handles the `details` element toggle event. Keeps `open` and the native element's open state in
+   * sync; the base class emits the standardized `show` / `hide` / `after-show` / `after-hide` events.
    * @param event
    */
   protected handleToggle(event: Event) {
     this.open = (event.target as HTMLDetailsElement).open;
-    this.emit('accordion-item-open-change');
   }
 
   /** Returns the template for the open/close indicator. */
@@ -161,7 +166,13 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   /** Returns the template for the details. */
   protected detailsTemplate() {
     return this.html`
-      <details class="base" part="accordion-item-base" ?open=${this.open} @toggle=${this.handleToggle}>
+      <details
+        class="base"
+        part="accordion-item-base"
+        ?open=${this.open}
+        @toggle=${this.handleToggle}
+        @transitionend=${this.handleTransitionEnd}
+      >
         ${this.summaryTemplate()}
         <slot></slot>
       </details>

@@ -25,44 +25,23 @@ export class CoreAccordion extends CharmElement {
   @property({ type: Boolean, reflect: true, attribute: 'open-single' })
   public openSingle?: boolean = false;
 
-  /** Used to prevent multiple calls to the logic when updating the `open` attribute when `openSingle` is true */
-  protected updating = false;
-
-  protected updateTimer?: number;
-
-  public override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    if (this.updateTimer) {
-      clearTimeout(this.updateTimer);
-      this.updateTimer = undefined;
-    }
-  }
-
   /** Ensures only one item is open at a time. */
-  protected async handleOpenChange(event: Event) {
-    if (!this.openSingle || this.updating) return;
+  protected handleOpenChange(event: Event) {
+    if (!this.openSingle) return;
 
-    this.updating = true;
     const toggledItem = event.target as CoreAccordionItem;
     const items = this.querySelectorAll('[accordion-item]') as NodeListOf<CoreAccordionItem>;
 
     for (const item of items) {
       if (item !== toggledItem && item.open) {
         item.open = false;
-        await item.updateComplete;
       }
     }
-
-    // Allow the update to complete before resetting the updating flag
-    this.updateTimer = window.setTimeout(() => {
-      this.updating = false;
-      this.updateTimer = undefined;
-    });
   }
 
   /** Generate the accordion template with declarative event handling. */
   protected accordionTemplate() {
-    return html`<slot @accordion-item-open-change=${this.handleOpenChange}></slot>`;
+    return html`<slot @accordion-item-show=${this.handleOpenChange}></slot>`;
   }
 
   protected override render() {
