@@ -1,6 +1,15 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, waitUntil } from '@open-wc/testing';
+import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreAvatar } from './index.js';
+
+/** A valid 1x1 PNG that loads synchronously without network access. */
+const loadableImage =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
+
+/** A second valid 1x1 PNG, used to verify a new image source resets the error state. */
+const alternateLoadableImage =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2ZkUAAAAASUVORK5CYII=';
 
 export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> {
   public constructor() {
@@ -20,7 +29,7 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   const labelValue = 'User Label';
 
                   el.label = labelValue;
-                  el.image = 'https://via.placeholder.com/32x32';
+                  el.image = loadableImage;
                   await elementUpdated(el!);
                   await expect(el).to.be.accessible();
                 },
@@ -101,6 +110,18 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   expect(getComputedStyle(el.shadowRoot!.querySelector('.status-container')!).display).to.equal('none');
                 },
               },
+              defaultIconFallback: {
+                description: 'renders a default person icon when no image, initials, or slot content is provided',
+                test: async () => {
+                  const el = this.component;
+                  await elementUpdated(el);
+
+                  const icon = el.shadowRoot?.querySelector('[part="avatar-icon"]');
+                  expect(icon).to.not.be.null;
+                  expect(icon?.querySelector('slot')).to.not.be.null;
+                  expect(el.shadowRoot?.querySelector('ch-icon')).to.not.be.null;
+                },
+              },
             },
           },
           properties: {
@@ -119,6 +140,18 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   expect(ariaLabel).to.equal(labelValue);
                 },
               },
+              fallbackAccessibleLabel: {
+                description: 'labels the default slot fallback as an image when a label is provided',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'User';
+                  await elementUpdated(el);
+
+                  const icon = el.shadowRoot?.querySelector('[part="avatar-icon"]');
+                  expect(icon?.getAttribute('role')).to.equal('img');
+                  expect(icon?.getAttribute('aria-label')).to.equal('User');
+                },
+              },
               initialsLabeledWithoutImage: {
                 description: 'labels the initials as an image when no real image is shown',
                 test: async () => {
@@ -132,15 +165,14 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                 },
               },
               imageShownNoDuplicateImgRole: {
-                description: 'does not label the initials as an image when a real image is shown',
+                description: 'does not render initials when a real image is shown',
                 test: async () => {
                   const el = this.component;
                   el.label = 'User';
-                  el.image = 'https://via.placeholder.com/32x32';
+                  el.image = loadableImage;
                   await elementUpdated(el);
                   const initials = el.shadowRoot?.querySelector('[part="avatar-initials"]');
-                  expect(initials?.getAttribute('role')).to.equal(null);
-                  expect(initials?.getAttribute('aria-label')).to.equal(null);
+                  expect(initials).to.be.null;
                 },
               },
               altText: {
@@ -150,7 +182,7 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   const labelValue = 'User Label';
 
                   el.label = labelValue;
-                  el.image = 'https://via.placeholder.com/32x32';
+                  el.image = loadableImage;
                   await elementUpdated(el!);
                   const imgElement = el.shadowRoot?.querySelector('img') as HTMLImageElement;
 
@@ -161,13 +193,72 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                 description: 'sets the src attribute of the img element based on the image property',
                 test: async () => {
                   const el = this.component;
-                  const imageUrl = 'https://via.placeholder.com/32x32';
 
-                  el.image = imageUrl;
+                  el.image = loadableImage;
                   await elementUpdated(el);
 
                   const imgElement = el.shadowRoot?.querySelector('img') as HTMLImageElement;
-                  expect(imgElement.src).to.equal(imageUrl);
+                  expect(imgElement.getAttribute('src')).to.equal(loadableImage);
+                },
+              },
+              loading: {
+                description: 'passes the loading mode to the image',
+                test: async () => {
+                  const el = this.component;
+                  el.image = loadableImage;
+                  await elementUpdated(el);
+
+                  const imgElement = el.shadowRoot?.querySelector('img') as HTMLImageElement;
+                  expect(imgElement.loading).to.equal('eager');
+
+                  el.loading = 'lazy';
+                  await elementUpdated(el);
+
+                  expect(imgElement.loading).to.equal('lazy');
+                },
+              },
+              imageErrorFallback: {
+                description: 'falls back to initials and emits avatar-error when the image fails to load',
+                test: async () => {
+                  const el = this.component;
+                  el.image = loadableImage;
+                  el.initials = 'JD';
+                  await elementUpdated(el);
+
+                  const errorHandler = sinon.spy();
+                  el.addEventListener('avatar-error', errorHandler);
+
+                  const imgElement = el.shadowRoot?.querySelector('img') as HTMLImageElement;
+                  expect(imgElement).to.not.be.null;
+                  imgElement.dispatchEvent(new Event('error'));
+
+                  await waitUntil(() => errorHandler.calledOnce, 'avatar-error should fire');
+                  await elementUpdated(el);
+
+                  expect(el.shadowRoot?.querySelector('img')).to.be.null;
+                  expect(el.shadowRoot?.querySelector('[part="avatar-initials"]')).to.not.be.null;
+                },
+              },
+              imageErrorReset: {
+                description: 'retries the image when a new source is provided after an error',
+                test: async () => {
+                  const el = this.component;
+                  el.image = loadableImage;
+                  await elementUpdated(el);
+
+                  const imgElement = el.shadowRoot?.querySelector('img') as HTMLImageElement;
+                  imgElement.dispatchEvent(new Event('error'));
+                  await elementUpdated(el);
+
+                  expect(el.shadowRoot?.querySelector('img')).to.be.null;
+
+                  const retryImage = alternateLoadableImage;
+                  el.image = retryImage;
+                  await elementUpdated(el);
+
+                  const retriedImg = el.shadowRoot?.querySelector('img') as HTMLImageElement;
+                  expect(retriedImg).to.not.be.null;
+                  expect(retriedImg.getAttribute('src')).to.equal(retryImage);
                 },
               },
               initials: {

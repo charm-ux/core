@@ -33,6 +33,13 @@ export default css`
     color: ${component('avatar', 'fgColor')};
   }
 
+  .default-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${component('avatar', 'fgColor')};
+  }
+
   .image {
     display: block;
     object-fit: fill;

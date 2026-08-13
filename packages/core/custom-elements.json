@@ -3518,6 +3518,10 @@
               "name": "avatar-base"
             },
             {
+              "description": "A wrapper for the default slot fallback when no image or initials are present.",
+              "name": "avatar-icon"
+            },
+            {
               "description": "The image tag for the avatar.",
               "name": "avatar-image"
             },
@@ -3532,7 +3536,7 @@
           ],
           "slots": [
             {
-              "description": "Utilized for specifying the default element, typically an icon.",
+              "description": "Utilized for specifying the default element, typically an icon. When no image, initials, or slot content is provided, a default person icon is rendered.",
               "name": ""
             },
             {
@@ -3567,7 +3571,7 @@
               "kind": "method",
               "name": "backgroundTemplate",
               "privacy": "protected",
-              "description": "Generates the template for the avatar's background. The slot image is used to provide custom image content that will override the image property."
+              "description": "Generates the template for the avatar's background."
             },
             {
               "kind": "field",
@@ -3582,6 +3586,22 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "defaultSlotTemplate",
+              "privacy": "protected",
+              "description": "Generates the fallback template used when no image or initials are present."
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
             },
             {
               "kind": "field",
@@ -3619,6 +3639,21 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "handleImageError",
+              "privacy": "protected",
+              "description": "Handles image load failures by falling back to the initials or default icon."
+            },
+            {
+              "kind": "field",
+              "name": "hasError",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -3668,6 +3703,12 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "imageTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the avatar's image."
+            },
+            {
               "kind": "field",
               "name": "initials",
               "type": {
@@ -3679,6 +3720,12 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "initialsTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the avatar's initials."
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -3688,6 +3735,17 @@
               "description": "The alt text for the avatar.",
               "attribute": "label",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "type": {
+                "text": "'eager' | 'lazy'"
+              },
+              "privacy": "public",
+              "default": "'eager'",
+              "description": "Indicates how the browser should load the avatar's image.",
+              "attribute": "loading"
             },
             {
               "kind": "field",
@@ -3720,6 +3778,20 @@
               "name": "statusIndicatorTemplate",
               "privacy": "protected",
               "description": "Generates a template for the status indicator."
+            }
+          ],
+          "events": [
+            {
+              "description": "Emitted when the avatar's image fails to load. When this fires, the avatar falls back to the initials or default icon.",
+              "name": "avatar-error"
+            },
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -3758,6 +3830,15 @@
               },
               "description": "The alt text for the avatar.",
               "fieldName": "label"
+            },
+            {
+              "name": "loading",
+              "type": {
+                "text": "'eager' | 'lazy'"
+              },
+              "default": "'eager'",
+              "description": "Indicates how the browser should load the avatar's image.",
+              "fieldName": "loading"
             }
           ],
           "superclass": {
@@ -3774,16 +3855,6 @@
             "name": "beta",
             "description": ""
           },
-          "events": [
-            {
-              "description": "Emitted when the component is ready.",
-              "name": "ready",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "src/base/charm-element/charm-element.ts"
-              }
-            }
-          ],
           "modulePath": "src/components/avatar/avatar.ts",
           "cssStates": []
         }

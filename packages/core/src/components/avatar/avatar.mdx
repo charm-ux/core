@@ -42,6 +42,37 @@ To render an image, use the `image` attribute within the `<ch-avatar>` element.
 
 </code-bubble>
 
+Add `loading="lazy"` to let the browser defer loading the image until it nears the viewport.
+
+<code-bubble>
+
+```html
+<ch-avatar image="path/to/image.png" loading="lazy"></ch-avatar>
+```
+
+</code-bubble>
+
+If the image fails to load, the avatar automatically falls back to the `initials` (or the default icon)
+and emits an `avatar-error` event. The error is reset whenever a new `image` source is provided.
+
+<code-bubble>
+
+```html
+<ch-avatar image="broken.png" initials="CM"></ch-avatar>
+```
+
+</code-bubble>
+
+A default person icon is rendered when no image, initials, or slot content is present.
+
+<code-bubble>
+
+```html
+<ch-avatar></ch-avatar>
+```
+
+</code-bubble>
+
 ## Status Indicator
 
 To render a badge to indicate the current status of the user, add a badge or icon element with the `status-indicator` slot set.
