@@ -23,6 +23,34 @@ Use `<ch-breadcrumb-items>` as links within the opening and closing of the `<ch-
 
 </code-bubble>
 
+## Custom separator
+
+Set the `separator` slot on `<ch-breadcrumb>` to change the separator used between every item. When
+set, it is cloned into each item that does not provide its own.
+
+<code-bubble>
+
+```html
+<ch-breadcrumb>
+  <span slot="separator">/</span>
+  <ch-breadcrumb-item>Catalog</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Clothing</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Men's</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Suits</ch-breadcrumb-item>
+</ch-breadcrumb>
+```
+
+</code-bubble>
+
+A single item can still override the group separator by providing its own `separator` slot:
+
+```html
+<ch-breadcrumb-item>
+  Clothing
+  <span slot="separator">›</span>
+</ch-breadcrumb-item>
+```
+
 ## Accessibility
 
 Use the `label` attribute within the `<ch-breadcrumb>` element to set the `aria-label` on the breadcrumb. This will not be shown on the screen, but it will be announced by screen readers and other assistive devices to provide more context for users.

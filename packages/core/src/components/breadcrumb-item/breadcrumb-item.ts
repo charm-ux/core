@@ -138,7 +138,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
     return this.separator
       ? this.html`<span part="breadcrumb-item-separator" class="separator"><slot name="separator"> <scoped-icon
     class="icon"
-    name="chevron-right"
+    name=${this.dir === 'rtl' ? 'chevron-left' : 'chevron-right'}
 ></scoped-icon> </slot></span>`
       : this.html``;
   }

@@ -41,10 +41,22 @@ export const CustomSeparator: Story = {
     template(
       args,
       html`
-        <ch-breadcrumb-item>item 1<span slot="separator">|</span></ch-breadcrumb-item>
-        <ch-breadcrumb-item>item 2<span slot="separator">|</span></ch-breadcrumb-item>
+        <span slot="separator">|</span>
+        <ch-breadcrumb-item>item 1</ch-breadcrumb-item>
+        <ch-breadcrumb-item>item 2</ch-breadcrumb-item>
         <ch-breadcrumb-item>item 3</ch-breadcrumb-item>
       `
+    ),
+};
+
+export const Rtl: Story = {
+  args: { dir: 'rtl' },
+  render: args =>
+    template(
+      args,
+      html`<ch-breadcrumb-item>item 1</ch-breadcrumb-item>
+        <ch-breadcrumb-item>item 2</ch-breadcrumb-item>
+        <ch-breadcrumb-item>item 3</ch-breadcrumb-item> `
     ),
 };
 
