@@ -22,6 +22,24 @@ export class CoreBadgeTests<T extends CoreBadge> extends CharmElementTests<T> {
                   expect(defaultSlot).to.not.be.null;
                 },
               },
+              startSlot: {
+                description: 'places children in the start slot',
+                test: async () => {
+                  this.component.innerHTML = '<span slot="start">Start</span>';
+                  await elementUpdated(this.component);
+                  const startSlot = this.component.shadowRoot?.querySelector('slot[name="start"]') as HTMLSlotElement;
+                  expect(startSlot).to.not.be.null;
+                },
+              },
+              endSlot: {
+                description: 'places children in the end slot',
+                test: async () => {
+                  this.component.innerHTML = '<span slot="end">End</span>';
+                  await elementUpdated(this.component);
+                  const endSlot = this.component.shadowRoot?.querySelector('slot[name="end"]') as HTMLSlotElement;
+                  expect(endSlot).to.not.be.null;
+                },
+              },
             },
           },
         },

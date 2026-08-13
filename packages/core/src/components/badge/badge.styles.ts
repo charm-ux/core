@@ -14,10 +14,18 @@ export default css`
     border-width: ${component('badge', 'borderWidth')};
     color: ${component('badge', 'fgColor')};
     font-size: inherit;
+    gap: ${component('badge', 'gap')};
     line-height: 1;
     min-height: ${component('badge', 'size')};
     min-width: ${component('badge', 'size')};
     padding: ${component('badge', 'padding')};
     text-align: center;
+  }
+
+  .start,
+  .end {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
