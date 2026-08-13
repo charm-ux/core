@@ -107,6 +107,10 @@ export class CoreButtonGroup extends CharmElement {
     super.disconnectedCallback();
     this.removeEventListener('change', this.handleToggleChange);
     this.removeEventListener('keydown', this.handleKeyDown);
+    this.removeEventListener('focusin', this.handleFocusIn);
+    // Toolbar mode mutates child tabindexes and attributes; restore defaults so a
+    // re-attached group doesn't trap children out of the tab order.
+    this.resetAttributes();
   }
 
   public override attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
@@ -116,8 +120,10 @@ export class CoreButtonGroup extends CharmElement {
     if (name === 'toolbar') {
       if (newValue !== null) {
         this.addEventListener('keydown', this.handleKeyDown);
+        this.addEventListener('focusin', this.handleFocusIn);
       } else {
         this.removeEventListener('keydown', this.handleKeyDown);
+        this.removeEventListener('focusin', this.handleFocusIn);
       }
     }
     // The change listener for selection must be wired whenever `select` changes, not just at connect time.
@@ -128,17 +134,26 @@ export class CoreButtonGroup extends CharmElement {
         this.removeEventListener('change', this.handleToggleChange);
       }
     }
+    // Roving state (tabindex) and the child attributes propagated by setAttributes must follow
+    // runtime changes to these attributes, not just slot changes.
+    if (name === 'toolbar' || name === 'vertical' || name === 'split' || name === 'select') {
+      if (this.isConnected && this.hasUpdated) {
+        this.initializeSlottedElements();
+      }
+    }
   }
 
   /**
    * Handles the 'change' event from a button for toggling of buttons
    * @param {Event} e - The 'change' event object.
    */
-  protected handleToggleChange = () => {
+  protected handleToggleChange = (e: Event) => {
     if (this.select === 'single') {
-      // reset all pressed attr's on buttons
+      // Reset pressed on every other button, but never the source of the change — the source
+      // button has already toggled its own pressed state via its click handler.
+      const target = e.target as HTMLElement;
       this.buttons.forEach(button => {
-        if (button.hasAttribute('pressed')) {
+        if (button !== target && button.hasAttribute('pressed')) {
           button.removeAttribute('pressed');
         }
       });
@@ -159,7 +174,7 @@ export class CoreButtonGroup extends CharmElement {
    */
   protected handleKeyDown = (e: KeyboardEvent) => {
     {
-      if (![keys.ArrowRight, keys.ArrowLeft, keys.ArrowUp, keys.ArrowDown].includes(e.key)) {
+      if (![keys.ArrowRight, keys.ArrowLeft, keys.ArrowUp, keys.ArrowDown, keys.Home, keys.End].includes(e.key)) {
         return;
       }
 
@@ -181,6 +196,16 @@ export class CoreButtonGroup extends CharmElement {
           nextIndex = this.findNextFocusableIndex(this.focusedIndex, -1);
           break;
         }
+
+        case keys.Home: {
+          nextIndex = this.findNextFocusableIndex(-1, 1);
+          break;
+        }
+
+        case keys.End: {
+          nextIndex = this.findNextFocusableIndex(this.slottedElements.length, -1);
+          break;
+        }
       }
 
       if (nextIndex === -1) {
@@ -191,13 +216,29 @@ export class CoreButtonGroup extends CharmElement {
     }
   };
 
+  /**
+   * Keeps the roving focusedIndex in sync when focus moves to a slotted item by
+   * any means other than the arrow keys (click, tab, programmatic focus). Without
+   * this, arrow navigation after a mouse click would jump from a stale index.
+   */
+  protected handleFocusIn = (e: FocusEvent) => {
+    const target = e.target as HTMLElement;
+    const index = this.slottedElements.indexOf(target);
+    if (index === -1 || index === this.focusedIndex) return;
+    this.focusedIndex = index;
+    this.slottedElements.forEach((el, i) => {
+      el.setAttribute('tabindex', i === this.focusedIndex ? '0' : '-1');
+    });
+  };
+
   protected initializeSlottedElements() {
     this.setAttributes();
     this.setTooltipPosition();
   }
 
   protected setAttributes() {
-    // Set child button attributes
+    // Propagate styling/selection state to child buttons, keeping them in sync when
+    // the corresponding attributes change at runtime (and clearing stale ones).
     const buttons = this.buttons;
     buttons.forEach((button, idx) => {
       if (idx === 0) {
@@ -209,19 +250,31 @@ export class CoreButtonGroup extends CharmElement {
       }
       if (this.vertical) {
         button.setAttribute('vertical', '');
+      } else {
+        button.removeAttribute('vertical');
       }
       if (this.split) {
         button.setAttribute('split', '');
+      } else {
+        button.removeAttribute('split');
       }
       if (this.select) {
         button.setAttribute('toggle', '');
-      }
-      if (this.toolbar) {
-        button.tabIndex = idx === 0 ? 0 : -1;
+      } else {
+        button.removeAttribute('toggle');
       }
     });
 
     if (this.toolbar) {
+      // The roving tabindex lives on the slotted elements — the same index space navigation uses —
+      // so the initial tab stop and arrow-key movement can't drift apart. The first enabled item
+      // becomes the tab stop; the rest are reachable only via the arrow keys.
+      const firstEnabled = this.findNextFocusableIndex(-1, 1);
+      this.slottedElements.forEach((el, index) => {
+        el.setAttribute('tabindex', index === firstEnabled ? '0' : '-1');
+      });
+      this.focusedIndex = firstEnabled;
+
       // Propagate toolbar attribute to child button groups, including nested ones
       this.slottedElements.forEach(el => {
         if (el instanceof CoreButtonGroup) {
@@ -234,7 +287,29 @@ export class CoreButtonGroup extends CharmElement {
           }
         });
       });
+    } else {
+      // Toolbar was removed at runtime: undo the roving tabindex and stop propagating the
+      // toolbar attribute so children aren't left trapped or reporting toolbar semantics.
+      this.slottedElements.forEach(el => {
+        el.removeAttribute('tabindex');
+        el.removeAttribute('toolbar');
+      });
     }
+  }
+
+  /** Clears the attributes this element propagated to its children, restoring default tab behavior. */
+  protected resetAttributes() {
+    this.buttons.forEach(button => {
+      button.removeAttribute('button-group-button-position');
+      button.removeAttribute('vertical');
+      button.removeAttribute('split');
+      button.removeAttribute('toggle');
+      button.removeAttribute('tabindex');
+    });
+    this.slottedElements.forEach(el => {
+      el.removeAttribute('tabindex');
+      el.removeAttribute('toolbar');
+    });
   }
 
   protected setTooltipPosition() {
@@ -269,6 +344,7 @@ export class CoreButtonGroup extends CharmElement {
         class="button-group"
         role=${this.toolbar ? 'toolbar' : 'group'}
         aria-label=${ifDefined(this.label)}
+        aria-orientation=${ifDefined(this.toolbar ? (this.vertical ? 'vertical' : 'horizontal') : undefined)}
       >
         <slot @slotchange=${this.initializeSlottedElements}></slot>
       </div>

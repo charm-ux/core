@@ -4,6 +4,11 @@ import { CharmElementTests } from '../../base/charm-element/charm-element.test-h
 import { CorePopup } from '../popup/index.js';
 import { CoreTooltip } from './index.js';
 
+// Headless WebKit throttles timers while the suite runs every test file, so the
+// transition-settle timer (transitionMaxTime + 50ms) can land past waitUntil's
+// 1000ms default. Give all settle-driven waits a generous window.
+const SETTLE_WAIT_TIMEOUT = 5000;
+
 export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T> {
   public constructor() {
     super();
@@ -31,7 +36,11 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  // The after-show event settles via a timer; let the compositor catch up before
+                  // reading the computed opacity so headless WebKit can't resolve the event first.
+                  await waitUntil(() => getComputedStyle(body).opacity === '1', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               notVisibleWhenClosed: {
@@ -45,7 +54,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await aTimeout(500);
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               disabled: {
@@ -69,7 +80,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await afterHide;
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
             },
@@ -109,11 +122,13 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.addEventListener('tooltip-after-show', afterShowHandler);
                   el.show();
 
-                  await waitUntil(() => showHandler.calledOnce);
-                  await waitUntil(() => afterShowHandler.calledOnce);
+                  await waitUntil(() => showHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  await waitUntil(() => afterShowHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  await waitUntil(() => getComputedStyle(body).opacity === '1', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               showFromAttribute: {
@@ -134,11 +149,13 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.addEventListener('tooltip-after-show', afterShowHandler);
                   el.open = true;
 
-                  await waitUntil(() => showHandler.calledOnce);
-                  await waitUntil(() => afterShowHandler.calledOnce);
+                  await waitUntil(() => showHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  await waitUntil(() => afterShowHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  await waitUntil(() => getComputedStyle(body).opacity === '1', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               hide: {
@@ -159,11 +176,13 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.addEventListener('tooltip-after-hide', afterHideHandler);
                   el.hide();
 
-                  await waitUntil(() => hideHandler.calledOnce);
-                  await waitUntil(() => afterHideHandler.calledOnce);
+                  await waitUntil(() => hideHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  await waitUntil(() => afterHideHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               hideFromAttribute: {
@@ -184,11 +203,13 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.addEventListener('tooltip-after-hide', afterHideHandler);
                   el.hide();
 
-                  await waitUntil(() => hideHandler.calledOnce);
-                  await waitUntil(() => afterHideHandler.calledOnce);
+                  await waitUntil(() => hideHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  await waitUntil(() => afterHideHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0', undefined, {
+                    timeout: SETTLE_WAIT_TIMEOUT,
+                  });
                 },
               },
               liveRegionAnnouncement: {
@@ -206,7 +227,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
 
                   el.open = true;
                   await elementUpdated(el);
-                  await waitUntil(() => showHandler.calledOnce);
+                  await waitUntil(() => showHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
                   const liveRegion = el.shadowRoot!.querySelector('.visually-hidden');
                   expect(liveRegion).to.exist;
