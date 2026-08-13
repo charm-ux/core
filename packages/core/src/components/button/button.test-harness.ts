@@ -340,11 +340,11 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
 
   /**
    * Waits for the default slot's `slotchange` (which triggers icon-only detection) and the
-   * resulting re-render.
+   * resulting re-render. Listens on the shadow root because the detection handler is
+   * delegated there (slotchange bubbles to the shadow root but not the host).
    */
   protected async waitForContentSlotChange(el: CoreButton) {
-    const slot = el.shadowRoot?.querySelector('slot:not([name])') as HTMLSlotElement;
-    await oneEvent(slot, 'slotchange');
+    await oneEvent(el.shadowRoot!, 'slotchange');
     await elementUpdated(el);
   }
 }

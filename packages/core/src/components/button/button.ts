@@ -190,6 +190,13 @@ export class CoreButton extends CharmFocusableElement {
   protected hideHandler?: () => void;
   protected toggleHandler?: () => void;
   protected readonly _internals: ElementInternals;
+  protected readonly handleSlotChange = (event: Event) => {
+    const slot = event.target as HTMLSlotElement;
+    if (slot.name) {
+      return;
+    }
+    this.isIconButton = this.hasIconOnlyContent(slot.assignedNodes({ flatten: true }));
+  };
   protected _shows?: string;
   protected _hides?: string;
   protected _toggles?: string;
@@ -283,6 +290,18 @@ export class CoreButton extends CharmFocusableElement {
     }
   }
 
+  public override connectedCallback() {
+    super.connectedCallback();
+    // slotchange doesn't compose out of the shadow root, but it does bubble to it, so a
+    // single delegated listener catches every slot's changes (see HasSlotController).
+    this.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
+  }
+
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.shadowRoot?.removeEventListener('slotchange', this.handleSlotChange);
+  }
+
   protected handleClick(event: MouseEvent) {
     if (this.disabled) {
       event.preventDefault();
@@ -305,18 +324,11 @@ export class CoreButton extends CharmFocusableElement {
     }
   }
 
-  /** @internal Recomputes `isIconButton` when the default slot's contents change. */
-  protected handleContentSlotChange(event: Event) {
-    this.isIconButton = this.hasIconOnlyContent((event.target as HTMLSlotElement).assignedNodes({ flatten: true }));
-  }
-
   /*
    * Generate the template for the content of the button.
    */
   protected contentTemplate() {
-    return startContentEndTemplate({
-      contentSlotChange: this.handleContentSlotChange,
-    });
+    return startContentEndTemplate();
   }
 
   /**
