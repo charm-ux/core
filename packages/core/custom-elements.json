@@ -3841,6 +3841,10 @@
               "name": "--charm-badge-fg-color"
             },
             {
+              "description": "determines the space between the start slot, content, and end slot.",
+              "name": "--charm-badge-gap"
+            },
+            {
               "description": "determines the padding.",
               "name": "--charm-badge-padding"
             },
@@ -3853,12 +3857,28 @@
             {
               "description": "The component's base wrapper.",
               "name": "badge-base"
+            },
+            {
+              "description": "The end slot container.",
+              "name": "badge-end"
+            },
+            {
+              "description": "The start slot container.",
+              "name": "badge-start"
             }
           ],
           "slots": [
             {
               "description": "The content of the badge.",
               "name": ""
+            },
+            {
+              "description": "Content rendered after the badge content.",
+              "name": "end"
+            },
+            {
+              "description": "Content rendered before the badge content.",
+              "name": "start"
             }
           ],
           "members": [

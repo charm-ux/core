@@ -415,6 +415,7 @@ const charmTokensBase = defineTokens(
         borderWidth: primitive('borderWidth', 'thin'),
         padding: `${primitive('spacing', '2xs')} ${primitive('spacing', 'sm')}`,
         size: '20px',
+        gap: primitive('spacing', 'xs'),
       },
 
       // Breadcrumb
