@@ -164,8 +164,23 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   public override connectedCallback() {
     super.connectedCallback();
-    this.initialValue = this.value;
+    this.syncInitialFormValue();
     this.internals.setFormValue(this.value);
+  }
+
+  /** Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values. */
+  protected get initialFormValue(): string {
+    return this.value;
+  }
+
+  /** Saves the current form value as the initial reset state. */
+  protected syncInitialFormValue() {
+    this.initialValue = this.initialFormValue;
+  }
+
+  /** Restores the control's initial form value. Subclasses can override for checked-backed values. */
+  protected restoreInitialFormValue() {
+    this.value = this.initialValue;
   }
 
   /** Checks for validity but doesn't report a validation message when invalid. */
@@ -194,7 +209,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   protected formResetCallback() {
-    this.value = this.initialValue;
+    this.restoreInitialFormValue();
   }
 
   /** Restores the control's value when the browser restores form state (bfcache navigation or autofill). */

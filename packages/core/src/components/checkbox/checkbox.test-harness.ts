@@ -167,11 +167,13 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                 },
               },
               correctValueOutput: {
-                description: 'when submitting a form, it should submit the correct value when a value is provided',
+                description:
+                  'when submitting a form, it should submit the correct value when a value is provided and checked',
                 test: async () => {
                   const el = this.component;
                   el.name = 'a';
                   el.value = '1';
+                  el.checked = true;
                   const form = await fixture<HTMLFormElement>(html`
                     <form>
                       ${el}
@@ -191,6 +193,33 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                   expect(formData!.get('a')).to.equal('1');
                 },
               },
+              uncheckedValueOutput: {
+                description: 'when submitting a form, it should not submit any value when unchecked',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'a';
+                  el.value = '1';
+                  el.checked = false;
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      ${el}
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  let formData: FormData;
+                  const button = form.querySelector('button');
+                  const submitHandler = sinon.spy(evt => {
+                    formData = new FormData(form);
+                    evt.preventDefault();
+                    evt.stopImmediatePropagation();
+                  });
+                  form.addEventListener('click', submitHandler);
+                  button?.click();
+                  await waitUntil(() => submitHandler.calledOnce);
+                  expect(formData!.get('a')).to.be.null;
+                },
+              },
+
               defaultOnEmit: {
                 description: 'when submitting a form, should emit "on" when no value is provided',
                 test: async () => {
