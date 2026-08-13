@@ -68,6 +68,30 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
                   expect(el.shadowRoot?.querySelector('[part="breadcrumb-item-separator"]')).not.to.be.null;
                 },
               },
+              rtlSeparator: {
+                description: 'uses chevron-left separator in rtl',
+                test: async () => {
+                  const el = this.component;
+                  await el.setAttribute('dir', 'rtl');
+                  await elementUpdated(el);
+                  const icon = el.shadowRoot?.querySelector(
+                    'slot[name="separator"] scoped-icon, slot[name="separator"] ch-icon'
+                  );
+                  expect(icon?.getAttribute('name')).to.equal('chevron-left');
+                },
+              },
+              ltrSeparator: {
+                description: 'uses chevron-right separator in ltr',
+                test: async () => {
+                  const el = this.component;
+                  await el.setAttribute('dir', 'ltr');
+                  await elementUpdated(el);
+                  const icon = el.shadowRoot?.querySelector(
+                    'slot[name="separator"] scoped-icon, slot[name="separator"] ch-icon'
+                  );
+                  expect(icon?.getAttribute('name')).to.equal('chevron-right');
+                },
+              },
               noSeparatorSlot: {
                 description: 'does not have a separator when separator property is false',
                 test: async () => {

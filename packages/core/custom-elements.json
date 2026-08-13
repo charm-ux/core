@@ -4686,6 +4686,10 @@
             {
               "description": "Breadcrumb's contents, which should typically be a breadcrumb-item.",
               "name": ""
+            },
+            {
+              "description": "The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own.",
+              "name": "separator"
             }
           ],
           "members": [
@@ -4718,7 +4722,18 @@
             {
               "kind": "method",
               "name": "breadcrumbTemplate",
-              "privacy": "protected"
+              "privacy": "protected",
+              "description": "Template for the breadcrumb component."
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
             },
             {
               "kind": "field",
@@ -4756,6 +4771,12 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "getSeparator",
+              "privacy": "protected",
+              "description": "Generates a clone of the breadcrumb's separator element."
             },
             {
               "kind": "method",
@@ -4816,6 +4837,14 @@
               }
             },
             {
+              "kind": "field",
+              "name": "separatorSlot",
+              "type": {
+                "text": "HTMLSlotElement"
+              },
+              "privacy": "protected"
+            },
+            {
               "kind": "method",
               "name": "setAriaCurrent",
               "privacy": "protected",
@@ -4866,6 +4895,25 @@
               "description": "Controls the display of item separators for a given CoreBreadcrumbItem."
             },
             {
+              "kind": "method",
+              "name": "setItemSeparatorContent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "item",
+                  "type": {
+                    "text": "CoreBreadcrumbItem"
+                  }
+                }
+              ],
+              "description": "Clones the breadcrumb's separator into an item that does not provide its own."
+            },
+            {
               "kind": "field",
               "name": "slottedNodes",
               "type": {
@@ -4899,7 +4947,7 @@
           ],
           "superclass": {
             "name": "CharmElement",
-            "module": "/src/base/charm-element/charm-element.js"
+            "module": "/src/base/index.js"
           },
           "tagName": "ch-breadcrumb",
           "customElement": true,
@@ -4911,6 +4959,12 @@
             "name": "beta",
             "description": ""
           },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            }
+          ],
           "events": [
             {
               "description": "Emitted when the component is ready.",
