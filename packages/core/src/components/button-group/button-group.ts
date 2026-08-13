@@ -344,7 +344,7 @@ export class CoreButtonGroup extends CharmElement {
         class="button-group"
         role=${this.toolbar ? 'toolbar' : 'group'}
         aria-label=${ifDefined(this.label)}
-        aria-orientation=${this.toolbar ? (this.vertical ? 'vertical' : 'horizontal') : undefined}
+        aria-orientation=${ifDefined(this.toolbar ? (this.vertical ? 'vertical' : 'horizontal') : undefined)}
       >
         <slot @slotchange=${this.initializeSlottedElements}></slot>
       </div>

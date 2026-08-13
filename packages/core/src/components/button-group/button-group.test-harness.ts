@@ -51,6 +51,23 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   toolbar: '',
                 },
               },
+              orientationAttribute: {
+                description: 'should reflect aria-orientation only in toolbar mode',
+                test: async () => {
+                  const el = this.component;
+                  const buttonGroupBase = el.shadowRoot?.querySelector('[part="button-group-base"]') as HTMLElement;
+                  expect(buttonGroupBase.getAttribute('aria-orientation')).to.be.null;
+
+                  el.setAttribute('toolbar', '');
+                  await el.updateComplete;
+                  expect(buttonGroupBase.getAttribute('aria-orientation')).to.equal('horizontal');
+
+                  el.setAttribute('vertical', '');
+                  await el.updateComplete;
+                  expect(buttonGroupBase.getAttribute('aria-orientation')).to.equal('vertical');
+                },
+                config: {},
+              },
               positionAttribute: {
                 description: 'should have the attribute "button-group-button-position" to all child buttons',
                 test: async () => {
