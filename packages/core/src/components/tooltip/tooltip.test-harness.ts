@@ -62,7 +62,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.disabled = true;
 
                   await elementUpdated(el);
-                  await waitUntil(() => getComputedStyle(body).opacity === '0', 'tooltip body should fade out');
+                  // The body only becomes hidden once the hide transition settles, so poll for the
+                  // end state rather than the CSS opacity, which drops to 0 as soon as the class changes.
+                  await waitUntil(() => body.hidden === true, 'tooltip body should become hidden');
 
                   expect(body.hidden).to.be.true;
                   expect(getComputedStyle(body).opacity).to.equal('0');
