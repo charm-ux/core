@@ -267,20 +267,161 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
               },
               toolBarRovingIndexInit: {
                 description:
-                  'should set a tabindex of -1 on all button children, and 0 on the first child when `toolbar` attribute is set',
+                  'should set a tabindex of -1 on all slotted children, and 0 on the first child when `toolbar` attribute is set',
                 test: async () => {
-                  const buttons = this.component.querySelectorAll(project.scope.tagName('button'));
-                  buttons.forEach((button, i) => {
+                  const children = this.component.children;
+                  for (let i = 0; i < children.length; i++) {
                     if (i === 0) {
-                      expect(button.getAttribute('tabindex')).to.equal('0');
+                      expect(children[i].getAttribute('tabindex')).to.equal('0');
                     } else {
-                      expect(button.getAttribute('tabindex')).to.equal('-1');
+                      expect(children[i].getAttribute('tabindex')).to.equal('-1');
                     }
-                  });
+                  }
                 },
                 config: {
                   toolbar: '',
                 },
+              },
+              toolBarRovingTabStopSkipsDisabled: {
+                description: 'should skip disabled children when assigning the initial tab stop',
+                test: async () => {
+                  const el = this.component;
+                  const itemOne = el.children[0] as CoreButton;
+                  const itemTwo = el.children[1] as CoreButton;
+                  const itemThree = el.children[2] as CoreButton;
+
+                  itemOne.setAttribute('disabled', '');
+                  const slotChangeEvent = new Event('slotchange');
+                  el.shadowRoot?.querySelector('slot')?.dispatchEvent(slotChangeEvent);
+                  await el.updateComplete;
+
+                  expect(itemOne.getAttribute('tabindex')).to.equal('-1');
+                  expect(itemTwo.getAttribute('tabindex')).to.equal('0');
+                  expect(itemThree.getAttribute('tabindex')).to.equal('-1');
+
+                  el.querySelector(project.scope.tagName('button'))?.removeAttribute('disabled');
+                  el.shadowRoot?.querySelector('slot')?.dispatchEvent(slotChangeEvent);
+                  await el.updateComplete;
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
+              toolBarHomeEnd: {
+                description: 'should move focus to the first and last items when `Home` and `End` keys are pressed',
+                test: async () => {
+                  const el = this.component;
+                  const itemOne = el.children[0] as CoreButton;
+                  const itemTwo = el.children[1] as CoreButton;
+                  const itemFour = el.children[3] as CoreButton;
+
+                  itemOne.focus();
+                  await sendKeys({ press: 'End' });
+                  await el.updateComplete;
+                  expect(itemOne.getAttribute('tabindex')).to.equal('-1');
+                  expect(itemFour.getAttribute('tabindex')).to.equal('0');
+
+                  await sendKeys({ press: 'Home' });
+                  await el.updateComplete;
+                  expect(itemFour.getAttribute('tabindex')).to.equal('-1');
+                  expect(itemOne.getAttribute('tabindex')).to.equal('0');
+                  expect(itemTwo.getAttribute('tabindex')).to.equal('-1');
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
+              anchorRovingOnFocus: {
+                description:
+                  'should sync the roving index when a child is focused directly by click or programmatic focus',
+                test: async () => {
+                  const el = this.component;
+                  const itemOne = el.children[0] as CoreButton;
+                  const itemThree = el.children[2] as CoreButton;
+
+                  itemOne.focus();
+                  expect(itemOne.getAttribute('tabindex')).to.equal('0');
+
+                  itemThree.focus();
+                  await el.updateComplete;
+                  expect(itemThree.getAttribute('tabindex')).to.equal('0');
+                  expect(itemOne.getAttribute('tabindex')).to.equal('-1');
+
+                  // Arrow navigation should continue from the focused (now anchored) item, not index 0.
+                  const arrowKeyEvent = new KeyboardEvent('keydown', {
+                    key: 'ArrowRight',
+                    bubbles: true,
+                    composed: true,
+                  });
+                  el.dispatchEvent(arrowKeyEvent);
+                  await el.updateComplete;
+                  expect(itemThree.getAttribute('tabindex')).to.equal('-1');
+                  expect((el.children[3] as CoreButton).getAttribute('tabindex')).to.equal('0');
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
+              toolbarRemovalRestoresTabOrder: {
+                description: 'should remove the roving tabindex from children when `toolbar` is removed at runtime',
+                test: async () => {
+                  const el = this.component;
+                  const itemOne = el.children[0] as CoreButton;
+                  const itemTwo = el.children[1] as CoreButton;
+
+                  el.setAttribute('toolbar', '');
+                  await el.updateComplete;
+                  expect(itemOne.getAttribute('tabindex')).to.equal('0');
+                  expect(itemTwo.getAttribute('tabindex')).to.equal('-1');
+
+                  el.removeAttribute('toolbar');
+                  await el.updateComplete;
+                  expect(itemOne.getAttribute('tabindex')).to.be.null;
+                  expect(itemTwo.getAttribute('tabindex')).to.be.null;
+                },
+                config: {},
+              },
+              runtimeAttributeSync: {
+                description:
+                  'should keep `vertical`, `split`, and `toggle` on children in sync when changed at runtime',
+                test: async () => {
+                  const el = this.component;
+                  const buttons = el.querySelectorAll(project.scope.tagName('button'));
+
+                  el.setAttribute('vertical', '');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('vertical')).to.not.be.null;
+                  });
+                  el.removeAttribute('vertical');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('vertical')).to.be.null;
+                  });
+
+                  el.setAttribute('split', '');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('split')).to.not.be.null;
+                  });
+                  el.removeAttribute('split');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('split')).to.be.null;
+                  });
+
+                  el.setAttribute('select', 'single');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('toggle')).to.not.be.null;
+                  });
+                  el.removeAttribute('select');
+                  await el.updateComplete;
+                  buttons.forEach(button => {
+                    expect(button.getAttribute('toggle')).to.be.null;
+                  });
+                },
+                config: {},
               },
               toolBarKeyboardNext: {
                 description:
