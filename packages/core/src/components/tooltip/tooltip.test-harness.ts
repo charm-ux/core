@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, waitUntil } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { CorePopup } from '../popup/index.js';
@@ -22,13 +22,14 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
+                  // The after-show event is emitted once the show transition has settled, which is the
+                  // authoritative signal that the body is visible. Waiting for it avoids racing the
+                  // requestAnimationFrame-driven visible class and its CSS opacity transition.
+                  const afterShow = oneEvent(el, 'tooltip-after-show');
                   el.open = true;
-                  await elementUpdated(el);
+                  await afterShow;
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
-                  // Poll instead of sleeping: the body becomes visible in a requestAnimationFrame and
-                  // then animates over the show transition, which can exceed a fixed timeout on WebKit.
-                  await waitUntil(() => getComputedStyle(body).opacity === '1', 'tooltip body should become visible');
                   expect(body.hidden).to.be.false;
                   expect(getComputedStyle(body).opacity).to.equal('1');
                 },
@@ -53,18 +54,19 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
+                  // Wait for the show transition to fully settle before disabling the tooltip.
+                  const afterShow = oneEvent(el, 'tooltip-after-show');
                   el.open = true;
-                  await elementUpdated(el);
+                  await afterShow;
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
-                  await waitUntil(() => getComputedStyle(body).opacity === '1', 'tooltip body should become visible');
+                  expect(body.hidden).to.be.false;
 
+                  // hide() is triggered by the disabled setter and its side effects only run once the
+                  // hide transition settles, so wait for the after-hide event before asserting.
+                  const afterHide = oneEvent(el, 'tooltip-after-hide');
                   el.disabled = true;
-
-                  await elementUpdated(el);
-                  // The body only becomes hidden once the hide transition settles, so poll for the
-                  // end state rather than the CSS opacity, which drops to 0 as soon as the class changes.
-                  await waitUntil(() => body.hidden === true, 'tooltip body should become hidden');
+                  await afterHide;
 
                   expect(body.hidden).to.be.true;
                   expect(getComputedStyle(body).opacity).to.equal('0');
