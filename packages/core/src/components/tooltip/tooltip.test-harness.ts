@@ -31,7 +31,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  // The after-show event settles via a timer; let the compositor catch up before
+                  // reading the computed opacity so headless WebKit can't resolve the event first.
+                  await waitUntil(() => getComputedStyle(body).opacity === '1');
                 },
               },
               notVisibleWhenClosed: {
@@ -45,7 +47,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await aTimeout(500);
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0');
                 },
               },
               disabled: {
@@ -69,7 +71,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await afterHide;
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0');
                 },
               },
             },
@@ -113,7 +115,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => afterShowHandler.calledOnce);
 
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  await waitUntil(() => getComputedStyle(body).opacity === '1');
                 },
               },
               showFromAttribute: {
@@ -138,7 +140,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => afterShowHandler.calledOnce);
 
                   expect(body.hidden).to.be.false;
-                  expect(getComputedStyle(body).opacity).to.equal('1');
+                  await waitUntil(() => getComputedStyle(body).opacity === '1');
                 },
               },
               hide: {
@@ -163,7 +165,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => afterHideHandler.calledOnce);
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0');
                 },
               },
               hideFromAttribute: {
@@ -188,7 +190,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => afterHideHandler.calledOnce);
 
                   expect(body.hidden).to.be.true;
-                  expect(getComputedStyle(body).opacity).to.equal('0');
+                  await waitUntil(() => getComputedStyle(body).opacity === '0');
                 },
               },
               liveRegionAnnouncement: {
