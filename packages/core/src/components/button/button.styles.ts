@@ -70,7 +70,8 @@ export default css`
     box-shadow: ${component('button', 'active', 'shadow')};
   }
 
-  :host([icon-only]) .control {
+  :host([icon-only]) .control,
+  .control.is-icon-button {
     padding: ${component('button', 'iconPaddingY')} ${component('button', 'iconPaddingX')};
   }
 

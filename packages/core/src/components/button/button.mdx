@@ -44,13 +44,16 @@ To disable on page load, use the `disabled` attribute within the `<ch-button>` e
 
 ## Icon only
 
-To create an icon-only button, you can use the `icon-only` attribute or leave the button text blank and put the icon in the default slot. Remember to add a label for the icon to keep it accessible to screen readers and other assistive technologies.
+To create an icon-only button, you can use the `icon-only` attribute or leave the button text blank and put the icon in the default slot. When no `icon-only` attribute is present, the component detects whether the default slot contains only an icon (an `<svg>`, the `<ch-icon>` component, or an element with an `icon` attribute) with no other visible content, and applies icon-only spacing automatically.
+
+Remember to add a label for the icon to keep it accessible to screen readers and other assistive technologies. A visually-hidden label doesn't affect detection, so prefer it over relying on the icon's own label:
 
 <code-bubble>
 
 ```html
-<ch-button icon-only>
-  <ch-icon name="success" label="success"></ch-icon>
+<ch-button>
+  <ch-icon name="success"></ch-icon>
+  <span class="visually-hidden">Success</span>
 </ch-button>
 ```
 
