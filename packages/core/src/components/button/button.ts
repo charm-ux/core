@@ -190,13 +190,6 @@ export class CoreButton extends CharmFocusableElement {
   protected hideHandler?: () => void;
   protected toggleHandler?: () => void;
   protected readonly _internals: ElementInternals;
-  protected readonly handleSlotChange = (event: Event) => {
-    const slot = event.target as HTMLSlotElement;
-    if (slot.name) {
-      return;
-    }
-    this.isIconButton = this.hasIconOnlyContent(slot.assignedNodes({ flatten: true }));
-  };
   protected _shows?: string;
   protected _hides?: string;
   protected _toggles?: string;
@@ -301,6 +294,14 @@ export class CoreButton extends CharmFocusableElement {
     super.disconnectedCallback();
     this.shadowRoot?.removeEventListener('slotchange', this.handleSlotChange);
   }
+
+  protected readonly handleSlotChange = (event: Event) => {
+    const slot = event.target as HTMLSlotElement;
+    if (slot.name) {
+      return;
+    }
+    this.isIconButton = this.hasIconOnlyContent(slot.assignedNodes({ flatten: true }));
+  };
 
   protected handleClick(event: MouseEvent) {
     if (this.disabled) {
