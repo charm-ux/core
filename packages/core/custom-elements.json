@@ -6100,6 +6100,12 @@
             },
             {
               "kind": "field",
+              "name": "handleFocusIn",
+              "privacy": "protected",
+              "description": "Keeps the roving focusedIndex in sync when focus moves to a slotted item by\nany means other than the arrow keys (click, tab, programmatic focus). Without\nthis, arrow navigation after a mouse click would jump from a stale index."
+            },
+            {
+              "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
               "description": "Handles the 'keydown' event on button-group",
@@ -6180,6 +6186,12 @@
               },
               "privacy": "protected",
               "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "resetAttributes",
+              "privacy": "protected",
+              "description": "Clears the attributes this element propagated to its children, restoring default tab behavior."
             },
             {
               "kind": "field",
@@ -6822,6 +6834,25 @@
               }
             },
             {
+              "kind": "method",
+              "name": "hasIconOnlyContent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "nodes",
+                  "type": {
+                    "text": "Node[]"
+                  }
+                }
+              ],
+              "description": "True when every visible node in the default slot is an icon and there is at least one\nicon. Visually-hidden labels (per A11Y-002) don't disqualify icon-only detection."
+            },
+            {
               "kind": "field",
               "name": "hideHandler",
               "type": {
@@ -6885,9 +6916,28 @@
                 "text": "boolean | undefined"
               },
               "privacy": "public",
-              "description": "Allows component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'",
+              "description": "Allows the component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'. When not set, this is\ndetected automatically when the default slot contains only an icon and no other visible\ncontent.",
               "attribute": "icon-only",
               "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "isIconElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "node",
+                  "type": {
+                    "text": "Node"
+                  }
+                }
+              ],
+              "description": "True when the node represents an icon: an inline SVG, an element carrying the `icon`\nattribute, or the scope's icon component."
             },
             {
               "kind": "field",
@@ -7167,7 +7217,7 @@
               "type": {
                 "text": "boolean | undefined"
               },
-              "description": "Allows component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'",
+              "description": "Allows the component to render using only the icon as visual element.\nOptional, default is false, associated attribute is 'icon-only'. When not set, this is\ndetected automatically when the default slot contains only an icon and no other visible\ncontent.",
               "fieldName": "iconOnly"
             },
             {

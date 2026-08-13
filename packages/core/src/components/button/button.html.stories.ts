@@ -39,6 +39,20 @@ export const IconOnly: Story = {
   },
 };
 
+export const IconOnlyAutoDetected: Story = {
+  render: args => template(args),
+  args: {
+    'default-slot': `<ch-icon name="person" label="person"></ch-icon>`,
+  },
+};
+
+export const IconOnlyVisuallyHiddenLabel: Story = {
+  render: args => template(args),
+  args: {
+    'default-slot': `<ch-icon name="person"></ch-icon><span class="visually-hidden">Person</span>`,
+  },
+};
+
 export const StartIcon: Story = {
   render: args => template(args),
   args: {

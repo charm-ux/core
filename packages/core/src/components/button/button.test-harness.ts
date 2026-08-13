@@ -88,6 +88,60 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   await expect(el.shadowRoot?.querySelector('a')!.getAttribute('name')).to.be.null;
                 },
               },
+              iconOnlyDetectedForSvg: {
+                description: 'applies is-icon-button when only an SVG is slotted in the default slot',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<svg><path d="M0 0h1v1H0z"></path></svg>';
+                  await this.waitForContentSlotChange(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.have.class('is-icon-button');
+                },
+              },
+              iconOnlyDetectedForIconElement: {
+                description: 'applies is-icon-button when only the icon component is slotted',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = `<${project.scope.tagName('icon')} name="person" label="person"></${project.scope.tagName('icon')}>`;
+                  await this.waitForContentSlotChange(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.have.class('is-icon-button');
+                },
+              },
+              iconOnlyDetectedWithVisuallyHiddenLabel: {
+                description: 'applies is-icon-button when an icon is paired with a visually-hidden label',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<svg><path d="M0 0h1v1H0z"></path></svg><span class="visually-hidden">Person</span>';
+                  await this.waitForContentSlotChange(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.have.class('is-icon-button');
+                },
+              },
+              notIconOnlyWithText: {
+                description: 'does not apply is-icon-button when visible text is present',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = 'Save <svg><path d="M0 0h1v1H0z"></path></svg>';
+                  await this.waitForContentSlotChange(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.not.have.class('is-icon-button');
+                },
+              },
+              explicitIconOnlyAppliesClass: {
+                description: 'applies is-icon-button when the icon-only attribute is set',
+                test: async () => {
+                  const el = this.component;
+                  el.iconOnly = true;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.have.class('is-icon-button');
+                },
+              },
+              plainTextNotIconButton: {
+                description: 'does not apply is-icon-button for plain text content',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = 'Just text';
+                  await this.waitForContentSlotChange(el);
+                  expect(el.shadowRoot?.querySelector('.control')).to.not.have.class('is-icon-button');
+                },
+              },
             },
           },
           // event tests
@@ -159,6 +213,20 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.addEventListener('click', clickSpy);
                   await elementUpdated(el);
                   el.click();
+                  expect(clickSpy.callCount).to.equal(0);
+                },
+              },
+              disabledStopsOtherListeners: {
+                description: 'stops propagation to additional listeners on the control when disabled',
+                test: async () => {
+                  const el = this.component;
+                  el.disabled = true;
+                  el.href = '#';
+                  await elementUpdated(el);
+                  const control = el.shadowRoot?.querySelector('.control') as HTMLElement;
+                  const clickSpy = sinon.spy();
+                  control.addEventListener('click', clickSpy);
+                  control.click();
                   expect(clickSpy.callCount).to.equal(0);
                 },
               },
@@ -268,5 +336,15 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
         },
       },
     });
+  }
+
+  /**
+   * Waits for the default slot's `slotchange` (which triggers icon-only detection) and the
+   * resulting re-render. Listens on the shadow root because the detection handler is
+   * delegated there (slotchange bubbles to the shadow root but not the host).
+   */
+  protected async waitForContentSlotChange(el: CoreButton) {
+    await oneEvent(el.shadowRoot!, 'slotchange');
+    await elementUpdated(el);
   }
 }

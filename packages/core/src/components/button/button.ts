@@ -1,12 +1,23 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { html, literal } from 'lit/static-html.js';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
 import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
 import { type CharmDismissibleElement } from '../../base/index.js';
 import styles from './button.styles.js';
+
+/**
+ * True when the node is a visually-hidden or hidden element that shouldn't count as button
+ * content. Mirrors the convention used by `HasSlotController`.
+ */
+const isVisuallyHidden = (node: Node): boolean => {
+  if (!(node instanceof Element)) {
+    return false;
+  }
+  return node.hasAttribute('hidden') || (node instanceof HTMLElement && node.classList.contains('visually-hidden'));
+};
 
 /**
  * Buttons are used to commit a change or complete steps in a task. They are typically found inside forms, dialogs, panels or pages.
@@ -157,8 +168,10 @@ export class CoreButton extends CharmFocusableElement {
   public value?: string;
 
   /**
-   * Allows component to render using only the icon as visual element.
-   * Optional, default is false, associated attribute is 'icon-only'
+   * Allows the component to render using only the icon as visual element.
+   * Optional, default is false, associated attribute is 'icon-only'. When not set, this is
+   * detected automatically when the default slot contains only an icon and no other visible
+   * content.
    */
   @property({ type: Boolean, reflect: true, attribute: 'icon-only' })
   public iconOnly?: boolean;
@@ -168,6 +181,10 @@ export class CoreButton extends CharmFocusableElement {
    */
   @property({ attribute: 'allow-wrap', type: Boolean, reflect: true })
   public allowWrap? = false;
+
+  /** @internal True when the default slot resolves to only an icon (auto-detected). */
+  @state()
+  protected isIconButton = false;
 
   protected showHandler?: () => void;
   protected hideHandler?: () => void;
@@ -266,10 +283,30 @@ export class CoreButton extends CharmFocusableElement {
     }
   }
 
+  public override connectedCallback() {
+    super.connectedCallback();
+    // slotchange doesn't compose out of the shadow root, but it does bubble to it, so a
+    // single delegated listener catches every slot's changes (see HasSlotController).
+    this.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
+  }
+
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.shadowRoot?.removeEventListener('slotchange', this.handleSlotChange);
+  }
+
+  protected readonly handleSlotChange = (event: Event) => {
+    const slot = event.target as HTMLSlotElement;
+    if (slot.name) {
+      return;
+    }
+    this.isIconButton = this.hasIconOnlyContent(slot.assignedNodes({ flatten: true }));
+  };
+
   protected handleClick(event: MouseEvent) {
     if (this.disabled) {
       event.preventDefault();
-      event.stopPropagation();
+      event.stopImmediatePropagation();
       return;
     }
 
@@ -295,6 +332,52 @@ export class CoreButton extends CharmFocusableElement {
     return startContentEndTemplate();
   }
 
+  /**
+   * True when every visible node in the default slot is an icon and there is at least one
+   * icon. Visually-hidden labels (per A11Y-002) don't disqualify icon-only detection.
+   */
+  protected hasIconOnlyContent(nodes: Node[]): boolean {
+    let hasIcon = false;
+
+    for (const node of nodes) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        if (node.textContent?.trim()) {
+          return false;
+        }
+        continue;
+      }
+
+      if (isVisuallyHidden(node)) {
+        continue;
+      }
+
+      if (this.isIconElement(node)) {
+        hasIcon = true;
+      } else {
+        return false;
+      }
+    }
+
+    return hasIcon;
+  }
+
+  /**
+   * True when the node represents an icon: an inline SVG, an element carrying the `icon`
+   * attribute, or the scope's icon component.
+   */
+  protected isIconElement(node: Node): boolean {
+    if (!(node instanceof Element)) {
+      return false;
+    }
+    if (node instanceof SVGElement) {
+      return true;
+    }
+    if (node.hasAttribute('icon')) {
+      return true;
+    }
+    return node.localName.toLowerCase() === this.scope.tagName('icon').toLowerCase();
+  }
+
   /*
    * Generate the button template.
    */
@@ -309,6 +392,7 @@ export class CoreButton extends CharmFocusableElement {
       aria-pressed=${ifDefined(!isLink && this.pressed !== undefined ? this.pressed : undefined)}
       class=${classMap({
         control: true,
+        'is-icon-button': this.iconOnly || this.isIconButton,
       })}
       href=${ifDefined(!this.disabled && this.href ? this.href : undefined)}
       name=${ifDefined(isLink ? undefined : this.name)}
