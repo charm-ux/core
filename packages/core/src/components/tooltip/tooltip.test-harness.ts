@@ -24,9 +24,11 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   const el = this.component;
                   el.open = true;
                   await elementUpdated(el);
-                  await aTimeout(500);
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  // Poll instead of sleeping: the body becomes visible in a requestAnimationFrame and
+                  // then animates over the show transition, which can exceed a fixed timeout on WebKit.
+                  await waitUntil(() => getComputedStyle(body).opacity === '1', 'tooltip body should become visible');
                   expect(body.hidden).to.be.false;
                   expect(getComputedStyle(body).opacity).to.equal('1');
                 },
@@ -53,13 +55,14 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   const el = this.component;
                   el.open = true;
                   await elementUpdated(el);
-                  await aTimeout(200);
 
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  await waitUntil(() => getComputedStyle(body).opacity === '1', 'tooltip body should become visible');
+
                   el.disabled = true;
 
                   await elementUpdated(el);
-                  await aTimeout(200);
+                  await waitUntil(() => getComputedStyle(body).opacity === '0', 'tooltip body should fade out');
 
                   expect(body.hidden).to.be.true;
                   expect(getComputedStyle(body).opacity).to.equal('0');
