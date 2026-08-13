@@ -75,6 +75,21 @@ export default css`
     transition-behavior: allow-discrete;
   }
 
+  /*
+   * Expose the animation through the convention custom-properties that
+   * CharmDismissibleElement measures ({baseName}-show/hide-transition) so its
+   * after-show / after-hide events settle once the block-size animation has
+   * actually finished. Declared only under [animated] so an unanimated item
+   * settles its after-events immediately. block-size drives the timing;
+   * content-visibility is a discrete flip.
+   */
+  :host([animated]) {
+    --accordion-item-show-transition: block-size ${component('accordionItem', 'animation', 'duration')}
+      ${component('accordionItem', 'animation', 'timingFunction')};
+    --accordion-item-hide-transition: block-size ${component('accordionItem', 'animation', 'duration')}
+      ${component('accordionItem', 'animation', 'timingFunction')};
+  }
+
   :host([disabled]) {
     cursor: not-allowed;
     background-color: ${component('accordionItem', 'disabled', 'bgColor')};
