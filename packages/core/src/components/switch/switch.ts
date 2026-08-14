@@ -99,7 +99,8 @@ export class CoreSwitch extends CharmFormControlElement {
     this.internals.setFormValue(this.checked ? this.value || 'on' : null);
   }
 
-  protected override get initialFormValue(): string {
+  /** Gets the control's initial form value for reset behavior. */
+  protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
   }
 

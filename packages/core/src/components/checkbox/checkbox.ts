@@ -76,14 +76,14 @@ export class CoreCheckbox extends CharmFormControlElement {
   /** @internal Click the checkbox. */
   public override click() {
     if (this.disabled || this.readonly) {
-      super.click();
       return;
     }
 
-    this.input ? this.input.click() : super.click();
+    this.input?.click();
   }
 
-  protected override get initialFormValue(): string {
+  /** Gets the control's initial form value for reset behavior. */
+  protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
   }
 
