@@ -77,6 +77,16 @@ export const Type: Story = {
   args: {
     type: 'password',
     label: 'Password',
+    passwordToggle: true,
+  },
+};
+
+export const Clearable: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Clearable input',
+    withClear: true,
+    value: 'Type here',
   },
 };
 

@@ -62,6 +62,37 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(this.component.shadowRoot?.querySelector('input')).attribute('type', 'password');
                 },
               },
+              clearButton: {
+                description: 'shows a clear button and clears the value when activated',
+                test: async () => {
+                  this.component.withClear = true;
+                  this.component.value = 'test';
+                  await elementUpdated(this.component);
+
+                  const clearButton = this.component.shadowRoot?.querySelector('.form-control-clear');
+                  expect(clearButton).to.not.be.null;
+                  clearButton?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                  await elementUpdated(this.component);
+
+                  expect(this.component.value).to.equal('');
+                },
+              },
+              passwordToggle: {
+                description: 'toggles password visibility when the password toggle is activated',
+                test: async () => {
+                  this.component.type = 'password';
+                  this.component.passwordToggle = true;
+                  await elementUpdated(this.component);
+
+                  const toggle = this.component.shadowRoot?.querySelector('.form-control-password-toggle');
+                  expect(toggle).to.not.be.null;
+                  toggle?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                  await elementUpdated(this.component);
+
+                  expect(this.component.passwordVisible).to.be.true;
+                  expect(this.component.shadowRoot?.querySelector('input')?.getAttribute('type')).to.equal('text');
+                },
+              },
             },
           },
           accessibility: {

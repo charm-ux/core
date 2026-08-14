@@ -90,6 +90,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected input?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
   protected internals: ElementInternals;
   protected initialValue: string = '';
+  protected defaultValue: string | null = null;
   protected _errorMessage = '';
   protected _value: string = '';
   protected _disabled: boolean = false;
@@ -195,17 +196,18 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values. */
   protected getInitialFormValue(): string {
-    return this.value;
+    return this.defaultValue ?? this.value ?? '';
   }
 
   /** Saves the current form value as the initial reset state. */
   protected syncInitialFormValue() {
+    this.defaultValue = this.getAttribute('value') ?? null;
     this.initialValue = this.getInitialFormValue();
   }
 
   /** Restores the control's initial form value. Subclasses can override for checked-backed values. */
   protected restoreInitialFormValue() {
-    this.value = this.initialValue;
+    this.value = this.defaultValue ?? this.initialValue;
   }
 
   protected formResetCallback() {

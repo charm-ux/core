@@ -2,6 +2,7 @@ import { html } from 'lit/static-html.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { live } from 'lit/directives/live.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import { keys } from '../../utilities/key-map.js';
@@ -116,6 +117,22 @@ export class CoreInput extends CharmFormControlElement {
   @property({ reflect: true })
   public placeholder?: string;
 
+  /** Adds a clear button when the input is not empty. */
+  @property({ attribute: 'with-clear', type: Boolean })
+  public withClear = false;
+
+  /** Adds a button to toggle the password's visibility. Only applies to password types. */
+  @property({ attribute: 'password-toggle', type: Boolean })
+  public passwordToggle = false;
+
+  /** Determines whether the password is currently visible. Only applies to password types. */
+  @property({ attribute: 'password-visible', type: Boolean })
+  public passwordVisible = false;
+
+  /** Tooltip text for the input. */
+  @property({ reflect: true })
+  public override title = '';
+
   //@ts-ignore
   @query('#input')
   protected override input?: HTMLInputElement;
@@ -130,7 +147,7 @@ export class CoreInput extends CharmFormControlElement {
   }
 
   public override get value() {
-    return this._value;
+    return this._value ?? this.defaultValue ?? '';
   }
 
   /** Gets or sets the current value as a `Date` object. Only valid when `type` is `date`. */
@@ -140,12 +157,13 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Gets or sets the current value as a number. */
   public get valueAsNumber() {
-    return this.input?.valueAsNumber ?? parseFloat(this.value!.toString());
+    return this.input?.valueAsNumber ?? parseFloat(this.value.toString());
   }
 
   public override set value(val: string) {
     if (this.type !== 'number') {
-      super.value = val;
+      this._value = val;
+      this.requestUpdate('value');
       return;
     }
     // check the val is within the range of min and max if they are set
@@ -155,7 +173,8 @@ export class CoreInput extends CharmFormControlElement {
     } else if (this.max && parsedValue > this.max) {
       val = this.max?.toString();
     }
-    super.value = val;
+    this._value = val;
+    this.requestUpdate('value');
   }
 
   public set valueAsDate(newValue: Date | null) {
@@ -174,6 +193,61 @@ export class CoreInput extends CharmFormControlElement {
     input.type = 'number';
     input.valueAsNumber = newValue;
     this.value = input.value;
+  }
+
+  /** Shows the browser picker for supported input types. */
+  public showPicker() {
+    if ('showPicker' in HTMLInputElement.prototype && this.input) {
+      this.input.showPicker();
+    }
+  }
+
+  /** Selects all input text. */
+  public select() {
+    this.input?.select();
+  }
+
+  /** Sets the start and end positions of the selection. */
+  public setSelectionRange(
+    selectionStart: number,
+    selectionEnd: number,
+    selectionDirection: 'forward' | 'backward' | 'none' = 'none'
+  ) {
+    this.input?.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
+  }
+
+  /** Replaces a range of text in the input. */
+  public setRangeText(
+    replacement: string,
+    start?: number,
+    end?: number,
+    selectMode: 'select' | 'start' | 'end' | 'preserve' = 'preserve'
+  ) {
+    this.input?.setRangeText(
+      replacement,
+      start ?? this.input.selectionStart ?? 0,
+      end ?? this.input.selectionEnd ?? 0,
+      selectMode
+    );
+    if (this.input && this.value !== this.input.value) {
+      this.value = this.input.value;
+    }
+  }
+
+  /** Increments the value of a numeric input type by the value of the step attribute. */
+  public stepUp() {
+    this.input?.stepUp();
+    if (this.input && this.value !== this.input.value) {
+      this.value = this.input.value;
+    }
+  }
+
+  /** Decrements the value of a numeric input type by the value of the step attribute. */
+  public stepDown() {
+    this.input?.stepDown();
+    if (this.input && this.value !== this.input.value) {
+      this.value = this.input.value;
+    }
   }
 
   public override disconnectedCallback(): void {
@@ -210,6 +284,22 @@ export class CoreInput extends CharmFormControlElement {
     this.value = this.input!.value;
   }
 
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+
+    if (changedProperties.has('value') || changedProperties.has('defaultValue') || changedProperties.has('type')) {
+      const sanitizingTypes = ['number', 'date', 'time', 'datetime-local'];
+      if (
+        this.input &&
+        sanitizingTypes.includes(this.type ?? 'text') &&
+        this.value &&
+        this.input.value !== this.value
+      ) {
+        this._value = this.input.value;
+      }
+    }
+  }
+
   /** Handles the Enter key press event. */
   protected handleEnterKey(event: KeyboardEvent) {
     this.enterKeyTimer = window.setTimeout(() => {
@@ -240,6 +330,23 @@ export class CoreInput extends CharmFormControlElement {
     this.handleSliderReadonly(event);
   }
 
+  /** Handles the clear button click event. */
+  protected handleClearClick(event: MouseEvent) {
+    event.preventDefault();
+    if (this.value !== '') {
+      this.value = '';
+      this.input?.focus();
+      this.emitInput();
+      this.emitChange();
+    }
+  }
+
+  /** Handles the password toggle click event. */
+  protected handlePasswordToggle() {
+    if (this.type !== 'password' || this.disabled || this.readonly) return;
+    this.passwordVisible = !this.passwordVisible;
+  }
+
   /**
    * Handles the `mousedown` event for slider.
    */
@@ -251,6 +358,7 @@ export class CoreInput extends CharmFormControlElement {
    * Generates the template for the native input element.
    */
   protected inputElementTemplate() {
+    const isPasswordVisible = this.type === 'password' && this.passwordVisible;
     return html`
       <input
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
@@ -272,12 +380,13 @@ export class CoreInput extends CharmFormControlElement {
         max=${ifDefined(this.max)}
         spellcheck=${ifDefined(this.spellcheck)}
         step=${ifDefined(this.step)}
+        title=${ifDefined(this.title)}
         ?readonly=${this.readonly}
         ?autofocus=${this.autofocus}
-        type=${this.type ?? 'text'}
+        type=${isPasswordVisible ? 'text' : (this.type ?? 'text')}
         ?disabled=${this.disabled}
         ?required=${this.required}
-        .value=${this._value}
+        .value=${live(this.value ?? '')}
         @change=${this.handleChange}
         @input=${this.handleInput}
         @keydown=${this.handleKeyDown}
@@ -313,8 +422,34 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Generates the template for the input's control. */
   protected inputControlTemplate() {
+    const hasClearButton = this.withClear && !this.disabled && !this.readonly && !!this.value;
+    const hasPasswordToggle = this.passwordToggle && !this.disabled && this.type === 'password';
+
     return html`<div part="input-control" class="form-control-input">
-      ${this.inputStartTemplate()} ${this.inputElementTemplate()} ${this.dataListTemplate()}${this.inputEndTemplate()}
+      ${this.inputStartTemplate()} ${this.inputElementTemplate()} ${this.dataListTemplate()}
+      ${hasClearButton
+        ? html`<button
+            type="button"
+            class="form-control-clear"
+            @click=${this.handleClearClick}
+            tabindex="-1"
+            aria-label="Clear input"
+          >
+            <scoped-icon name="dismiss"></scoped-icon>
+          </button>`
+        : ''}
+      ${hasPasswordToggle
+        ? html`<button
+            type="button"
+            class="form-control-password-toggle"
+            @click=${this.handlePasswordToggle}
+            tabindex="-1"
+            aria-label=${this.passwordVisible ? 'Hide password' : 'Show password'}
+          >
+            <scoped-icon name=${this.passwordVisible ? 'eye-slash' : 'eye'}></scoped-icon>
+          </button>`
+        : ''}
+      ${this.inputEndTemplate()}
     </div>`;
   }
 
