@@ -1136,6 +1136,17 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values."
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
               "return": {
@@ -1406,6 +1417,12 @@
               "description": "Generates the template for the required asterisk"
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values."
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -1442,6 +1459,12 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state."
             },
             {
               "kind": "method",
@@ -6822,6 +6845,12 @@
             },
             {
               "kind": "field",
+              "name": "handleSlotChange",
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "hasFocus",
               "type": {
                 "text": "boolean"
@@ -8462,6 +8491,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
               "return": {
@@ -8827,6 +8871,21 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -8866,6 +8925,16 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -12153,6 +12222,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getOptions",
               "privacy": "protected",
               "description": "Gets all the options in the datalist from the input"
@@ -12693,6 +12777,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -12756,6 +12850,16 @@
               "description": "The input's step attribute.",
               "attribute": "step",
               "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -14657,16 +14761,6 @@
               "description": "Menu items"
             },
             {
-              "kind": "field",
-              "name": "lastFocusedItem",
-              "type": {
-                "text": "HTMLElement | null | undefined"
-              },
-              "privacy": "protected",
-              "default": "null",
-              "description": "The last focused item before a submenu was opened"
-            },
-            {
               "kind": "method",
               "name": "menuTemplate",
               "privacy": "protected",
@@ -14963,6 +15057,25 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "userTypedQuery",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "description": "The characters accumulated for type-ahead search."
+            },
+            {
+              "kind": "field",
+              "name": "userTypedTimeout",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "privacy": "protected",
+              "description": "Handle for the timer that resets the type-ahead query after a pause in typing."
             }
           ],
           "events": [
@@ -18966,6 +19079,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getNativeErrorMessage",
               "privacy": "protected"
             },
@@ -19427,6 +19555,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -19468,6 +19606,16 @@
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               },
               "description": "The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus\nand hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,\nfind none, and silently drop the `focus()` call."
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -21369,6 +21517,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getOptionNodes",
               "privacy": "protected",
               "description": "Gets the direct option and optgroup children for the select."
@@ -21827,6 +21990,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -21895,6 +22068,16 @@
               "name": "startTemplate",
               "privacy": "protected",
               "description": "Generates the start slot template"
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -23577,6 +23760,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
               "return": {
@@ -23979,6 +24177,21 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -24025,6 +24238,16 @@
               "name": "switchTemplate",
               "privacy": "protected",
               "description": "Generates the template for the switch."
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -26185,6 +26408,21 @@
             },
             {
               "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
               "return": {
@@ -26602,6 +26840,16 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "rows",
               "type": {
@@ -26653,6 +26901,16 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
