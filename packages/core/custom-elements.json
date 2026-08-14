@@ -9713,18 +9713,33 @@
             },
             {
               "kind": "field",
-              "name": "handleKeydown",
+              "name": "handleDialogCancel",
               "privacy": "protected",
-              "description": "Handles the 'keydown' event, specifically for the 'Escape' key.",
+              "description": "Handles the native 'cancel' event, which the browser fires when the user presses Escape.\nThe browser natively targets the event at the correct dialog in the top layer: the topmost\nmodal dialog on Firefox and WebKit, and each nested dialog in sequence on Chromium. preventDefault()\nalways so the native dialog never closes itself outside Charm's transition flow.",
               "parameters": [
                 {
-                  "description": "The 'keydown' event object.",
-                  "name": "e",
+                  "description": "The 'cancel' event object.",
+                  "name": "event",
                   "type": {
-                    "text": "KeyboardEvent"
+                    "text": "Event"
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "handleRenderedChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "isRendered",
+                  "type": {
+                    "text": "boolean"
+                  },
+                  "description": "Whether the host still generates layout boxes."
+                }
+              ],
+              "description": "Suspends the modal when third-party CSS (e.g. cookie banner blockers) hides an open dialog, so\nthe page isn't left scroll locked and inert. \"open\" stays true so the modal resumes if the\ndialog is rendered again."
             },
             {
               "kind": "method",
@@ -9928,6 +9943,15 @@
               "default": "''"
             },
             {
+              "kind": "field",
+              "name": "renderedWatcher",
+              "type": {
+                "text": "RenderedWatcher | undefined"
+              },
+              "privacy": "private",
+              "description": "Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert."
+            },
+            {
               "kind": "method",
               "name": "requestClose",
               "privacy": "protected",
@@ -9993,6 +10017,18 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "startRenderedWatcher",
+              "privacy": "protected",
+              "description": "Starts watching the dialog's render state, tearing down any previous watcher first."
+            },
+            {
+              "kind": "method",
+              "name": "stopRenderedWatcher",
+              "privacy": "protected",
+              "description": "Stops watching the dialog's render state."
             },
             {
               "kind": "method",
@@ -11238,17 +11274,8 @@
             },
             {
               "kind": "field",
-              "name": "cachedUrl",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
               "name": "defaultIcon",
-              "privacy": "protected",
-              "default": "this.icons['question']"
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -11263,6 +11290,17 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "flip",
+              "type": {
+                "text": "'x' | 'y' | 'both' | undefined"
+              },
+              "privacy": "public",
+              "description": "Sets the flip direction of the icon.",
+              "attribute": "flip",
+              "reflects": true
             },
             {
               "kind": "method",
@@ -11322,12 +11360,6 @@
               "privacy": "protected"
             },
             {
-              "kind": "method",
-              "name": "iconTemplate",
-              "privacy": "protected",
-              "description": "Generates the icon template."
-            },
-            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -11352,6 +11384,11 @@
               "kind": "method",
               "name": "requestIcon",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<SVGResult>"
+                }
+              },
               "parameters": [
                 {
                   "name": "url",
@@ -11360,6 +11397,18 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "rotate",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "public",
+              "default": "0",
+              "description": "Sets the rotation degree of the icon.",
+              "attribute": "rotate",
+              "reflects": true
             },
             {
               "kind": "field",
@@ -11382,10 +11431,15 @@
               "kind": "field",
               "name": "svg",
               "type": {
-                "text": "string"
+                "text": "SVGSVGElement | null"
               },
               "privacy": "protected",
-              "default": "''"
+              "default": "null"
+            },
+            {
+              "kind": "method",
+              "name": "syncIconNode",
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -11436,6 +11490,14 @@
               }
             },
             {
+              "name": "flip",
+              "type": {
+                "text": "'x' | 'y' | 'both' | undefined"
+              },
+              "description": "Sets the flip direction of the icon.",
+              "fieldName": "flip"
+            },
+            {
               "name": "label",
               "type": {
                 "text": "string | undefined"
@@ -11450,6 +11512,15 @@
               },
               "description": "The name of the icon to draw.",
               "fieldName": "name"
+            },
+            {
+              "name": "rotate",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Sets the rotation degree of the icon.",
+              "fieldName": "rotate"
             },
             {
               "name": "url",

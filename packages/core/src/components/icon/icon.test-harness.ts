@@ -33,16 +33,17 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                 },
               },
               roleImgWhenLabel: {
-                description: 'sets role="img" and aria-label on the icon base when a label is provided',
+                description: 'renders a visually-hidden label for assistive tech when a label is provided',
                 test: async () => {
                   const el = this.component;
                   el.label = 'Close';
                   await elementUpdated(el);
                   const base = el.shadowRoot?.querySelector('[part="icon-base"]');
                   expect(base?.getAttribute('role')).to.equal('img');
-                  expect(base?.getAttribute('aria-label')).to.equal('Close');
+                  expect(base?.querySelector('.visually-hidden')?.textContent).to.equal('Close');
                 },
               },
+
               ariaHiddenWithoutLabel: {
                 description: 'marks the icon base as aria-hidden when no label is provided',
                 test: async () => {
@@ -51,8 +52,21 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                   expect(base?.getAttribute('aria-hidden')).to.equal('true');
                 },
               },
+              rotateAndFlipTransform: {
+                description: 'applies rotation and flip values to the rendered svg',
+                test: async () => {
+                  const el = this.component;
+                  el.rotate = 90;
+                  el.flip = 'both';
+                  await elementUpdated(el);
+                  expect(el.style.getPropertyValue('--icon-rotate')).to.equal('90deg');
+                  expect(el.style.getPropertyValue('--icon-scale-x')).to.equal('-1');
+                  expect(el.style.getPropertyValue('--icon-scale-y')).to.equal('-1');
+                },
+              },
             },
           },
+
           events: {
             description: 'events',
             tests: {
