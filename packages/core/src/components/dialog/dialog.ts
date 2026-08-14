@@ -2,9 +2,9 @@ import { LitElement } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-import { keys } from '../../utilities/key-map.js';
 // import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
+import { RenderedWatcher } from '../../internal/rendered-watcher.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import styles from './dialog.styles.js';
@@ -121,6 +121,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
   protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
 
+  /** Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert. */
+  private renderedWatcher?: RenderedWatcher;
+
   // protected readonly focusTrapController = new FocusTrapController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
@@ -129,7 +132,6 @@ export class CoreDialog extends CharmDismissibleElement {
 
   public override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('keydown', this.handleKeydown);
     this.setAttribute('focusable', '');
     if (this.open) {
       this.dialog?.setAttribute('hidden', '');
@@ -139,7 +141,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   public override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('keydown', this.handleKeydown);
+    this.stopRenderedWatcher();
     if (this.open) {
       this.unlockBodyScrolling();
     }
@@ -167,8 +169,10 @@ export class CoreDialog extends CharmDismissibleElement {
         this.visible = true;
       });
       this.lockBodyScrolling();
+      this.startRenderedWatcher();
     } else {
       this.visible = false;
+      this.stopRenderedWatcher();
       this.unlockBodyScrolling();
       // the dialog will be closed in handleTransitionEnd if there is animation
       if (!this.transition) {
@@ -176,6 +180,25 @@ export class CoreDialog extends CharmDismissibleElement {
       }
     }
     super.onOpenChange(open);
+  }
+
+  /** Starts watching the dialog's render state, tearing down any previous watcher first. */
+  protected startRenderedWatcher() {
+    if (!this.dialog) return;
+
+    // Starting is idempotent: dispose any previous watcher before re-arming (COMP-010).
+    if (this.renderedWatcher) {
+      this.renderedWatcher.stop();
+    }
+
+    this.renderedWatcher = new RenderedWatcher(this, isRendered => this.handleRenderedChange(isRendered));
+    this.renderedWatcher.start(this.dialog);
+  }
+
+  /** Stops watching the dialog's render state. */
+  protected stopRenderedWatcher() {
+    this.renderedWatcher?.stop();
+    this.renderedWatcher = undefined;
   }
 
   /** Lock body scrolling. */
@@ -227,18 +250,42 @@ export class CoreDialog extends CharmDismissibleElement {
   }
 
   /**
-   * Handles the 'keydown' event, specifically for the 'Escape' key.
-   * @param {KeyboardEvent} e - The 'keydown' event object.
+   * Handles the native 'cancel' event, which the browser fires when the user presses Escape.
+   * The browser natively targets the event at the correct dialog in the top layer: the topmost
+   * modal dialog on Firefox and WebKit, and each nested dialog in sequence on Chromium. preventDefault()
+   * always so the native dialog never closes itself outside Charm's transition flow.
+   * @param {Event} event - The 'cancel' event object.
    */
-  protected handleKeydown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case keys.Escape:
-        e.stopPropagation();
-        e.preventDefault();
-        this.requestClose('keyboard');
-        break;
-    }
+  protected handleDialogCancel = (event: Event) => {
+    event.preventDefault();
+
+    if (!this.open) return;
+
+    this.requestClose('keyboard');
   };
+
+  /**
+   * Suspends the modal when third-party CSS (e.g. cookie banner blockers) hides an open dialog, so
+   * the page isn't left scroll locked and inert. "open" stays true so the modal resumes if the
+   * dialog is rendered again.
+   * @param {boolean} isRendered - Whether the host still generates layout boxes.
+   */
+  protected handleRenderedChange(isRendered: boolean) {
+    if (!this.isConnected || !this.open) {
+      this.stopRenderedWatcher();
+      return;
+    }
+
+    if (!isRendered && this.dialog?.open) {
+      // Suspend the modal while hidden so the page stays scrollable and interactive
+      this.dialog.close();
+      this.unlockBodyScrolling();
+    } else if (isRendered && this.dialog && !this.dialog.open) {
+      // Resume the modal now that the dialog is rendered again
+      this.dialog.showModal();
+      this.lockBodyScrolling();
+    }
+  }
 
   /**
    * Handles the 'transitionend' event for CSS transitions.
@@ -359,6 +406,7 @@ export class CoreDialog extends CharmDismissibleElement {
       part="dialog-base"
       aria-labelledby="header"
       tabindex=${this.open ? 0 : -1}
+      @cancel=${this.handleDialogCancel}
       @pointerup=${this.lightDismiss}
       @transitionend=${this.handleTransitionEnd}
       role=${ifDefined(this.alert ? 'alertdialog' : undefined)}

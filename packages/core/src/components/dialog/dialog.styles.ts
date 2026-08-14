@@ -10,6 +10,17 @@ export default css`
    */
   :host {
     color-scheme: inherit;
+    /*
+     * The host is always a block. It is empty while closed, so nothing is visible, but it must
+     * generate a layout box while open for dialog's RenderedWatcher, which uses the host's
+     * getClientRects() to detect when third-party CSS (e.g. cookie banner blockers) hides the open
+     * dialog and the page would otherwise be left inert and scroll locked.
+     *
+     * It must also stay rendered when [open] is removed on close: the internal <dialog> fades out
+     * from that moment, and a display: none host would hide the fade and prevent transitionend
+     * from firing, breaking the close animation.
+     */
+    display: block;
   }
 
   dialog {
