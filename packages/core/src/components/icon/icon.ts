@@ -1,7 +1,6 @@
 import { html } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { project } from '../../utilities/project.js';
 import styles from './icon.styles.js';
@@ -14,6 +13,36 @@ export interface IconResponse {
 
 export interface IconErrorEvent {
   status: number;
+}
+
+const CACHEABLE_ERROR = Symbol('cacheable-error');
+const RETRYABLE_ERROR = Symbol('retryable-error');
+
+type SVGResult = SVGSVGElement | typeof CACHEABLE_ERROR | typeof RETRYABLE_ERROR;
+const iconCache = new Map<string, Promise<SVGResult>>();
+const svgMarkupCache = new Map<string, SVGSVGElement>();
+
+function parseSvg(markup: string): SVGSVGElement | null {
+  const cached = svgMarkupCache.get(markup);
+  if (cached) {
+    return cached.cloneNode(true) as SVGSVGElement;
+  }
+
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(markup, 'image/svg+xml');
+    const svgEl = doc.documentElement;
+
+    if (!svgEl || svgEl.nodeName.toLowerCase() !== 'svg') {
+      return null;
+    }
+
+    const adoptedSvg = document.adoptNode(svgEl) as unknown as SVGSVGElement;
+    svgMarkupCache.set(markup, adoptedSvg);
+    return adoptedSvg.cloneNode(true) as SVGSVGElement;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -44,96 +73,155 @@ export class CoreIcon extends CharmElement {
   @property()
   public url?: string;
 
+  /** Sets the rotation degree of the icon. */
+  @property({ type: Number, reflect: true })
+  public rotate = 0;
+
+  /** Sets the flip direction of the icon. */
+  @property({ reflect: true })
+  public flip?: 'x' | 'y' | 'both';
+
   @state()
-  protected svg = '';
+  protected svg: SVGSVGElement | null = null;
 
   protected icons = project.iconSet;
-  protected cachedUrl?: string;
-  protected defaultIcon = this.icons['question'];
+  protected defaultIcon =
+    parseSvg(this.icons['question']) ?? document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
   protected override async willUpdate() {
     await this.setIcon();
   }
 
   protected async setIcon() {
-    // If no name or url is set, use the default icon.
     if (!this.name && !this.url) {
-      this.svg = this.defaultIcon;
+      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
       return;
     }
 
-    // If a name is set, use the default icons.
     if (this.name) {
-      this.svg = (this.icons as any)[this.name] || this.defaultIcon;
+      const icon = parseSvg((this.icons as Record<string, string>)[this.name] || this.icons['question']);
+      this.svg = icon ? (icon.cloneNode(true) as SVGSVGElement) : (this.defaultIcon.cloneNode(true) as SVGSVGElement);
       return;
     }
 
-    // If the url hasn't changed, don't fetch it again.
-    if (this.cachedUrl === this.url) return;
-
-    this.cachedUrl = `${this.url}`;
-
-    try {
-      const file = await this.requestIcon(this.cachedUrl)!;
-
-      if (this.cachedUrl !== this.url) {
-        // If the url has changed while fetching the icon, ignore this request.
-        return;
-      } else if (file.ok) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(file.svg, 'text/html');
-        const svgEl = doc.body.querySelector('svg');
-
-        if (svgEl) {
-          this.svg = svgEl.outerHTML;
-          this.emit('icon-load');
-        } else {
-          this.svg = this.defaultIcon;
-          this.emit('icon-error', { detail: { status: file.status } });
-        }
-      } else {
-        this.svg = this.defaultIcon;
-        this.emit('icon-error', { detail: { status: file.status } });
-      }
-    } catch (e) {
-      this.svg = this.defaultIcon;
-      this.emit('icon-error', { detail: { status: -1 } });
+    const resolvedUrl = `${this.url}`;
+    if (!resolvedUrl) {
+      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
+      return;
     }
+
+    let iconResolver = iconCache.get(resolvedUrl);
+    if (!iconResolver) {
+      iconResolver = this.requestIcon(resolvedUrl);
+      iconCache.set(resolvedUrl, iconResolver);
+    }
+
+    const icon = await iconResolver;
+
+    if (icon === RETRYABLE_ERROR) {
+      iconCache.delete(resolvedUrl);
+    }
+
+    if (resolvedUrl !== this.url) {
+      return;
+    }
+
+    if (icon === RETRYABLE_ERROR || icon === CACHEABLE_ERROR) {
+      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
+      this.emit('icon-error', { detail: { status: icon === RETRYABLE_ERROR ? 503 : 500 } });
+      return;
+    }
+
+    this.svg = icon.cloneNode(true) as SVGSVGElement;
+    this.emit('icon-load');
   }
 
-  protected requestIcon(url: string) {
-    return fetch(url).then(async response => {
-      if (response.ok) {
-        const div = document.createElement('div');
-        div.innerHTML = await response.text();
-        const svg = div.firstElementChild;
+  protected requestIcon(url: string): Promise<SVGResult> {
+    return fetch(url)
+      .then(async response => {
+        if (!response.ok) {
+          return response.status === 410 ? CACHEABLE_ERROR : RETRYABLE_ERROR;
+        }
 
-        return {
-          ok: response.ok,
-          status: response.status,
-          svg: svg && svg.tagName.toLowerCase() === 'svg' ? svg.outerHTML : '',
-        };
-      } else {
-        return {
-          ok: response.ok,
-          status: response.status,
-          svg: null,
-        };
-      }
-    }) as Promise<IconResponse>;
+        const markup = await response.text();
+        const parsedSvg = parseSvg(markup);
+
+        if (!parsedSvg) {
+          return CACHEABLE_ERROR;
+        }
+
+        return parsedSvg;
+      })
+      .catch(() => RETRYABLE_ERROR);
+  }
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    const shouldSyncSvg =
+      changedProperties.has('svg') ||
+      changedProperties.has('rotate') ||
+      changedProperties.has('flip') ||
+      changedProperties.has('label');
+
+    if (shouldSyncSvg) {
+      this.syncIconNode();
+    }
   }
 
   protected override render() {
-    return this.iconTemplate();
+    return html`
+      <span
+        part="icon-base"
+        role=${ifDefined(this.label ? 'img' : undefined)}
+        aria-label=${ifDefined(this.label)}
+        aria-hidden=${ifDefined(this.label ? undefined : 'true')}
+      >
+        ${this.label ? html`<span class="visually-hidden">${this.label}</span>` : ''}
+      </span>
+    `;
   }
 
-  /** Generates the icon template. */
-  protected iconTemplate() {
-    return html`
-      ${this.label
-        ? html` <span part="icon-base" role="img" aria-label=${ifDefined(this.label)}> ${unsafeSVG(this.svg)} </span> `
-        : html` <span part="icon-base" aria-hidden="true"> ${unsafeSVG(this.svg)} </span> `}
-    `;
+  protected syncIconNode() {
+    const base = this.shadowRoot?.querySelector('[part="icon-base"]');
+    if (!base) {
+      return;
+    }
+
+    const label = base.querySelector('.visually-hidden');
+    if (this.label) {
+      if (!label) {
+        const hiddenLabel = document.createElement('span');
+        hiddenLabel.classList.add('visually-hidden');
+        hiddenLabel.textContent = this.label;
+        base.prepend(hiddenLabel);
+      } else {
+        label.textContent = this.label;
+      }
+    } else if (label) {
+      label.remove();
+    }
+
+    const svg = this.svg?.cloneNode(true) as SVGSVGElement | null;
+    if (!svg) {
+      return;
+    }
+
+    const existingSvg = base.querySelector('[part="svg"]');
+    if (existingSvg) {
+      existingSvg.replaceWith(svg);
+    } else {
+      base.append(svg);
+    }
+
+    svg.setAttribute('part', 'svg');
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('viewBox', '0 0 16 16');
+    svg.setAttribute('aria-hidden', 'true');
+
+    const scaleX = this.flip === 'x' || this.flip === 'both' ? -1 : 1;
+    const scaleY = this.flip === 'y' || this.flip === 'both' ? -1 : 1;
+    this.style.setProperty('--icon-rotate', `${this.rotate}deg`);
+    this.style.setProperty('--icon-scale-x', `${scaleX}`);
+    this.style.setProperty('--icon-scale-y', `${scaleY}`);
   }
 }
 
