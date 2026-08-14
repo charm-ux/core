@@ -158,9 +158,9 @@ export class CoreMenuItem extends CharmElement {
     this.removeEventListener('click', this.handleClick);
     this.removeEventListener('keydown', this.handleMenuItemKeyDown);
 
-    const parentMenu = this.closest('[menu]');
-    if (parentMenu) {
-      parentMenu.removeEventListener('menu-hide', this.handleParentMenuHide);
+    if (this.parentMenu) {
+      this.parentMenu.removeEventListener('menu-hide', this.handleParentMenuHide);
+      this.parentMenu = null;
     }
 
     if (this.hasSubmenu) {

@@ -75,11 +75,14 @@ export class CoreMenu extends CharmDismissibleElement {
   /** The index of the currently focused item */
   protected focusIndex = 0;
 
-  /** The last focused item before a submenu was opened */
-  protected lastFocusedItem?: HTMLElement | null = null;
-
   /** Query for the trigger element */
   protected trigger?: HTMLElement;
+
+  /** The characters accumulated for type-ahead search. */
+  protected userTypedQuery = '';
+
+  /** Handle for the timer that resets the type-ahead query after a pause in typing. */
+  protected userTypedTimeout?: ReturnType<typeof setTimeout>;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CorePopup];
@@ -124,6 +127,7 @@ export class CoreMenu extends CharmDismissibleElement {
 
   public override disconnectedCallback() {
     super.disconnectedCallback();
+    clearTimeout(this.userTypedTimeout);
     document.removeEventListener('click', this.handlePageClick);
     this.removeEventListener('keydown', this.handleKeyDown);
     this.removeEventListener('focusout', this.handleFocusOut);
@@ -230,7 +234,6 @@ export class CoreMenu extends CharmDismissibleElement {
             currentItem.click();
           } else if (this.open) {
             if (currentItem.hasSubmenu && !currentItem.expanded) {
-              this.lastFocusedItem = currentItem;
               currentItem.expanded = true;
               await this.updateComplete;
             } else {
@@ -254,6 +257,34 @@ export class CoreMenu extends CharmDismissibleElement {
           keyHandled = true;
         }
         break;
+    }
+
+    // Type-ahead search: jump to the first item whose label starts with the typed characters
+    // (APG menu pattern). Only single printable characters while open and unmodified count; a
+    // Space is ignored when it would start a new query so Space still activates a focused item.
+    if (
+      this.open &&
+      e.key.length === 1 &&
+      !(e.metaKey || e.ctrlKey || e.altKey) &&
+      !(e.key === ' ' && this.userTypedQuery === '')
+    ) {
+      clearTimeout(this.userTypedTimeout);
+      this.userTypedTimeout = setTimeout(() => {
+        this.userTypedQuery = '';
+      }, 1000);
+
+      this.userTypedQuery += e.key.toLowerCase();
+
+      const itemToSelect = this.items.find(
+        item =>
+          !item.hasAttribute('disabled') &&
+          (item.textContent ?? '').trim().toLowerCase().startsWith(this.userTypedQuery)
+      );
+
+      if (itemToSelect) {
+        this.setFocus(this.items.indexOf(itemToSelect));
+        keyHandled = true;
+      }
     }
 
     if (keyHandled) {
@@ -374,7 +405,7 @@ export class CoreMenu extends CharmDismissibleElement {
 
     if (parentGroup) {
       // If navigating inside a group, get the group's items instead
-      items = Array.from(parentGroup.querySelectorAll('ch-menu-item'));
+      items = Array.from(parentGroup.querySelectorAll(this.scope.tagName('menu-item')));
     }
 
     if (!items?.length) return;
@@ -429,7 +460,6 @@ export class CoreMenu extends CharmDismissibleElement {
       }
     });
 
-    this.items = slottedElements;
     this.initializeItems();
   };
 

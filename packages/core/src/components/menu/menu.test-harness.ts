@@ -323,6 +323,32 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                   expect(el.open).to.be.false;
                 },
               },
+              typeAhead: {
+                description: 'focuses the menu item matching the characters typed',
+                test: async () => {
+                  const el = this.component;
+                  const triggerElement = el.querySelector('#triggerId') as HTMLButtonElement;
+                  const menuItems = el.querySelectorAll('[role="menuitem"]');
+                  const alphaItem = menuItems[2] as HTMLElement;
+                  alphaItem.textContent = 'Alpha';
+                  await elementUpdated(el);
+
+                  const handleFocus = sinon.spy();
+                  alphaItem.focus = handleFocus;
+
+                  triggerElement.focus();
+                  await elementUpdated(el);
+                  await sendKeys({ press: 'Enter' });
+                  await elementUpdated(el);
+
+                  expect(el.open).to.be.true;
+
+                  await sendKeys({ press: 'a' });
+                  await elementUpdated(el);
+
+                  expect(handleFocus).to.have.been.calledOnce;
+                },
+              },
               popupRequestClose: {
                 description: 'should set "open" to false when the popup requests a close',
                 test: async () => {
