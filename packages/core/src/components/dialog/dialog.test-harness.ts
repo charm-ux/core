@@ -217,6 +217,76 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   nested.remove();
                 },
               },
+              suspendAndResume: {
+                description:
+                  'suspends the modal when hidden by external CSS while open, and resumes when rendered again',
+                test: async () => {
+                  const el = this.component;
+                  const previous = document.body.style.overflow;
+                  const dialogElement = () => el.shadowRoot?.querySelector('dialog');
+
+                  el.open = true;
+                  await waitUntil(() => dialogElement()?.hasAttribute('open') === true, 'dialog should open', {
+                    timeout: 2500,
+                  });
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  // Simulate third-party CSS hiding the dialog host (e.g. a cookie banner blocker)
+                  el.style.display = 'none';
+                  await waitUntil(
+                    () => dialogElement()?.hasAttribute('open') === false,
+                    'dialog should suspend while hidden',
+                    { timeout: 2500 }
+                  );
+                  expect(document.body.style.overflow).to.equal(previous);
+                  expect(el.open).to.be.true;
+
+                  // Simulate the third-party CSS being lifted
+                  el.style.display = '';
+                  await waitUntil(
+                    () => dialogElement()?.hasAttribute('open') === true,
+                    'dialog should resume when rendered again',
+                    { timeout: 2500 }
+                  );
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  el.open = false;
+                  await waitUntil(() => !el.open, 'dialog should close', {
+                    timeout: 2500,
+                  });
+                },
+              },
+              closeTransitionPlays: {
+                description: 'should play the close transition so the dialog closes via transitionend',
+                test: async () => {
+                  const el = this.component;
+                  // Use a duration long enough that transitionend fires reliably on every browser.
+                  // The fixture's 1ms transition is sub-frame and Firefox skips the transition.
+                  el.style.setProperty('--dialog-transition', 'opacity 300ms');
+                  el.open = true;
+                  await waitUntil(
+                    () => el.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
+                    'dialog should open',
+                    {
+                      timeout: 2500,
+                    }
+                  );
+                  await aTimeout(350); // let the open transition complete
+
+                  const dialogElement = el.shadowRoot!.querySelector('dialog')!;
+                  const transitionEnded = sinon.spy();
+                  dialogElement.addEventListener('transitionend', transitionEnded);
+
+                  // The host must stay rendered while the dialog fades out. A display: none host would
+                  // hide the fade, prevent transitionend from firing, and break the close animation.
+                  el.open = false;
+                  await waitUntil(() => transitionEnded.called, 'transitionend should fire on close', {
+                    timeout: 2500,
+                  });
+                  await waitUntil(() => !el.open, 'dialog should close', { timeout: 2500 });
+                  expect(el.open).to.be.false;
+                },
+              },
             },
           },
           events: {
@@ -354,6 +424,58 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   await sendKeys({ press: 'Escape' });
                   await waitUntil(() => spy.calledOnce);
                   expect(this.component.open).to.be.false;
+                },
+              },
+              cancelEventCloses: {
+                description: 'should close the dialog when the native cancel event fires',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+                  await waitUntil(
+                    () => el.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
+                    'dialog should open',
+                    {
+                      timeout: 2500,
+                    }
+                  );
+
+                  const dialogElement = el.shadowRoot!.querySelector('dialog')!;
+                  dialogElement.dispatchEvent(new Event('cancel', { cancelable: true, bubbles: true }));
+
+                  await waitUntil(() => !el.open, 'dialog should close', {
+                    timeout: 2500,
+                  });
+                  expect(el.open).to.be.false;
+                },
+              },
+              escapeClosesTopmost: {
+                description: 'should close the topmost dialog when Escape is pressed and multiple dialogs are open',
+                test: async () => {
+                  const outer = this.component;
+                  const inner = document.createElement(project.scope.tagName('dialog')) as CoreDialog;
+                  outer.appendChild(inner);
+                  await elementUpdated(outer);
+                  await elementUpdated(inner);
+
+                  outer.open = true;
+                  await waitUntil(
+                    () => outer.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
+                    'outer dialog should open',
+                    { timeout: 2500 }
+                  );
+
+                  inner.open = true;
+                  await waitUntil(
+                    () => inner.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
+                    'inner dialog should open',
+                    { timeout: 2500 }
+                  );
+
+                  await sendKeys({ press: 'Escape' });
+                  await waitUntil(() => !inner.open, 'topmost dialog should close first', { timeout: 2500 });
+                  expect(inner.open).to.be.false;
+
+                  inner.remove();
                 },
               },
               restoreFocus: {
