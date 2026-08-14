@@ -75,29 +75,43 @@ export class CoreCheckbox extends CharmFormControlElement {
 
   /** @internal Click the checkbox. */
   public override click() {
-    super.click();
-    if (!this.disabled && !this.readonly) {
-      this.input?.click();
+    if (this.disabled || this.readonly) {
+      return;
     }
+
+    this.input?.click();
+  }
+
+  /** Gets the control's initial form value for reset behavior. */
+  protected override getInitialFormValue(): string {
+    return this.checked ? this.value || 'on' : '';
   }
 
   protected override firstUpdated(): void {
     super.firstUpdated();
-    this.initialValue = this.checked ? this.value || 'on' : '';
+    this.syncInitialFormValue();
   }
 
   protected override formResetCallback(): void {
     this.checked = this.initialValue === 'on';
   }
 
+  protected override restoreInitialFormValue(): void {
+    this.checked = this.initialValue === 'on';
+  }
+
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
+
     if (changedProperties.has('checked')) {
       this.internals.setFormValue(this.checked ? this.value || 'on' : null);
       this.validate();
     }
     if (changedProperties.has('hasFocus')) {
       this.validate();
+    }
+    if (changedProperties.has('value')) {
+      this.internals.setFormValue(this.checked ? this.value || 'on' : null);
     }
   }
 
@@ -146,7 +160,6 @@ export class CoreCheckbox extends CharmFormControlElement {
             aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
             aria-invalid=${this.invalid}
             class="input"
-            id=${ifDefined(this.name)}
             name=${ifDefined(this.name)}
             type="checkbox"
             value=${ifDefined(this.value)}
