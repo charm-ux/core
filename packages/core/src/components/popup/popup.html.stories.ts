@@ -58,14 +58,14 @@ export const Default: Story = {
       .box {
         width: 100px;
         height: 50px;
-        background: blue;
+        background: var(--popup-bg-color, #f3f4f6);
       }
     </style>
   `,
   args: {
     open: false,
     arrow: true,
-    '--popup-arrow-color': 'blue',
+    '--popup-bg-color': 'blue',
   },
 };
 
@@ -102,7 +102,7 @@ export const Animation: Story = {
       .box {
         width: 100px;
         height: 50px;
-        background: blue;
+        background: var(--popup-bg-color, #f3f4f6);
       }
     </style>
   `,
@@ -110,7 +110,7 @@ export const Animation: Story = {
     open: false,
     '--popup-show-transition': 'opacity 1s',
     '--popup-hide-transition': 'opacity 1s',
-    '--popup-arrow-color': 'blue',
+    '--popup-bg-color': 'blue',
   },
 };
 
@@ -147,7 +147,7 @@ export const HoverBridge: Story = {
       .box {
         width: 100px;
         height: 50px;
-        background: blue;
+        background: #f3f4f6;
       }
 
       [popup]::part(popup-hover-bridge) {

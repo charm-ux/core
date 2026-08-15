@@ -7,7 +7,9 @@ export default css`
      * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
      */
     --popup-arrow-size-diagonal: calc(${component('popup', 'arrowSize')} * 0.7071);
-    --popup-arrow-padding-offset: calc(var(--popup-arrow-size-diagonal) - ${component('popup', 'arrowSize')});
+    --popup-arrow-padding-offset: calc(
+      var(--popup-arrow-size-diagonal) - var(--popup-arrow-size, ${component('popup', 'arrowSize')})
+    );
 
     display: contents;
   }
@@ -32,6 +34,7 @@ export default css`
     padding: 0;
     border: transparent;
     margin: 0;
+    background: var(--popup-bg-color, ${component('popup', 'bgColor')});
   }
 
   :host([strategy='fixed']) .popup {
@@ -66,7 +69,7 @@ export default css`
     width: calc(var(--popup-arrow-size-diagonal) * 2);
     height: calc(var(--popup-arrow-size-diagonal) * 2);
     transform: rotate(45deg);
-    background: ${component('popup', 'arrowColor')};
+    background: var(--popup-bg-color, ${component('popup', 'bgColor')});
     z-index: -1;
   }
 

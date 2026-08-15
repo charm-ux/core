@@ -5,6 +5,7 @@ import {
   ComputePositionReturn,
   ElementRects,
   flip,
+  getOverflowAncestors,
   limitShift,
   Middleware,
   offset,
@@ -65,7 +66,7 @@ export interface PopupRepositionEvent {
  * @csspart popup-base - The popup's container. Useful for setting a background color, box shadow, etc.
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
- * @cssprop --charm-popup-arrow-color - The color of the arrow.
+ * @cssprop --charm-popup-bg-color - The background color of the popup. The arrow uses the same color, so the two always match.
  * @cssprop --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
  * @cssprop --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
  * @cssprop --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
@@ -111,7 +112,7 @@ export class CorePopup extends CharmDismissibleElement {
   public skidding: number = 0;
 
   /**
-   * Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
+   * Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
    */
   @property({ type: Boolean, reflect: true })
   public arrow = false;
@@ -206,6 +207,10 @@ export class CorePopup extends CharmDismissibleElement {
   /** The amount of padding, in pixels, to exceed before the auto-size behavior will occur. */
   @property({ attribute: 'auto-size-padding', type: Number })
   public autoSizePadding?: number;
+
+  /** Determines which overflow ancestors are used when flipping, shifting, and auto-sizing. */
+  @property({ reflect: true })
+  public boundary: 'viewport' | 'scroll' = 'viewport';
 
   /** Provides keyboard focus trapping within the overlay content. */
   @property({ attribute: 'focus-trap', type: Boolean })
@@ -628,6 +633,21 @@ export class CorePopup extends CharmDismissibleElement {
     }
   }
 
+  protected resolveBoundary(boundary?: Element | Element[]): Element | Element[] | undefined {
+    if (boundary) {
+      return boundary;
+    }
+
+    if (this.boundary === 'scroll') {
+      const ancestors = getOverflowAncestors(this.anchorEl ?? this).filter(
+        (ancestor): ancestor is Element => ancestor instanceof Element
+      );
+      return ancestors.length > 0 ? ancestors : undefined;
+    }
+
+    return undefined;
+  }
+
   protected configureFlip(middleware: Middleware[]) {
     if (!this.flip) {
       return;
@@ -635,7 +655,7 @@ export class CorePopup extends CharmDismissibleElement {
 
     middleware.push(
       flip({
-        boundary: this.flipBoundary,
+        boundary: this.resolveBoundary(this.flipBoundary),
         // @ts-expect-error - We're converting a string attribute to an array here
         fallbackPlacements: this.flipFallbackPlacements,
         fallbackStrategy: this.flipFallbackStrategy === 'best-fit' ? 'bestFit' : 'initialPlacement',
@@ -651,7 +671,7 @@ export class CorePopup extends CharmDismissibleElement {
 
     middleware.push(
       shift({
-        boundary: this.shiftBoundary,
+        boundary: this.resolveBoundary(this.shiftBoundary),
         padding: this.shiftPadding,
         limiter: limitShift({
           offset: this.arrow ? this.arrowPadding * 2 : 0,
@@ -664,7 +684,7 @@ export class CorePopup extends CharmDismissibleElement {
     if (this.autoSize) {
       middleware.push(
         size({
-          boundary: this.autoSizeBoundary,
+          boundary: this.resolveBoundary(this.autoSizeBoundary),
           padding: this.autoSizePadding,
           apply: ({ availableWidth, availableHeight }: { availableWidth: number; availableHeight: number }) => {
             if (this.autoSize === 'vertical' || this.autoSize === 'both') {

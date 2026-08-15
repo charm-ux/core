@@ -11,7 +11,7 @@ Popup is a utility that lets you declaratively anchor "popup" containers to anot
 <code-bubble>
 
 ```html
-<ch-popup>
+<ch-popup open>
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -27,7 +27,7 @@ The element the popup will be anchored to by adding a reference to the `anchor` 
 
 ```html
 <span id="trigger"></span>
-<ch-popup anchor="trigger">
+<ch-popup open anchor="trigger">
   <div class="box"></div>
 </ch-popup>
 ```
@@ -58,7 +58,7 @@ The values are `top` | `top-start` | `top-end` | `bottom` | `bottom-start` | `bo
 <code-bubble>
 
 ```html
-<ch-popup placement="bottom-start">
+<ch-popup open placement="bottom-start">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -77,7 +77,7 @@ The fixed positioning strategy reduces jumpiness when the anchor is fixed and al
 ```html
 <div style="contain: layout">
   <div style="position: relative; overflow: hidden;">
-    <ch-popup strategy="fixed">
+    <ch-popup open strategy="fixed">
       <span slot="anchor"></span>
       <div class="box"></div>
     </ch-popup>
@@ -94,7 +94,7 @@ Adding the `distance` attribute sets the pixels from which to offset the panel a
 <code-bubble>
 
 ```html
-<ch-popup distance="5">
+<ch-popup open distance="5">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -109,7 +109,7 @@ The `skidding` attribute is similar to distance, but instead allows you to offse
 <code-bubble>
 
 ```html
-<ch-popup skidding="5">
+<ch-popup open skidding="5">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -119,19 +119,19 @@ The `skidding` attribute is similar to distance, but instead allows you to offse
 
 ## Custom popup arrow
 
-Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
+Attaches an arrow to the popup. The popup's background color can be set with the `--popup-bg-color` custom property, and the arrow's size with `--popup-arrow-size`. The arrow uses the same color as the popup's background, so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
 
 <code-bubble>
 
 ```html
-<ch-popup>
+<ch-popup open>
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
 
 <style>
-  :host {
-    '--popup-arrow-color':'blue';
+  ch-popup {
+    --popup-bg-color: #2c7ef7;
   }
 
   span[slot='anchor'] {
@@ -146,7 +146,7 @@ Attaches an arrow to the popup. The arrow's size and color can be customized usi
   .box {
     width: 100px;
     height: 50px;
-    background: blue;
+    background: #f3f4f6;
   }
 </style>
 ```
@@ -162,7 +162,7 @@ Options are `start` | `end` | `center` | `anchor`.
 <code-bubble>
 
 ```html
-<ch-popup arrow-placement="end">
+<ch-popup open arrow-placement="end">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -177,7 +177,7 @@ The amount of padding between the arrow and the edges of the popup. If the popup
 <code-bubble>
 
 ```html
-<ch-popup arrow-padding="5">
+<ch-popup open arrow-padding="5">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -192,7 +192,7 @@ When set, placement of the popup will flip to the opposite site to keep it in vi
 <code-bubble>
 
 ```html
-<ch-popup flip>
+<ch-popup open flip>
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -207,7 +207,7 @@ If the preferred placement doesn't fit, popup will be tested in these fallback p
 <code-bubble>
 
 ```html
-<ch-popup flip flip-fallback-placements="top bottom left">
+<ch-popup open flip flip-fallback-placements="top bottom left">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -224,7 +224,7 @@ space.
 <code-bubble>
 
 ```html
-<ch-popup flip flip-fallback-strategy="best-fit">
+<ch-popup open flip flip-fallback-strategy="best-fit">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -240,7 +240,7 @@ The flip boundary describes clipping element(s) that overflow will be checked re
 
 ```html
 <div id="parent">
-  <ch-popup id="my-pop-up" flip>
+  <ch-popup open id="my-pop-up" flip>
     <span slot="anchor"></span>
     <div class="box"></div>
   </ch-popup>
@@ -261,7 +261,7 @@ Adding the `flip-padding` attribute dictates the amount of padding, in pixels, t
 <code-bubble>
 
 ```html
-<ch-popup flip flip-padding="5">
+<ch-popup open flip flip-padding="5">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -276,7 +276,7 @@ When a popup is longer than its anchor, it risks being clipped by an overflowing
 <code-bubble>
 
 ```html
-<ch-popup shift>
+<ch-popup open shift>
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -292,7 +292,7 @@ The shift boundary describes clipping element(s) that overflow will be checked r
 
 ```html
 <div id="parent">
-  <ch-popup id="my-pop-up" shift>
+  <ch-popup open id="my-pop-up" shift>
     <span slot="anchor"></span>
     <div class="box"></div>
   </ch-popup>
@@ -313,7 +313,7 @@ The amount of padding, in pixels, to exceed before the shift behavior will occur
 <code-bubble>
 
 ```html
-<ch-popup shift shift-padding="5">
+<ch-popup open shift shift-padding="5">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -330,7 +330,7 @@ When using `auto-size`, one or both of `--auto-size-available-width` and `--auto
 <code-bubble>
 
 ```html
-<ch-popup auto-size="vertical">
+<ch-popup open auto-size="vertical">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -345,7 +345,7 @@ The auto-size boundary describes clipping element(s) that overflow will be check
 <code-bubble>
 
 ```html
-<ch-popup auto-size="both">
+<ch-popup open auto-size="both">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -365,7 +365,7 @@ The amount of padding, in pixels, to exceed before the auto-size behavior will o
 <code-bubble>
 
 ```html
-<ch-popup auto-size-padding="5" auto-size="both">
+<ch-popup open auto-size-padding="5" auto-size="both">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -380,7 +380,7 @@ Use the `--popup-show-transition` and `--popup-hide-transition` CSS properties t
 <code-bubble>
 
 ```html
-<ch-popup class="animation">
+<ch-popup open class="animation">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -388,7 +388,7 @@ Use the `--popup-show-transition` and `--popup-hide-transition` CSS properties t
   .animation {
     --popup-show-transition: opacity 1s;
     --popup-hide-transition: opacity 1s;
-    --popup-arrow-color: blue;
+    --popup-bg-color: #2c7ef7;
   }
 </style>
 ```
@@ -402,7 +402,7 @@ When a gap exists between the anchor and the popup element, this option will add
 <code-bubble>
 
 ```html
-<ch-popup hover-bridge distance="20" skidding="20">
+<ch-popup open hover-bridge distance="20" skidding="20">
   <span slot="anchor"></span>
   <div class="box"></div>
 </ch-popup>
@@ -434,7 +434,7 @@ When a gap exists between the anchor and the popup element, this option will add
   .box {
     width: 100px;
     height: 50px;
-    background: blue;
+    background: #f3f4f6;
   }
 
   [popup]::part(popup-hover-bridge) {

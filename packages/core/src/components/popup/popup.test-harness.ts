@@ -115,6 +115,39 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.equal('');
                 },
               },
+              scrollBoundary: {
+                description: 'uses overflow ancestors when `boundary` is set to `scroll`',
+                test: async () => {
+                  const el = this.component;
+                  const scrollContainer = document.createElement('div');
+                  const anchor = document.createElement('span');
+
+                  scrollContainer.style.position = 'relative';
+                  scrollContainer.style.overflow = 'auto';
+                  scrollContainer.style.width = '120px';
+                  scrollContainer.style.height = '120px';
+                  anchor.style.display = 'inline-block';
+                  anchor.style.width = '20px';
+                  anchor.style.height = '20px';
+                  scrollContainer.append(anchor);
+                  document.body.append(scrollContainer);
+
+                  el.anchor = anchor;
+                  el.boundary = 'scroll';
+                  el.flip = true;
+                  el.shift = true;
+                  el.autoSize = 'both';
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  await oneEvent(el, 'popup-reposition');
+
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.contain('px');
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.contain('px');
+
+                  scrollContainer.remove();
+                },
+              },
               sync: {
                 description: 'should sync popup size to anchor size if using `sync`',
                 test: async () => {

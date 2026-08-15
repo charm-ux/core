@@ -11,7 +11,7 @@ export default css`
   }
 
   .tooltip {
-    --popup-arrow-color: ${component('tooltip', 'bgColor')};
+    --popup-bg-color: ${component('tooltip', 'bgColor')};
     --popup-arrow-size: ${component('tooltip', 'arrowSize')};
   }
 
