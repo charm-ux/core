@@ -741,7 +741,7 @@ const charmTokensBase = defineTokens(
 
       // Popup
       popup: {
-        arrowColor: semantic('surface', 'primary'),
+        bgColor: semantic('surface', 'primary'),
         arrowSize: '8px',
         dropShadow: primitive('shadow', 'lg'),
         showTransition: 'opacity 0.15s ease, transform 0.15s ease',

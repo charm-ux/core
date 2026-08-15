@@ -1001,6 +1001,15 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null"
+            },
+            {
+              "kind": "field",
               "name": "describedBy",
               "type": {
                 "text": "string | undefined"
@@ -8301,6 +8310,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -12089,6 +12111,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -12365,6 +12400,20 @@
             },
             {
               "kind": "method",
+              "name": "handleClearClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ],
+              "description": "Handles the clear button click event."
+            },
+            {
+              "kind": "method",
               "name": "handleEnterKey",
               "privacy": "protected",
               "parameters": [
@@ -12419,6 +12468,12 @@
                 }
               ],
               "description": "Handles the `mousedown` event for slider."
+            },
+            {
+              "kind": "method",
+              "name": "handlePasswordToggle",
+              "privacy": "protected",
+              "description": "Handles the password toggle click event."
             },
             {
               "kind": "method",
@@ -12772,6 +12827,28 @@
             },
             {
               "kind": "field",
+              "name": "passwordToggle",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Adds a button to toggle the password's visibility. Only applies to password types.",
+              "attribute": "password-toggle"
+            },
+            {
+              "kind": "field",
+              "name": "passwordVisible",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Determines whether the password is currently visible. Only applies to password types.",
+              "attribute": "password-visible"
+            },
+            {
+              "kind": "field",
               "name": "pattern",
               "type": {
                 "text": "string | undefined"
@@ -12871,6 +12948,12 @@
             },
             {
               "kind": "method",
+              "name": "select",
+              "privacy": "public",
+              "description": "Selects all input text."
+            },
+            {
+              "kind": "method",
               "name": "setCustomValidity",
               "privacy": "public",
               "parameters": [
@@ -12886,6 +12969,68 @@
               }
             },
             {
+              "kind": "method",
+              "name": "setRangeText",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "replacement",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "start",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "end",
+                  "optional": true,
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectMode",
+                  "default": "'preserve'",
+                  "type": {
+                    "text": "'select' | 'start' | 'end' | 'preserve'"
+                  }
+                }
+              ],
+              "description": "Replaces a range of text in the input."
+            },
+            {
+              "kind": "method",
+              "name": "setSelectionRange",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "selectionStart",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectionEnd",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "selectionDirection",
+                  "default": "'none'",
+                  "type": {
+                    "text": "'forward' | 'backward' | 'none'"
+                  }
+                }
+              ],
+              "description": "Sets the start and end positions of the selection."
+            },
+            {
               "kind": "field",
               "name": "shadowRootOptions",
               "type": {
@@ -12898,6 +13043,12 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "showPicker",
+              "privacy": "public",
+              "description": "Shows the browser picker for supported input types."
             },
             {
               "kind": "field",
@@ -12924,6 +13075,18 @@
             },
             {
               "kind": "method",
+              "name": "stepDown",
+              "privacy": "public",
+              "description": "Decrements the value of a numeric input type by the value of the step attribute."
+            },
+            {
+              "kind": "method",
+              "name": "stepUp",
+              "privacy": "public",
+              "description": "Increments the value of a numeric input type by the value of the step attribute."
+            },
+            {
+              "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
               "description": "Saves the current form value as the initial reset state.",
@@ -12931,6 +13094,18 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "''",
+              "description": "Tooltip text for the input.",
+              "attribute": "title",
+              "reflects": true
             },
             {
               "kind": "field",
@@ -13031,6 +13206,17 @@
               "name": "valueAsNumber",
               "privacy": "public",
               "description": "Gets or sets the current value as a number."
+            },
+            {
+              "kind": "field",
+              "name": "withClear",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Adds a clear button when the input is not empty.",
+              "attribute": "with-clear"
             }
           ],
           "events": [
@@ -13249,6 +13435,24 @@
               }
             },
             {
+              "name": "password-toggle",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds a button to toggle the password's visibility. Only applies to password types.",
+              "fieldName": "passwordToggle"
+            },
+            {
+              "name": "password-visible",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Determines whether the password is currently visible. Only applies to password types.",
+              "fieldName": "passwordVisible"
+            },
+            {
               "name": "pattern",
               "type": {
                 "text": "string | undefined"
@@ -13307,6 +13511,15 @@
               "fieldName": "step"
             },
             {
+              "name": "title",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "Tooltip text for the input.",
+              "fieldName": "title"
+            },
+            {
               "name": "type",
               "type": {
                 "text": "InputTypes | undefined"
@@ -13327,6 +13540,15 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "name": "with-clear",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds a clear button when the input is not empty.",
+              "fieldName": "withClear"
             }
           ],
           "superclass": {
@@ -15959,8 +16181,8 @@
           "name": "CorePopup",
           "cssProperties": [
             {
-              "description": "The color of the arrow.",
-              "name": "--charm-popup-arrow-color"
+              "description": "The background color of the popup. The arrow uses the same color, so the two always match.",
+              "name": "--charm-popup-bg-color"
             },
             {
               "description": "The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.",
@@ -16069,7 +16291,7 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
               "attribute": "arrow",
               "reflects": true
             },
@@ -16151,6 +16373,18 @@
                 "module": "src/base/charm-element/charm-element.ts"
               },
               "default": "'popup'"
+            },
+            {
+              "kind": "field",
+              "name": "boundary",
+              "type": {
+                "text": "'viewport' | 'scroll'"
+              },
+              "privacy": "public",
+              "default": "'viewport'",
+              "description": "Determines which overflow ancestors are used when flipping, shifting, and auto-sizing.",
+              "attribute": "boundary",
+              "reflects": true
             },
             {
               "kind": "field",
@@ -16663,6 +16897,25 @@
               "description": "Recalculate and repositions the popup."
             },
             {
+              "kind": "method",
+              "name": "resolveBoundary",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | Element[] | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "boundary",
+                  "optional": true,
+                  "type": {
+                    "text": "Element | Element[]"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -16939,7 +17192,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size and color can be customized using the `--popup-arrow-size` and `--popup-arrow-color` custom properties. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
               "fieldName": "arrow"
             },
             {
@@ -16974,6 +17227,15 @@
               },
               "description": "The amount of padding, in pixels, to exceed before the auto-size behavior will occur.",
               "fieldName": "autoSizePadding"
+            },
+            {
+              "name": "boundary",
+              "type": {
+                "text": "'viewport' | 'scroll'"
+              },
+              "default": "'viewport'",
+              "description": "Determines which overflow ancestors are used when flipping, shifting, and auto-sizing.",
+              "fieldName": "boundary"
             },
             {
               "name": "content-role",
@@ -18947,6 +19209,19 @@
               },
               "privacy": "protected",
               "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -21397,6 +21672,19 @@
             },
             {
               "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "dependencies",
               "type": {
                 "text": "(typeof CharmElement)[]"
@@ -23634,6 +23922,19 @@
               },
               "privacy": "protected",
               "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -26276,6 +26577,19 @@
               },
               "privacy": "protected",
               "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
