@@ -137,15 +137,17 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow left keydown event on the switch.*/
   protected handleArrowLeftKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = false;
-    this.emit('change');
+    this.checked = this.dir === 'rtl';
+    this.emitInput();
+    this.emitChange();
   }
 
   /** Handles the arrow right keydown event on the switch. */
   protected handleArrowRightKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = true;
-    this.emit('change');
+    this.checked = this.dir !== 'rtl';
+    this.emitInput();
+    this.emitChange();
   }
 
   /** Handles the keydown event on the switch. */

@@ -111,6 +111,15 @@ export default css`
     background-color: ${component('switch', 'thumb', 'checked', 'bgColor')};
   }
 
+  /* RTL mirrors the thumb travel direction so checked stays toward the "end" of the track. */
+  .switch-rtl .switch-thumb {
+    transform: translateX(${component('switch', 'thumb', 'transform')});
+  }
+
+  :host([checked]) .switch-rtl .switch-thumb {
+    transform: translateX(calc(${component('switch', 'thumb', 'transform')} * (-1)));
+  }
+
   /* Checked + hover for switch thumb*/
   :host([checked]:not([disabled])) .switch:hover .switch-thumb {
     background-color: ${component('switch', 'thumb', 'checked', 'hover', 'bgColor')};
