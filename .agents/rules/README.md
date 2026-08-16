@@ -81,6 +81,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [PROP-007](props/PROP-007.md) — Emit dismissible events with `emitScopedEvent`; gate closing on `request-close`
 - [PROP-008](props/PROP-008.md) — Use `@state()` for internal state; compute derived state in `willUpdate`
 - [PROP-009](props/PROP-009.md) — Author side-effecting properties as getter/setter pairs
+- [PROP-010](props/PROP-010.md) — Prefer getter/setter pairs for property/attribute value management; defer to lifecycle hooks only when they fit better
 
 ### STYLE — styling (path-gated)
 

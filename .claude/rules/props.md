@@ -15,3 +15,4 @@ Property/attribute/event rules. Full details in [`.agents/rules/props/`](../../.
 - **PROP-007** — Dismissible components emit via `emitScopedEvent` → `{baseName}-{action}`; user dismissal fires a cancelable `{baseName}-request-close` and only hides if not `defaultPrevented`. ([details](../../.agents/rules/props/PROP-007.md))
 - **PROP-008** — `@state()` for internal/derived reactive state (not `@property`); compute derived state in `willUpdate` (call `super` first), not `updated`. ([details](../../.agents/rules/props/PROP-008.md))
 - **PROP-009** — Side-effecting props are getter/setter pairs over a backing field with `requestUpdate` + a no-op guard. ([details](../../.agents/rules/props/PROP-009.md))
+- **PROP-010** — Validate/coerce/normalize property values in the getter/setter pair (runs for property + attribute, skips no-op renders); defer to `willUpdate` for cross-property derivation, `updated` for DOM work. ([details](../../.agents/rules/props/PROP-010.md))

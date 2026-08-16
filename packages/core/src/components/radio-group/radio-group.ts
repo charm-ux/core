@@ -6,6 +6,7 @@ import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { HasSlotController } from '../../controller/slot.js';
 import CoreRadio from '../radio/radio.js';
 import { keys } from '../../utilities/key-map.js';
+import { findNextEnabledIndex } from '../../utilities/helpers.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './radio-group.styles.js';
 
@@ -21,6 +22,7 @@ import styles from './radio-group.styles.js';
  * @slot help-text - Help text that describes how to use the input. Alternatively, you can use the `help-text` attribute.
  *
  * @event change - Emitted when the radio group's selected value changes.
+ * @event input - Emitted when the radio group receives user input.
  * @event blur - Emitted when the radio group loses focus.
  * @event focus - Emitted when the radio group gains focus.
  *
@@ -52,7 +54,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected radios: CoreRadio[] = [];
   protected override readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
-  private previouslyDisabledRadios: Set<CoreRadio> = new Set();
 
   public constructor() {
     super();
@@ -88,6 +89,11 @@ export class CoreRadioGroup extends CharmFormControlElement {
     };
   }
 
+  /** The first enabled radio, used to anchor the browser's constraint-validation message to the radio controls. */
+  protected get validationTarget(): CoreRadio | undefined {
+    return this.getAllRadios().find(radio => !radio.disabled && !radio.forceDisabled);
+  }
+
   /** Checks for validity and shows the browser's validation message if the control is invalid. */
   public override reportValidity(): boolean {
     this.hadFocus = true;
@@ -98,7 +104,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
     this.internals.setValidity(
       validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
-      this._errorMessage
+      this._errorMessage,
+      this.validationTarget
     );
 
     return !this.invalid;
@@ -141,25 +148,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
       this.radios.forEach(radio => (radio.readonly = this.readonly));
     }
     if (changedProperties.has('disabled')) {
-      if (this.disabled) {
-        // Store which radios were already disabled before we disable the group
-        this.previouslyDisabledRadios.clear();
-        this.getAllRadios().forEach(radio => {
-          if (radio.disabled) {
-            this.previouslyDisabledRadios.add(radio);
-          } else {
-            radio.disabled = true;
-          }
-        });
-      } else {
-        // Re-enable only the radios that weren't already disabled
-        this.getAllRadios().forEach(radio => {
-          if (!this.previouslyDisabledRadios.has(radio)) {
-            radio.disabled = false;
-          }
-        });
-        this.previouslyDisabledRadios.clear();
-      }
+      this.syncRadioElements();
     }
     if (changedProperties.has('autofocus')) {
       if (this.autofocus) {
@@ -180,7 +169,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected handleValueChange() {
     if (!this.hasUpdated) return;
-    this.updateCheckedRadio();
+    this.syncRadioElements();
     this.internals.setFormValue(this.value || null);
     this.reportValidity();
   }
@@ -200,22 +189,19 @@ export class CoreRadioGroup extends CharmFormControlElement {
     const target = event.target as CoreRadio;
 
     // Make sure the radio isn't disabled and that the element is actually a radio
-    if (target.getAttribute('role') !== 'radio' || target.disabled) {
+    if (target.getAttribute('role') !== 'radio' || this.disabled || target.disabled || target.forceDisabled) {
       return;
     }
 
     const oldValue = this.value;
-    this.value = target.value || '';
-    const radios = this.getAllRadios();
-    radios.forEach(radio => {
-      radio.checked = radio === target;
-      radio.tabIndex = radio.checked ? 0 : -1;
-    });
-
-    // Emit change event only if the selection has changed
-    if (oldValue !== this.value) {
-      this.emitChange();
+    if (oldValue === target.value) {
+      return;
     }
+
+    this.value = target.value || '';
+
+    this.emitInput();
+    this.emitChange();
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
@@ -224,38 +210,44 @@ export class CoreRadioGroup extends CharmFormControlElement {
       return;
     }
 
-    const radios = this.radios.filter(radio => !radio.disabled);
-    const checkedRadio = radios.find(radio => radio.checked) ?? radios[0];
-    const incr = event.key === keys.Space ? 0 : [keys.ArrowUp, keys.ArrowLeft].includes(event.key) ? -1 : 1;
-    let index = radios.indexOf(checkedRadio) + incr;
-    if (index < 0) {
-      index = radios.length - 1;
-    } else if (index > radios.length - 1) {
-      index = 0;
+    const enabledRadios = this.radios.filter(radio => !radio.disabled && !radio.forceDisabled);
+    if (enabledRadios.length === 0) {
+      return;
     }
 
-    this.radios.forEach(radio => {
-      radio.checked = false;
-      radio.tabIndex = -1;
-    });
-
-    radios[index].checked = true;
-
-    radios[index].tabIndex = 0;
-    radios[index].focus();
-
     event.preventDefault();
+
+    const checkedIndex = enabledRadios.findIndex(radio => radio.checked);
+
+    let targetIndex: number;
+    if (event.key === keys.Space) {
+      targetIndex = checkedIndex === -1 ? 0 : checkedIndex;
+    } else {
+      const direction: 1 | -1 = [keys.ArrowUp, keys.ArrowLeft].includes(event.key) ? -1 : 1;
+      const startIndex = checkedIndex === -1 ? (direction === 1 ? -1 : 0) : checkedIndex;
+      targetIndex = findNextEnabledIndex(enabledRadios, startIndex, direction, () => true);
+    }
+
+    if (targetIndex === -1) {
+      return;
+    }
+
+    const targetRadio = enabledRadios[targetIndex];
+    this.radios.forEach(radio => (radio.checked = false));
+    targetRadio.checked = true;
+    targetRadio.tabIndex = 0;
+    targetRadio.focus();
+
+    this.radios.forEach(radio => {
+      if (radio !== targetRadio) {
+        radio.tabIndex = -1;
+      }
+    });
   }
 
   protected handleSlotChange() {
     this.radios = this.getAllRadios();
-    this.radios.forEach(radio => {
-      radio.checked = radio.value === this.value;
-      radio.setAttribute('tabindex', radio.checked ? '0' : '-1');
-    });
-    if (this.radios.length && !this.radios.some(radio => radio.checked)) {
-      this.radios[0].setAttribute('tabindex', '0');
-    }
+    this.syncRadioElements();
   }
 
   protected handleBlurElement() {
@@ -277,8 +269,43 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this.setAttribute('tabindex', '0');
   };
 
-  protected updateCheckedRadio() {
-    this.radios.forEach(radio => (radio.checked = radio.value === this.value));
+  /**
+   * Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without
+   * clobbering their own `disabled` state), syncs their `checked` state to the group's value, and applies the roving
+   * tabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's.
+   */
+  protected async syncRadioElements() {
+    const radios = this.getAllRadios();
+
+    radios.forEach(radio => {
+      radio.forceDisabled = this.disabled;
+    });
+
+    await Promise.all(radios.map(radio => radio.updateComplete));
+
+    radios.forEach(radio => {
+      radio.checked = radio.value === this.value && !radio.disabled;
+    });
+
+    await Promise.all(radios.map(radio => radio.updateComplete));
+
+    if (this.disabled) {
+      radios.forEach(radio => (radio.tabIndex = -1));
+      return;
+    }
+
+    const enabledRadios = radios.filter(radio => !radio.disabled && !radio.forceDisabled);
+    const checkedRadio = enabledRadios.find(radio => radio.checked);
+
+    enabledRadios.forEach(radio => {
+      radio.tabIndex = checkedRadio ? (radio.checked ? 0 : -1) : radio === enabledRadios[0] ? 0 : -1;
+    });
+
+    radios
+      .filter(radio => radio.disabled)
+      .forEach(radio => {
+        radio.tabIndex = -1;
+      });
   }
 
   /** Focuses on the first focusable element. */
@@ -345,6 +372,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
         aria-describedby=${ifDefined(this.describedBy)}
         aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid="${this.invalid}"
+        aria-orientation=${this.layout === 'vertical' ? 'vertical' : 'horizontal'}
         aria-required="${this.required}"
         class=${classMap({
           'radio-group': true,
