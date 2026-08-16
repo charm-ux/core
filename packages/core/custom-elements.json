@@ -11296,6 +11296,14 @@
             },
             {
               "kind": "field",
+              "name": "cachedSource",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "defaultIcon",
               "privacy": "protected"
             },
@@ -11380,6 +11388,16 @@
               "kind": "field",
               "name": "icons",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "iconSource",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
             },
             {
               "kind": "field",

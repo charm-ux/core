@@ -85,6 +85,7 @@ export class CoreIcon extends CharmElement {
   protected svg: SVGSVGElement | null = null;
 
   protected icons = project.iconSet;
+  protected cachedSource?: string;
   protected defaultIcon =
     parseSvg(this.icons['question']) ?? document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
@@ -93,14 +94,23 @@ export class CoreIcon extends CharmElement {
   }
 
   protected async setIcon() {
+    const source = this.iconSource();
+
+    if (source === this.cachedSource) {
+      return;
+    }
+
+    this.cachedSource = source;
+
     if (!this.name && !this.url) {
       this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
       return;
     }
 
     if (this.name) {
-      const icon = parseSvg((this.icons as Record<string, string>)[this.name] || this.icons['question']);
-      this.svg = icon ? (icon.cloneNode(true) as SVGSVGElement) : (this.defaultIcon.cloneNode(true) as SVGSVGElement);
+      this.svg = (parseSvg((this.icons as Record<string, string>)[this.name]) ?? this.defaultIcon).cloneNode(
+        true
+      ) as SVGSVGElement;
       return;
     }
 
@@ -134,6 +144,18 @@ export class CoreIcon extends CharmElement {
 
     this.svg = icon.cloneNode(true) as SVGSVGElement;
     this.emit('icon-load');
+  }
+
+  protected iconSource(): string {
+    if (this.name) {
+      return `name:${this.name}`;
+    }
+
+    if (this.url) {
+      return `url:${this.url}`;
+    }
+
+    return 'default';
   }
 
   protected requestIcon(url: string): Promise<SVGResult> {
@@ -213,8 +235,11 @@ export class CoreIcon extends CharmElement {
     }
 
     svg.setAttribute('part', 'svg');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    svg.setAttribute('viewBox', '0 0 16 16');
+
+    if (!svg.getAttribute('viewBox')) {
+      svg.setAttribute('viewBox', '0 0 16 16');
+    }
+
     svg.setAttribute('aria-hidden', 'true');
 
     const scaleX = this.flip === 'x' || this.flip === 'both' ? -1 : 1;
