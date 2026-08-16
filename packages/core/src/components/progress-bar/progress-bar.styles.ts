@@ -44,18 +44,18 @@ export default css`
 
   :host([indeterminate]) .progress-bar-indicator {
     position: absolute;
+    inset-block: 0;
+    width: 50%;
     animation: ${component('progressBar', 'animation')};
   }
 
   @keyframes indeterminate {
     0% {
       inset-inline-start: -50%;
-      width: 50%;
     }
     75%,
     100% {
       inset-inline-start: 100%;
-      width: 50%;
     }
   }
 

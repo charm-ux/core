@@ -1,11 +1,15 @@
-import { html } from 'lit/static-html.js';
+import { type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import { html } from 'lit/static-html.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import formControlStyles from '../../base/form-control-element/form-control.styles.js';
 import { HasSlotController } from '../../controller/index.js';
 import styles from './progress-bar.styles.js';
+
+/** Fallback text used to name the progress bar for assistive tech when no label is provided. */
+const PROGRESS_BAR_DEFAULT_LABEL = 'Progress';
 
 /**
  * Progress bar is used to visualize a known percentage value (determinate) or to represent an unspecified wait time (indeterminate).
@@ -14,7 +18,7 @@ import styles from './progress-bar.styles.js';
  * @since 1.0.0
  * @status beta
  *
- * @slot - A label to show inside the indicator when the `label` attribute is not provided.
+ * @slot - A label shown above the track. When the `label` attribute is not provided and the slot is empty, a default `Progress` text is used to name the bar for assistive tech.
  * @slot help-text - The progress bar's help text.
  *
  * @csspart progress-bar-base - The component's internal wrapper.
@@ -52,7 +56,7 @@ export class CoreProgressBar extends CharmElement {
   /** When true, percentage is ignored, the label is hidden, and the progress bar is drawn in an indeterminate state. */
   @property({ type: Boolean, reflect: true }) public indeterminate?: boolean;
 
-  /** A custom label for the progress bar's aria label. */
+  /** A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used. */
   @property() public label?: string;
 
   /** Hides the input label and help text. */
@@ -66,6 +70,9 @@ export class CoreProgressBar extends CharmElement {
 
   protected readonly hasSlotController = new HasSlotController(this, '[default]', 'help-text');
 
+  /** The id of the pending animation frame that defers the width sync, if one is scheduled. */
+  private _syncRangeFrame?: number;
+
   /** Whether a label is present via the `label` attribute or the default slot. */
   protected get hasLabel(): boolean {
     return !!this.label || this.hasSlotController.hasDefaultSlot();
@@ -76,36 +83,67 @@ export class CoreProgressBar extends CharmElement {
     return !!this.helpText || this.hasSlotController.hasNamedSlot('help-text');
   }
 
-  protected override async willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this._syncRangeFrame !== undefined) {
+      cancelAnimationFrame(this._syncRangeFrame);
+      this._syncRangeFrame = undefined;
+    }
+  }
+
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    this.syncRange();
+    // The initial value is synced synchronously so the bar doesn't sweep in from 0 on
+    // mount. Subsequent value/max changes are deferred a frame in `updated()` so Safari
+    // reliably animates the width transition.
+    if (!this.hasUpdated) {
+      this.syncRange();
+    }
+  }
+
+  protected override updated(changedProperties: PropertyValues<this>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('value') || changedProperties.has('max')) {
+      this.syncRangeOnNextFrame();
+    }
   }
 
   /** Updates the percentage of the progress bar loaded. */
   protected syncRange() {
     const value = this.value ?? 0;
     const max = this.max ?? 100;
-    const progressPercent = `${(value / max) * 100}%`;
+    const safeMax = max > 0 ? max : 100;
+    const progressPercent = `${Math.min(100, Math.max(0, (value / safeMax) * 100))}%`;
 
     this.style.setProperty('--progress-percent', progressPercent);
   }
 
+  /**
+   * Defers the width sync by a frame so Safari animates the width transition instead of snapping it.
+   */
+  protected syncRangeOnNextFrame() {
+    if (this._syncRangeFrame !== undefined) {
+      cancelAnimationFrame(this._syncRangeFrame);
+    }
+    this._syncRangeFrame = requestAnimationFrame(() => {
+      this._syncRangeFrame = undefined;
+      this.syncRange();
+    });
+  }
+
   /** Generates the template for the label. */
   protected labelTemplate() {
-    if (!this.hasLabel) {
-      return html``;
-    }
     return html`
       <div
         id="label"
         class=${classMap({
           'form-control-label': true,
           'progress-bar-label': true,
-          'visually-hidden': this.hideLabel || false,
+          'visually-hidden': this.hideLabel || !this.hasLabel,
         })}
         part="progress-bar-label"
       >
-        ${this.label ? this.label : html`<slot></slot>`}
+        ${this.label ? this.label : html`<slot>${PROGRESS_BAR_DEFAULT_LABEL}</slot>`}
       </div>
     `;
   }
@@ -134,7 +172,7 @@ export class CoreProgressBar extends CharmElement {
         part="progress-bar-track"
         class="progress-bar-track"
         role=${this.meter ? 'meter' : 'progressbar'}
-        aria-labelledby=${ifDefined(this.hasLabel ? 'label' : undefined)}
+        aria-labelledby="label"
         aria-describedby=${ifDefined(this.hasHelpText ? 'help-text' : undefined)}
         aria-valuemin="0"
         aria-valuemax=${this.max ?? 100}
