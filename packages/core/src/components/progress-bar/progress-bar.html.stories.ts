@@ -40,7 +40,7 @@ export const Height: Story = {
     html` ${template(args)}
       <style>
         [progress-bar] {
-          --progress-bar-height: 20px;
+          --charm-progress-bar-height: 20px;
         }
       </style>`,
   args: {
