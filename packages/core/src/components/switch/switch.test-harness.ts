@@ -193,6 +193,69 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   expect(el.checked).to.be.false;
                 },
               },
+              rightArrowInput: {
+                description: 'should fire input when toggled with the right arrow',
+                test: async () => {
+                  const el = this.component;
+                  el.focus();
+                  setTimeout(() => sendKeys({ press: 'ArrowRight' }));
+                  const event = (await oneEvent(el, 'input')) as CustomEvent;
+                  expect(event.target).to.equal(el);
+                  expect(el.checked).to.be.true;
+                },
+              },
+              rightArrowRtl: {
+                description: 'should uncheck with the right arrow in RTL',
+                test: async () => {
+                  const el = this.component;
+                  el.dir = 'rtl';
+                  el.checked = true;
+                  await elementUpdated(el);
+                  el.focus();
+                  setTimeout(() => sendKeys({ press: 'ArrowRight' }));
+                  const event = (await oneEvent(el, 'change')) as CustomEvent;
+                  expect(event.target).to.equal(el);
+                  expect(el.checked).to.be.false;
+                },
+              },
+              leftArrowRtl: {
+                description: 'should check with the left arrow in RTL',
+                test: async () => {
+                  const el = this.component;
+                  el.dir = 'rtl';
+                  await elementUpdated(el);
+                  el.focus();
+                  setTimeout(() => sendKeys({ press: 'ArrowLeft' }));
+                  const event = (await oneEvent(el, 'change')) as CustomEvent;
+                  expect(event.target).to.equal(el);
+                  expect(el.checked).to.be.true;
+                },
+              },
+              rtlThumbMirror: {
+                description: 'mirrors the thumb travel direction in RTL',
+                test: async () => {
+                  const el = this.component;
+                  el.dir = 'rtl';
+                  el.style.setProperty('--charm-switch-thumb-transform', '10px');
+                  el.style.setProperty('--charm-switch-thumb-transition', 'none');
+                  await elementUpdated(el);
+                  const thumb = el.shadowRoot?.querySelector('.switch-thumb') as HTMLElement;
+                  const rtlUnchecked = getComputedStyle(thumb).transform;
+                  el.checked = true;
+                  await elementUpdated(el);
+                  const rtlChecked = getComputedStyle(thumb).transform;
+                  el.checked = false;
+                  el.dir = 'ltr';
+                  await elementUpdated(el);
+                  const ltrUnchecked = getComputedStyle(thumb).transform;
+                  el.checked = true;
+                  await elementUpdated(el);
+                  const ltrChecked = getComputedStyle(thumb).transform;
+                  expect(rtlUnchecked).to.equal(ltrChecked);
+                  expect(rtlChecked).to.equal(ltrUnchecked);
+                  expect(rtlUnchecked).to.not.equal(rtlChecked);
+                },
+              },
               notFire: {
                 description: 'should not fire change when checked is set by javascript',
                 test: async () => {
