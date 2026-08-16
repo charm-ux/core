@@ -2,6 +2,9 @@ import { elementUpdated, expect } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreProgressBar } from './index.js';
 
+/** Resolves after the next animation frame, allowing the deferred width sync to run. */
+const waitForFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+
 export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElementTests<T> {
   public constructor() {
     super();
@@ -42,6 +45,7 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
                   const el = this.component;
                   el.value = 25;
                   await elementUpdated(el);
+                  await waitForFrame();
                   const componentStyle = window.getComputedStyle(el);
                   expect(componentStyle.getPropertyValue('--progress-percent')).to.equal('25%');
                 },
@@ -51,12 +55,25 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
                 test: async () => {
                   this.component.value = 10;
                   await elementUpdated(this.component);
+                  await waitForFrame();
                   const componentStyle = window.getComputedStyle(this.component);
                   expect(componentStyle.getPropertyValue('--progress-percent')).to.equal('10%');
 
                   this.component.max = 200;
                   await elementUpdated(this.component);
+                  await waitForFrame();
                   expect(componentStyle.getPropertyValue('--progress-percent')).to.equal('5%');
+                },
+              },
+              clampsOutOfRange: {
+                description: 'clamps the indicator to 100% when the value exceeds the max',
+                test: async () => {
+                  const el = this.component;
+                  el.value = 150;
+                  await elementUpdated(el);
+                  await waitForFrame();
+                  const componentStyle = window.getComputedStyle(el);
+                  expect(componentStyle.getPropertyValue('--progress-percent')).to.equal('100%');
                 },
               },
               hideLabel: {
@@ -90,8 +107,8 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
                     .be.false;
                 },
               },
-              labelledByOnlyWhenLabel: {
-                description: 'sets aria-labelledby only when a label is present',
+              labelledByWiredToLabel: {
+                description: 'keeps aria-labelledby wired to the label even when no label text is provided',
                 test: async () => {
                   const el = this.component;
                   const track = el.shadowRoot?.querySelector('[part="progress-bar-track"]');
@@ -99,7 +116,19 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
                   el.removeAttribute('label');
                   el.innerHTML = '';
                   await elementUpdated(el);
-                  expect(track?.hasAttribute('aria-labelledby')).to.be.false;
+                  expect(track?.getAttribute('aria-labelledby')).to.equal('label');
+                },
+              },
+              defaultLabel: {
+                description: 'names the bar with fallback text when no label is provided',
+                test: async () => {
+                  const el = this.component;
+                  el.removeAttribute('label');
+                  el.innerHTML = '';
+                  await elementUpdated(el);
+                  const label = el.shadowRoot?.querySelector('#label');
+                  expect(label?.textContent?.trim()).to.equal('Progress');
+                  expect(label).to.have.class('visually-hidden');
                 },
               },
             },
