@@ -64,6 +64,27 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                   expect(el.style.getPropertyValue('--icon-scale-y')).to.equal('-1');
                 },
               },
+              svgStableAcrossUpdates: {
+                description: 'keeps a stable svg node across updates without re-rendering',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'checkmark';
+                  await elementUpdated(el);
+                  const svg = el.shadowRoot?.querySelector('svg');
+                  await elementUpdated(el);
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('svg')).to.equal(svg);
+                },
+              },
+              viewBoxPreserved: {
+                description: 'preserves the source viewBox instead of forcing one',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'warning';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('svg')?.getAttribute('viewBox')).to.equal('0 0 12 12');
+                },
+              },
             },
           },
 
