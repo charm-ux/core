@@ -100,6 +100,26 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                     expect(handler).to.not.have.been.calledOnce;
                   },
                 },
+                forceDisabled: {
+                  description: 'should reflect disabled styling and block selection when force-disabled',
+                  test: async () => {
+                    const handler = sinon.spy();
+
+                    this.component.forceDisabled = true;
+                    this.component.addEventListener('selected', handler);
+                    await this.component.updateComplete;
+
+                    expect(this.component.getAttribute('aria-disabled')).to.equal('true');
+                    expect(this.component.hasAttribute('force-disabled')).to.be.true;
+                    expect(this.component.getAttribute('tabindex')).to.equal('-1');
+
+                    this.component.click();
+                    await this.component.updateComplete;
+
+                    expect(this.component.checked).to.not.be.true;
+                    expect(handler).to.not.have.been.called;
+                  },
+                },
               },
             },
           },

@@ -63,6 +63,10 @@ export class CoreRadio extends CharmElement {
   @property({ type: Boolean, reflect: true })
   public disabled?: boolean;
 
+  /** @internal Disables the radio while preserving its own `disabled` state. Set by the containing radio group when the group is disabled. */
+  @state()
+  public forceDisabled = false;
+
   /** Focus on the radio on page load. */
   @property({ type: Boolean, reflect: true })
   public override autofocus = false;
@@ -86,6 +90,11 @@ export class CoreRadio extends CharmElement {
   @state() protected hasFocus = false;
   protected readonly hasSlotController = new HasSlotController(this, '[default]');
 
+  /** Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`. */
+  protected get effectivelyDisabled() {
+    return !!(this.disabled || this.forceDisabled);
+  }
+
   public override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListeners();
@@ -96,11 +105,12 @@ export class CoreRadio extends CharmElement {
     super.disconnectedCallback();
   }
 
-  /** Handles the change in the `disabled` property. */
+  /** Handles the change in the `disabled` and `forceDisabled` state. */
   protected handleDisabledChange() {
-    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
-    this.setAttribute('tabindex', this.disabled ? '-1' : '0');
-    if (this.checked) this.checked = false;
+    const disabled = this.effectivelyDisabled;
+    this.toggleAttribute('force-disabled', this.forceDisabled);
+    this.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    this.setAttribute('tabindex', disabled ? '-1' : this.checked ? '0' : '-1');
   }
 
   /** Handles the change in the `checked` property. */
@@ -112,7 +122,7 @@ export class CoreRadio extends CharmElement {
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
-    if (changedProperties.has('disabled')) {
+    if (changedProperties.has('disabled') || changedProperties.has('forceDisabled')) {
       this.handleDisabledChange();
     }
     if (changedProperties.has('checked')) {
@@ -134,14 +144,14 @@ export class CoreRadio extends CharmElement {
 
   /** Handles the click event. */
   protected handleClick = () => {
-    if (!this.disabled && !this.readonly) {
+    if (!this.effectivelyDisabled && !this.readonly) {
       this.checked = true;
     }
   };
 
   /** Handles the keydown event. */
   protected handleKeyDown = (e: KeyboardEvent) => {
-    if (this.disabled || this.readonly) return;
+    if (this.effectivelyDisabled || this.readonly) return;
     if (e.key === keys.Space) {
       this.checked = true;
     }
@@ -156,9 +166,10 @@ export class CoreRadio extends CharmElement {
   /** Sets the initial attributes for the CoreRadio component. */
   protected setInitialAttributes() {
     this.setAttribute('role', 'radio');
-    this.setAttribute('tabindex', this.disabled ? '-1' : '0');
-    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
+    this.setAttribute('tabindex', this.effectivelyDisabled ? '-1' : '0');
+    this.setAttribute('aria-disabled', this.effectivelyDisabled ? 'true' : 'false');
     this.setAttribute('aria-checked', this.checked ? 'true' : 'false');
+    if (this.forceDisabled) this.setAttribute('force-disabled', '');
   }
 
   /** Generates the HTML template for the radio's control. */

@@ -42,6 +42,70 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     expect(document.activeElement).to.equal(radios[1]);
                   },
                 },
+                disabledGroupKeepsChecked: {
+                  description: 'keeps the selected radio checked when the group is disabled and re-enabled',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    el.value = '2';
+                    await elementUpdated(el);
+                    expect(radios[1].checked).to.be.true;
+
+                    el.disabled = true;
+                    await elementUpdated(el);
+                    await aTimeout(100);
+                    expect(radios[1].checked).to.be.true;
+                    expect(radios[1].hasAttribute('disabled')).to.be.false;
+                    expect(radios[1].getAttribute('aria-disabled')).to.equal('true');
+                    expect(radios[1].hasAttribute('force-disabled')).to.be.true;
+                    expect(radios[1].tabIndex).to.equal(-1);
+
+                    el.disabled = false;
+                    await elementUpdated(el);
+                    await aTimeout(100);
+                    expect(radios[1].checked).to.be.true;
+                    expect(radios[1].hasAttribute('disabled')).to.be.false;
+                    expect(radios[1].getAttribute('aria-disabled')).to.equal('false');
+                    expect(radios[1].hasAttribute('force-disabled')).to.be.false;
+                    expect(radios[1].tabIndex).to.equal(0);
+                  },
+                },
+                independentlyDisabledRadioStaysDisabled: {
+                  description: 'keeps an independently disabled radio disabled when the group is re-enabled',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    radios[0].disabled = true;
+                    await elementUpdated(radios[0]);
+
+                    el.disabled = true;
+                    await elementUpdated(el);
+                    await aTimeout(100);
+                    expect(radios[0].disabled).to.be.true;
+
+                    el.disabled = false;
+                    await elementUpdated(el);
+                    await aTimeout(100);
+                    expect(radios[0].hasAttribute('disabled')).to.be.true;
+                    expect(radios[0].tabIndex).to.equal(-1);
+                  },
+                },
+                ariaOrientation: {
+                  description: 'reflects the layout through aria-orientation',
+                  test: async () => {
+                    const el = this.component;
+                    el.layout = 'vertical';
+                    await elementUpdated(el);
+                    expect(el.shadowRoot?.querySelector('fieldset')?.getAttribute('aria-orientation')).to.equal(
+                      'vertical'
+                    );
+                    el.layout = 'horizontal';
+                    await elementUpdated(el);
+                    expect(el.shadowRoot?.querySelector('fieldset')?.getAttribute('aria-orientation')).to.equal(
+                      'horizontal'
+                    );
+                  },
+                },
               },
             },
             validation: {
@@ -216,6 +280,22 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await elementUpdated(radioGroup);
                     expect(handler).to.have.been.calledOnce;
                     expect(radioGroup.value).to.equal('1');
+                  },
+                },
+                clickInputEvent: {
+                  description: 'should fire input when a radio is clicked',
+                  test: async () => {
+                    const el = this.component;
+                    const inputHandler = sinon.spy();
+                    const changeHandler = sinon.spy();
+                    el.addEventListener('input', inputHandler);
+                    el.addEventListener('change', changeHandler);
+                    const radio = el.querySelector<CoreRadio>('#radio1')!;
+                    radio.click();
+                    await elementUpdated(radio);
+                    await elementUpdated(el);
+                    expect(inputHandler).to.have.been.calledOnce;
+                    expect(changeHandler).to.have.been.calledOnce;
                   },
                 },
                 keyboard_arrow_keys: {
