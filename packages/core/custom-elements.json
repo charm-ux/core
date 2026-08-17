@@ -12053,6 +12053,18 @@
             },
             {
               "kind": "field",
+              "name": "autocorrect",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Indicates whether the browser's autocorrect feature is on or off for the input.",
+              "attribute": "autocorrect",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -13280,6 +13292,15 @@
               },
               "description": "Permission the user agent has to provide automated assistance in filling out form field values and the type of\ninformation expected in the field.",
               "fieldName": "autocomplete"
+            },
+            {
+              "name": "autocorrect",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Indicates whether the browser's autocorrect feature is on or off for the input.",
+              "fieldName": "autocorrect"
             },
             {
               "name": "autofocus",
@@ -17546,7 +17567,7 @@
           ],
           "slots": [
             {
-              "description": "A label to show inside the indicator when the `label` attribute is not provided.",
+              "description": "A label shown above the track. When the `label` attribute is not provided and the slot is empty, a default `Progress` text is used to name the bar for assistive tech.",
               "name": ""
             },
             {
@@ -17566,6 +17587,15 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "_syncRangeFrame",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "private",
+              "description": "The id of the pending animation frame that defers the width sync, if one is scheduled."
             },
             {
               "kind": "field",
@@ -17719,7 +17749,7 @@
                 "text": "string | undefined"
               },
               "privacy": "public",
-              "description": "A custom label for the progress bar's aria label.",
+              "description": "A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used.",
               "attribute": "label"
             },
             {
@@ -17773,6 +17803,12 @@
               "name": "syncRange",
               "privacy": "protected",
               "description": "Updates the percentage of the progress bar loaded."
+            },
+            {
+              "kind": "method",
+              "name": "syncRangeOnNextFrame",
+              "privacy": "protected",
+              "description": "Defers the width sync by a frame so Safari animates the width transition instead of snapping it."
             },
             {
               "kind": "method",
@@ -17834,7 +17870,7 @@
               "type": {
                 "text": "string | undefined"
               },
-              "description": "A custom label for the progress bar's aria label.",
+              "description": "A custom label for the progress bar's aria label. When omitted and the default slot is empty, a default `Progress` text is used.",
               "fieldName": "label"
             },
             {
@@ -19821,15 +19857,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "previouslyDisabledRadios",
-              "type": {
-                "text": "Set<CoreRadio>"
-              },
-              "privacy": "private",
-              "default": "new Set()"
-            },
-            {
               "kind": "method",
               "name": "radioGroupHelpTextTemplate",
               "privacy": "protected",
@@ -19983,8 +20010,9 @@
             },
             {
               "kind": "method",
-              "name": "updateCheckedRadio",
-              "privacy": "protected"
+              "name": "syncRadioElements",
+              "privacy": "protected",
+              "description": "Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without\nclobbering their own `disabled` state), syncs their `checked` state to the group's value, and applies the roving\ntabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's."
             },
             {
               "kind": "method",
@@ -20035,6 +20063,16 @@
             },
             {
               "kind": "field",
+              "name": "validationTarget",
+              "type": {
+                "text": "CoreRadio | undefined"
+              },
+              "privacy": "protected",
+              "description": "The first enabled radio, used to anchor the browser's constraint-validation message to the radio controls.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "validity",
               "type": {
                 "text": "ValidityState"
@@ -20081,7 +20119,7 @@
               "name": "focus"
             },
             {
-              "description": "fires when the value of the element has been changed as a direct result of a user action",
+              "description": "Emitted when the radio group receives user input.",
               "name": "input",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -20507,6 +20545,13 @@
               "reflects": true
             },
             {
+              "kind": "field",
+              "name": "effectivelyDisabled",
+              "privacy": "protected",
+              "description": "Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`.",
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -20551,7 +20596,7 @@
               "kind": "method",
               "name": "handleDisabledChange",
               "privacy": "protected",
-              "description": "Handles the change in the `disabled` property."
+              "description": "Handles the change in the `disabled` and `forceDisabled` state."
             },
             {
               "kind": "field",
@@ -26526,6 +26571,18 @@
             },
             {
               "kind": "field",
+              "name": "autocorrect",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "true",
+              "description": "Indicates whether the browser's autocorrect feature is on or off for the textarea.",
+              "attribute": "autocorrect",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -27129,6 +27186,16 @@
             },
             {
               "kind": "field",
+              "name": "lastObservedWidth",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "private",
+              "default": "0",
+              "description": "The width last observed by the resize observer, used to recompute height only when wrapping changes."
+            },
+            {
+              "kind": "field",
               "name": "maxlength",
               "type": {
                 "text": "number | undefined"
@@ -27235,12 +27302,29 @@
               "kind": "field",
               "name": "resize",
               "type": {
-                "text": "'none' | 'horizontal' | 'vertical' | 'both' | undefined"
+                "text": "'none' | 'horizontal' | 'vertical' | 'both' | 'auto' | undefined"
               },
               "privacy": "public",
-              "description": "Controls how the textarea can be resized.",
+              "description": "Controls how the textarea can be resized. Use `auto` to grow the textarea to fit its content.",
               "attribute": "resize",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "resizeFrame",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "private",
+              "description": "Deferred recompute handle, cancelled on teardown."
+            },
+            {
+              "kind": "field",
+              "name": "resizeObserver",
+              "type": {
+                "text": "ResizeObserver | undefined"
+              },
+              "privacy": "private"
             },
             {
               "kind": "method",
@@ -27293,6 +27377,12 @@
               }
             },
             {
+              "kind": "method",
+              "name": "setTextareaDimensions",
+              "privacy": "private",
+              "description": "Grows the textarea to fit its content when `resize` is `auto`, or clears the measured height when\nthe textarea switches back to a manual resize mode."
+            },
+            {
               "kind": "field",
               "name": "shadowRootOptions",
               "type": {
@@ -27321,6 +27411,12 @@
               "name": "textAreaTemplate",
               "privacy": "protected",
               "description": "Generates the template for the text area"
+            },
+            {
+              "kind": "method",
+              "name": "updateResizeObserver",
+              "privacy": "private",
+              "description": "Creates or destroys the resize observer based on the current resize mode. The observer is only\nneeded in `auto` mode, where the height must be recomputed when the width changes and text re-wraps."
             },
             {
               "kind": "method",
@@ -27454,6 +27550,15 @@
               },
               "description": "This attribute specifies whether the browser can automatically fill in the control's value.",
               "fieldName": "autocomplete"
+            },
+            {
+              "name": "autocorrect",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "true",
+              "description": "Indicates whether the browser's autocorrect feature is on or off for the textarea.",
+              "fieldName": "autocorrect"
             },
             {
               "name": "autofocus",
@@ -27646,9 +27751,9 @@
             {
               "name": "resize",
               "type": {
-                "text": "'none' | 'horizontal' | 'vertical' | 'both' | undefined"
+                "text": "'none' | 'horizontal' | 'vertical' | 'both' | 'auto' | undefined"
               },
-              "description": "Controls how the textarea can be resized.",
+              "description": "Controls how the textarea can be resized. Use `auto` to grow the textarea to fit its content.",
               "fieldName": "resize"
             },
             {

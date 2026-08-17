@@ -90,6 +90,14 @@ export const Clearable: Story = {
   },
 };
 
+export const AutocorrectOn: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Autocorrect on',
+    autocorrect: true,
+  },
+};
+
 export const Datalist: Story = {
   render: args =>
     template(

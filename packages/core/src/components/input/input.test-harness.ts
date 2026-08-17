@@ -62,6 +62,25 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(this.component.shadowRoot?.querySelector('input')).attribute('type', 'password');
                 },
               },
+              autocorrect: {
+                description: 'reflects the autocorrect property as an on/off attribute',
+                test: async () => {
+                  const input = this.component.shadowRoot?.querySelector('input');
+                  expect(input).to.not.be.null;
+
+                  expect(this.component.getAttribute('autocorrect')).to.equal('off');
+                  expect(input?.getAttribute('autocorrect')).to.equal('off');
+
+                  this.component.autocorrect = true;
+                  await elementUpdated(this.component);
+                  expect(this.component.getAttribute('autocorrect')).to.equal('on');
+                  expect(input?.getAttribute('autocorrect')).to.equal('on');
+
+                  this.component.setAttribute('autocorrect', 'off');
+                  await elementUpdated(this.component);
+                  expect(this.component.autocorrect).to.be.false;
+                },
+              },
               clearButton: {
                 description: 'shows a clear button and clears the value when activated',
                 test: async () => {

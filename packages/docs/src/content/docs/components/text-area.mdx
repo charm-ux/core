@@ -76,4 +76,30 @@ To disable the textarea, add the `disabled` attribute within the `<ch-text-area>
 
 </code-bubble>
 
+## Auto-resize
+
+Set `resize` to `auto` to make the textarea grow to fit its content as the user types. The textarea's height
+recomputes whenever its width changes and text re-wraps.
+
+<code-bubble>
+
+```html
+<ch-text-area resize="auto"></ch-text-area>
+```
+
+</code-bubble>
+
+## Autocorrect
+
+The `autocorrect` boolean property controls the browser's autocorrect for spelling and punctuation. It is `on`
+by default; set it to `false` (or the `autocorrect="off"` attribute) to disable it.
+
+<code-bubble>
+
+```html
+<ch-text-area autocorrect="off"></ch-text-area>
+```
+
+</code-bubble>
+
 ## API
