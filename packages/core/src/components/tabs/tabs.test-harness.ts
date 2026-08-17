@@ -190,6 +190,36 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                       expect(el.activeId).to.equal('tab-6');
                     },
                   },
+                  arrowRightRtl: {
+                    description: 'moves backward when pressing ArrowRight in RTL',
+                    test: async () => {
+                      const el = this.component;
+                      el.dir = 'rtl';
+                      await elementUpdated(el);
+
+                      await sendKeys({ press: 'Tab' });
+                      await sendKeys({ press: 'ArrowRight' });
+
+                      await elementUpdated(el);
+
+                      expect(el.activeId).to.equal('tab-6');
+                    },
+                  },
+                  arrowLeftRtl: {
+                    description: 'moves forward when pressing ArrowLeft in RTL',
+                    test: async () => {
+                      const el = this.component;
+                      el.dir = 'rtl';
+                      await elementUpdated(el);
+
+                      await sendKeys({ press: 'Tab' });
+                      await sendKeys({ press: 'ArrowLeft' });
+
+                      await elementUpdated(el);
+
+                      expect(el.activeId).to.equal('tab-2');
+                    },
+                  },
                   arrowLeftManualActivation: {
                     description:
                       'does not change selected tab on ArrowLeft until Enter is pushed if `manual-activation` is set',
