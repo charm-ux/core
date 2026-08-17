@@ -248,7 +248,88 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
           // interaction tests
           interactions: {
             description: 'interactions',
-            tests: {},
+            tests: {
+              staysOpenWhenMovingAnchorToTooltip: {
+                description: 'stays open when the pointer moves from the anchor into the tooltip',
+                config: { trigger: 'hover' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  expect(body).to.exist;
+
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  anchor.dispatchEvent(
+                    new MouseEvent('mouseout', { bubbles: true, composed: true, relatedTarget: body })
+                  );
+                  // hide-delay is 0ms, so a regression here would close the tooltip almost immediately.
+                  await aTimeout(100);
+                  expect(el.open).to.be.true;
+                },
+              },
+              staysOpenWhenMovingTooltipToAnchor: {
+                description: 'stays open when the pointer moves from the tooltip into the anchor',
+                config: { trigger: 'hover' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  expect(body).to.exist;
+
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  body.dispatchEvent(
+                    new MouseEvent('mouseout', { bubbles: true, composed: true, relatedTarget: anchor })
+                  );
+                  await aTimeout(100);
+                  expect(el.open).to.be.true;
+                },
+              },
+              hidesWhenPointerFullyLeaves: {
+                description: 'hides when the pointer fully leaves the anchor and tooltip',
+                config: { trigger: 'hover' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  anchor.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, composed: true }));
+                  await waitUntil(() => !el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                },
+              },
+              pressDismissesUntilRearmed: {
+                description: 'light dismisses on press and keeps the tooltip hidden until re-armed',
+                config: { trigger: 'hover focus' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  anchor.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }));
+                  await waitUntil(() => !el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  // Re-hovering while dismissed must not reopen the tooltip.
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  // Longer than the 300ms show-delay to prove the hover was ignored.
+                  await aTimeout(350);
+                  expect(el.open).to.be.false;
+
+                  // Fully leaving the anchor re-arms hover.
+                  anchor.dispatchEvent(new MouseEvent('mouseout', { bubbles: true, composed: true }));
+                  await aTimeout(50);
+
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                },
+              },
+            },
           },
         },
       },

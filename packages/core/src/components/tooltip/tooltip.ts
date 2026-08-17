@@ -84,6 +84,10 @@ export class CoreTooltip extends CharmDismissibleElement {
   protected anchorEl?: HTMLElement | undefined;
   protected hoverTimeout?: number;
 
+  // Set when the anchor is pressed to light dismiss the tooltip. While true, hover and focus won't reopen it. Cleared
+  // when the pointer fully leaves the anchor and tooltip or when the anchor blurs.
+  protected dismissedByPress = false;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CorePopup];
   }
@@ -149,6 +153,8 @@ export class CoreTooltip extends CharmDismissibleElement {
       throw new Error('Invalid tooltip target: no anchor element was found.');
     }
 
+    // A new anchor must not inherit press dismissal state from the old one.
+    this.dismissedByPress = false;
     this.removeListeners();
     this.anchorEl = target;
     this.attachListeners();
@@ -194,8 +200,12 @@ export class CoreTooltip extends CharmDismissibleElement {
     this.handleClick = this.handleClick.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleMouseDown = this.handleMouseDown.bind(this);
     this.handleMouseOver = this.handleMouseOver.bind(this);
     this.handleMouseOut = this.handleMouseOut.bind(this);
+
+    // Re-arm the tooltip after a light dismiss in case the re-arm events were missed while disconnected.
+    this.dismissedByPress = false;
 
     this.updateComplete.then(() => this.attachListeners());
   }
@@ -237,6 +247,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       this.anchorEl.addEventListener('focus', this.handleFocus, true);
       this.anchorEl.addEventListener('click', this.handleClick);
       this.anchorEl.addEventListener('keydown', this.handleKeyDown);
+      this.anchorEl.addEventListener('mousedown', this.handleMouseDown);
       this.anchorEl.addEventListener('mouseover', this.handleMouseOver);
       this.anchorEl.addEventListener('mouseout', this.handleMouseOut);
     }
@@ -252,6 +263,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       this.anchorEl.removeEventListener('focus', this.handleFocus, true);
       this.anchorEl.removeEventListener('click', this.handleClick);
       this.anchorEl.removeEventListener('keydown', this.handleKeyDown);
+      this.anchorEl.removeEventListener('mousedown', this.handleMouseDown);
       this.anchorEl.removeEventListener('mouseover', this.handleMouseOver);
       this.anchorEl.removeEventListener('mouseout', this.handleMouseOut);
     }
@@ -315,6 +327,10 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Handles blur event on the popup */
   protected handleBlur() {
+    // Moving focus away re-arms the tooltip after a light dismiss. On touch devices no mouseout fires, so this is
+    // the reset path.
+    this.dismissedByPress = false;
+
     if (this.hasTrigger('focus')) {
       this.hide();
     }
@@ -328,7 +344,32 @@ export class CoreTooltip extends CharmDismissibleElement {
       } else {
         this.show();
       }
+      return;
     }
+
+    if (this.hasTrigger('manual')) {
+      return;
+    }
+
+    // Light dismiss for activations that don't fire mousedown, like Enter or Space on a button.
+    this.lightDismiss();
+  }
+
+  /** Handles mousedown event on the popup */
+  protected handleMouseDown() {
+    if (this.hasTrigger('click') || this.hasTrigger('manual')) {
+      return;
+    }
+
+    // Light dismiss before focus fires so the tooltip doesn't flash visible during the click.
+    this.lightDismiss();
+  }
+
+  /** Hides the tooltip, or cancels a pending show, and keeps it hidden until re-armed. */
+  protected lightDismiss() {
+    clearTimeout(this.hoverTimeout);
+    this.dismissedByPress = true;
+    this.hide();
   }
 
   /** Handles focus event on the popup */
@@ -349,6 +390,10 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Handles mouseover event on the popup */
   protected handleMouseOver() {
+    if (this.dismissedByPress) {
+      return;
+    }
+
     if (this.hasTrigger('hover')) {
       const delay = parseDuration(getComputedStyle(this).getPropertyValue('--tooltip-show-delay'));
       clearTimeout(this.hoverTimeout);
@@ -357,7 +402,22 @@ export class CoreTooltip extends CharmDismissibleElement {
   }
 
   /** Handles mouseout event on the popup */
-  protected handleMouseOut() {
+  protected handleMouseOut(event: MouseEvent) {
+    const relatedTarget = event.relatedTarget as Node | null;
+
+    // Don't hide when the pointer moves between the anchor and the tooltip. Relying on `:hover` matching here is
+    // unreliable when the pointer moves onto a slotted child of the tooltip, since the host's `:hover` state can
+    // briefly report false during that transition.
+    const movedIntoAnchor = Boolean(relatedTarget && this.anchorEl?.contains(relatedTarget));
+    const movedIntoTooltip = Boolean(relatedTarget && this.contains(relatedTarget));
+
+    if (movedIntoAnchor || movedIntoTooltip) {
+      return;
+    }
+
+    // The pointer has fully left, so hovering can show the tooltip again after a light dismiss.
+    this.dismissedByPress = false;
+
     if (this.hasTrigger('hover')) {
       const delay = parseDuration(getComputedStyle(this).getPropertyValue('--tooltip-hide-delay'));
       clearTimeout(this.hoverTimeout);
