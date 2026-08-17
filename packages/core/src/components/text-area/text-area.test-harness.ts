@@ -136,30 +136,6 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
                   },
                 },
-                autocorrect: {
-                  description: 'reflects the autocorrect property as an on/off attribute',
-                  test: async () => {
-                    const el = this.component;
-                    const textarea = el.shadowRoot?.querySelector('textarea') as HTMLTextAreaElement;
-                    expect(textarea).to.exist;
-
-                    expect(el.getAttribute('autocorrect')).to.equal('on');
-                    expect(textarea.getAttribute('autocorrect')).to.equal('on');
-
-                    el.autocorrect = false;
-                    await el.updateComplete;
-                    expect(el.getAttribute('autocorrect')).to.equal('off');
-                    expect(textarea.getAttribute('autocorrect')).to.equal('off');
-
-                    el.setAttribute('autocorrect', 'off');
-                    await el.updateComplete;
-                    expect(el.autocorrect).to.be.false;
-
-                    el.setAttribute('autocorrect', 'on');
-                    await el.updateComplete;
-                    expect(el.autocorrect).to.be.true;
-                  },
-                },
                 resizeAuto: {
                   description: 'grows the textarea to fit its content when resize is auto',
                   test: async () => {

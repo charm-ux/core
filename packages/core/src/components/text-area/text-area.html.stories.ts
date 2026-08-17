@@ -45,14 +45,6 @@ export const AutoResize: Story = {
   },
 };
 
-export const AutocorrectOff: Story = {
-  render: args => template(args),
-  args: {
-    label: 'Autocorrect off',
-    autocorrect: false,
-  },
-};
-
 export const Disabled: Story = {
   render: args => template(args),
   args: {

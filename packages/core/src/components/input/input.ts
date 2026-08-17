@@ -69,17 +69,6 @@ export class CoreInput extends CharmFormControlElement {
   @property({ reflect: true })
   public override autocapitalize: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters' = 'off';
 
-  /** Indicates whether the browser's autocorrect feature is on or off for the input. */
-  @property({
-    type: Boolean,
-    reflect: true,
-    converter: {
-      fromAttribute: value => (!value || value === 'off' ? false : true),
-      toAttribute: value => (value ? 'on' : 'off'),
-    },
-  })
-  public override autocorrect = false;
-
   /**
    * Permission the user agent has to provide automated assistance in filling out form field values and the type of
    * information expected in the field.
@@ -373,7 +362,6 @@ export class CoreInput extends CharmFormControlElement {
     return html`
       <input
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
-        autocorrect=${this.autocorrect ? 'on' : 'off'}
         autocomplete=${ifDefined(this.type === 'password' ? 'off' : this.autocomplete) as any}
         aria-describedby=${ifDefined(this.describedBy)}
         aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}

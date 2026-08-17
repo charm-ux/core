@@ -51,17 +51,6 @@ export class CoreTextArea extends CharmFormControlElement {
   @property({ reflect: true })
   public override autocapitalize: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters' = 'none';
 
-  /** Indicates whether the browser's autocorrect feature is on or off for the textarea. */
-  @property({
-    type: Boolean,
-    reflect: true,
-    converter: {
-      fromAttribute: value => (!value || value === 'off' ? false : true),
-      toAttribute: value => (value ? 'on' : 'off'),
-    },
-  })
-  public override autocorrect = true;
-
   /** This attribute specifies whether the browser can automatically fill in the control's value. */
   @property()
   public autocomplete?: 'off' | 'on';
@@ -193,7 +182,6 @@ export class CoreTextArea extends CharmFormControlElement {
           aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
           autocapitalize=${ifDefined(this.autocapitalize)}
-          autocorrect=${this.autocorrect ? 'on' : 'off'}
           autocomplete=${ifDefined(this.autocomplete)}
           class="form-control-base-input"
           enterkeyhint=${ifDefined(this.enterkeyhint)}

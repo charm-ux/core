@@ -12053,18 +12053,6 @@
             },
             {
               "kind": "field",
-              "name": "autocorrect",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "public",
-              "default": "false",
-              "description": "Indicates whether the browser's autocorrect feature is on or off for the input.",
-              "attribute": "autocorrect",
-              "reflects": true
-            },
-            {
-              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -13292,15 +13280,6 @@
               },
               "description": "Permission the user agent has to provide automated assistance in filling out form field values and the type of\ninformation expected in the field.",
               "fieldName": "autocomplete"
-            },
-            {
-              "name": "autocorrect",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "false",
-              "description": "Indicates whether the browser's autocorrect feature is on or off for the input.",
-              "fieldName": "autocorrect"
             },
             {
               "name": "autofocus",
@@ -26571,18 +26550,6 @@
             },
             {
               "kind": "field",
-              "name": "autocorrect",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "public",
-              "default": "true",
-              "description": "Indicates whether the browser's autocorrect feature is on or off for the textarea.",
-              "attribute": "autocorrect",
-              "reflects": true
-            },
-            {
-              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -27550,15 +27517,6 @@
               },
               "description": "This attribute specifies whether the browser can automatically fill in the control's value.",
               "fieldName": "autocomplete"
-            },
-            {
-              "name": "autocorrect",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "true",
-              "description": "Indicates whether the browser's autocorrect feature is on or off for the textarea.",
-              "fieldName": "autocorrect"
             },
             {
               "name": "autofocus",
