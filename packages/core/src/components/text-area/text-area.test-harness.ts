@@ -136,6 +136,27 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
                   },
                 },
+                resizeAuto: {
+                  description: 'grows the textarea to fit its content when resize is auto',
+                  test: async () => {
+                    const el = this.component;
+                    const textarea = el.shadowRoot?.querySelector('textarea') as HTMLTextAreaElement;
+                    expect(textarea).to.exist;
+
+                    el.resize = 'auto';
+                    await el.updateComplete;
+                    const initialHeight = textarea.offsetHeight;
+
+                    el.value = 'line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10';
+                    await el.updateComplete;
+                    expect(textarea.offsetHeight).to.be.greaterThan(initialHeight);
+                    expect(textarea.style.height).to.not.equal('');
+
+                    el.resize = 'none';
+                    await el.updateComplete;
+                    expect(textarea.style.height).to.equal('');
+                  },
+                },
               },
             },
           },

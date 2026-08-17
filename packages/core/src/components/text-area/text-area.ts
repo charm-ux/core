@@ -6,6 +6,7 @@ import { property, query } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './text-area.styles.js';
+import type { PropertyValues } from 'lit';
 
 /**
  * A text field that allows multiple lines of text entry.
@@ -40,9 +41,11 @@ export class CoreTextArea extends CharmFormControlElement {
   @property({ reflect: true })
   public rows: number = 4;
 
-  /** Controls how the textarea can be resized. */
+  /**
+   * Controls how the textarea can be resized. Use `auto` to grow the textarea to fit its content.
+   */
   @property({ reflect: true })
-  public resize?: 'none' | 'horizontal' | 'vertical' | 'both';
+  public resize?: 'none' | 'horizontal' | 'vertical' | 'both' | 'auto';
 
   /** Controls whether and how text input is automatically capitalized as it is entered/edited by the user. */
   @property({ reflect: true })
@@ -75,8 +78,33 @@ export class CoreTextArea extends CharmFormControlElement {
   @query('#input')
   protected override input?: HTMLTextAreaElement;
 
+  /** The width last observed by the resize observer, used to recompute height only when wrapping changes. */
+  private lastObservedWidth = 0;
+
+  /** Deferred recompute handle, cancelled on teardown. */
+  private resizeFrame?: number;
+
+  private resizeObserver?: ResizeObserver;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
+  }
+
+  public override connectedCallback() {
+    super.connectedCallback();
+    this.updateComplete.then(() => this.updateResizeObserver());
+  }
+
+  public override disconnectedCallback() {
+    if (this.resizeFrame !== undefined) {
+      cancelAnimationFrame(this.resizeFrame);
+      this.resizeFrame = undefined;
+    }
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = undefined;
+    }
+    super.disconnectedCallback();
   }
 
   protected handleChange() {
@@ -92,6 +120,19 @@ export class CoreTextArea extends CharmFormControlElement {
   protected handleKeyDown = (event: KeyboardEvent) => {
     event.stopPropagation();
   };
+
+  protected override updated(changedProperties: PropertyValues<this>) {
+    super.updated(changedProperties);
+
+    if (changedProperties.has('value') || changedProperties.has('rows')) {
+      this.setTextareaDimensions();
+    }
+
+    if (changedProperties.has('resize')) {
+      this.setTextareaDimensions();
+      this.updateResizeObserver();
+    }
+  }
 
   protected override render() {
     return this.textAreaTemplate();
@@ -164,6 +205,57 @@ export class CoreTextArea extends CharmFormControlElement {
         ></textarea>
       </div>
     `;
+  }
+
+  /**
+   * Creates or destroys the resize observer based on the current resize mode. The observer is only
+   * needed in `auto` mode, where the height must be recomputed when the width changes and text re-wraps.
+   */
+  private updateResizeObserver() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = undefined;
+    }
+
+    if (!this.isConnected || this.resize !== 'auto' || !this.input) return;
+
+    this.lastObservedWidth = 0;
+    this.resizeObserver = new ResizeObserver(entries => {
+      // Guard against callbacks firing after disconnect
+      if (!this.isConnected) return;
+
+      // Height mutations are skipped so our own sizing doesn't recurse into the observer.
+      const width = entries[0]?.contentRect.width ?? 0;
+      if (width === this.lastObservedWidth) return;
+      this.lastObservedWidth = width;
+
+      // Deferred to the next frame so it runs outside the observer callback.
+      if (this.resizeFrame !== undefined) {
+        cancelAnimationFrame(this.resizeFrame);
+      }
+      this.resizeFrame = requestAnimationFrame(() => {
+        this.resizeFrame = undefined;
+        this.setTextareaDimensions();
+      });
+    });
+    this.resizeObserver.observe(this);
+  }
+
+  /**
+   * Grows the textarea to fit its content when `resize` is `auto`, or clears the measured height when
+   * the textarea switches back to a manual resize mode.
+   */
+  private setTextareaDimensions() {
+    if (!this.input) return;
+
+    if (this.resize !== 'auto') {
+      this.input.style.height = '';
+      return;
+    }
+
+    this.input.style.height = 'auto';
+    const newHeight = this.input.scrollHeight;
+    this.input.style.height = `${newHeight}px`;
   }
 }
 

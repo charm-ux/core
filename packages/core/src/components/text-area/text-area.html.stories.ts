@@ -36,6 +36,15 @@ export const Resize: Story = {
   },
 };
 
+export const AutoResize: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Auto-resize',
+    resize: 'auto',
+    placeholder: 'This textarea grows to fit its content...',
+  },
+};
+
 export const Disabled: Story = {
   render: args => template(args),
   args: {

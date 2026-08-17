@@ -44,4 +44,11 @@ export default css`
   :host([resize='both']) .form-control-base-input {
     resize: both;
   }
+
+  :host([resize='auto']) .form-control-base-input {
+    height: auto;
+    max-height: none;
+    overflow-y: hidden;
+    resize: none;
+  }
 `;
