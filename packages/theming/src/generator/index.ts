@@ -36,3 +36,6 @@ export {
   type GenerateThemeResult,
   type GenerateThemeOptions,
 } from './generateTheme.js';
+
+// Pre-generated theme artifacts (build-time only)
+export { charmTheme, demoTheme } from '../themes/generated.js';

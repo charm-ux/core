@@ -1,5 +1,4 @@
 import { defineTokens } from '../defineTokens.js';
-import { generateThemeSync } from '../generator/generateTheme.js';
 
 const charmTokensBase = defineTokens(
   {
@@ -1054,25 +1053,7 @@ export const charmDefinition = charmTokensBase.definition;
 /** Token helpers for the charm theme */
 export const charmHelpers = charmTokensBase.helpers;
 
-/** Pre-generated CSS theme for the charm tokens (lazily computed) */
-let _charmTheme: ReturnType<typeof generateThemeSync> | undefined;
-
-function getCharmTheme(): ReturnType<typeof generateThemeSync> {
-  if (!_charmTheme) {
-    _charmTheme = generateThemeSync(charmDefinition, { prefix: 'charm' });
-  }
-  return _charmTheme;
-}
-
-/**
- * Lazy-evaluated proxy for the generated charm theme.
- * Generation only runs on first property access.
- */
-export const charmTheme: ReturnType<typeof generateThemeSync> = new Proxy({} as ReturnType<typeof generateThemeSync>, {
-  get(_target, prop: keyof ReturnType<typeof generateThemeSync>) {
-    return getCharmTheme()[prop];
-  },
-});
+export { charmTokensBase as charmTokens };
 
 /**
  * Complete charm theme tokens with extension methods.
@@ -1103,14 +1084,3 @@ export const charmTheme: ReturnType<typeof generateThemeSync> = new Proxy({} as 
  *   }));
  * ```
  */
-export const charmTokens = Object.defineProperties(charmTokensBase, {
-  theme: { get: getCharmTheme, enumerable: true },
-  css: { get: () => getCharmTheme().css, enumerable: true },
-  cssReset: { get: () => getCharmTheme().cssReset, enumerable: true },
-  cssUtilities: { get: () => getCharmTheme().cssUtilities, enumerable: true },
-  hasLightDarkTokens: { get: () => getCharmTheme().hasLightDarkTokens, enumerable: true },
-  tokensJson: { get: () => getCharmTheme().tokensJson, enumerable: true },
-  tokensLightJson: { get: () => getCharmTheme().tokensLightJson, enumerable: true },
-  tokensDarkJson: { get: () => getCharmTheme().tokensDarkJson, enumerable: true },
-  tokensMarkdown: { get: () => getCharmTheme().tokensMarkdown, enumerable: true },
-});

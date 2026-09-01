@@ -47,7 +47,7 @@ setThemeDefinition(myTokens.definition);
 Generate the stylesheet from the same definition, so the variables it declares are the ones the components reference:
 
 ```typescript
-import { generateThemeSync } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 
 const theme = generateThemeSync(myTokens.definition, { dryRun: true });
 // theme.css declares --vel-* — inject it once at the document level
@@ -219,10 +219,10 @@ const value = getComputedStyle(element).getPropertyValue(
 #### Generating Theme CSS — `generateTheme`
 
 If you need to generate theme CSS at runtime (server-side rendering, build scripts, etc.),
-import directly from `@charm-ux/theming`:
+import from the `@charm-ux/theming/generator` subpath:
 
 ```typescript
-import { generateTheme } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 
 const { css, cssReset, cssUtilities } = generateTheme(myDefinition, { prefix: 'fui' });
 ```

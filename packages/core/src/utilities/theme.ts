@@ -3,8 +3,10 @@ import { charmDefinition } from '@charm-ux/theming/themes';
 import { createCssHelpers, type CssHelpers } from '@charm-ux/theming/lit';
 import type { ResolvedTokenDefinition } from '@charm-ux/theming';
 
-// Local copy to avoid pulling in the `@charm-ux/theming` root barrel (and its culori-based generator)
-// from component style modules. Matches `helpers/toKebabCase` in the theming package.
+// Local copy to avoid pulling the `@charm-ux/theming` root barrel into every
+// component style module - the runtime entry is browser-safe, but importing it
+// here would still drag in the whole runtime surface for one tiny function.
+// Matches `helpers/toKebabCase` in the theming package.
 function toKebabCase(value: string): string {
   return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 }

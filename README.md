@@ -91,12 +91,14 @@ Charm uses CSS custom properties for theming. Generate a custom theme or use the
 
 ```typescript
 import { charmTokens } from '@charm-ux/theming';
+import { charmTheme } from '@charm-ux/theming/generator';
 
 // Use the pre-built theme CSS
-document.adoptedStyleSheets = [charmTokens.theme.css];
+document.adoptedStyleSheets = [charmTheme.css];
 
 // Or generate a custom theme
-import { defineTokens, generateTheme } from '@charm-ux/theming';
+import { defineTokens } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 
 const { definition } = defineTokens({
   primitives: {

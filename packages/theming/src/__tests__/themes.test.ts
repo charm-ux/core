@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { generateCss } from '../generator/index.js';
-import { charmTheme, charmTokens, demoTheme, demoTokens } from '../themes/index.js';
+import { charmTheme, demoTheme, generateCss } from '../generator/index.js';
+import { charmTokens, demoTokens } from '../themes/index.js';
 
 describe('charmTokens', () => {
   it('has primitives defined', () => {

@@ -8,15 +8,32 @@ Design token system for Charm UI with automatic color palette generation, theme 
 npm install @charm-ux/theming
 ```
 
+## Entry Points
+
+The package splits browser-safe runtime utilities from the Node.js-backed theme generator:
+
+```typescript
+// Runtime-only (~2KB) - safe for browsers
+import { cssVarName, toKebabCase, defineTokens, charmTokens } from '@charm-ux/theming';
+
+// Generator (~170KB) - build-time only, pulls in node:fs/node:path
+import { generateThemeSync, generateTheme, generateCss } from '@charm-ux/theming/generator';
+```
+
+Import generator functions from `@charm-ux/theming/generator` in build scripts and SSR contexts, never from the runtime barrel.
+
 ## Quick Start
 
 ### Using the Pre-built Theme
 
 ```typescript
 import { charmTokens } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 
 // Access generated CSS
-const { css, cssReset, cssUtilities } = charmTokens.theme;
+const { css, cssReset, cssUtilities } = generateThemeSync(charmTokens.definition, {
+  prefix: 'charm',
+});
 
 // Write to files
 fs.writeFileSync('tokens.css', css);
@@ -29,7 +46,8 @@ fs.writeFileSync('utilities.css', cssUtilities);
 Use `.extendPrimitives()`, `.extendSemantics()`, `.extendComponents()`, and `.extendRawCss()` to create derived themes. The semantic and component factories receive layer-specific reference helpers (`primitive`, `semantic`, `component`); their return value is **deep-merged** into the inherited tokens, so you only describe what changes — no need to spread `base`:
 
 ```typescript
-import { charmTokens, generateTheme } from '@charm-ux/theming';
+import { charmTokens } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 
 // Extend with custom brand colors
 const myTokens = charmTokens
@@ -69,7 +87,8 @@ Untouched groups and untouched keys within a group are preserved automatically. 
 ### Creating a Theme from Scratch
 
 ```typescript
-import { defineTokens, generateTheme } from '@charm-ux/theming';
+import { defineTokens } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 
 const myTokens = defineTokens(
   {
@@ -276,6 +295,8 @@ const customTokens = charmTokens
 Changes the CSS variable prefix of a derived theme. The `extend*()` methods inherit the prefix — this is the only way to change it:
 
 ```typescript
+import { generateTheme } from '@charm-ux/theming/generator';
+
 const myTokens = charmTokens.updatePrefix('my').extendPrimitives({
   color: { brand: '#1a4fd6' },
 });
@@ -436,7 +457,7 @@ Returns: `{ definition, helpers, semantic, component, updatePrefix, extendPrimit
 
 ### `generateTheme(definition, options?)`
 
-Generates theme outputs asynchronously.
+Generates theme outputs asynchronously. Import from `@charm-ux/theming/generator`.
 
 Options:
 
@@ -445,7 +466,7 @@ Options:
 
 ### `generateThemeSync(definition, options?)`
 
-Synchronous version of `generateTheme()`.
+Synchronous version of `generateTheme()`. Import from `@charm-ux/theming/generator`.
 
 ### `createCssHelpers(definition, prefix)`
 

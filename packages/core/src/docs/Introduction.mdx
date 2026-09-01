@@ -90,16 +90,19 @@ Charm uses CSS custom properties for theming. You can use the pre-built theme or
 
 ```typescript
 import { charmTokens } from '@charm-ux/theming';
+import { generateThemeSync } from '@charm-ux/theming/generator';
 
 // Write the CSS to your build output
-fs.writeFileSync('tokens.css', charmTokens.theme.css);
-fs.writeFileSync('reset.css', charmTokens.theme.cssReset);
+const { css, cssReset } = generateThemeSync(charmTokens.definition, { prefix: 'charm' });
+fs.writeFileSync('tokens.css', css);
+fs.writeFileSync('reset.css', cssReset);
 ```
 
 Or create a custom theme:
 
 ```typescript
-import { defineTokens, generateTheme } from '@charm-ux/theming';
+import { defineTokens } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 
 const { definition } = defineTokens({
   primitives: {
