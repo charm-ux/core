@@ -1,2 +1,2 @@
-export { charmDefinition, charmHelpers, charmTheme, charmTokens } from './charm.js';
-export { demoDefinition, demoHelpers, demoTheme, demoTokens } from './demo.js';
+export { charmDefinition, charmHelpers, charmTokens } from './charm.js';
+export { demoDefinition, demoHelpers, demoTokens } from './demo.js';

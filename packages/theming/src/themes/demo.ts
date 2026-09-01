@@ -1,4 +1,3 @@
-import { generateThemeSync } from '../generator/generateTheme.js';
 import { charmTokens } from './charm.js';
 
 /**
@@ -129,25 +128,5 @@ body {
 export const demoDefinition = demoTokens.definition;
 /** Token helpers for the demo theme */
 export const demoHelpers = demoTokens.helpers;
-
-/** Pre-generated CSS theme for the demo tokens (lazily computed) */
-let _demoTheme: ReturnType<typeof generateThemeSync> | undefined;
-
-function getDemoTheme(): ReturnType<typeof generateThemeSync> {
-  if (!_demoTheme) {
-    _demoTheme = generateThemeSync(demoDefinition, { prefix: 'charm' });
-  }
-  return _demoTheme;
-}
-
-/**
- * Lazy-evaluated proxy for the generated demo theme.
- * Generation only runs on first property access.
- */
-export const demoTheme: ReturnType<typeof generateThemeSync> = new Proxy({} as ReturnType<typeof generateThemeSync>, {
-  get(_target, prop: keyof ReturnType<typeof generateThemeSync>) {
-    return getDemoTheme()[prop];
-  },
-});
 
 export default demoTokens;

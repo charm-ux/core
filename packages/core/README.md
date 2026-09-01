@@ -175,10 +175,10 @@ import { component } from '@charm-ux/core';
 
 ### Generating Theme CSS
 
-For runtime CSS generation (SSR, build scripts), import from `@charm-ux/theming`:
+For runtime CSS generation (SSR, build scripts), import from `@charm-ux/theming/generator`:
 
 ```typescript
-import { generateTheme } from '@charm-ux/theming';
+import { generateTheme } from '@charm-ux/theming/generator';
 const { css, cssReset } = generateTheme(definition, 'myapp');
 ```
 

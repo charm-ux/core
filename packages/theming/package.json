@@ -2,13 +2,18 @@
   "name": "@charm-ux/theming",
   "version": "0.5.0",
   "description": "Design token system with type-safe helpers and CSS generation for Charm UI",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/runtime.js",
+  "types": "./dist/runtime.d.ts",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.js"
+    },
+    "./generator": {
+      "types": "./dist/generator/index.d.ts",
+      "import": "./dist/generator/index.js"
     },
     "./themes": {
       "types": "./dist/themes/index.d.ts",

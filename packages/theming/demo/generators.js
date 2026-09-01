@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { charmTokens, defineTokens, generateThemeSync } from '../dist/index.js';
+import { charmTokens, defineTokens } from '../dist/index.js';
+import { generateThemeSync } from '../dist/generator/index.js';
 
 // Helper to write all theme outputs
 function writeThemeAssets(name, theme) {
@@ -37,7 +38,7 @@ function writeThemeAssets(name, theme) {
 
 // 1. Pre-built Charm Theme
 console.log('\n--- Pre-built Charm Theme ---');
-writeThemeAssets('charm', charmTokens.theme);
+writeThemeAssets('charm', generateThemeSync(charmTokens.definition, { prefix: 'charm' }));
 
 // 2. Custom Theme with defineTokens
 console.log('\n--- Custom Theme ---');
