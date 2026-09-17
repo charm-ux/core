@@ -48,6 +48,13 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(getComputedStyle(button).display).to.equal('');
                 },
               },
+              trapFocusDefault: {
+                description: 'should default `trapFocus` to false/undefined and not reflect the attribute',
+                test: async () => {
+                  expect(this.component.trapFocus).to.not.be.true;
+                  expect(this.component.hasAttribute('trap-focus')).to.be.false;
+                },
+              },
               notAlertRole: {
                 description: 'should not have role "alertdialog" when alert is not set',
                 test: async () => {
@@ -465,6 +472,101 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   await sendKeys({ press: 'Tab' });
                   const closeBtn = this.component.shadowRoot?.querySelector('.close-btn');
                   expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                },
+              },
+              // `trap-focus` opt-in tests. These run on every browser (no Safari/Firefox skip) since the wrapping is
+              // implemented in JS by the component rather than relying on native <dialog> modal focus containment.
+              // The default fixture always has a "Cancel"/"Save" footer, so the true last focusable element is the
+              // "Save" button and the true first is the shadow-DOM close button.
+              trapFocusWrapForward: {
+                description: 'should wrap focus from the last to the first focusable element when trapFocus is enabled',
+                test: async () => {
+                  this.component.trapFocus = true;
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn') as HTMLElement;
+                  const saveBtn = Array.from(this.component.querySelectorAll('button')).find(
+                    b => b.textContent?.trim() === 'Save'
+                  ) as HTMLElement;
+
+                  saveBtn.focus();
+                  await sendKeys({ press: 'Tab' });
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                },
+              },
+              trapFocusWrapBackward: {
+                description:
+                  'should wrap focus from the first to the last focusable element with Shift+Tab when trapFocus is enabled',
+                test: async () => {
+                  this.component.trapFocus = true;
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn') as HTMLElement;
+                  const saveBtn = Array.from(this.component.querySelectorAll('button')).find(
+                    b => b.textContent?.trim() === 'Save'
+                  ) as HTMLElement;
+
+                  closeBtn.focus();
+                  await sendKeys({ press: 'Shift+Tab' });
+                  expect(document.activeElement).to.equal(saveBtn);
+                },
+              },
+              trapFocusDynamicContent: {
+                description: 'should include content added after the dialog opens when trapFocus is enabled',
+                test: async () => {
+                  this.component.trapFocus = true;
+                  await elementUpdated(this.component);
+                  this.component.show();
+                  await aTimeout(300);
+
+                  // Append a new element to the footer slot so it becomes the new last focusable element.
+                  const lateButton = document.createElement('button');
+                  lateButton.textContent = 'Late';
+                  lateButton.setAttribute('slot', 'footer');
+                  this.component.appendChild(lateButton);
+                  await elementUpdated(this.component);
+
+                  const closeBtn = this.component.shadowRoot?.querySelector('.close-btn') as HTMLElement;
+                  lateButton.focus();
+                  await sendKeys({ press: 'Tab' });
+                  // Tabbing from the dynamically added element should wrap back to the close button, proving it is
+                  // now recognized as the last focusable element.
+                  expect(this.component.shadowRoot?.activeElement).to.equal(closeBtn);
+                },
+              },
+              trapFocusEscapeStillCloses: {
+                description: 'should still close on Escape when trapFocus is enabled',
+                test: async () => {
+                  const spy = sinon.spy();
+                  this.component.trapFocus = true;
+                  this.component.addEventListener('dialog-hide', spy);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  await sendKeys({ press: 'Escape' });
+                  await waitUntil(() => spy.calledOnce);
+                  expect(this.component.open).to.be.false;
+                },
+              },
+              trapFocusLightDismissStillCloses: {
+                description: 'should still light-dismiss on backdrop click when trapFocus is enabled',
+                test: async () => {
+                  const spy = sinon.spy();
+                  this.component.trapFocus = true;
+                  this.component.addEventListener('dialog-hide', spy);
+
+                  const div = document.createElement('div');
+                  this.component.after(div);
+                  const { x, y } = getMiddleOfElement(div);
+
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  await sendMouse({ type: 'click', position: [x, y] });
+
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.be.false;
+                  await waitUntil(() => spy.calledOnce);
                 },
               },
             },
