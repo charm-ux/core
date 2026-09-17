@@ -129,3 +129,22 @@ To prevent the dialog from closing by clicking the backdrop, set the `explicit-c
 ```
 
 </code-bubble>
+
+## Trap Focus
+
+By default, the dialog relies on the native `<dialog>` element's built-in modal focus containment, which isn't
+completely reliable across all browsers. To guarantee that Tab/Shift+Tab can only cycle among the dialog's own
+focusable elements (slotted content and the close button) and never escape into the rest of the page or the
+browser's UI/chrome, set the `trap-focus` attribute on the element.
+
+<code-bubble>
+
+```html
+<ch-button shows="trap-focus">Open dialog</ch-button>
+<ch-dialog id="trap-focus" heading="Trap Focus" trap-focus>
+  <input type="text" placeholder="First input" />
+  <input type="text" placeholder="Second input" />
+</ch-dialog>
+```
+
+</code-bubble>

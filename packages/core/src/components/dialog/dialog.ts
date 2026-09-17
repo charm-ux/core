@@ -3,7 +3,6 @@ import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-// import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
@@ -109,6 +108,14 @@ export class CoreDialog extends CharmDismissibleElement {
   @property({ attribute: 'alert', type: Boolean })
   public alert?: boolean;
 
+  /**
+   * Enables strict keyboard focus trapping. When set, Tab/Shift+Tab can only cycle among the dialog's own focusable
+   * elements (including slotted content and the close button) and cannot move focus outside the dialog, e.g. into
+   * the rest of the page or the browser's UI/chrome. Off by default to preserve the native `<dialog>` behavior.
+   */
+  @property({ attribute: 'trap-focus', type: Boolean, reflect: true })
+  public trapFocus?: boolean;
+
   @state()
   protected visible = false;
 
@@ -116,8 +123,6 @@ export class CoreDialog extends CharmDismissibleElement {
   protected dialog?: HTMLDialogElement;
 
   protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
-
-  // protected readonly focusTrapController = new FocusTrapController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -206,7 +211,7 @@ export class CoreDialog extends CharmDismissibleElement {
   }
 
   /**
-   * Handles the 'keydown' event, specifically for the 'Escape' key.
+   * Handles the 'keydown' event, specifically for the 'Escape' and 'Tab' keys.
    * @param {KeyboardEvent} e - The 'keydown' event object.
    */
   protected handleKeydown = (e: KeyboardEvent) => {
@@ -216,8 +221,99 @@ export class CoreDialog extends CharmDismissibleElement {
         e.preventDefault();
         this.requestClose('keyboard');
         break;
+      case 'Tab':
+        if (this.trapFocus && this.open) this.handleFocusTrapTab(e);
+        break;
     }
   };
+
+  /**
+   * Wraps Tab/Shift+Tab focus at the boundaries of the dialog's focusable elements so it cannot escape into the rest
+   * of the page or the browser's UI/chrome. Only invoked when `trapFocus` is enabled.
+   * @param {KeyboardEvent} e - The 'keydown' event object for the 'Tab' key.
+   */
+  protected handleFocusTrapTab(e: KeyboardEvent) {
+    const focusableElements = this.getFocusableElements();
+    if (focusableElements.length === 0) {
+      e.preventDefault();
+      return;
+    }
+
+    const first = focusableElements[0];
+    const last = focusableElements[focusableElements.length - 1];
+    const activeElement = this.getDeepActiveElement();
+    const activeIsInDialog = activeElement != null && focusableElements.includes(activeElement as HTMLElement);
+
+    if (e.shiftKey) {
+      if (!activeIsInDialog || activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else if (!activeIsInDialog || activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  /**
+   * Returns the dialog's focusable elements in visual/document order, walking the rendered `<dialog>` subtree and
+   * expanding `<slot>` elements to include slotted light-DOM content alongside shadow-DOM parts (e.g. the close
+   * button). Recomputed on every call so it stays correct as content is added or removed while the dialog is open.
+   */
+  protected getFocusableElements(): HTMLElement[] {
+    if (!this.dialog) return [];
+    return this.collectFocusableElements(this.dialog);
+  }
+
+  /**
+   * Recursively collects focusable elements from `root`, expanding `<slot>` elements into their assigned light-DOM
+   * elements so slotted content is included in the correct position.
+   * @param {Element | ShadowRoot} root - The node whose descendants should be searched.
+   */
+  protected collectFocusableElements(root: Element | ShadowRoot): HTMLElement[] {
+    const results: HTMLElement[] = [];
+
+    for (const child of Array.from(root.children)) {
+      if (child instanceof HTMLSlotElement) {
+        for (const assigned of child.assignedElements({ flatten: true })) {
+          if (this.isFocusableElement(assigned)) results.push(assigned as HTMLElement);
+          results.push(...this.collectFocusableElements(assigned));
+        }
+      } else {
+        if (this.isFocusableElement(child)) results.push(child as HTMLElement);
+        results.push(...this.collectFocusableElements(child));
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Determines whether `el` is a focusable, enabled, and visible candidate for the focus trap.
+   * @param {Element} el - The element to test.
+   */
+  protected isFocusableElement(el: Element): boolean {
+    if (!(el instanceof HTMLElement)) return false;
+    if (el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true') return false;
+    if (el.hidden || el.getAttribute('aria-hidden') === 'true') return false;
+
+    const tabindex = el.getAttribute('tabindex');
+    if (tabindex !== null && Number(tabindex) < 0) return false;
+
+    return el.matches('button, [href], input, select, textarea, [tabindex], [focusable]');
+  }
+
+  /**
+   * Returns the true active element, drilling into nested shadow roots (needed because `delegatesFocus` can keep
+   * `document.activeElement` pointed at a host element instead of the element with actual focus).
+   */
+  protected getDeepActiveElement(): Element | null {
+    let active: Element | null = document.activeElement;
+    while (active?.shadowRoot?.activeElement) {
+      active = active.shadowRoot.activeElement;
+    }
+    return active;
+  }
 
   /**
    * Handles the 'transitionend' event for CSS transitions.
