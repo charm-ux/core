@@ -84,6 +84,19 @@ export class FocusTrapController implements ReactiveController {
   }
 
   /**
+   * Gets the composed children of an element, taking into account slot assignments.
+   */
+  protected getComposedChildren(element: Element): Element[] {
+    if (element instanceof HTMLSlotElement) {
+      const assignedElements = element.assignedElements({ flatten: true });
+
+      return assignedElements.length > 0 ? assignedElements : Array.from(element.children);
+    }
+
+    return Array.from(element.children);
+  }
+
+  /**
    * Finds first and last focusable elements within the host component.
    */
   protected getFocusableElements(): HTMLElement[] {
@@ -95,30 +108,44 @@ export class FocusTrapController implements ReactiveController {
       'textarea:not([disabled]), button:not([disabled]), iframe, object, embed, ' +
       '[tabindex]:not([tabindex="-1"]), [contenteditable], [focusable]';
 
-    // Check shadow DOM elements
-    this.host.shadowRoot?.querySelectorAll<HTMLElement>(selector).forEach(el => {
-      if (el.tagName !== 'DIALOG') elements.push(el);
-    });
+    // // Check shadow DOM elements
+    // this.host.shadowRoot?.querySelectorAll<HTMLElement>(selector).forEach(el => {
+    //   if (el.tagName !== 'DIALOG') elements.push(el);
+    // });
 
-    // Check slotted elements
-    this.host.shadowRoot?.querySelectorAll<HTMLSlotElement>('slot').forEach(slot => {
-      slot.assignedElements({ flatten: true }).forEach(assigned => {
-        // With delegatesFocus, the custom element itself is focusable
-        if (assigned.matches(selector)) {
-          elements.push(assigned as HTMLElement);
-        }
-        // Also check children (in case of nested regular HTML)
-        elements.push(...assigned.querySelectorAll<HTMLElement>(selector));
-        // Also check shadow DOM of assigned elements
-        if (assigned.shadowRoot) {
-          assigned.shadowRoot.querySelectorAll<HTMLElement>(selector).forEach(el => {
-            if (el.tagName !== 'DIALOG') elements.push(el);
-          });
-        }
-      });
-    });
+    // // Check slotted elements
+    // this.host.shadowRoot?.querySelectorAll<HTMLSlotElement>('slot').forEach(slot => {
+    //   slot.assignedElements({ flatten: true }).forEach(assigned => {
+    //     // With delegatesFocus, the custom element itself is focusable
+    //     if (assigned.matches(selector)) {
+    //       elements.push(assigned as HTMLElement);
+    //     }
+    //     // Also check children (in case of nested regular HTML)
+    //     elements.push(...assigned.querySelectorAll<HTMLElement>(selector));
+    //     // Also check shadow DOM of assigned elements
+    //     if (assigned.shadowRoot) {
+    //       assigned.shadowRoot.querySelectorAll<HTMLElement>(selector).forEach(el => {
+    //         if (el.tagName !== 'DIALOG') elements.push(el);
+    //       });
+    //     }
+    //   });
+    // });
 
-    return elements.filter(el => this.isVisible(el));
+    const walk = (element: Element) => {
+      for (const child of this.getComposedChildren(element)) {
+        if (child.matches(selector) && child.tagName !== 'DIALOG') {
+          elements.push(child as HTMLElement);
+        }
+
+        walk(child);
+      }
+    };
+    const dialog = this.host.shadowRoot?.querySelector('dialog');
+    if (dialog) {
+      walk(dialog);
+    }
+
+    return elements.filter(element => this.isVisible(element));
   }
 
   protected matchesFocusableElement(activeEl: Element | null, targetEl: HTMLElement): boolean {
