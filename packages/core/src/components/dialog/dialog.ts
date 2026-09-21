@@ -1,9 +1,9 @@
-import { LitElement } from 'lit';
+import { LitElement, type PropertyValues } from 'lit';
 import { html } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-// import { FocusTrapController } from '../../controller/focus-trap.js';
+import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
@@ -109,6 +109,10 @@ export class CoreDialog extends CharmDismissibleElement {
   @property({ attribute: 'alert', type: Boolean })
   public alert?: boolean;
 
+  /** Keeps keyboard focus within the dialog while it is open. */
+  @property({ attribute: 'trap-focus', type: Boolean })
+  public trapFocus = false;
+
   @state()
   protected visible = false;
 
@@ -117,7 +121,7 @@ export class CoreDialog extends CharmDismissibleElement {
 
   protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
 
-  // protected readonly focusTrapController = new FocusTrapController(this);
+  protected readonly focusTrapController = new FocusTrapController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -154,6 +158,9 @@ export class CoreDialog extends CharmDismissibleElement {
       // make sure the hidden attribute is fully removed before triggering transition
       this.dialog?.removeAttribute('hidden');
 
+      if (this.trapFocus) {
+        this.focusTrapController.activate();
+      }
       this.dialog?.showModal();
 
       requestAnimationFrame(() => {
@@ -166,9 +173,23 @@ export class CoreDialog extends CharmDismissibleElement {
       // the dialog will be closed in handleTransitionEnd if there is animation
       if (!this.transition) {
         this.dialog?.close();
+        this.focusTrapController.deactivate();
       }
     }
     super.onOpenChange(open);
+  }
+
+  /** Handles trap focus changes while dialog is open. Deactivates or activates the focus trap based on the 'trapFocus' property when the component is updated. */
+  protected override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+
+    if (!this.open || !changedProperties.has('trapFocus')) return;
+
+    if (this.trapFocus) {
+      this.focusTrapController.activate();
+    } else {
+      this.focusTrapController.deactivate();
+    }
   }
 
   /** Lock body scrolling. */
@@ -228,6 +249,7 @@ export class CoreDialog extends CharmDismissibleElement {
     if (e.target !== e.currentTarget) return;
     if (!this.open && e.propertyName === this.transitionProperty) {
       this.dialog?.close();
+      this.focusTrapController.deactivate();
     }
   }
 

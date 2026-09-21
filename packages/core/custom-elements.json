@@ -8196,6 +8196,13 @@
             },
             {
               "kind": "field",
+              "name": "focusTrapController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new FocusTrapController(this)"
+            },
+            {
+              "kind": "field",
               "name": "handleKeydown",
               "privacy": "protected",
               "description": "Handles the 'keydown' event, specifically for the 'Escape' key.",
@@ -8440,6 +8447,17 @@
               }
             },
             {
+              "kind": "field",
+              "name": "trapFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Keeps keyboard focus within the dialog while it is open.",
+              "attribute": "trap-focus"
+            },
+            {
               "kind": "method",
               "name": "unlockBodyScrolling",
               "privacy": "protected",
@@ -8564,6 +8582,15 @@
               },
               "description": "Position of the dialog.",
               "fieldName": "position"
+            },
+            {
+              "name": "trap-focus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Keeps keyboard focus within the dialog while it is open.",
+              "fieldName": "trapFocus"
             }
           ],
           "superclass": {
