@@ -6,6 +6,8 @@ import type { CharmReactiveControllerHost } from '../base/types.js';
  */
 export class FocusTrapController implements ReactiveController {
   public host: CharmReactiveControllerHost;
+  // Detects whether focus trap is enabled
+  protected isActive = false;
   //   protected firstElement: HTMLElement | null = null;
   //   protected lastElement: HTMLElement | null = null;
   protected previousFocus: HTMLElement | null = null;
@@ -69,9 +71,6 @@ export class FocusTrapController implements ReactiveController {
       el.offsetHeight > 0
     );
   }
-
-  // Detects whether focus trap is enabled
-  protected isActive = false;
 
   protected getDeepActiveElement(): Element | null {
     let active = document.activeElement;
