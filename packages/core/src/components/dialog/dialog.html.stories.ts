@@ -42,6 +42,26 @@ export const Default: Story = {
   },
 };
 
+export const TrapFocus: Story = {
+  render: args =>
+    html`${template(
+        args,
+        html`<span slot="heading">Focus trap example</span>
+          <ch-button slot="actions">Back</ch-button>
+          dialog content
+          <div slot="footer">
+            <ch-button hides="trap-focus-dialog">Cancel</ch-button>
+            <ch-button hides="trap-focus-dialog">Save</ch-button>
+          </div>`
+      )}
+
+      <ch-button shows="trap-focus-dialog">open dialog</ch-button>`,
+  args: {
+    id: 'trap-focus-dialog',
+    'trap-focus': true,
+  },
+};
+
 export const Position: Story = {
   render: args =>
     html`<div>
@@ -78,6 +98,7 @@ export const Position: Story = {
     id: 'dialog1',
     position: 'end',
     heading: 'Drawer heading',
+    'trap-focus': true,
   },
 };
 

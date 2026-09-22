@@ -325,6 +325,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrap: {
                 description: 'should trap focus within dialog on Tab key',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input1 = document.createElement('input');
                   input1.setAttribute('type', 'text');
@@ -351,6 +352,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrapReverse: {
                 description: 'should trap focus in reverse with Shift+Tab',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input1 = document.createElement('input');
                   input1.setAttribute('type', 'text');
@@ -373,6 +375,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrapWithTabindex: {
                 description: 'should include elements with tabindex in focus trap',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input = document.createElement('input');
                   input.setAttribute('type', 'text');
@@ -396,6 +399,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrapIgnoresHiddenElements: {
                 description: 'should ignore hidden/disabled elements in focus trap',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input1 = document.createElement('input');
                   input1.setAttribute('type', 'text');
@@ -420,6 +424,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrapRestoresOnClose: {
                 description: 'should restore previous focus when dialog closes',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input = document.createElement('input');
                   input.setAttribute('type', 'text');
@@ -449,6 +454,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               focusTrapWrapAround: {
                 description: 'should wrap focus to first element when tabbing past last focusable element',
                 test: async () => {
+                  this.component.trapFocus = true;
                   if (isSafari() || /firefox/i.test(navigator.userAgent)) return;
                   const input1 = document.createElement('input');
                   input1.setAttribute('type', 'text');
