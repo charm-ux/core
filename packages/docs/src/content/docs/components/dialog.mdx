@@ -134,4 +134,24 @@ To prevent the dialog from closing by clicking the backdrop, set the `explicit-c
 
 </code-bubble>
 
+## Trap Focus
+
+The native `dialog` element already blocks focus from reaching page content behind it, but `Tab` can still escape to browser UI (like the address bar) in some browsers. Set the `trap-focus` attribute to keep `Tab` and `Shift+Tab` cycling within the dialog's focusable elements instead.
+
+<code-bubble>
+
+```html
+<ch-button shows="trap-focus-dialog">Open dialog</ch-button>
+<ch-dialog id="trap-focus-dialog" heading="Trap Focus" trap-focus>
+  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
+  repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
+  <div slot="footer">
+    <ch-button hides="trap-focus-dialog">Cancel</ch-button>
+    <ch-button hides="trap-focus-dialog">Save</ch-button>
+  </div>
+</ch-dialog>
+```
+
+</code-bubble>
+
 ## API
