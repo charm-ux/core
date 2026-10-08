@@ -32,11 +32,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
-              "attribute": "dir"
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
+              "attribute": "dir",
+              "reflects": true
             },
             {
               "kind": "method",
@@ -101,9 +102,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir"
             }
           ],
@@ -181,11 +182,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -448,9 +450,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -551,11 +553,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -704,9 +707,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -1022,11 +1025,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -1571,9 +1575,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -1867,6 +1871,15 @@
             },
             {
               "kind": "field",
+              "name": "_resolvedDir",
+              "type": {
+                "text": "'ltr' | 'rtl'"
+              },
+              "privacy": "protected",
+              "default": "'ltr'"
+            },
+            {
+              "kind": "field",
               "name": "baseName",
               "type": {
                 "text": "string"
@@ -1907,11 +1920,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -2368,9 +2382,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -2524,11 +2538,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -2629,9 +2644,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -2925,11 +2940,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3398,9 +3414,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -3639,11 +3655,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3830,9 +3847,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -4021,11 +4038,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4114,9 +4132,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -4302,6 +4320,15 @@
             },
             {
               "kind": "field",
+              "name": "_resolvedDir",
+              "type": {
+                "text": "'ltr' | 'rtl'"
+              },
+              "privacy": "protected",
+              "default": "'ltr'"
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -4373,11 +4400,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4617,9 +4645,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -4759,6 +4787,15 @@
             },
             {
               "kind": "field",
+              "name": "_resolvedDir",
+              "type": {
+                "text": "'ltr' | 'rtl'"
+              },
+              "privacy": "protected",
+              "default": "'ltr'"
+            },
+            {
+              "kind": "field",
               "name": "baseName",
               "type": {
                 "text": "string"
@@ -4791,11 +4828,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4978,9 +5016,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -5172,11 +5210,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -5813,9 +5852,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -6063,11 +6102,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -6338,9 +6378,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -6720,11 +6760,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7201,9 +7242,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -7558,11 +7599,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7693,9 +7735,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -8349,11 +8391,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -9100,9 +9143,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -9629,11 +9672,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -10207,9 +10251,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -10441,11 +10485,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -10858,9 +10903,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -11012,11 +11057,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11157,9 +11203,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -11311,11 +11357,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11520,9 +11567,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -12168,11 +12215,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -13297,9 +13345,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -13706,11 +13754,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -13886,9 +13935,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -14212,11 +14261,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -14528,9 +14578,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -14784,11 +14834,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -15429,9 +15480,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -15643,11 +15694,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -16074,9 +16126,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -16502,11 +16554,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -17267,9 +17320,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -17594,11 +17647,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -17811,9 +17865,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -18195,11 +18249,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -18705,9 +18760,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -19288,11 +19343,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -20131,9 +20187,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -20502,11 +20558,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -20769,9 +20826,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -20979,11 +21036,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -21188,9 +21246,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -21753,11 +21811,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -22600,9 +22659,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -22890,11 +22949,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -22993,9 +23053,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -23182,11 +23242,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23301,9 +23362,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -23847,6 +23908,15 @@
             },
             {
               "kind": "field",
+              "name": "_resolvedDir",
+              "type": {
+                "text": "'ltr' | 'rtl'"
+              },
+              "privacy": "protected",
+              "default": "'ltr'"
+            },
+            {
+              "kind": "field",
               "name": "_value",
               "type": {
                 "text": "string"
@@ -24010,11 +24080,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -24814,9 +24885,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -25098,11 +25169,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -25243,9 +25315,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -25445,11 +25517,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -25552,9 +25625,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -25741,11 +25814,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -26094,9 +26168,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -26665,11 +26739,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -27534,9 +27609,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",
@@ -28058,11 +28133,12 @@
               "kind": "field",
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
               "privacy": "public",
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "attribute": "dir",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -28078,6 +28154,15 @@
               "description": "Disables/enables the tooltip",
               "attribute": "disabled",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dismissedByPress",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -28229,8 +28314,22 @@
             },
             {
               "kind": "method",
+              "name": "handleMouseDown",
+              "privacy": "protected",
+              "description": "Handles mousedown event on the popup"
+            },
+            {
+              "kind": "method",
               "name": "handleMouseOut",
               "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ],
               "description": "Handles mouseout event on the popup"
             },
             {
@@ -28337,6 +28436,12 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "lightDismiss",
+              "privacy": "protected",
+              "description": "Hides the tooltip, or cancels a pending show, and keeps it hidden until re-armed."
             },
             {
               "kind": "method",
@@ -28645,9 +28750,9 @@
             {
               "name": "dir",
               "type": {
-                "text": "'ltr' | 'rtl' | 'auto'"
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
               },
-              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
               "fieldName": "dir",
               "inheritedFrom": {
                 "name": "CharmElement",

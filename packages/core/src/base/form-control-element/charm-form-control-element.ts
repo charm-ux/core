@@ -287,11 +287,15 @@ export class CharmFormControlElement extends CharmFocusableElement {
         aria-live="assertive"
         role="alert"
       >
-       <scoped-icon
-          part="form-control-error-text-icon"
-          class="form-control-error-text-icon"
-          name="error-circle"
-        ></scoped-icon>
+        ${
+          this.invalid && this.hadFocus
+            ? this.html`<scoped-icon
+              part="form-control-error-text-icon"
+              class="form-control-error-text-icon"
+              name="error-circle"
+            ></scoped-icon>`
+            : ''
+        }
         <span part="form-control-error-text-message" class="form-control-error-text-message">${errorText}</span>
       </div>
     `;

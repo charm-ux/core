@@ -68,16 +68,51 @@ export class CharmElement extends LitElement {
     return [];
   }
 
-  /** The dir global attribute is an enumerated attribute that indicates the directionality of the element's text. */
-  @property()
-  public override get dir(): 'ltr' | 'rtl' | 'auto' {
-    // getComputedStyle will always return ltr or rtl - if dir is "auto" it will return the user agent defined direction
-    return this._dir && this._dir !== 'auto' ? this._dir : (getComputedStyle(this).direction as 'ltr' | 'rtl');
+  /**
+   * The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.
+   *
+   * Mirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when
+   * unset) and does no layout or style work, and writing reflects back to the attribute. Use
+   * {@link resolvedDir} for the effective `'ltr' | 'rtl'` direction, including inherited directionality.
+   */
+  @property({
+    reflect: true,
+    converter: {
+      // Never materialize an empty `dir=""` attribute for the unset/removed state.
+      toAttribute: (value: unknown) => value || null,
+    },
+  })
+  public override get dir(): 'ltr' | 'rtl' | 'auto' | '' {
+    return this._dir ?? '';
   }
 
   public override set dir(val: 'ltr' | 'rtl' | 'auto') {
+    if (val === this._dir) return;
     this._dir = val;
     this.requestUpdate('dir');
+  }
+
+  /**
+   * @internal The resolved directionality of the element as `'ltr' | 'rtl'`.
+   *
+   * Uses `:dir()` because it reads the browser's cached element directionality. The previous
+   * `getComputedStyle()` implementation forced a synchronous style recalculation on every
+   * render, which made mount cost grow faster than linearly. Note that `:dir()` follows the
+   * `dir` attribute tree and ignores the CSS `direction` property; set `dir` (on the element
+   * or an ancestor) rather than `direction` when a component must resolve to RTL.
+   */
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  protected get resolvedDir(): 'ltr' | 'rtl' {
+    if (this._dir === 'ltr' || this._dir === 'rtl') {
+      return this._dir;
+    }
+
+    try {
+      return this.matches(':dir(rtl)') ? 'rtl' : 'ltr';
+    } catch {
+      // `:dir()` is unsupported in older browsers; only they pay for the style recalculation.
+      return getComputedStyle(this).direction === 'rtl' ? 'rtl' : 'ltr';
+    }
   }
 
   /** @internal Gets scoped tag name */

@@ -1,4 +1,4 @@
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { startContentEndTemplate } from '../../templates/start-content-end.js';
 import { CharmElement, CharmFocusableElement } from '../../base/index.js';
@@ -91,6 +91,8 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   @property()
   public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
+  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -99,6 +101,11 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   public override click() {
     super.click();
     this.shadowRoot?.querySelector<HTMLElement>('.control')?.click();
+  }
+
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+    this._resolvedDir = this.resolvedDir;
   }
 
   /** Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible. */
@@ -138,7 +145,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
     return this.separator
       ? this.html`<span part="breadcrumb-item-separator" class="separator"><slot name="separator"> <scoped-icon
     class="icon"
-    name=${this.dir === 'rtl' ? 'chevron-left' : 'chevron-right'}
+    name=${this._resolvedDir === 'rtl' ? 'chevron-left' : 'chevron-right'}
 ></scoped-icon> </slot></span>`
       : this.html``;
   }

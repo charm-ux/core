@@ -256,6 +256,18 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   expect(rtlUnchecked).to.not.equal(rtlChecked);
                 },
               },
+              checkedStateClass: {
+                description: 'uses an internal checked state class for styling',
+                test: async () => {
+                  const el = this.component;
+                  el.checked = true;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('.switch')).to.have.class('switch-checked');
+                  el.checked = false;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('.switch')).to.not.have.class('switch-checked');
+                },
+              },
               notFire: {
                 description: 'should not fire change when checked is set by javascript',
                 test: async () => {

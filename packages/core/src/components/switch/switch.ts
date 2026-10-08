@@ -1,5 +1,5 @@
 import { html } from 'lit/static-html.js';
-import { property, query } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
@@ -67,6 +67,8 @@ export class CoreSwitch extends CharmFormControlElement {
 
   @query('input[type="checkbox"]') protected override input?: HTMLInputElement;
 
+  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
+
   protected usesArrowKeys = true;
   protected _checked: boolean = false;
 
@@ -119,6 +121,7 @@ export class CoreSwitch extends CharmFormControlElement {
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
     super.willUpdate(changedProperties);
+    this._resolvedDir = this.resolvedDir;
     if (changedProperties.has('checked')) {
       this.updateValidity();
       // Set the form value after updateValidity() so the base class' form-value sync
@@ -137,7 +140,7 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow left keydown event on the switch.*/
   protected handleArrowLeftKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = this.dir === 'rtl';
+    this.checked = this.resolvedDir === 'rtl';
     this.emitInput();
     this.emitChange();
   }
@@ -145,7 +148,7 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow right keydown event on the switch. */
   protected handleArrowRightKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = this.dir !== 'rtl';
+    this.checked = this.resolvedDir !== 'rtl';
     this.emitInput();
     this.emitChange();
   }
@@ -241,7 +244,14 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Generates the template for the base. */
   protected baseTemplate() {
     return html`
-      <label part="switch-base" class="switch switch-${this.dir}">
+      <label
+        part="switch-base"
+        class=${classMap({
+          switch: true,
+          [`switch-${this._resolvedDir}`]: true,
+          'switch-checked': this.checked,
+        })}
+      >
         ${this.inputTemplate()} ${this.labelTemplate()} ${this.controlWrapperTemplate()}
       </label>
     `;

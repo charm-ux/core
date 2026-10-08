@@ -173,9 +173,14 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await elementUpdated(el);
 
                     const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text');
+                    const errorIcon = errorMessage?.querySelector('[part="form-control-error-text-icon"]');
 
                     expect(el.invalid).to.be.true;
+                    expect(errorMessage).to.have.attribute('role', 'alert');
+                    expect(errorMessage).to.have.attribute('aria-live', 'assertive');
+                    expect(errorIcon).to.not.be.null;
                     expect(errorMessage?.textContent?.trim()).to.equal('Custom validation message');
+                    await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
                   },
                 },
 
@@ -194,7 +199,11 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text') as HTMLElement;
 
                     expect(el.invalid).to.be.false;
+                    expect(errorMessage).to.have.attribute('role', 'alert');
+                    expect(errorMessage).to.have.attribute('aria-live', 'assertive');
+                    expect(errorMessage.querySelector('[part="form-control-error-text-icon"]')).to.be.null;
                     expect(errorMessage?.textContent?.trim()).to.equal('');
+                    await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
                   },
                 },
 

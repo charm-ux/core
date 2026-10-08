@@ -60,6 +60,36 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   expect(getErrorText()).to.equal('');
                 },
               },
+              errorIcon: {
+                description: 'renders the error icon only when an interacted control is invalid',
+                test: async () => {
+                  const el = this.component;
+                  const getError = () => el.shadowRoot?.querySelector('.form-control-error-text');
+                  const getIcon = () => getError()?.querySelector('[part="form-control-error-text-icon"]');
+
+                  expect(getError()).to.not.be.null;
+                  expect(getError()?.getAttribute('role')).to.equal('alert');
+                  expect(getError()?.getAttribute('aria-live')).to.equal('assertive');
+                  expect(getIcon()).to.be.null;
+                  await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
+
+                  el.setCustomValidity('Invalid value');
+                  await elementUpdated(el);
+
+                  expect(el.invalid).to.be.true;
+                  expect(getError()).to.not.be.null;
+                  expect(getIcon()).to.not.be.null;
+                  await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
+
+                  el.setCustomValidity('');
+                  await elementUpdated(el);
+
+                  expect(el.invalid).to.be.false;
+                  expect(getError()).to.not.be.null;
+                  expect(getIcon()).to.be.null;
+                  await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
+                },
+              },
               required: {
                 description: 'attaches the required attribute to the input',
                 test: async () => {

@@ -286,7 +286,7 @@ export class CorePopup extends CharmDismissibleElement {
     if (!position) return;
 
     const splitPosition = position.split('-');
-    const dir = this.dir;
+    const dir = this.resolvedDir;
 
     const replaceObj = {
       start: dir === 'ltr' ? 'left' : 'right',
@@ -741,7 +741,7 @@ export class CorePopup extends CharmDismissibleElement {
       position.placement.split('-')[0]
     ]!;
 
-    const isRtl = this.dir === 'rtl';
+    const isRtl = this.resolvedDir === 'rtl';
     const arrowX = position.middlewareData.arrow!.x;
     const arrowY = position.middlewareData.arrow!.y;
     const shiftOffsetX = position.middlewareData.shift?.x || 0;
