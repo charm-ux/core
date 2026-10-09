@@ -150,6 +150,22 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
                   expect(options[1].textContent?.trim()).to.equal('Disabled');
                 },
               },
+              textSpacing: {
+                description: 'control respects user line-height overrides (WCAG 1.4.12)',
+                test: async () => {
+                  const el = this.component;
+                  el.style.setProperty('line-height', '1.5', 'important');
+                  await elementUpdated(el);
+
+                  const control = el.shadowRoot?.querySelector('.form-control-input');
+                  const inner = el.shadowRoot?.querySelector('select');
+
+                  [control, inner].forEach(node => {
+                    const style = window.getComputedStyle(node!);
+                    expect(parseFloat(style.lineHeight)).to.be.closeTo(parseFloat(style.fontSize) * 1.5, 0.5);
+                  });
+                },
+              },
               optgroup: {
                 description: 'preserves optgroup wrappers in the internal select',
                 test: async () => {
