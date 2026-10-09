@@ -9,7 +9,6 @@ import CharmElement from '../charm-element/charm-element.js';
  * it has focus.
  */
 export class CharmFocusableElement extends CharmElement {
-  public static override styles = [...super.styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
   /**

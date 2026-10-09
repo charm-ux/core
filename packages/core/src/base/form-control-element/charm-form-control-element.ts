@@ -95,8 +95,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
-
   protected readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
+  protected validityUpdatePending = false;
 
   public constructor() {
     super();
@@ -143,6 +143,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** The input's value attribute. */
   @property({ reflect: true })
   public set value(val: string) {
+    if (this._value === val) return;
     this._value = val;
     this.requestUpdate('value');
   }
@@ -150,6 +151,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Disables the input. */
   @property({ type: Boolean, reflect: true })
   public set disabled(val: boolean) {
+    if (this._disabled === val) return;
     this._disabled = val;
     this.requestUpdate('disabled');
     this.updateValidity();
@@ -158,6 +160,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Makes the input readonly. */
   @property({ type: Boolean, reflect: true })
   public set readonly(val: boolean) {
+    if (this._readonly === val) return;
     this._readonly = val;
     this.requestUpdate('readonly');
     this.updateValidity();
@@ -227,13 +230,19 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid. */
   protected updateValidity() {
-    this.updateComplete.then(() => {
-      this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
-      this.invalid = this.disabled || this.readonly ? false : !this.checkValidity();
-      if (this.hadFocus || this.hasFocus) {
-        this.reportValidity();
-      }
-    });
+    if (!this.validityUpdatePending) {
+      this.validityUpdatePending = true;
+      this.updateComplete.then(() => {
+        this.validityUpdatePending = false;
+        if (!this.isConnected) return;
+
+        this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
+        this.invalid = this.disabled || this.readonly ? false : !this.checkValidity();
+        if (this.hadFocus || this.hasFocus) {
+          this.reportValidity();
+        }
+      });
+    }
 
     if (this.value) {
       this.internals.setFormValue(this.value);
@@ -287,11 +296,15 @@ export class CharmFormControlElement extends CharmFocusableElement {
         aria-live="assertive"
         role="alert"
       >
-       <scoped-icon
-          part="form-control-error-text-icon"
-          class="form-control-error-text-icon"
-          name="error-circle"
-        ></scoped-icon>
+        ${
+          this.invalid && this.hadFocus
+            ? this.html`<scoped-icon
+              part="form-control-error-text-icon"
+              class="form-control-error-text-icon"
+              name="error-circle"
+            ></scoped-icon>`
+            : ''
+        }
         <span part="form-control-error-text-message" class="form-control-error-text-message">${errorText}</span>
       </div>
     `;

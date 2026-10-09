@@ -1,5 +1,5 @@
 import { unsafeStatic } from 'lit/static-html.js';
-import { property, query } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { startTemplate } from '../../templates/start.js';
@@ -73,6 +73,8 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   @property({ reflect: true, attribute: 'expand-icon-position' })
   public expandIconPosition?: 'start' | 'end';
 
+  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
+
   @query('details')
   private details!: HTMLDetailsElement;
 
@@ -94,6 +96,11 @@ export class CoreAccordionItem extends CharmDismissibleElement {
 
   public set headingLevel(value: HeadingLevel | undefined) {
     this._headingLevel = headingLevels.includes(value || 0) ? value : undefined;
+  }
+
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+    this._resolvedDir = this.resolvedDir;
   }
 
   protected override firstUpdated() {
@@ -131,7 +138,7 @@ export class CoreAccordionItem extends CharmDismissibleElement {
           <scoped-icon
             class=${classMap({
               chevron: true,
-              'chevron-rtl': this.dir === 'rtl',
+              'chevron-rtl': this._resolvedDir === 'rtl',
             })}
             part="accordion-item-chevron"
             name="chevron-down"

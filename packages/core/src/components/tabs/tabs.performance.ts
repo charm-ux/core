@@ -1,14 +1,26 @@
-import { html, testBundleSize, testRenderTime } from 'web-test-runner-performance/browser.js';
-import { expect } from '@open-wc/testing';
-import './index.js';
+import { benchmarkComponentPerformance } from '../../internal/testing/component-performance.js';
+import { createScope } from '../../utilities/index.js';
+import CoreTab from '../tab/tab.js';
+import CoreTabPanel from '../tab-panel/tab-panel.js';
+import CoreTabs from './tabs.js';
+
+createScope({
+  styles: [],
+  components: [CoreTabs, CoreTab, CoreTabPanel],
+});
 
 describe('tabs performance', () => {
-  const element = html`<ch-tabs>TODO: change this</ch-tabs>`;
-
-  it(`should render under 20ms`, async () => {
-    expect((await testRenderTime(element)).duration).to.be.lessThan(20);
-  });
-  it('should have a small bundle', async () => {
-    expect((await testBundleSize('./dist/components/tabs/tabs.js')).kb).to.below(1);
+  it('reports mount, rerender, and bulk mount timings', async () => {
+    await benchmarkComponentPerformance({
+      name: 'tabs',
+      create: () => {
+        const element = document.createElement('ch-tabs');
+        element.innerHTML =
+          '<ch-tab id="tab-one">One</ch-tab><ch-tab id="tab-two">Two</ch-tab>' +
+          '<ch-tab-panel>Panel one</ch-tab-panel><ch-tab-panel>Panel two</ch-tab-panel>';
+        return element;
+      },
+      update: (element, iteration) => element.setAttribute('active-id', iteration % 2 === 0 ? 'tab-one' : 'tab-two'),
+    });
   });
 });

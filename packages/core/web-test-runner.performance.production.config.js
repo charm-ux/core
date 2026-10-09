@@ -1,16 +1,19 @@
 import { fileURLToPath } from 'url';
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { defaultReporter } from '@web/test-runner';
-import { bundlePerformancePlugin, performanceReporter, renderPerformancePlugin } from 'web-test-runner-performance';
+import { performanceReporter } from 'web-test-runner-performance';
 import { resolvePlaywrightLaunchers } from './test/playwrightLaunchers.js';
 
 const browsers = resolvePlaywrightLaunchers().slice(0, 1);
 
-export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
+export default {
   concurrency: 1,
   concurrentBrowsers: 1,
-  files: ['./src/**/*.performance.ts'],
-  nodeResolve: true,
+  testsFinishTimeout: 400000,
+  files: ['./src/internal/testing/component-production.performance.ts'],
+  nodeResolve: {
+    exportConditions: ['browser'],
+  },
   browsers,
   plugins: [
     esbuildPlugin({
@@ -19,23 +22,14 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
       target: 'es2020',
       tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)),
     }),
-    renderPerformancePlugin(),
-    bundlePerformancePlugin({
-      optimize: false,
-      // writePath: `./dist/performance`, // uncomment to see bundle output with sourcemaps
-      // external: [] // externals are not used so each bundle measured includes all third party dependencies
-    }),
   ],
   reporters: [
     defaultReporter({ reportTestResults: true, reportTestProgress: true }),
-    performanceReporter({ writePath: `./dist/performance` }),
+    performanceReporter({ writePath: './dist/performance-production' }),
   ],
   testRunnerHtml: testFramework => `
     <html>
       <body>
-        <script>
-          window.litDisableDevModeWarning = true;
-        </script>
         <script type="module" src="${testFramework}"></script>
       </body>
     </html>
@@ -45,4 +39,4 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
       timeout: 60000,
     },
   },
-});
+};

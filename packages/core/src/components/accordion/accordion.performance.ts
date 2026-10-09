@@ -1,14 +1,17 @@
-import { html, testBundleSize, testRenderTime } from 'web-test-runner-performance/browser.js';
-import { expect } from '@open-wc/testing';
+import {
+  benchmarkComponentPerformance,
+  benchmarkTagPerformance,
+} from '../../internal/testing/component-performance.js';
+import {
+  composedComponentCases,
+  composedPerformanceOptions,
+} from '../../internal/testing/component-performance-cases.js';
 import './index.js';
+import '../accordion-item/index.js';
 
 describe('accordion performance', () => {
-  const element = html`<ch-accordion>TODO: change this</ch-accordion>`;
+  it('reports mount, rerender, and bulk mount timings', () => benchmarkTagPerformance('accordion', 'ch-accordion'));
 
-  it(`should render under 20ms`, async () => {
-    expect((await testRenderTime(element)).duration).to.be.lessThan(20);
-  });
-  it('should have a small bundle', async () => {
-    expect((await testBundleSize('./dist/components/accordion/accordion.js')).kb).to.below(1);
-  });
+  it('reports composed accordion timings', () =>
+    benchmarkComponentPerformance(composedComponentCases.accordion, composedPerformanceOptions));
 });

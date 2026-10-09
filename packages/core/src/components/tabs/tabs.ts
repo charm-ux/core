@@ -154,13 +154,19 @@ export class CoreTabs extends CharmElement {
       case keys.ArrowRight:
       case keys.ArrowDown: {
         // Horizontal arrows flip in RTL, where "next" is to the left.
-        nextIndex = this.findNextTabIndex(this.focusedIndex, e.key === keys.ArrowRight && this.dir === 'rtl' ? -1 : 1);
+        nextIndex = this.findNextTabIndex(
+          this.focusedIndex,
+          e.key === keys.ArrowRight && this.resolvedDir === 'rtl' ? -1 : 1
+        );
         break;
       }
 
       case keys.ArrowLeft:
       case keys.ArrowUp: {
-        nextIndex = this.findNextTabIndex(this.focusedIndex, e.key === keys.ArrowLeft && this.dir === 'rtl' ? 1 : -1);
+        nextIndex = this.findNextTabIndex(
+          this.focusedIndex,
+          e.key === keys.ArrowLeft && this.resolvedDir === 'rtl' ? 1 : -1
+        );
         break;
       }
 

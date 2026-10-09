@@ -19,7 +19,6 @@ import { minifyCssString } from '../../utilities/helpers.js';
  *
  **/
 export class CoreScopedStyles extends CharmElement {
-  public static override styles = [...super.styles];
   public static override baseName = 'scoped-styles';
 
   @queryAssignedElements({ slot: 'stylesheets', selector: 'link', flatten: true })

@@ -1,21 +1,26 @@
-import { html, testBundleSize, testRenderTime } from 'web-test-runner-performance/browser.js';
-import { expect } from '@open-wc/testing';
-import './index.js';
+import { benchmarkComponentPerformance } from '../../internal/testing/component-performance.js';
 import { createScope } from '../../utilities/index.js';
+import CoreRadio from '../radio/radio.js';
 import coreRadioGroup from './radio-group.js';
 
 createScope({
   styles: [],
-  components: [coreRadioGroup],
+  components: [coreRadioGroup, CoreRadio],
 });
 
 describe('radio-group performance', () => {
-  const element = html`<ch-radio-group>TODO: change this</ch-radio-group>`;
-
-  it(`should render under 20ms`, async () => {
-    expect((await testRenderTime(element)).duration).to.be.lessThan(20);
-  });
-  it('should have a small bundle', async () => {
-    expect((await testBundleSize('./dist/components/radio-group/radio-group.js')).kb).to.below(1);
+  it('reports mount, rerender, and bulk mount timings', async () => {
+    await benchmarkComponentPerformance({
+      name: 'radio-group',
+      create: () => {
+        const element = document.createElement('ch-radio-group');
+        element.innerHTML = Array.from(
+          { length: 5 },
+          (_, index) => `<ch-radio value="${index}">Option ${index}</ch-radio>`
+        ).join('');
+        return element;
+      },
+      update: (element, iteration) => element.setAttribute('value', String(iteration % 5)),
+    });
   });
 });

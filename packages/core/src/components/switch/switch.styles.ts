@@ -71,8 +71,8 @@ export default css`
     z-index: 1;
   }
 
-  :host(:not([checked])) .switch-checked-message,
-  :host([checked]) .switch-unchecked-message {
+  .switch:not(.switch-checked) .switch-checked-message,
+  .switch-checked .switch-unchecked-message {
     display: none;
   }
 
@@ -83,30 +83,30 @@ export default css`
   }
 
   /* Unchecked + hover for switch control*/
-  :host(:not([disabled]):not([checked])) .switch:hover .switch-control {
+  :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-control {
     border-color: ${component('switch', 'control', 'hover', 'borderColor')};
     background-color: ${component('switch', 'control', 'hover', 'bgColor')};
   }
 
   /* Checked for switch control*/
-  :host([checked]) .switch-control {
+  .switch-checked .switch-control {
     border-color: ${component('switch', 'control', 'checked', 'borderColor')};
     background-color: ${component('switch', 'control', 'checked', 'bgColor')};
   }
 
   /* Checked + hover for switch control*/
-  :host([checked]:not([disabled])) .switch:hover .switch-control {
+  :host(:not([disabled])) .switch-checked:hover .switch-control {
     border-color: ${component('switch', 'control', 'checked', 'hover', 'borderColor')};
     background-color: ${component('switch', 'control', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + hover for switch thumb*/
-  :host(:not([disabled]):not([checked])) .switch:hover .switch-thumb {
+  :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-thumb {
     background-color: ${component('switch', 'thumb', 'hover', 'bgColor')};
   }
 
   /* Checked for switch thumb*/
-  :host([checked]) .switch-thumb {
+  .switch-checked .switch-thumb {
     transform: translateX(${component('switch', 'thumb', 'transform')});
     background-color: ${component('switch', 'thumb', 'checked', 'bgColor')};
   }
@@ -116,37 +116,37 @@ export default css`
     transform: translateX(${component('switch', 'thumb', 'transform')});
   }
 
-  :host([checked]) .switch-rtl .switch-thumb {
+  .switch.switch-checked.switch-rtl .switch-thumb {
     transform: translateX(calc(${component('switch', 'thumb', 'transform')} * (-1)));
   }
 
   /* Checked + hover for switch thumb*/
-  :host([checked]:not([disabled])) .switch:hover .switch-thumb {
+  :host(:not([disabled])) .switch-checked:hover .switch-thumb {
     background-color: ${component('switch', 'thumb', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + active for switch control*/
-  :host(:not([disabled]):not([checked])) .switch:active .switch-thumb {
+  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-thumb {
     background-color: ${component('switch', 'control', 'active', 'bgColor')};
   }
 
-  :host(:not([disabled]):not([checked])) .switch:active .switch-control {
+  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-control {
     border-color: ${component('switch', 'control', 'active', 'borderColor')};
   }
 
   /* Checked + active for switch control*/
-  :host([checked]:not([disabled])) .switch:active .switch-control {
+  :host(:not([disabled])) .switch-checked:active .switch-control {
     border-color: ${component('switch', 'control', 'checked', 'active', 'borderColor')};
     background-color: ${component('switch', 'control', 'checked', 'active', 'bgColor')};
   }
 
   /* Unchecked + active for switch thumb*/
-  :host(:not([disabled]):not([checked])) .switch:active .switch-thumb {
+  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-thumb {
     background-color: ${component('switch', 'thumb', 'active', 'bgColor')};
   }
 
   /* Checked + active for switch thumb*/
-  :host([checked]:not([disabled])) .switch:active .switch-thumb {
+  :host(:not([disabled])) .switch-checked:active .switch-thumb {
     background-color: ${component('switch', 'thumb', 'checked', 'active', 'bgColor')};
   }
 
@@ -177,20 +177,27 @@ export default css`
       background-color: ${SystemColors.GrayText};
     }
 
-    :host(:not([disabled]):not([checked])) .switch-thumb,
-    :host(:not([disabled]):not([checked])) .switch:hover .switch-thumb {
+    :host(:not([disabled])) .switch:not(.switch-checked) .switch-thumb,
+    :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-thumb {
       background-color: ${SystemColors.ButtonText};
     }
 
-    :host(:not([disabled]):not([checked])) .switch-control,
-    :host(:not([disabled]):not([checked])) .switch:hover .switch-control {
+    :host(:not([disabled])) .switch:not(.switch-checked) .switch-control,
+    :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-control {
       background-color: ${SystemColors.ButtonFace};
       border-color: ${SystemColors.ButtonBorder};
     }
 
-    :host([checked]) .switch-thumb,
-    :host([checked]:not([disabled])) .switch:hover .switch-thumb {
+    .switch-checked .switch-thumb,
+    :host(:not([disabled])) .switch-checked:hover .switch-thumb {
       background-color: ${SystemColors.Highlight};
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .switch-control,
+    .switch-thumb {
+      transition: none;
     }
   }
 `;

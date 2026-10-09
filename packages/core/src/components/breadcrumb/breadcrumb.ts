@@ -1,4 +1,4 @@
-import { property, query, queryAssignedElements } from 'lit/decorators.js';
+import { property, query, queryAssignedElements, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
@@ -35,11 +35,18 @@ export class CoreBreadcrumb extends CharmElement {
   @query('slot[name="separator"]')
   protected separatorSlot!: HTMLSlotElement;
 
+  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
+
   /** @internal The direction of the breadcrumb, used to regenerate default separators when it changes. */
-  protected separatorDir?: 'ltr' | 'rtl' | 'auto';
+  protected separatorDir?: 'ltr' | 'rtl';
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
+  }
+
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+    this._resolvedDir = this.resolvedDir;
   }
 
   /** Handles changes in the default slot. */
@@ -127,7 +134,7 @@ export class CoreBreadcrumb extends CharmElement {
 
       <span hidden aria-hidden="true">
         <slot name="separator" @slotchange=${this.handleSlotChange}>
-          <scoped-icon class="icon" name=${this.dir === 'rtl' ? 'chevron-left' : 'chevron-right'}></scoped-icon>
+          <scoped-icon class="icon" name=${this._resolvedDir === 'rtl' ? 'chevron-left' : 'chevron-right'}></scoped-icon>
         </slot>
       </span>
     `;
@@ -136,12 +143,9 @@ export class CoreBreadcrumb extends CharmElement {
   protected override render() {
     // We clone the separator into each breadcrumb item, so the default separators need to be
     // regenerated when the directionality changes.
-    if (this.separatorDir !== this.dir) {
-      this.separatorDir = this.dir;
-
-      if (this.dir === 'rtl' || this.dir === 'ltr') {
-        this.updateComplete.then(() => this.handleSlotChange());
-      }
+    if (this.separatorDir !== this._resolvedDir) {
+      this.separatorDir = this._resolvedDir;
+      this.updateComplete.then(() => this.handleSlotChange());
     }
 
     return this.breadcrumbTemplate();
