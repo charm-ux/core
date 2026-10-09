@@ -18,8 +18,22 @@ export default css`
 
   .form-control-input {
     cursor: pointer;
-    line-height: 1;
+    line-height: inherit;
     padding: 0;
+  }
+
+  .form-control-base-input {
+    line-height: inherit;
+  }
+
+  /* Re-centers the text after line-height stopped being hardcoded to 1 */
+  :host(:not([multiple])) .form-control-base-input {
+    padding-block-start: 1px;
+  }
+
+  .end-icons,
+  .start {
+    line-height: 1;
   }
 
   .end-icons {
