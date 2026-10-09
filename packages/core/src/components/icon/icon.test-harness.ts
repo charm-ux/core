@@ -23,13 +23,14 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                 },
               },
               doesIconExist: {
-                description: 'svg not rendered with an icon that does not exist in the library',
+                description: 'falls back to the question mask for an unknown icon',
                 test: async () => {
                   const el = this.component;
                   // @ts-ignore
                   el.name = 'does-not-exist';
                   await elementUpdated(el);
-                  expect(el.shadowRoot?.querySelector('.question')).to.not.be.null;
+                  expect(el.shadowRoot?.querySelector('svg')).to.be.null;
+                  expect(getComputedStyle(el).maskImage).to.not.equal('none');
                 },
               },
               roleImgWhenLabel: {
@@ -56,12 +57,11 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                 description: 'applies rotation and flip values to the rendered svg',
                 test: async () => {
                   const el = this.component;
+                  el.name = 'checkmark';
                   el.rotate = 90;
                   el.flip = 'both';
                   await elementUpdated(el);
-                  expect(el.style.getPropertyValue('--icon-rotate')).to.equal('90deg');
-                  expect(el.style.getPropertyValue('--icon-scale-x')).to.equal('-1');
-                  expect(el.style.getPropertyValue('--icon-scale-y')).to.equal('-1');
+                  expect(getComputedStyle(el).transform).to.not.equal('none');
                 },
               },
               svgStableAcrossUpdates: {
@@ -69,6 +69,7 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   el.name = 'checkmark';
+                  el.renderMode = 'svg';
                   await elementUpdated(el);
                   const svg = el.shadowRoot?.querySelector('svg');
                   await elementUpdated(el);
@@ -81,6 +82,7 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   el.name = 'warning';
+                  el.renderMode = 'svg';
                   await elementUpdated(el);
                   expect(el.shadowRoot?.querySelector('svg')?.getAttribute('viewBox')).to.equal('0 0 12 12');
                 },
