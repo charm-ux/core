@@ -11349,6 +11349,25 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyUrlIcon",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "resolvedUrl",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "iconResolver",
+                  "type": {
+                    "text": "Promise<SVGResult>"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "baseName",
               "type": {
@@ -11368,11 +11387,6 @@
               "type": {
                 "text": "string | undefined"
               },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
-              "name": "defaultIcon",
               "privacy": "protected"
             },
             {
@@ -11455,6 +11469,14 @@
             },
             {
               "kind": "field",
+              "name": "iconBase",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "icons",
               "privacy": "protected"
             },
@@ -11480,6 +11502,12 @@
             },
             {
               "kind": "field",
+              "name": "maskMode",
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "name",
               "type": {
                 "text": "string | undefined"
@@ -11487,6 +11515,18 @@
               "privacy": "public",
               "description": "The name of the icon to draw.",
               "attribute": "name",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "renderMode",
+              "type": {
+                "text": "'mask' | 'svg'"
+              },
+              "privacy": "public",
+              "default": "'mask'",
+              "description": "Selects the rendering strategy. Named icons use a CSS mask by default; use `svg` as an escape hatch.",
+              "attribute": "render",
               "reflects": true
             },
             {
@@ -11621,6 +11661,15 @@
               },
               "description": "The name of the icon to draw.",
               "fieldName": "name"
+            },
+            {
+              "name": "render",
+              "type": {
+                "text": "'mask' | 'svg'"
+              },
+              "default": "'mask'",
+              "description": "Selects the rendering strategy. Named icons use a CSS mask by default; use `svg` as an escape hatch.",
+              "fieldName": "renderMode"
             },
             {
               "name": "rotate",
