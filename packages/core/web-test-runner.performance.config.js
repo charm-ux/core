@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'url';
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { defaultReporter } from '@web/test-runner';
 import { bundlePerformancePlugin, performanceReporter, renderPerformancePlugin } from 'web-test-runner-performance';
@@ -12,7 +13,12 @@ export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   nodeResolve: true,
   browsers,
   plugins: [
-    esbuildPlugin({ ts: true, json: true, target: 'es2020' }),
+    esbuildPlugin({
+      ts: true,
+      json: true,
+      target: 'es2020',
+      tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)),
+    }),
     renderPerformancePlugin(),
     bundlePerformancePlugin({
       optimize: false,

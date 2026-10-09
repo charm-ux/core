@@ -439,7 +439,9 @@ export class CorePopup extends CharmDismissibleElement {
     }
 
     // All other properties will trigger a reposition when active
-    await this.reposition();
+    if (this.open) {
+      await this.reposition();
+    }
   }
 
   protected override firstUpdated() {
@@ -451,7 +453,11 @@ export class CorePopup extends CharmDismissibleElement {
     // here is also what lets a consumer stop hiding its own slotted content -
     // which is what was costing consumers their exit transition.
     if (this.popup) this.popup.hidden = !this.open;
-    this.start();
+    if (this.open) {
+      this.start();
+    } else {
+      void this.reposition();
+    }
   }
 
   protected override onOpenChange(open: boolean): void {
@@ -536,7 +542,11 @@ export class CorePopup extends CharmDismissibleElement {
   protected handleAnchorChange() {
     this.stop();
     this.setAnchorElement();
-    this.start();
+    if (this.open) {
+      this.start();
+    } else {
+      void this.reposition();
+    }
   }
 
   protected setAnchorElement() {
@@ -574,7 +584,9 @@ export class CorePopup extends CharmDismissibleElement {
     }
 
     this.cleanup = autoUpdate(this.anchorEl, this.popup, async () => {
-      await this.reposition();
+      if (this.open) {
+        await this.reposition();
+      }
     });
 
     window.addEventListener('scroll', this.handleScrollDismiss, { passive: true });

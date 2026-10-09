@@ -181,26 +181,27 @@ export class CoreOverflow extends CharmElement {
    * Handles the hiding/showing of overflowing elements, and emits the overflow event.
    */
   protected handleResize() {
-    if (!this.slottedElements) return;
+    const slottedElements = this.slottedElements;
+    if (!slottedElements.length) return;
 
     const overFlowing = this.isOverflowing();
     const previousOverflowSize = this.overflowSet.size;
     const containerWidth = this.collapsingContainer.clientWidth;
     const direction = containerWidth > this.lastWidth ? 'larger' : 'smaller';
 
-    if (overFlowing && this.slottedElements.length - this.overflowSet.size > this.min) {
+    if (overFlowing && slottedElements.length - this.overflowSet.size > this.min) {
       // Hide items from right to left until we are no longer overflowing.
       if (this.overflowDirection === 'start') {
-        this.hideElements([...this.slottedElements]);
+        this.hideElements(slottedElements);
       } else {
-        this.hideElements([...this.slottedElements].reverse());
+        this.hideElements([...slottedElements].reverse());
       }
     } else if (!overFlowing && direction === 'larger') {
       // Unhide hidden items from left to right until end or overflowing
       if (this.overflowDirection === 'start') {
-        this.showElements([...this.slottedElements].reverse());
+        this.showElements([...slottedElements].reverse());
       } else {
-        this.showElements([...this.slottedElements]);
+        this.showElements(slottedElements);
       }
     }
 

@@ -1530,6 +1530,15 @@
             },
             {
               "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
               "name": "value",
               "type": {
                 "text": "string"
@@ -9070,6 +9079,19 @@
             },
             {
               "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "value",
               "type": {
                 "text": "string"
@@ -13241,6 +13263,19 @@
               "privacy": "public",
               "description": "Gets the validity of the input.",
               "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20122,6 +20157,19 @@
             },
             {
               "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "value",
               "type": {
                 "text": "string"
@@ -22602,6 +22650,19 @@
             },
             {
               "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "value",
               "type": {
                 "text": "string"
@@ -24805,6 +24866,19 @@
               "privacy": "public",
               "description": "Gets the validity of the input.",
               "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -27516,6 +27590,19 @@
               "privacy": "public",
               "description": "Gets the validity of the input.",
               "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
