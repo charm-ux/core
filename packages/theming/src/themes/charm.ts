@@ -907,7 +907,7 @@ const charmTokensBase = defineTokens(
         thumb: {
           size: '20px',
           bgColor: primitive('color', 'white'),
-          transform: '0px',
+          transform: '8px',
           transition: 'transform 0.2s ease',
           hover: {
             bgColor: { light: primitive('color', 'neutral', 50), dark: primitive('color', 'neutral', 800) },

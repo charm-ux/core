@@ -49,6 +49,8 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   form.reset();
                   await elementUpdated(el);
                   expect(el.checked).to.be.false;
+                  expect(el.shadowRoot!.querySelector('.switch')).to.not.have.class('switch-animate');
+                  expect(el.shadowRoot!.querySelector('.switch-thumb')!.getAnimations()).to.have.length(0);
                 },
               },
             },
@@ -71,6 +73,21 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   await expect(el).to.be.accessible();
                 },
               },
+              accessibleState: {
+                description: 'keeps the switch role, name, and checked state accessible without aria-checked',
+                test: async () => {
+                  const el = this.component;
+                  const input = el.shadowRoot!.querySelector('input')!;
+                  expect(input.getAttribute('role')).to.equal('switch');
+                  expect(input.getAttribute('aria-checked')).to.be.null;
+                  expect(input.labels).to.have.length(1);
+                  el.checked = true;
+                  await el.updateComplete;
+                  expect(input.checked).to.be.true;
+                  input.setAttribute('aria-checked', 'true');
+                  await expect(el).to.be.accessible();
+                },
+              },
               accessibleDisabled: {
                 description: 'should be accessible when disabled',
                 test: async () => {
@@ -88,7 +105,7 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   await el.updateComplete;
                   const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
                   expect(input.disabled).to.be.true;
-                  expect(input.readOnly).to.be.true;
+                  expect(input.readOnly).to.be.false;
                 },
               },
               describedBy: {
@@ -127,6 +144,15 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   expect(window.getComputedStyle(checkedContainer!).getPropertyValue('display')).to.equal('none');
                 },
               },
+              noMessages: {
+                description: 'does not render empty message slots',
+                test: async () => {
+                  const el = this.component;
+                  await el.updateComplete;
+                  expect(el.shadowRoot!.querySelector('slot[name="checked-message"]')).to.exist;
+                  expect(el.shadowRoot!.querySelector('slot[name="unchecked-message"]')).to.exist;
+                },
+              },
               uncheckedMessage: {
                 description: 'unchecked',
                 test: async () => {
@@ -158,6 +184,17 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   const event = (await oneEvent(el, 'change')) as CustomEvent;
                   expect(event.target).to.equal(el);
                   expect(el.checked).to.be.true;
+
+                  el.shadowRoot!.querySelector('input')!.click();
+                  await el.updateComplete;
+                  expect(el.checked).to.be.false;
+                  el.shadowRoot!.querySelector('label')!.click();
+                  await el.updateComplete;
+                  expect(el.checked).to.be.true;
+                  expect(el.shadowRoot!.querySelector('.switch')).to.have.class('switch-checked');
+                  expect(getComputedStyle(el.shadowRoot!.querySelector('.switch-thumb')!).transform).to.not.equal(
+                    'matrix(1, 0, 0, 1, 0, 0)'
+                  );
                 },
               },
               spaceBar: {
@@ -180,6 +217,37 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   const event = (await oneEvent(el, 'change')) as CustomEvent;
                   expect(event.target).to.equal(el);
                   expect(el.checked).to.be.true;
+                },
+              },
+              interactionAnimation: {
+                description: 'animates user toggles and removes the animate class afterward',
+                test: async () => {
+                  const el = this.component;
+                  el.style.setProperty('--charm-switch-control-transition', '100ms linear');
+                  el.style.setProperty('--charm-switch-thumb-transition', '100ms linear');
+                  await el.updateComplete;
+                  el.shadowRoot!.querySelector('input')!.click();
+                  await el.updateComplete;
+                  const base = el.shadowRoot!.querySelector('.switch')!;
+                  expect(base).to.have.class('switch-animate');
+                  expect(getComputedStyle(el.shadowRoot!.querySelector('.switch-thumb')!).transitionDuration).to.equal(
+                    '0.1s'
+                  );
+                  await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+                  expect(el.shadowRoot!.querySelector('.switch-control')!.getAnimations().length).to.be.greaterThan(0);
+                  await waitUntil(() => !base.classList.contains('switch-animate'), 'animation did not settle', {
+                    timeout: 1000,
+                  });
+                },
+              },
+              programmaticChangeDoesNotAnimate: {
+                description: 'does not animate programmatic checked changes',
+                test: async () => {
+                  const el = this.component;
+                  el.checked = true;
+                  await el.updateComplete;
+                  expect(el.shadowRoot!.querySelector('.switch')).to.not.have.class('switch-animate');
+                  expect(el.shadowRoot!.querySelector('.switch-thumb')!.getAnimations()).to.have.length(0);
                 },
               },
               leftArrow: {

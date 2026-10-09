@@ -48,6 +48,9 @@ export default css`
     border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('switch', 'control', 'borderColor')};
     border-radius: ${primitive('borderRadius', 'full')};
+  }
+
+  .switch-animate .switch-control {
     transition: ${component('switch', 'control', 'transition')};
   }
 
@@ -57,6 +60,9 @@ export default css`
     background-color: ${component('switch', 'thumb', 'bgColor')};
     border-radius: 50%;
     transform: translateX(calc(${component('switch', 'thumb', 'transform')} * (-1)));
+  }
+
+  .switch-animate .switch-thumb {
     transition: ${component('switch', 'thumb', 'transition')};
   }
 
@@ -78,12 +84,13 @@ export default css`
 
   .switch-checked-message,
   .switch-unchecked-message {
+    display: inline;
     user-select: none;
     margin-inline-start: ${semantic('formControl', 'label', 'gap')};
   }
 
   /* Unchecked + hover for switch control*/
-  :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-control {
+  .switch:not(.switch-disabled):not(.switch-checked):hover .switch-control {
     border-color: ${component('switch', 'control', 'hover', 'borderColor')};
     background-color: ${component('switch', 'control', 'hover', 'bgColor')};
   }
@@ -95,13 +102,13 @@ export default css`
   }
 
   /* Checked + hover for switch control*/
-  :host(:not([disabled])) .switch-checked:hover .switch-control {
+  .switch:not(.switch-disabled).switch-checked:hover .switch-control {
     border-color: ${component('switch', 'control', 'checked', 'hover', 'borderColor')};
     background-color: ${component('switch', 'control', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + hover for switch thumb*/
-  :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-thumb {
+  .switch:not(.switch-disabled):not(.switch-checked):hover .switch-thumb {
     background-color: ${component('switch', 'thumb', 'hover', 'bgColor')};
   }
 
@@ -112,91 +119,93 @@ export default css`
   }
 
   /* RTL mirrors the thumb travel direction so checked stays toward the "end" of the track. */
-  .switch-rtl .switch-thumb {
+  :host(:dir(rtl)) .switch .switch-thumb {
     transform: translateX(${component('switch', 'thumb', 'transform')});
   }
 
-  .switch.switch-checked.switch-rtl .switch-thumb {
+  :host(:dir(rtl)) .switch.switch-checked .switch-thumb {
     transform: translateX(calc(${component('switch', 'thumb', 'transform')} * (-1)));
   }
 
   /* Checked + hover for switch thumb*/
-  :host(:not([disabled])) .switch-checked:hover .switch-thumb {
+  .switch:not(.switch-disabled).switch-checked:hover .switch-thumb {
     background-color: ${component('switch', 'thumb', 'checked', 'hover', 'bgColor')};
   }
 
   /* Unchecked + active for switch control*/
-  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-thumb {
+  .switch:not(.switch-disabled):not(.switch-checked):active .switch-thumb {
     background-color: ${component('switch', 'control', 'active', 'bgColor')};
   }
 
-  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-control {
+  .switch:not(.switch-disabled):not(.switch-checked):active .switch-control {
     border-color: ${component('switch', 'control', 'active', 'borderColor')};
   }
 
   /* Checked + active for switch control*/
-  :host(:not([disabled])) .switch-checked:active .switch-control {
+  .switch:not(.switch-disabled).switch-checked:active .switch-control {
     border-color: ${component('switch', 'control', 'checked', 'active', 'borderColor')};
     background-color: ${component('switch', 'control', 'checked', 'active', 'bgColor')};
   }
 
   /* Unchecked + active for switch thumb*/
-  :host(:not([disabled])) .switch:not(.switch-checked):active .switch-thumb {
+  .switch:not(.switch-disabled):not(.switch-checked):active .switch-thumb {
     background-color: ${component('switch', 'thumb', 'active', 'bgColor')};
   }
 
   /* Checked + active for switch thumb*/
-  :host(:not([disabled])) .switch-checked:active .switch-thumb {
+  .switch:not(.switch-disabled).switch-checked:active .switch-thumb {
     background-color: ${component('switch', 'thumb', 'checked', 'active', 'bgColor')};
   }
 
   /* Focus */
-  .switch:has(.switch-input:focus-visible) {
+  .switch-input:focus-visible {
     outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
       ${semantic('focus', 'outlineColor')};
     outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   /* Disabled */
-  :host([disabled]) .switch {
+  .switch-disabled {
     opacity: ${semantic('formControl', 'disabled', 'opacity')};
     cursor: not-allowed;
   }
 
   @media screen and (forced-colors: active) {
-    :host([disabled]) .switch {
+    .switch-disabled {
       opacity: 1;
     }
 
-    :host([disabled]) .switch-control {
+    .switch-disabled .switch-control {
       background-color: ${SystemColors.ButtonFace};
       border-color: ${SystemColors.GrayText};
     }
 
-    :host([disabled]) .switch-thumb {
+    .switch-disabled .switch-thumb {
       background-color: ${SystemColors.GrayText};
     }
 
-    :host(:not([disabled])) .switch:not(.switch-checked) .switch-thumb,
-    :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-thumb {
+    .switch:not(.switch-disabled):not(.switch-checked) .switch-thumb,
+    .switch:not(.switch-disabled):not(.switch-checked):hover .switch-thumb {
       background-color: ${SystemColors.ButtonText};
     }
 
-    :host(:not([disabled])) .switch:not(.switch-checked) .switch-control,
-    :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-control {
+    .switch:not(.switch-disabled):not(.switch-checked) .switch-control,
+    .switch:not(.switch-disabled):not(.switch-checked):hover .switch-control {
       background-color: ${SystemColors.ButtonFace};
       border-color: ${SystemColors.ButtonBorder};
     }
 
     .switch-checked .switch-thumb,
-    :host(:not([disabled])) .switch-checked:hover .switch-thumb {
+    .switch:not(.switch-disabled).switch-checked:hover .switch-thumb {
       background-color: ${SystemColors.Highlight};
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .switch-control,
-    .switch-thumb {
+    .switch-animate .switch-control,
+    .switch-thumb,
+    .switch-animate .switch-thumb {
       transition: none;
     }
   }

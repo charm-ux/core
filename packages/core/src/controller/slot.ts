@@ -4,14 +4,21 @@ import type { CharmReactiveControllerHost } from '../base/types.js';
 export class HasSlotController implements ReactiveController {
   public host: CharmReactiveControllerHost;
   protected slotNames: string[] = [];
+  protected slotState = new Map<string, boolean>();
 
   public constructor(host: CharmReactiveControllerHost, ...slotNames: string[]) {
     (this.host = host).addController(this);
     this.slotNames = slotNames;
+    for (const slotName of slotNames) {
+      this.slotState.set(slotName, this.readSlotState(slotName));
+    }
     this.handleSlotChange = this.handleSlotChange.bind(this);
   }
 
   public hostConnected() {
+    for (const slotName of this.slotNames) {
+      this.slotState.set(slotName, this.readSlotState(slotName));
+    }
     this.host.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
   }
 
@@ -20,7 +27,27 @@ export class HasSlotController implements ReactiveController {
   }
 
   public hasDefaultSlot() {
-    return [...this.host.childNodes].some(node => {
+    return this.slotState.get('[default]') ?? this.readDefaultSlotState();
+  }
+
+  public test(slotName: string) {
+    return slotName === '[default]' ? this.hasDefaultSlot() : this.hasNamedSlot(slotName);
+  }
+
+  public addSlotNames(...slotNames: string[]) {
+    for (const slotName of slotNames) {
+      if (this.slotNames.includes(slotName)) continue;
+      this.slotNames.push(slotName);
+      this.slotState.set(slotName, this.readSlotState(slotName));
+    }
+  }
+
+  public hasNamedSlot(name: string) {
+    return this.slotState.get(name) ?? this.readNamedSlotState(name);
+  }
+
+  protected readDefaultSlotState() {
+    for (const node of this.host.childNodes) {
       if (node.nodeType === node.TEXT_NODE && node.textContent && node.textContent.trim() !== '') {
         return true;
       }
@@ -38,23 +65,27 @@ export class HasSlotController implements ReactiveController {
           return true;
         }
       }
-
-      return false;
-    });
+    }
+    return false;
   }
 
-  public test(slotName: string) {
-    return slotName === '[default]' ? this.hasDefaultSlot() : this.hasNamedSlot(slotName);
-  }
-
-  public hasNamedSlot(name: string) {
+  protected readNamedSlotState(name: string) {
     return this.host.querySelector(`:scope > [slot="${name}"]`) !== null;
+  }
+
+  protected readSlotState(slotName: string) {
+    return slotName === '[default]' ? this.readDefaultSlotState() : this.readNamedSlotState(slotName);
   }
 
   protected handleSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
 
-    if ((this.slotNames.includes('[default]') && !slot.name) || (slot.name && this.slotNames.includes(slot.name))) {
+    const slotName = slot.name || '[default]';
+    if (!this.slotNames.includes(slotName)) return;
+
+    const nextState = this.readSlotState(slotName);
+    if (this.slotState.get(slotName) !== nextState) {
+      this.slotState.set(slotName, nextState);
       this.host.requestUpdate();
     }
   }

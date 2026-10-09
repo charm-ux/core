@@ -1,11 +1,10 @@
 import { html } from 'lit/static-html.js';
-import { property, query, state } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 import { keys } from '../../utilities/key-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
-import { HasSlotController } from '../../controller/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './switch.styles.js';
 
@@ -67,12 +66,14 @@ export class CoreSwitch extends CharmFormControlElement {
 
   @query('input[type="checkbox"]') protected override input?: HTMLInputElement;
 
-  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
+  @query('.switch') protected switchBase?: HTMLElement;
+
+  @query('.switch-thumb') protected switchThumb?: HTMLElement;
 
   protected usesArrowKeys = true;
   protected _checked: boolean = false;
 
-  protected override readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
+  protected animationTimer?: number;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -86,6 +87,7 @@ export class CoreSwitch extends CharmFormControlElement {
 
   public set checked(val: boolean) {
     this._checked = val;
+    this.switchBase?.classList.toggle('switch-checked', val);
     this.requestUpdate('checked');
   }
 
@@ -101,6 +103,12 @@ export class CoreSwitch extends CharmFormControlElement {
     this.internals.setFormValue(this.checked ? this.value || 'on' : null);
   }
 
+  public override disconnectedCallback(): void {
+    this.clearAnimation();
+    this.switchThumb?.removeEventListener('transitionend', this.handleTransitionEnd);
+    super.disconnectedCallback();
+  }
+
   /** Gets the control's initial form value for reset behavior. */
   protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
@@ -109,6 +117,7 @@ export class CoreSwitch extends CharmFormControlElement {
   protected override firstUpdated(): void {
     super.firstUpdated();
     this.syncInitialFormValue();
+    this.switchThumb?.addEventListener('transitionend', this.handleTransitionEnd);
   }
 
   protected override formResetCallback(): void {
@@ -121,7 +130,6 @@ export class CoreSwitch extends CharmFormControlElement {
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
     super.willUpdate(changedProperties);
-    this._resolvedDir = this.resolvedDir;
     if (changedProperties.has('checked')) {
       this.updateValidity();
       // Set the form value after updateValidity() so the base class' form-value sync
@@ -131,8 +139,12 @@ export class CoreSwitch extends CharmFormControlElement {
   }
 
   /** Handles the click event on the switch. Toggles the checked state and emits a 'change' event. */
-  protected handleClick() {
-    if (this.readonly || this.disabled) return;
+  protected handleClick(event: MouseEvent) {
+    event.preventDefault();
+    if (this.readonly || this.disabled) {
+      return;
+    }
+    this.animateSwitch();
     this.checked = !this.checked;
     this.emit('change');
   }
@@ -140,6 +152,7 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow left keydown event on the switch.*/
   protected handleArrowLeftKey(event: KeyboardEvent) {
     event.preventDefault();
+    this.animateSwitch();
     this.checked = this.resolvedDir === 'rtl';
     this.emitInput();
     this.emitChange();
@@ -148,6 +161,7 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow right keydown event on the switch. */
   protected handleArrowRightKey(event: KeyboardEvent) {
     event.preventDefault();
+    this.animateSwitch();
     this.checked = this.resolvedDir !== 'rtl';
     this.emitInput();
     this.emitChange();
@@ -164,6 +178,41 @@ export class CoreSwitch extends CharmFormControlElement {
     }
   }
 
+  protected handleInvalid(event: Event) {
+    event.preventDefault();
+  }
+
+  protected animateSwitch() {
+    if (!this.switchBase || !this.switchThumb) return;
+    this.clearAnimation();
+    this.switchBase.classList.add('switch-animate');
+    const style = getComputedStyle(this.switchThumb);
+    const duration = this.parseTransitionTime(style.transitionDuration);
+    const delay = this.parseTransitionTime(style.transitionDelay);
+    this.animationTimer = window.setTimeout(() => this.clearAnimation(), duration + delay + 50);
+  }
+
+  protected handleTransitionEnd = (event: TransitionEvent) => {
+    if (event.target === this.switchThumb && event.propertyName === 'transform') this.clearAnimation();
+  };
+
+  protected clearAnimation() {
+    if (this.animationTimer !== undefined) {
+      window.clearTimeout(this.animationTimer);
+      this.animationTimer = undefined;
+    }
+    this.switchBase?.classList.remove('switch-animate');
+  }
+
+  protected parseTransitionTime(value: string): number {
+    const times = value.split(',').map(time => {
+      const trimmed = time.trim();
+      const milliseconds = trimmed.endsWith('ms') ? Number.parseFloat(trimmed) : Number.parseFloat(trimmed) * 1000;
+      return Number.isFinite(milliseconds) ? milliseconds : 0;
+    });
+    return Math.max(...times, 0);
+  }
+
   /** Generates the template for the input element. */
   protected inputTemplate() {
     return html`
@@ -174,18 +223,15 @@ export class CoreSwitch extends CharmFormControlElement {
         value=${ifDefined(this.value)}
         .checked=${live(this.checked ?? false)}
         role="switch"
-        aria-checked=${this.checked ? 'true' : 'false'}
         aria-describedby=${ifDefined(this.describedBy)}
         aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid=${this.invalid}
         ?autofocus=${this.autofocus}
-        ?checked=${live(this.checked ?? false)}
         ?disabled=${this.disabled}
-        ?readonly=${this.readonly || this.disabled}
         ?required=${this.required}
         @keydown=${this.handleKeyDown}
         @click=${this.handleClick}
-        @invalid=${(e: Event) => e.preventDefault()}
+        @invalid=${this.handleInvalid}
       />
     `;
   }
@@ -205,42 +251,6 @@ export class CoreSwitch extends CharmFormControlElement {
     `;
   }
 
-  /**
-   * Generates the template for the control.
-   */
-  protected controlTemplate() {
-    return html`
-      <span part="switch-control" class="switch-control">
-        <span part="switch-thumb" class="switch-thumb"></span>
-      </span>
-    `;
-  }
-
-  /** Generates the template for the checked message. */
-  protected checkedMessageTemplate() {
-    return html`
-      <span part="switch-checked-message" class="switch-checked-message" aria-hidden="true">
-        <slot name="checked-message"></slot>
-      </span>
-    `;
-  }
-
-  /** Generates the template for the unchecked message. */
-  protected unCheckedMessageTemplate() {
-    return html`
-      <span part="switch-unchecked-message" class="switch-unchecked-message" aria-hidden="true">
-        <slot name="unchecked-message"></slot>
-      </span>
-    `;
-  }
-
-  /** Generates the template for the control wrapper.*/
-  protected controlWrapperTemplate() {
-    return html` <div class="switch-control-wrapper">
-      ${this.controlTemplate()} ${this.checkedMessageTemplate()} ${this.unCheckedMessageTemplate()}
-    </div>`;
-  }
-
   /** Generates the template for the base. */
   protected baseTemplate() {
     return html`
@@ -248,11 +258,28 @@ export class CoreSwitch extends CharmFormControlElement {
         part="switch-base"
         class=${classMap({
           switch: true,
-          [`switch-${this._resolvedDir}`]: true,
           'switch-checked': this.checked,
+          'switch-disabled': this.disabled,
         })}
       >
-        ${this.inputTemplate()} ${this.labelTemplate()} ${this.controlWrapperTemplate()}
+        ${this.inputTemplate()} ${this.labelTemplate()}
+        <span class="switch-control-wrapper">
+          <span part="switch-control" class="switch-control">
+            <span part="switch-thumb" class="switch-thumb"></span>
+          </span>
+          <slot
+            name="checked-message"
+            part="switch-checked-message"
+            class="switch-checked-message"
+            aria-hidden="true"
+          ></slot>
+          <slot
+            name="unchecked-message"
+            part="switch-unchecked-message"
+            class="switch-unchecked-message"
+            aria-hidden="true"
+          ></slot>
+        </span>
       </label>
     `;
   }
