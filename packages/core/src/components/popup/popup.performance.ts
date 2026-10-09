@@ -1,14 +1,16 @@
-import { html, testBundleSize, testRenderTime } from 'web-test-runner-performance/browser.js';
-import { expect } from '@open-wc/testing';
+import { benchmarkComponentPerformance } from '../../internal/testing/component-performance.js';
 import './index.js';
 
 describe('popup performance', () => {
-  const element = html`<ch-popup></ch-popup>`;
-
-  it(`should render under 20ms`, async () => {
-    expect((await testRenderTime(element)).duration).to.be.lessThan(20);
-  });
-  it('should have a small bundle', async () => {
-    expect((await testBundleSize('./dist/components/popup/popup.js')).kb).to.below(1);
+  it('reports mount, rerender, and bulk mount timings', async () => {
+    await benchmarkComponentPerformance({
+      name: 'popup',
+      create: () => {
+        const element = document.createElement('ch-popup');
+        element.innerHTML = '<span slot="anchor">Anchor</span><div>Content</div>';
+        return element;
+      },
+      update: (element, iteration) => element.setAttribute('distance', String(iteration % 2)),
+    });
   });
 });

@@ -44,7 +44,8 @@
     "storybook:build": "cem analyze && storybook build -c .storybook",
     "test": "pnpm generate:theme && web-test-runner",
     "test:watch": "web-test-runner --watch",
-    "test:performance": "web-test-runner --config ./web-test-runner.performance.config.js"
+    "test:performance": "web-test-runner --config ./web-test-runner.performance.config.js",
+    "test:performance:production": "pnpm build && web-test-runner --config ./web-test-runner.performance.production.config.js"
   },
   "files": [
     "dist",

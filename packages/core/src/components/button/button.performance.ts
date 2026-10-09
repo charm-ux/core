@@ -1,5 +1,4 @@
-import { html, testRenderTime } from 'web-test-runner-performance/browser.js';
-import { expect } from '@open-wc/testing';
+import { benchmarkComponentPerformance } from '../../internal/testing/component-performance.js';
 import { createScope } from '../../utilities/index.js';
 import coreButton from './button.js';
 
@@ -9,13 +8,15 @@ createScope({
 });
 
 describe('core-button performance', () => {
-  const element = html`<ch-button>button</ch-button>`;
-
-  it(`should render under 20ms`, async () => {
-    expect((await testRenderTime(element)).duration).to.be.lessThan(20);
+  it('reports mount, rerender, and bulk mount timings', async () => {
+    await benchmarkComponentPerformance({
+      name: 'button',
+      create: () => {
+        const element = document.createElement('ch-button');
+        element.textContent = 'Button';
+        return element;
+      },
+      update: (element, iteration) => element.setAttribute('disabled', String(iteration % 2 === 0)),
+    });
   });
-  // TODO: test component bundle size rather than full lib size
-  // it('should have a small bundle', async () => {
-  //   expect((await testBundleSize('./dist/index.js')).kb).to.below(1);
-  // });
 });

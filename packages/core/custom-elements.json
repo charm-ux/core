@@ -1534,7 +1534,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false"
             },
             {
@@ -9083,7 +9083,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -13274,7 +13274,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -20161,7 +20161,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -22654,7 +22654,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -24877,7 +24877,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
@@ -27601,7 +27601,7 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
