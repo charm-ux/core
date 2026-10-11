@@ -1,8 +1,9 @@
 import { html } from 'lit/static-html.js';
-import { property, state } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { project } from '../../utilities/project.js';
+import { getThemePrefix } from '../../utilities/theme.js';
 import styles from './icon.styles.js';
 
 export interface IconResponse {
@@ -25,7 +26,7 @@ const svgMarkupCache = new Map<string, SVGSVGElement>();
 function parseSvg(markup: string): SVGSVGElement | null {
   const cached = svgMarkupCache.get(markup);
   if (cached) {
-    return cached.cloneNode(true) as SVGSVGElement;
+    return cached;
   }
 
   try {
@@ -38,8 +39,11 @@ function parseSvg(markup: string): SVGSVGElement | null {
     }
 
     const adoptedSvg = document.adoptNode(svgEl) as unknown as SVGSVGElement;
+    adoptedSvg.setAttribute('part', 'svg');
+    adoptedSvg.setAttribute('viewBox', adoptedSvg.getAttribute('viewBox') || '0 0 16 16');
+    adoptedSvg.setAttribute('aria-hidden', 'true');
     svgMarkupCache.set(markup, adoptedSvg);
-    return adoptedSvg.cloneNode(true) as SVGSVGElement;
+    return adoptedSvg;
   } catch {
     return null;
   }
@@ -73,6 +77,10 @@ export class CoreIcon extends CharmElement {
   @property()
   public url?: string;
 
+  /** Selects the rendering strategy. Named icons use a CSS mask by default; use `svg` as an escape hatch. */
+  @property({ attribute: 'render', reflect: true, useDefault: true })
+  public renderMode: 'mask' | 'svg' = 'mask';
+
   /** Sets the rotation degree of the icon. */
   @property({ type: Number, reflect: true })
   public rotate = 0;
@@ -81,19 +89,39 @@ export class CoreIcon extends CharmElement {
   @property({ reflect: true })
   public flip?: 'x' | 'y' | 'both';
 
+  @query('[part="icon-base"]')
+  protected iconBase?: HTMLElement;
+
   @state()
   protected svg: SVGSVGElement | null = null;
 
   protected icons = project.iconSet;
   protected cachedSource?: string;
-  protected defaultIcon =
-    parseSvg(this.icons['question']) ?? document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
-  protected override async willUpdate() {
-    await this.setIcon();
+  protected get maskMode() {
+    return Boolean(this.name && this.renderMode !== 'svg');
   }
 
-  protected async setIcon() {
+  protected override willUpdate(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has('rotate')) {
+      if (this.rotate) this.style.setProperty('--icon-rotate', `${this.rotate}deg`);
+      else this.style.removeProperty('--icon-rotate');
+    }
+    if (this.maskMode) {
+      if (changedProperties.has('name') || changedProperties.has('renderMode')) {
+        const name = this.name ?? 'question';
+        const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '-').replace(/^[0-9]/, '-$&') || 'icon';
+        this.style.setProperty(
+          '--_icon-src',
+          `var(--${getThemePrefix()}-icon-${safeName}, var(--${getThemePrefix()}-icon-question))`
+        );
+      }
+      return;
+    }
+    void this.setIcon();
+  }
+
+  protected setIcon() {
     const source = this.iconSource();
 
     if (source === this.cachedSource) {
@@ -103,20 +131,18 @@ export class CoreIcon extends CharmElement {
     this.cachedSource = source;
 
     if (!this.name && !this.url) {
-      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
+      this.svg = getDefaultIcon();
       return;
     }
 
     if (this.name) {
-      this.svg = (parseSvg((this.icons as Record<string, string>)[this.name]) ?? this.defaultIcon).cloneNode(
-        true
-      ) as SVGSVGElement;
+      this.svg = parseSvg((this.icons as Record<string, string>)[this.name]) ?? getDefaultIcon();
       return;
     }
 
     const resolvedUrl = `${this.url}`;
     if (!resolvedUrl) {
-      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
+      this.svg = getDefaultIcon();
       return;
     }
 
@@ -126,23 +152,19 @@ export class CoreIcon extends CharmElement {
       iconCache.set(resolvedUrl, iconResolver);
     }
 
+    return this.applyUrlIcon(resolvedUrl, iconResolver);
+  }
+
+  protected async applyUrlIcon(resolvedUrl: string, iconResolver: Promise<SVGResult>) {
     const icon = await iconResolver;
-
-    if (icon === RETRYABLE_ERROR) {
-      iconCache.delete(resolvedUrl);
-    }
-
-    if (resolvedUrl !== this.url) {
-      return;
-    }
-
+    if (icon === RETRYABLE_ERROR) iconCache.delete(resolvedUrl);
+    if (resolvedUrl !== this.url) return;
     if (icon === RETRYABLE_ERROR || icon === CACHEABLE_ERROR) {
-      this.svg = this.defaultIcon.cloneNode(true) as SVGSVGElement;
+      this.svg = getDefaultIcon();
       this.emit('icon-error', { detail: { status: icon === RETRYABLE_ERROR ? 503 : 500 } });
       return;
     }
-
-    this.svg = icon.cloneNode(true) as SVGSVGElement;
+    this.svg = icon;
     this.emit('icon-load');
   }
 
@@ -178,11 +200,12 @@ export class CoreIcon extends CharmElement {
   }
 
   protected override updated(changedProperties: Map<string, unknown>) {
-    const shouldSyncSvg =
-      changedProperties.has('svg') ||
-      changedProperties.has('rotate') ||
-      changedProperties.has('flip') ||
-      changedProperties.has('label');
+    if (this.maskMode) {
+      this.iconBase?.querySelector('[part="svg"]')?.remove();
+      return;
+    }
+
+    const shouldSyncSvg = changedProperties.has('svg') || changedProperties.has('renderMode');
 
     if (shouldSyncSvg) {
       this.syncIconNode();
@@ -203,23 +226,9 @@ export class CoreIcon extends CharmElement {
   }
 
   protected syncIconNode() {
-    const base = this.shadowRoot?.querySelector('[part="icon-base"]');
+    const base = this.iconBase;
     if (!base) {
       return;
-    }
-
-    const label = base.querySelector('.visually-hidden');
-    if (this.label) {
-      if (!label) {
-        const hiddenLabel = document.createElement('span');
-        hiddenLabel.classList.add('visually-hidden');
-        hiddenLabel.textContent = this.label;
-        base.prepend(hiddenLabel);
-      } else {
-        label.textContent = this.label;
-      }
-    } else if (label) {
-      label.remove();
     }
 
     const svg = this.svg?.cloneNode(true) as SVGSVGElement | null;
@@ -233,21 +242,14 @@ export class CoreIcon extends CharmElement {
     } else {
       base.append(svg);
     }
-
-    svg.setAttribute('part', 'svg');
-
-    if (!svg.getAttribute('viewBox')) {
-      svg.setAttribute('viewBox', '0 0 16 16');
-    }
-
-    svg.setAttribute('aria-hidden', 'true');
-
-    const scaleX = this.flip === 'x' || this.flip === 'both' ? -1 : 1;
-    const scaleY = this.flip === 'y' || this.flip === 'both' ? -1 : 1;
-    this.style.setProperty('--icon-rotate', `${this.rotate}deg`);
-    this.style.setProperty('--icon-scale-x', `${scaleX}`);
-    this.style.setProperty('--icon-scale-y', `${scaleY}`);
   }
+}
+
+let defaultIcon: SVGSVGElement | undefined;
+function getDefaultIcon(): SVGSVGElement {
+  if (!defaultIcon)
+    defaultIcon = parseSvg(project.iconSet.question) ?? document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  return defaultIcon;
 }
 
 export default CoreIcon;
