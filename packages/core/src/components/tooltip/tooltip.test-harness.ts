@@ -74,6 +74,29 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
                 },
               },
+              preservesContentDuringHide: {
+                description: 'should preserve tooltip text until the hide transition completes',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  el.style.setProperty('--charm-tooltip-hide-transition', 'opacity 0.1s');
+                  el.style.setProperty('--charm-popup-hide-transition', 'opacity 1s');
+                  el.open = true;
+                  await oneEvent(el, 'tooltip-after-show');
+
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
+                  expect(body.textContent).to.contain('This is a tooltip');
+
+                  const afterHide = oneEvent(el, 'tooltip-after-hide');
+                  el.hide();
+                  await elementUpdated(el);
+                  await aTimeout(200);
+
+                  expect(body.hidden).to.be.false;
+                  expect(body.textContent).to.contain('This is a tooltip');
+                  await afterHide;
+                },
+              },
               disabled: {
                 description: 'should hide the tooltip when tooltip is visible and disabled becomes true',
                 // Use manual trigger so Chromium's synthetic hover events can't race the manual open/close.

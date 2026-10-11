@@ -87,6 +87,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   // Set when the anchor is pressed to light dismiss the tooltip. While true, hover and focus won't reopen it. Cleared
   // when the pointer fully leaves the anchor and tooltip or when the anchor blurs.
   protected dismissedByPress = false;
+  protected waitingForPopupHide = false;
 
   /** Keeps the closed initial render to the anchor until the tooltip is first shown. */
   protected hasOpened = false;
@@ -337,11 +338,29 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (waitId !== this.transitionWaitId || !this.pendingAfterEvent) return;
 
     if (this.pendingAfterEvent === 'after-hide') {
+      if (this.popup?.open) {
+        this.waitingForPopupHide = true;
+        if (this.transitionSettleTimer) {
+          clearTimeout(this.transitionSettleTimer);
+          this.transitionSettleTimer = undefined;
+        }
+        this.popup.open = false;
+        return;
+      }
+
       this.body.hidden = true;
-      this.popup.open = false;
     }
 
     super.settleTransition(waitId);
+  }
+
+  /** Finishes the tooltip hide after the nested popup's exit transition. */
+  protected handlePopupAfterHide() {
+    if (!this.waitingForPopupHide) return;
+
+    this.waitingForPopupHide = false;
+    this.body.hidden = true;
+    super.settleTransition(this.transitionWaitId);
   }
 
   /** Handles popup options changing */
@@ -499,6 +518,7 @@ export class CoreTooltip extends CharmDismissibleElement {
         shift
         skidding=${this.skidding ?? 0}
         strategy=${this.fixedPlacement ? 'fixed' : 'absolute'}
+        @popup-after-hide=${this.handlePopupAfterHide}
       >
         <slot slot="anchor" @slotchange=${this.handleSlotChange}></slot>
         ${this.tooltipBodyTemplate()}

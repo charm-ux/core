@@ -3176,7 +3176,7 @@
               "kind": "field",
               "name": "hasSlotController",
               "privacy": "protected",
-              "default": "new HasSlotController(this, '[default]', 'action', 'icon')"
+              "default": "new HasSlotController(this, '[default]', 'action', 'heading', 'icon')"
             },
             {
               "kind": "field",
@@ -7845,7 +7845,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'media', 'footer', 'heading', 'subheading')"
+              "default": "new HasSlotController( this, '[default]', 'media', 'footer', 'heading', 'subheading' )"
             },
             {
               "kind": "method",
@@ -28997,6 +28997,12 @@
             },
             {
               "kind": "method",
+              "name": "handlePopupAfterHide",
+              "privacy": "protected",
+              "description": "Finishes the tooltip hide after the nested popup's exit transition."
+            },
+            {
+              "kind": "method",
               "name": "handleSlotChange",
               "privacy": "protected",
               "parameters": [
@@ -29375,6 +29381,15 @@
               "privacy": "protected",
               "default": "false",
               "description": "This is state is set after popup is open, used for applying transitions."
+            },
+            {
+              "kind": "field",
+              "name": "waitingForPopupHide",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             }
           ],
           "events": [
