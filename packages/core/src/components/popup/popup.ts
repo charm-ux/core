@@ -455,8 +455,6 @@ export class CorePopup extends CharmDismissibleElement {
     if (this.popup) this.popup.hidden = !this.open;
     if (this.open) {
       this.start();
-    } else {
-      void this.reposition();
     }
   }
 
@@ -544,8 +542,6 @@ export class CorePopup extends CharmDismissibleElement {
     this.setAnchorElement();
     if (this.open) {
       this.start();
-    } else {
-      void this.reposition();
     }
   }
 

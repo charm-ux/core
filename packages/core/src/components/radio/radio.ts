@@ -50,6 +50,7 @@ import styles from './radio.styles.js';
 export class CoreRadio extends CharmElement {
   public static override styles = [...super.styles, formControlStyles, styles];
   public static override baseName = 'radio';
+  public static override slotNames = ['[default]'];
 
   /** This toggles the selected status for the radio and is for use when a radio button is used outside of a radio group. When used within a radio group, this value be overridden by the radio group's value. */
   @property({ type: Boolean, reflect: true })
@@ -88,7 +89,7 @@ export class CoreRadio extends CharmElement {
   public readonly?: boolean;
 
   @state() protected hasFocus = false;
-  protected readonly hasSlotController = new HasSlotController(this, '[default]');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   /** Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`. */
   protected get effectivelyDisabled() {

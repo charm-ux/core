@@ -65,7 +65,14 @@ export class CoreCard extends CharmElement {
   @property()
   public subheading?: string;
 
-  protected readonly hasSlotController = new HasSlotController(this, 'media', 'footer', 'heading', 'subheading');
+  protected readonly hasSlotController = new HasSlotController(
+    this,
+    '[default]',
+    'media',
+    'footer',
+    'heading',
+    'subheading'
+  );
 
   /** Generate HTML template for card media. */
   protected mediaTemplate() {

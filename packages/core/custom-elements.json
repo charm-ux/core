@@ -90,6 +90,16 @@
                 "text": "any"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]"
             }
           ],
           "events": [
@@ -400,6 +410,20 @@
               "description": "Shows/opens the component."
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "toggle",
               "privacy": "public",
@@ -674,6 +698,20 @@
               "privacy": "public",
               "static": true,
               "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true }"
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -1248,7 +1286,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'label', 'help-text')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -1471,6 +1509,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -2285,6 +2337,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "summaryTemplate",
               "privacy": "protected",
@@ -2643,6 +2709,20 @@
                 "text": "any"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3308,6 +3388,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "textTemplate",
               "privacy": "protected",
@@ -3819,6 +3913,20 @@
             },
             {
               "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "statusIndicatorSlotName",
               "type": {
                 "text": "string"
@@ -4117,6 +4225,20 @@
                 "text": "any"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4594,6 +4716,20 @@
             },
             {
               "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "target",
               "type": {
                 "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
@@ -5011,6 +5147,20 @@
                 }
               ],
               "description": "Clones the breadcrumb's separator into an item that does not provide its own."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -5738,6 +5888,20 @@
             },
             {
               "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "slottedElements",
               "type": {
                 "text": "HTMLElement[]"
@@ -6326,6 +6490,20 @@
               "kind": "method",
               "name": "setTooltipPosition",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -7108,6 +7286,20 @@
             },
             {
               "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "target",
               "type": {
                 "text": "'_blank' | '_parent' | '_self' | '_top' | (string & {}) | undefined"
@@ -7724,6 +7916,20 @@
                 "text": "any"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -8682,7 +8888,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[default]', 'help-text')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -8999,6 +9205,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]', 'label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -9595,6 +9815,12 @@
               }
             },
             {
+              "kind": "method",
+              "name": "activateDialog",
+              "privacy": "protected",
+              "description": "Opens the native dialog after the first-open render has produced its content."
+            },
+            {
               "kind": "field",
               "name": "alert",
               "type": {
@@ -9847,6 +10073,16 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "hasOpened",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Keeps the closed initial render to the native dialog shell until first open."
             },
             {
               "kind": "field",
@@ -10104,6 +10340,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -10803,6 +11053,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "toggle",
               "privacy": "public",
@@ -11207,6 +11471,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "startLineTemplate",
               "privacy": "protected",
@@ -11535,6 +11813,20 @@
               "kind": "method",
               "name": "setIcon",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -12627,7 +12919,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'label', 'help-text')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -13137,6 +13429,20 @@
               "name": "showPicker",
               "privacy": "public",
               "description": "Shows the browser picker for supported input types."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -13940,6 +14246,20 @@
               "description": "Internal state that tracks the currently selected menu item in single selection mode."
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "updateItemRoles",
               "privacy": "protected",
@@ -14524,6 +14844,20 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -15361,6 +15695,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "toggle",
               "privacy": "public",
@@ -16125,6 +16473,20 @@
                 }
               ],
               "description": "Shows an individual element and removes it from the overflow set."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -17141,6 +17503,20 @@
               "attribute": "skidding"
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "start",
               "privacy": "protected"
@@ -17867,6 +18243,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncRange",
               "privacy": "protected",
@@ -18439,7 +18829,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[actions], [footer]')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -18662,6 +19052,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['actions', 'footer']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -19726,7 +20130,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'help-text', 'label')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20067,6 +20471,20 @@
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               },
               "description": "The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus\nand hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,\nfind none, and silently drop the `focus()` call."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['help-text', 'label']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -20708,7 +21126,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[default]')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -20807,6 +21225,20 @@
               "name": "setInitialAttributes",
               "privacy": "protected",
               "description": "Sets the initial attributes for the CoreRadio component."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -21246,6 +21678,20 @@
                 }
               ],
               "description": "Generates a scoped CSS string."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -22181,7 +22627,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'label', 'help-text')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -22570,6 +23016,20 @@
               "description": "This attribute represents the number of rows in the list that should be visible at one time *",
               "attribute": "size",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -23100,6 +23560,20 @@
               "name": "skeletonTemplate",
               "privacy": "protected",
               "description": "Generates the template for the skeleton."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -23407,6 +23881,20 @@
                 "text": "any"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -24465,7 +24953,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'label', 'help-text')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -24777,6 +25265,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -25339,6 +25841,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "tabPanelTemplate",
               "privacy": "protected",
@@ -25687,6 +26203,20 @@
               "description": "Enables a selected tab.",
               "attribute": "selected",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -26152,6 +26682,20 @@
                 }
               ],
               "description": "Sets the focus on the specified tab indices."
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -27110,7 +27654,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'label', 'help-text')",
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -27510,6 +28054,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             },
             {
@@ -28126,6 +28684,12 @@
               "privacy": "protected"
             },
             {
+              "kind": "method",
+              "name": "activateTooltip",
+              "privacy": "protected",
+              "description": "Makes the lazily rendered popup available before the opening transition."
+            },
+            {
               "kind": "field",
               "name": "anchor",
               "type": {
@@ -28464,6 +29028,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "hasOpened",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Keeps the closed initial render to the anchor until the tooltip is first shown."
+            },
+            {
               "kind": "method",
               "name": "hasTrigger",
               "privacy": "protected",
@@ -28674,6 +29248,20 @@
               "attribute": "skidding"
             },
             {
+              "kind": "field",
+              "name": "slotNames",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "toggle",
               "privacy": "public",
@@ -28756,6 +29344,12 @@
               "default": "'hover focus'",
               "description": "Controls how the tooltip is activated. Possible options include `click`, `hover`, `focus`, and `manual`. Multiple options can be passed by separating them with a space. When manual is used, the tooltip must be activated programmatically.",
               "attribute": "trigger"
+            },
+            {
+              "kind": "method",
+              "name": "updateAnchorDescription",
+              "privacy": "protected",
+              "description": "References the live tooltip content after its first render."
             },
             {
               "kind": "method",

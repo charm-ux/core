@@ -71,7 +71,7 @@ export class CoreAlert extends CharmDismissibleElement {
   @query('.alert-message-container') protected messageContainer?: HTMLElement;
   @query('.alert-message-inner-container') protected messageContent?: HTMLElement;
 
-  protected hasSlotController = new HasSlotController(this, '[default]', 'action', 'icon');
+  protected hasSlotController = new HasSlotController(this, '[default]', 'action', 'heading', 'icon');
   protected originalTrigger?: HTMLElement | null;
   protected _politeness: PolitenessType = 'polite';
 

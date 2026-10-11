@@ -47,6 +47,7 @@ import styles from './form-control.styles.js';
  * @event change - fired when the user modifies the element's value
  */
 export class CharmFormControlElement extends CharmFocusableElement {
+  public static override slotNames = ['label', 'help-text'];
   public static override styles = [...super.styles, styles];
   protected static formAssociated = true;
 
@@ -95,7 +96,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
-  protected readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
+  protected readonly hasSlotController = new HasSlotController(this);
   protected validityUpdatePending = false;
 
   public constructor() {

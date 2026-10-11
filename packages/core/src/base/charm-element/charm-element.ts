@@ -29,6 +29,7 @@ function rewriteThemePrefix(cssText: string, prefix: string): string {
 export class CharmElement extends LitElement {
   public static override styles = [styles];
   public static baseName: string;
+  public static slotNames: string[] = [];
 
   /**
    * @internal Prefix-transformed stylesheets, keyed by component class and then by target prefix.

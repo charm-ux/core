@@ -82,6 +82,7 @@ export class CorePushPane extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'push-pane';
+  public static override slotNames = ['actions', 'footer'];
 
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
@@ -103,7 +104,7 @@ export class CorePushPane extends CharmDismissibleElement {
   @property({ attribute: 'no-header', type: Boolean, reflect: true })
   public noHeader?: boolean;
 
-  protected readonly hasSlotController = new HasSlotController(this, '[actions], [footer]');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];

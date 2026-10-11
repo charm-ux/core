@@ -5,7 +5,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
 import { keys } from '../../utilities/key-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
-import { HasSlotController } from '../../controller/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './switch.styles.js';
 
@@ -64,6 +63,7 @@ import styles from './switch.styles.js';
 export class CoreSwitch extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'switch';
+  public static override slotNames = ['label', 'help-text'];
 
   @query('input[type="checkbox"]') protected override input?: HTMLInputElement;
 
@@ -71,8 +71,6 @@ export class CoreSwitch extends CharmFormControlElement {
 
   protected usesArrowKeys = true;
   protected _checked: boolean = false;
-
-  protected override readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];

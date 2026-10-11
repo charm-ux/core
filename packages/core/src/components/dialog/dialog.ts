@@ -119,6 +119,9 @@ export class CoreDialog extends CharmDismissibleElement {
   @query('dialog')
   protected dialog?: HTMLDialogElement;
 
+  /** Keeps the closed initial render to the native dialog shell until first open. */
+  protected hasOpened = false;
+
   protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
 
   /** Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert. */
@@ -160,16 +163,12 @@ export class CoreDialog extends CharmDismissibleElement {
 
   protected override onOpenChange(open: boolean) {
     if (open) {
-      // make sure the hidden attribute is fully removed before triggering transition
-      this.dialog?.removeAttribute('hidden');
-
-      this.dialog?.showModal();
-
-      requestAnimationFrame(() => {
-        this.visible = true;
-      });
-      this.lockBodyScrolling();
-      this.startRenderedWatcher();
+      const wasOpened = this.hasOpened;
+      this.hasOpened = true;
+      this.requestUpdate();
+      if (wasOpened && this.dialog) {
+        this.activateDialog();
+      }
     } else {
       this.visible = false;
       this.stopRenderedWatcher();
@@ -180,6 +179,29 @@ export class CoreDialog extends CharmDismissibleElement {
       }
     }
     super.onOpenChange(open);
+  }
+
+  protected override updated(changedProps: Map<string, unknown>) {
+    super.updated(changedProps);
+    if (this.open && this.hasOpened && this.dialog && !this.dialog.open) {
+      this.activateDialog();
+    }
+  }
+
+  /** Opens the native dialog after the first-open render has produced its content. */
+  protected activateDialog() {
+    if (!this.dialog || !this.open) return;
+
+    // Make sure the hidden attribute is fully removed before triggering transition.
+    this.dialog.removeAttribute('hidden');
+
+    this.dialog.showModal();
+
+    requestAnimationFrame(() => {
+      this.visible = true;
+    });
+    this.lockBodyScrolling();
+    this.startRenderedWatcher();
   }
 
   /** Starts watching the dialog's render state, tearing down any previous watcher first. */
@@ -363,7 +385,7 @@ export class CoreDialog extends CharmDismissibleElement {
       </button>
     `;
 
-    return this.hideCloseButton || this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
+    return this.hideCloseButton ? '' : this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
   }
 
   /** Generates the HTML template for the dialog body. */
@@ -398,6 +420,17 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Generates the HTML template for the dialog. */
   protected dialogTemplate() {
+    if (!this.hasOpened && !this.open) {
+      return this.html`<dialog
+        part="dialog-base"
+        tabindex="-1"
+        role=${ifDefined(this.alert ? 'alertdialog' : undefined)}
+        @cancel=${this.handleDialogCancel}
+        @pointerup=${this.lightDismiss}
+        @transitionend=${this.handleTransitionEnd}
+      ></dialog>`;
+    }
+
     return this.html`<dialog
       class=${classMap({
         base: true,

@@ -41,11 +41,14 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               hideCloseButton: {
                 description: 'should hide the close button',
                 test: async () => {
+                  expect(this.component.shadowRoot!.querySelector('.close-btn')).to.be.null;
+                  this.component.open = true;
+                  await elementUpdated(this.component);
                   const button = this.component.shadowRoot!.querySelector('.close-btn')!;
                   expect(getComputedStyle(button).display).to.equal('block');
                   this.component.hideCloseButton = true;
                   await elementUpdated(this.component);
-                  expect(getComputedStyle(button).display).to.equal('');
+                  expect(this.component.shadowRoot!.querySelector('.close-btn')).to.be.null;
                 },
               },
               notAlertRole: {
@@ -402,9 +405,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                 test: async () => {
                   if (isSafari()) return;
                   const el = this.component;
-                  const closeButton = el.shadowRoot?.querySelector('.close-btn');
                   setTimeout(() => this.component.show(), 10);
                   await oneEvent(this.component, 'dialog-after-show');
+                  const closeButton = el.shadowRoot?.querySelector('.close-btn');
                   expect(el.shadowRoot?.activeElement).to.equal(closeButton);
                 },
               },

@@ -1,4 +1,5 @@
-import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CorePopup } from './index.js';
 import type { PopupPlacement } from './popup.js';
@@ -61,6 +62,19 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
 
                   // @ts-expect-error anchorEl is private
                   expect(el.anchorEl).to.equal(anchor);
+                },
+              },
+              closedChangesDoNotReposition: {
+                description: 'should not reposition or emit while closed',
+                test: async () => {
+                  const el = this.component;
+                  const reposition = sinon.spy();
+                  el.addEventListener('popup-reposition', reposition);
+                  el.placement = 'bottom';
+                  el.distance = 12;
+                  await elementUpdated(el);
+                  await aTimeout(50);
+                  expect(reposition).to.not.have.been.called;
                 },
               },
               arrow: {
@@ -188,10 +202,11 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   el.innerHTML = `
-                    <span slot="anchor"></span>
-                    <div style="width: 100px; height: 100px"></div>
-                  `;
+                     <span slot="anchor"></span>
+                     <div style="width: 100px; height: 100px"></div>
+                   `;
                   el.distance = 20;
+                  el.open = true;
                   await oneEvent(el, 'popup-reposition');
                   await elementUpdated(el);
                   expect(el.style.getPropertyValue('--hover-bridge-top-left-x')).to.exist;
