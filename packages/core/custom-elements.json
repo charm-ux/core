@@ -93,9 +93,16 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
               "type": {
-                "text": "string[]"
+                "text": "readonly string[]"
               },
               "privacy": "public",
               "static": true,
@@ -411,13 +418,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -468,6 +472,20 @@
               "kind": "method",
               "name": "updateTransitionState",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -701,13 +719,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -730,6 +745,20 @@
               },
               "privacy": "protected",
               "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -1283,13 +1312,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -1513,13 +1535,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -1599,6 +1618,20 @@
               "description": "The input's value attribute.",
               "attribute": "value",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -2338,13 +2371,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -2424,6 +2454,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -2716,9 +2760,20 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
               "type": {
-                "text": "string[]"
+                "text": "readonly string[]"
               },
               "privacy": "public",
               "static": true,
@@ -3174,12 +3229,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "heading",
               "type": {
                 "text": "string | undefined"
@@ -3389,13 +3438,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]', 'action', 'heading', 'icon']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3475,6 +3521,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]', 'action', 'heading', 'icon']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -3808,13 +3868,6 @@
               "default": "false"
             },
             {
-              "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
               "kind": "method",
               "name": "html",
               "privacy": "protected",
@@ -3913,13 +3966,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['status-indicator', 'image']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3944,6 +3994,20 @@
               "name": "statusIndicatorTemplate",
               "privacy": "protected",
               "description": "Generates a template for the status indicator."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['status-indicator', 'image']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -4232,9 +4296,20 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
               "type": {
-                "text": "string[]"
+                "text": "readonly string[]"
               },
               "privacy": "public",
               "static": true,
@@ -4716,13 +4791,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4762,6 +4834,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -5150,13 +5236,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -5169,6 +5252,20 @@
                 "text": "Array<CoreBreadcrumbItem>"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -5888,13 +5985,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -5922,6 +6016,20 @@
               "inheritedFrom": {
                 "name": "CoreOverflow",
                 "module": "src/components/overflow/overflow.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -6493,13 +6601,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -6545,6 +6650,20 @@
               "description": "Vertically stacks the buttons in the group",
               "attribute": "vertical",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -7286,13 +7405,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7385,6 +7501,20 @@
               "privacy": "public",
               "description": "An optional value for the button. Ignored when `href` is set.",
               "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -7841,13 +7971,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
               "kind": "method",
               "name": "headerTemplate",
               "privacy": "protected",
@@ -7923,13 +8046,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]', 'media', 'footer', 'heading', 'subheading']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7944,6 +8064,20 @@
               "privacy": "public",
               "description": "Provides a subheading for the card.",
               "attribute": "subheading"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]', 'media', 'footer', 'heading', 'subheading']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -8885,17 +9019,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -9209,13 +9332,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]', 'label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -9323,6 +9443,20 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]', 'label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -10086,13 +10220,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "heading",
               "type": {
                 "text": "string | undefined"
@@ -10344,13 +10471,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['actions', 'footer', 'heading']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -10464,6 +10588,20 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['actions', 'footer', 'heading']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -11054,13 +11192,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11148,6 +11283,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -11390,13 +11539,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
               "kind": "method",
               "name": "html",
               "privacy": "protected",
@@ -11472,13 +11614,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11489,6 +11628,20 @@
               "name": "startLineTemplate",
               "privacy": "protected",
               "description": "Generates the template for the start line of the divider."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -11816,13 +11969,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11851,6 +12001,20 @@
               "privacy": "public",
               "description": "A string that points to an external SVG.",
               "attribute": "url"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -12916,17 +13080,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -13432,13 +13585,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -13613,6 +13763,20 @@
               "name": "valueAsNumber",
               "privacy": "public",
               "description": "Gets or sets the current value as a number."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -14247,13 +14411,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -14264,6 +14425,20 @@
               "name": "updateItemRoles",
               "privacy": "protected",
               "description": "Updates the role attribute of slotted menu items dynamically."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -14721,13 +14896,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "hasSubmenu",
               "type": {
                 "text": "boolean"
@@ -14847,13 +15015,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['radio-indicator']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -14907,6 +15072,20 @@
               "name": "updateSubmenuState",
               "privacy": "protected",
               "description": "Updates the submenu state based on the presence of submenu items."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['radio-indicator']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -15696,13 +15875,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -15821,6 +15997,20 @@
               },
               "privacy": "protected",
               "description": "Handle for the timer that resets the type-ahead query after a pause in typing."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -16476,13 +16666,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -16503,6 +16690,20 @@
               "name": "startTemplate",
               "privacy": "protected",
               "description": "Generates the start template html."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -17504,13 +17705,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -17626,6 +17824,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -18114,13 +18326,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -18244,13 +18449,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -18284,6 +18486,20 @@
               "description": "The current progress, 0 to `max` or 100 if max is not defined.",
               "attribute": "value",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -18826,13 +19042,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "heading",
               "type": {
                 "text": "string | undefined"
@@ -19056,13 +19265,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['actions', 'footer']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -19148,6 +19354,20 @@
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['actions', 'footer']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -20127,17 +20347,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -20474,13 +20683,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['help-text', 'label']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -20599,6 +20805,20 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['help-text', 'label']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -21123,13 +21343,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)"
-            },
-            {
-              "kind": "field",
               "name": "hideLabel",
               "type": {
                 "text": "boolean | undefined"
@@ -21228,13 +21441,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['[default]']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -21261,6 +21471,20 @@
               "description": "The layout direction of the radio.",
               "attribute": "vertical",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['[default]']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -21681,13 +21905,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -21706,6 +21927,20 @@
               "name": "stylesTemplate",
               "privacy": "protected",
               "description": "Generate the template for the slots."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -22624,17 +22859,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -23019,13 +23243,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23134,6 +23355,20 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -23563,9 +23798,20 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
               "type": {
-                "text": "string[]"
+                "text": "readonly string[]"
               },
               "privacy": "public",
               "static": true,
@@ -23888,13 +24134,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23905,6 +24148,20 @@
               "name": "spinnerTemplate",
               "privacy": "protected",
               "description": "Generates the template for the spinner."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -24950,17 +25207,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -25269,13 +25515,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -25399,6 +25642,20 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -25842,13 +26099,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -25859,6 +26113,20 @@
               "name": "tabPanelTemplate",
               "privacy": "protected",
               "description": "Generates the template for the tab panel"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -26206,13 +26474,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -26223,6 +26488,20 @@
               "name": "tabTemplate",
               "privacy": "protected",
               "description": "Generates the template for the tab component."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "attributes": [
@@ -26685,13 +26964,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -26755,6 +27031,20 @@
                 }
               ],
               "description": "Updates the selection to the specified tab."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [
@@ -27651,17 +27941,6 @@
             },
             {
               "kind": "field",
-              "name": "hasSlotController",
-              "privacy": "protected",
-              "readonly": true,
-              "default": "new HasSlotController(this)",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -28058,13 +28337,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "['label', 'help-text']",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -28179,6 +28455,20 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text']",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
               }
             }
           ],
@@ -29269,13 +29559,10 @@
             },
             {
               "kind": "field",
-              "name": "slotNames",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "default": "[]",
+              "name": "slotController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new HasSlotController(this)",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -29404,6 +29691,20 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "readonly string[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "[]",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
             }
           ],
           "events": [

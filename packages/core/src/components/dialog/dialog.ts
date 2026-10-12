@@ -3,7 +3,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 // import { FocusTrapController } from '../../controller/focus-trap.js';
-import { HasSlotController } from '../../controller/slot.js';
 import { RenderedWatcher } from '../../internal/rendered-watcher.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
@@ -84,7 +83,7 @@ export class CoreDialog extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'dialog';
-  public static override slotNames = ['actions', 'footer', 'heading'];
+  public static override watchedSlots = ['actions', 'footer', 'heading'];
 
   /** Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock. */
   protected static bodyScrollLockCount = 0;
@@ -122,8 +121,6 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Keeps the closed initial render to the native dialog shell until first open. */
   protected hasOpened = false;
-
-  protected readonly hasSlotController = new HasSlotController(this);
 
   /** Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert. */
   private renderedWatcher?: RenderedWatcher;
@@ -344,7 +341,7 @@ export class CoreDialog extends CharmDismissibleElement {
     return this.html`<div
       class=${classMap({
         'header-base': true,
-        'header-base--no-actions': !this.hasSlotController.hasNamedSlot('actions'),
+        'header-base--no-actions': !this.slotController.hasNamedSlot('actions'),
       })}
       part="dialog-header-base"
     >
@@ -395,7 +392,7 @@ export class CoreDialog extends CharmDismissibleElement {
       <div
         class=${classMap({
           'dialog-body': true,
-          'dialog-body--has-header': this.heading || this.hasSlotController.hasNamedSlot('heading'),
+          'dialog-body--has-header': this.heading || this.slotController.hasNamedSlot('heading'),
         })}
         part="dialog-body"
       >
@@ -410,7 +407,7 @@ export class CoreDialog extends CharmDismissibleElement {
       <div
         class=${classMap({
           'dialog-footer': true,
-          'dialog-footer--has-footer': this.hasSlotController.hasNamedSlot('footer'),
+          'dialog-footer--has-footer': this.slotController.hasNamedSlot('footer'),
         })}
         part="dialog-footer"
       >

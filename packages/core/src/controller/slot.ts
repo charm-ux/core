@@ -5,8 +5,8 @@ const hostsWithSlotControllers = new WeakSet<CharmReactiveControllerHost>();
 
 export class HasSlotController implements ReactiveController {
   public host: CharmReactiveControllerHost;
-  protected readonly slotNames: string[];
-  private readonly watchedSlots = new Map<string, boolean>();
+  protected readonly watchedSlots: readonly string[];
+  private readonly cachedSlots = new Map<string, boolean>();
   private readonly warnedSlotNames = new Set<string>();
 
   public constructor(host: CharmReactiveControllerHost, ...slotNames: string[]) {
@@ -19,11 +19,15 @@ export class HasSlotController implements ReactiveController {
 
     hostsWithSlotControllers.add(host);
     (this.host = host).addController(this);
-    this.slotNames = slotNames.length ? slotNames : ((host.constructor as { slotNames?: string[] }).slotNames ?? []);
+    this.watchedSlots =
+      slotNames.length > 0
+        ? slotNames
+        : ((host.constructor as { watchedSlots?: readonly string[] }).watchedSlots ?? []);
     this.handleSlotChange = this.handleSlotChange.bind(this);
   }
 
   public hostConnected() {
+    if (this.watchedSlots.length === 0) return;
     this.updateWatchedSlots();
     this.host.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
   }
@@ -33,7 +37,7 @@ export class HasSlotController implements ReactiveController {
   }
 
   public hasDefaultSlot() {
-    if (this.watchedSlots.has('[default]')) return this.watchedSlots.get('[default]')!;
+    if (this.cachedSlots.has('[default]')) return this.cachedSlots.get('[default]')!;
     this.warnIfUnwatched('[default]');
     return this.hasDefaultSlotContent();
   }
@@ -43,7 +47,7 @@ export class HasSlotController implements ReactiveController {
   }
 
   public hasNamedSlot(name: string) {
-    if (this.watchedSlots.has(name)) return this.watchedSlots.get(name)!;
+    if (this.cachedSlots.has(name)) return this.cachedSlots.get(name)!;
 
     this.warnIfUnwatched(name);
 
@@ -53,7 +57,10 @@ export class HasSlotController implements ReactiveController {
   protected handleSlotChange(event: Event) {
     const slot = event.target as HTMLSlotElement;
 
-    if ((this.slotNames.includes('[default]') && !slot.name) || (slot.name && this.slotNames.includes(slot.name))) {
+    if (
+      (this.watchedSlots.includes('[default]') && !slot.name) ||
+      (slot.name && this.watchedSlots.includes(slot.name))
+    ) {
       if (this.updateWatchedSlots()) {
         this.host.requestUpdate();
       }
@@ -63,13 +70,13 @@ export class HasSlotController implements ReactiveController {
   private updateWatchedSlots(): boolean {
     let changed = false;
 
-    for (const slotName of this.slotNames) {
+    for (const slotName of this.watchedSlots) {
       const hasSlot =
         slotName === '[default]'
           ? this.hasDefaultSlotContent()
           : this.host.querySelector(`:scope > [slot="${slotName}"]`) !== null;
-      if (this.watchedSlots.get(slotName) !== hasSlot) {
-        this.watchedSlots.set(slotName, hasSlot);
+      if (this.cachedSlots.get(slotName) !== hasSlot) {
+        this.cachedSlots.set(slotName, hasSlot);
         changed = true;
       }
     }

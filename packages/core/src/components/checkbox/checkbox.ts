@@ -54,7 +54,7 @@ import styles from './checkbox.styles.js';
 export class CoreCheckbox extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'checkbox';
-  public static override slotNames = ['[default]', 'label', 'help-text'];
+  public static override watchedSlots = ['[default]', 'label', 'help-text'];
 
   /** Draws the checkbox in a checked state. */
   @property({ type: Boolean, reflect: true })
@@ -148,7 +148,7 @@ export class CoreCheckbox extends CharmFormControlElement {
           'form-control': true,
           'form-control-has-error': this.invalid,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': !!(this.label || this.hasSlotController.hasDefaultSlot()),
+          'form-control-has-label': !!(this.label || this.slotController.hasDefaultSlot()),
         })}
         part="checkbox-base"
       >

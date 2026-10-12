@@ -1,7 +1,6 @@
 import { type PropertyValues, type TemplateResult } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { HasSlotController } from '../../controller/index.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './avatar.styles.js';
@@ -43,7 +42,7 @@ import styles from './avatar.styles.js';
 export class CoreAvatar extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'avatar';
-  public static override slotNames = ['status-indicator', 'image'];
+  public static override watchedSlots = ['status-indicator', 'image'];
 
   /** The alt text for the avatar. */
   @property({ reflect: true }) public label?: string;
@@ -58,8 +57,6 @@ export class CoreAvatar extends CharmElement {
   @property() public loading: 'eager' | 'lazy' = 'eager';
 
   @state() protected hasError = false;
-
-  protected readonly hasSlotController = new HasSlotController(this);
 
   protected statusIndicatorSlotName = 'status-indicator';
 
@@ -124,7 +121,7 @@ export class CoreAvatar extends CharmElement {
 
   /** Generates the template for the avatar's background. */
   protected backgroundTemplate() {
-    const hasImageSlot = this.hasSlotController.hasNamedSlot('image');
+    const hasImageSlot = this.slotController.hasNamedSlot('image');
 
     let content: TemplateResult;
     if (hasImageSlot) {
@@ -154,7 +151,7 @@ export class CoreAvatar extends CharmElement {
       <div
         class="status-container"
         part="avatar-status-container"
-        ?hidden=${!this.hasSlotController.hasNamedSlot('status-indicator')}
+        ?hidden=${!this.slotController.hasNamedSlot('status-indicator')}
       >
         ${this.statusIndicatorSlotTemplate()}
       </div>

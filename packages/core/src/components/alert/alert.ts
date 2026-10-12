@@ -1,7 +1,6 @@
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { HasSlotController } from '../../controller/slot.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './alert.styles.js';
@@ -57,7 +56,7 @@ type PolitenessType = (typeof politenessLevels)[number];
 export class CoreAlert extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'alert';
-  public static override slotNames = ['[default]', 'action', 'heading', 'icon'];
+  public static override watchedSlots = ['[default]', 'action', 'heading', 'icon'];
 
   /** Shows the close button. */
   @property({ type: Boolean, reflect: true }) public dismissible: boolean = false;
@@ -72,7 +71,6 @@ export class CoreAlert extends CharmDismissibleElement {
   @query('.alert-message-container') protected messageContainer?: HTMLElement;
   @query('.alert-message-inner-container') protected messageContent?: HTMLElement;
 
-  protected hasSlotController = new HasSlotController(this);
   protected originalTrigger?: HTMLElement | null;
   protected _politeness: PolitenessType = 'polite';
 
@@ -139,7 +137,7 @@ export class CoreAlert extends CharmDismissibleElement {
 
   /** Generates the template for the icon. */
   protected iconTemplate() {
-    return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.hasSlotController.hasNamedSlot('icon')}>
+    return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.slotController.hasNamedSlot('icon')}>
       <slot name="icon"></slot>
     </div>`;
   }
@@ -148,7 +146,7 @@ export class CoreAlert extends CharmDismissibleElement {
   protected textTemplate() {
     return this.html` <div part="alert-message" class="alert-message-container">
       <div class="alert-message-inner-container" tabindex="-1">
-        <h3 class="alert-heading" ?hidden=${!(this.hasSlotController.hasNamedSlot('heading') || this.heading)}>
+        <h3 class="alert-heading" ?hidden=${!(this.slotController.hasNamedSlot('heading') || this.heading)}>
           <slot name="heading">${this.heading}</slot>
         </h3>
         <slot></slot>
@@ -194,7 +192,7 @@ export class CoreAlert extends CharmDismissibleElement {
           part="alert-base"
           class=${classMap({
             alert: true,
-            'has-actions': this.hasSlotController.test('action'),
+            'has-actions': this.slotController.test('action'),
           })}
           role=${ifDefined(this.politenessRole())}
           aria-live=${ifDefined(this.politeness === 'off' ? undefined : this.politeness)}

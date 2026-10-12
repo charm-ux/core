@@ -46,7 +46,7 @@ describe('HasSlotController', () => {
     const host = createHost();
     host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot><slot name="label"></slot>';
     Object.defineProperty(host, 'constructor', {
-      value: { slotNames: ['[default]', 'label'] },
+      value: { watchedSlots: ['[default]', 'label'] },
     });
     host.append(document.createElement('span'));
     const controller = new HasSlotController(host);

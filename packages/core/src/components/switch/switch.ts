@@ -63,7 +63,7 @@ import styles from './switch.styles.js';
 export class CoreSwitch extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'switch';
-  public static override slotNames = ['label', 'help-text'];
+  public static override watchedSlots = ['label', 'help-text'];
 
   @query('input[type="checkbox"]') protected override input?: HTMLInputElement;
 
@@ -263,7 +263,7 @@ export class CoreSwitch extends CharmFormControlElement {
         class=${classMap({
           'form-control': true,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': this.label || this.hasSlotController.hasNamedSlot('label'),
+          'form-control-has-label': this.label || this.slotController.hasNamedSlot('label'),
           'form-control-has-help-text': this.hasHelpText,
         })}
       >

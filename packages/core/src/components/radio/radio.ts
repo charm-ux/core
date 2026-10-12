@@ -3,7 +3,6 @@ import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import formControlStyles from '../../base/form-control-element/form-control.styles.js';
-import { HasSlotController } from '../../controller/slot.js';
 import { keys } from '../../utilities/key-map.js';
 import styles from './radio.styles.js';
 
@@ -50,7 +49,7 @@ import styles from './radio.styles.js';
 export class CoreRadio extends CharmElement {
   public static override styles = [...super.styles, formControlStyles, styles];
   public static override baseName = 'radio';
-  public static override slotNames = ['[default]'];
+  public static override watchedSlots = ['[default]'];
 
   /** This toggles the selected status for the radio and is for use when a radio button is used outside of a radio group. When used within a radio group, this value be overridden by the radio group's value. */
   @property({ type: Boolean, reflect: true })
@@ -89,7 +88,6 @@ export class CoreRadio extends CharmElement {
   public readonly?: boolean;
 
   @state() protected hasFocus = false;
-  protected readonly hasSlotController = new HasSlotController(this);
 
   /** Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`. */
   protected get effectivelyDisabled() {
@@ -201,7 +199,7 @@ export class CoreRadio extends CharmElement {
       class=${classMap({
         radio: true,
         'form-control-group-item': true,
-        'form-control-has-label': !!this.label || this.hasSlotController.test('[default]'),
+        'form-control-has-label': !!this.label || this.slotController.test('[default]'),
       })}
     >
       ${this.radioControlTemplate()} ${this.radioLabelTemplate()}

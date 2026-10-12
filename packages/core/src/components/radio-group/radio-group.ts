@@ -40,7 +40,7 @@ import styles from './radio-group.styles.js';
 export class CoreRadioGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'radio-group';
-  public static override slotNames = ['help-text', 'label'];
+  public static override watchedSlots = ['help-text', 'label'];
 
   /**
    * The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus

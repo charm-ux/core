@@ -1,7 +1,6 @@
 import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
-import { HasSlotController } from '../../controller/index.js';
 import styles from './card.styles.js';
 
 /**
@@ -50,7 +49,7 @@ import styles from './card.styles.js';
 export class CoreCard extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'card';
-  public static override slotNames = ['[default]', 'media', 'footer', 'heading', 'subheading'];
+  public static override watchedSlots = ['[default]', 'media', 'footer', 'heading', 'subheading'];
 
   /**
    * A flag used to change visual positioning of any media (default 'top').
@@ -66,11 +65,9 @@ export class CoreCard extends CharmElement {
   @property()
   public subheading?: string;
 
-  protected readonly hasSlotController = new HasSlotController(this);
-
   /** Generate HTML template for card media. */
   protected mediaTemplate() {
-    return html`<div ?hidden=${!this.hasSlotController.hasNamedSlot('media')} part="card-media">
+    return html`<div ?hidden=${!this.slotController.hasNamedSlot('media')} part="card-media">
       <slot name="media"></slot>
     </div>`;
   }
@@ -79,10 +76,10 @@ export class CoreCard extends CharmElement {
   protected headerTemplate() {
     return html`
       <header class="header" part="card-header">
-        <h3 part="card-heading" ?hidden=${!this.hasSlotController.hasNamedSlot('heading') && !this.heading}>
+        <h3 part="card-heading" ?hidden=${!this.slotController.hasNamedSlot('heading') && !this.heading}>
           <slot name="heading">${this.heading}</slot>
         </h3>
-        <h4 part="card-subheading" ?hidden=${!this.hasSlotController.hasNamedSlot('subheading') && !this.subheading}>
+        <h4 part="card-subheading" ?hidden=${!this.slotController.hasNamedSlot('subheading') && !this.subheading}>
           <slot name="subheading">${this.subheading}</slot>
         </h4>
       </header>
@@ -92,7 +89,7 @@ export class CoreCard extends CharmElement {
   /** Generate HTML template for card footer. */
   protected footerTemplate() {
     return html`
-      <footer class="footer" part="card-footer" ?hidden=${!this.hasSlotController.hasNamedSlot('footer')}>
+      <footer class="footer" part="card-footer" ?hidden=${!this.slotController.hasNamedSlot('footer')}>
         <slot name="footer"></slot>
       </footer>
     `;
@@ -101,7 +98,7 @@ export class CoreCard extends CharmElement {
   /** Generates the HTML template for card content. */
   protected contentTemplate() {
     return html`
-      <div class="card-content" part="card-content" ?hidden=${!this.hasSlotController.hasDefaultSlot()}>
+      <div class="card-content" part="card-content" ?hidden=${!this.slotController.hasDefaultSlot()}>
         <slot></slot>
       </div>
     `;

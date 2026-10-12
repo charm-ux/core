@@ -1,6 +1,7 @@
 import { type CSSResultOrNative, LitElement, type TemplateResult } from 'lit';
 import { html as staticHtml } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
+import { HasSlotController } from '../../controller/slot.js';
 import { DEFAULT_THEME_PREFIX, getScope, getThemePrefix } from '../../utilities/index.js';
 import styles from './charm-element.styles.js';
 
@@ -29,7 +30,7 @@ function rewriteThemePrefix(cssText: string, prefix: string): string {
 export class CharmElement extends LitElement {
   public static override styles = [styles];
   public static baseName: string;
-  public static slotNames: string[] = [];
+  public static watchedSlots: readonly string[] = [];
 
   /**
    * @internal Prefix-transformed stylesheets, keyed by component class and then by target prefix.
@@ -47,6 +48,7 @@ export class CharmElement extends LitElement {
   private static _scopedTemplateStrings = new WeakMap<TemplateStringsArray, Map<string, TemplateStringsArray>>();
 
   protected scope: any;
+  protected readonly slotController = new HasSlotController(this);
 
   private _dir?: 'ltr' | 'rtl' | 'auto';
 
