@@ -61,6 +61,7 @@ describe('HasSlotController', () => {
     const host = createHost();
     host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot><slot name="label"></slot>';
     const controller = new HasSlotController(host, '[default]', 'label');
+    document.body.append(host);
     controller.hostConnected();
     const slot = host.shadowRoot?.querySelector('slot');
 
@@ -71,6 +72,21 @@ describe('HasSlotController', () => {
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(host.updateCount).to.equal(1);
     expect(controller.hasDefaultSlot()).to.equal(true);
+    document.body.removeChild(host);
+  });
+
+  it('does not request an update after the host is disconnected', () => {
+    const host = createHost();
+    host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    const controller = new HasSlotController(host, '[default]');
+    document.body.append(host);
+    controller.hostConnected();
+    document.body.removeChild(host);
+
+    const slot = host.shadowRoot?.querySelector('slot');
+    slot?.dispatchEvent(new Event('slotchange'));
+
+    expect(host.updateCount).to.equal(0);
   });
 
   it('rejects duplicate controllers for one host', () => {

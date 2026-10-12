@@ -55,6 +55,8 @@ export class HasSlotController implements ReactiveController {
   }
 
   protected handleSlotChange(event: Event) {
+    if (!this.host.isConnected) return;
+
     const slot = event.target as HTMLSlotElement;
 
     if (
