@@ -77,7 +77,7 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                 description: 'renders image slot with content and hides initials',
                 test: async () => {
                   const el = this.component;
-                  const imageUrl = 'https://via.placeholder.com/32x32';
+                  const imageUrl = loadableImage;
                   const initialsValue = 'AB';
 
                   el.innerHTML = `<img slot="image" src="${imageUrl}" alt="User Avatar" />`;
