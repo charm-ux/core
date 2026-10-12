@@ -43,6 +43,7 @@
     "storybook:dev": "storybook dev -p 6006",
     "storybook:build": "cem analyze && storybook build -c .storybook",
     "test": "pnpm generate:theme && web-test-runner",
+    "test:sharding": "node --test ./test/test-sharding.test.js",
     "test:watch": "web-test-runner --watch",
     "test:performance": "web-test-runner --config ./web-test-runner.performance.config.js",
     "test:performance:production": "pnpm build && web-test-runner --config ./web-test-runner.performance.production.config.js"
