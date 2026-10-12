@@ -3176,7 +3176,7 @@
               "kind": "field",
               "name": "hasSlotController",
               "privacy": "protected",
-              "default": "new HasSlotController(this, '[default]', 'action', 'heading', 'icon')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -3395,7 +3395,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['[default]', 'action', 'heading', 'icon']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3812,7 +3812,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'status-indicator', 'image')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "method",
@@ -3919,7 +3919,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['status-indicator', 'image']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7845,7 +7845,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController( this, '[default]', 'media', 'footer', 'heading', 'subheading' )"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "method",
@@ -7929,7 +7929,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['[default]', 'media', 'footer', 'heading', 'subheading']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -10089,7 +10089,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'actions', 'footer', 'heading')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -10350,7 +10350,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['actions', 'footer', 'heading']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -11394,7 +11394,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[default]')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "method",
@@ -11478,7 +11478,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['[default]']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -14724,7 +14724,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, 'radio-indicator')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -14853,7 +14853,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['radio-indicator']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -18117,7 +18117,7 @@
               "name": "hasSlotController",
               "privacy": "protected",
               "readonly": true,
-              "default": "new HasSlotController(this, '[default]', 'help-text')"
+              "default": "new HasSlotController(this)"
             },
             {
               "kind": "field",
@@ -18250,7 +18250,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "[]",
+              "default": "['[default]', 'help-text']",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -28870,6 +28870,20 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "finalizeHide",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "waitId",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Completes the tooltip hide after the tooltip and nested popup transitions settle."
             },
             {
               "kind": "field",
