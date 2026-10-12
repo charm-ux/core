@@ -128,7 +128,7 @@ export default css`
     color: ${component('dialog', 'closeButton', 'focus', 'fgColor')};
   }
 
-  .close-btn svg {
+  .close-btn > * {
     pointer-events: none;
     width: calc(1 * 24px);
     height: calc(1 * 24px);

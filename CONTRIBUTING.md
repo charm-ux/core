@@ -66,7 +66,19 @@ pnpm test:watch
 
 # Run core package tests only
 pnpm test:core
+
+# Run one deterministic core test shard locally
+TEST_SHARD_INDEX=0 TEST_SHARD_COUNT=2 pnpm test
+TEST_SHARD_INDEX=1 TEST_SHARD_COUNT=2 pnpm test
+
+# Verify shard assignment without starting browsers
+pnpm --filter @charm-ux/core test:sharding
 ```
+
+`TEST_SHARD_INDEX` is zero-based and `TEST_SHARD_COUNT` is the total number of shards. Set
+both variables together. Test files are sorted by path and assigned round-robin, so the same
+files always belong to the same shard for a given shard count. The production performance
+suite is not affected by these variables.
 
 ### Linting & Formatting
 
