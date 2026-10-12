@@ -30,6 +30,8 @@ function rewriteThemePrefix(cssText: string, prefix: string): string {
 export class CharmElement extends LitElement {
   public static override styles = [styles];
   public static baseName: string;
+
+  /** @internal Slot names whose presence is cached by the element's slot controller. */
   public static watchedSlots: readonly string[] = [];
 
   /**
@@ -48,6 +50,8 @@ export class CharmElement extends LitElement {
   private static _scopedTemplateStrings = new WeakMap<TemplateStringsArray, Map<string, TemplateStringsArray>>();
 
   protected scope: any;
+
+  /** @internal Tracks the presence of watched slotted content. */
   protected readonly slotController = new HasSlotController(this);
 
   private _dir?: 'ltr' | 'rtl' | 'auto';
@@ -261,6 +265,21 @@ export class CharmElement extends LitElement {
     // For ShadowRoot, use querySelector with an ID selector. Escape id if CSS.escape is available.
     const escaped = typeof (CSS as any)?.escape === 'function' ? (CSS as any).escape(id) : id;
     return (rootNode as ShadowRoot).querySelector(`#${escaped}`);
+  }
+
+  /** @internal Returns whether the default slot has visible content. */
+  protected hasDefaultSlot(): boolean {
+    return this.slotController.hasDefaultSlot();
+  }
+
+  /** @internal Returns whether a named slot has assigned content. */
+  protected hasNamedSlot(name: string): boolean {
+    return this.slotController.hasNamedSlot(name);
+  }
+
+  /** @internal Tests a slot name, including the `[default]` sentinel. */
+  protected test(slotName: string): boolean {
+    return this.slotController.test(slotName);
   }
 }
 

@@ -357,7 +357,7 @@ export class CoreMenuItem extends CharmElement {
 
   /** Generates and returns a template for rendering the radio indicator within a menu item, conditional on the menu item's role being 'menuitemradio'. */
   protected radioIndicatorTemplate() {
-    const hasRadioIndicator = this.slotController.hasNamedSlot('radio-indicator');
+    const hasRadioIndicator = this.hasNamedSlot('radio-indicator');
 
     return this.role === 'menuitemradio'
       ? this.html`

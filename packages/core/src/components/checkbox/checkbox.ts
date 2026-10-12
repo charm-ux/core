@@ -148,7 +148,7 @@ export class CoreCheckbox extends CharmFormControlElement {
           'form-control': true,
           'form-control-has-error': this.invalid,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': !!(this.label || this.slotController.hasDefaultSlot()),
+          'form-control-has-label': !!(this.label || this.hasDefaultSlot()),
         })}
         part="checkbox-base"
       >

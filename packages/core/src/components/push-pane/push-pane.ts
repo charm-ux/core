@@ -177,8 +177,8 @@ export class CorePushPane extends CharmDismissibleElement {
       <div
         class=${classMap({
           body: true,
-          'body--has-actions': this.slotController.hasNamedSlot('actions'),
-          'body--has-footer': this.slotController.hasNamedSlot('footer'),
+          'body--has-actions': this.hasNamedSlot('actions'),
+          'body--has-footer': this.hasNamedSlot('footer'),
         })}
       >
         <slot aria-live=${this.open ? 'polite' : 'off'}></slot>
@@ -212,7 +212,7 @@ export class CorePushPane extends CharmDismissibleElement {
     return this.html` <header
       class=${classMap({
         'header-base': true,
-        'header-base--no-actions': !this.slotController.hasNamedSlot('actions'),
+        'header-base--no-actions': !this.hasNamedSlot('actions'),
       })}
       part="push-pane-header"
     >

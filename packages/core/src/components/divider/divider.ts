@@ -70,7 +70,7 @@ export class CoreDivider extends CharmElement {
       <span
         class=${classMap({
           content: true,
-          text: this.slotController.hasDefaultSlot(),
+          text: this.hasDefaultSlot(),
         })}
         part="divider-content"
       >

@@ -310,8 +310,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   protected override willUpdate(_changedProperties: Map<string | number | symbol, unknown>): void {
-    this.hasLabel = !!(this.label || this.slotController.hasNamedSlot('label'));
-    this.hasHelpText = !!(this.helpText || this.slotController.hasNamedSlot('help-text'));
+    this.hasLabel = !!(this.label || this.hasNamedSlot('label'));
+    this.hasHelpText = !!(this.helpText || this.hasNamedSlot('help-text'));
   }
 
   protected override firstUpdated(): void {

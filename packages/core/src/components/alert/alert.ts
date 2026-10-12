@@ -137,7 +137,7 @@ export class CoreAlert extends CharmDismissibleElement {
 
   /** Generates the template for the icon. */
   protected iconTemplate() {
-    return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.slotController.hasNamedSlot('icon')}>
+    return this.html` <div part="alert-icon" class="alert-icon" ?hidden=${!this.hasNamedSlot('icon')}>
       <slot name="icon"></slot>
     </div>`;
   }
@@ -146,7 +146,7 @@ export class CoreAlert extends CharmDismissibleElement {
   protected textTemplate() {
     return this.html` <div part="alert-message" class="alert-message-container">
       <div class="alert-message-inner-container" tabindex="-1">
-        <h3 class="alert-heading" ?hidden=${!(this.slotController.hasNamedSlot('heading') || this.heading)}>
+        <h3 class="alert-heading" ?hidden=${!(this.hasNamedSlot('heading') || this.heading)}>
           <slot name="heading">${this.heading}</slot>
         </h3>
         <slot></slot>
@@ -192,7 +192,7 @@ export class CoreAlert extends CharmDismissibleElement {
           part="alert-base"
           class=${classMap({
             alert: true,
-            'has-actions': this.slotController.test('action'),
+            'has-actions': this.test('action'),
           })}
           role=${ifDefined(this.politenessRole())}
           aria-live=${ifDefined(this.politeness === 'off' ? undefined : this.politeness)}

@@ -73,12 +73,12 @@ export class CoreProgressBar extends CharmElement {
 
   /** Whether a label is present via the `label` attribute or the default slot. */
   protected get hasLabel(): boolean {
-    return !!this.label || this.slotController.hasDefaultSlot();
+    return !!this.label || this.hasDefaultSlot();
   }
 
   /** Whether help text is present via the `help-text` attribute or the `help-text` slot. */
   protected get hasHelpText(): boolean {
-    return !!this.helpText || this.slotController.hasNamedSlot('help-text');
+    return !!this.helpText || this.hasNamedSlot('help-text');
   }
 
   public override disconnectedCallback() {

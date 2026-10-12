@@ -199,7 +199,7 @@ export class CoreRadio extends CharmElement {
       class=${classMap({
         radio: true,
         'form-control-group-item': true,
-        'form-control-has-label': !!this.label || this.slotController.test('[default]'),
+        'form-control-has-label': !!this.label || this.test('[default]'),
       })}
     >
       ${this.radioControlTemplate()} ${this.radioLabelTemplate()}

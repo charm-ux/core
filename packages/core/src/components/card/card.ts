@@ -67,7 +67,7 @@ export class CoreCard extends CharmElement {
 
   /** Generate HTML template for card media. */
   protected mediaTemplate() {
-    return html`<div ?hidden=${!this.slotController.hasNamedSlot('media')} part="card-media">
+    return html`<div ?hidden=${!this.hasNamedSlot('media')} part="card-media">
       <slot name="media"></slot>
     </div>`;
   }
@@ -76,10 +76,10 @@ export class CoreCard extends CharmElement {
   protected headerTemplate() {
     return html`
       <header class="header" part="card-header">
-        <h3 part="card-heading" ?hidden=${!this.slotController.hasNamedSlot('heading') && !this.heading}>
+        <h3 part="card-heading" ?hidden=${!this.hasNamedSlot('heading') && !this.heading}>
           <slot name="heading">${this.heading}</slot>
         </h3>
-        <h4 part="card-subheading" ?hidden=${!this.slotController.hasNamedSlot('subheading') && !this.subheading}>
+        <h4 part="card-subheading" ?hidden=${!this.hasNamedSlot('subheading') && !this.subheading}>
           <slot name="subheading">${this.subheading}</slot>
         </h4>
       </header>
@@ -89,7 +89,7 @@ export class CoreCard extends CharmElement {
   /** Generate HTML template for card footer. */
   protected footerTemplate() {
     return html`
-      <footer class="footer" part="card-footer" ?hidden=${!this.slotController.hasNamedSlot('footer')}>
+      <footer class="footer" part="card-footer" ?hidden=${!this.hasNamedSlot('footer')}>
         <slot name="footer"></slot>
       </footer>
     `;
@@ -98,7 +98,7 @@ export class CoreCard extends CharmElement {
   /** Generates the HTML template for card content. */
   protected contentTemplate() {
     return html`
-      <div class="card-content" part="card-content" ?hidden=${!this.slotController.hasDefaultSlot()}>
+      <div class="card-content" part="card-content" ?hidden=${!this.hasDefaultSlot()}>
         <slot></slot>
       </div>
     `;

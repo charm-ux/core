@@ -263,7 +263,7 @@ export class CoreSwitch extends CharmFormControlElement {
         class=${classMap({
           'form-control': true,
           'form-control-has-interaction': this.hadFocus,
-          'form-control-has-label': this.label || this.slotController.hasNamedSlot('label'),
+          'form-control-has-label': this.label || this.hasNamedSlot('label'),
           'form-control-has-help-text': this.hasHelpText,
         })}
       >

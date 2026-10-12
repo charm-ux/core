@@ -121,7 +121,7 @@ export class CoreAvatar extends CharmElement {
 
   /** Generates the template for the avatar's background. */
   protected backgroundTemplate() {
-    const hasImageSlot = this.slotController.hasNamedSlot('image');
+    const hasImageSlot = this.hasNamedSlot('image');
 
     let content: TemplateResult;
     if (hasImageSlot) {
@@ -151,7 +151,7 @@ export class CoreAvatar extends CharmElement {
       <div
         class="status-container"
         part="avatar-status-container"
-        ?hidden=${!this.slotController.hasNamedSlot('status-indicator')}
+        ?hidden=${!this.hasNamedSlot('status-indicator')}
       >
         ${this.statusIndicatorSlotTemplate()}
       </div>

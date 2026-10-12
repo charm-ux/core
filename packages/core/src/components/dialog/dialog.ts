@@ -341,7 +341,7 @@ export class CoreDialog extends CharmDismissibleElement {
     return this.html`<div
       class=${classMap({
         'header-base': true,
-        'header-base--no-actions': !this.slotController.hasNamedSlot('actions'),
+        'header-base--no-actions': !this.hasNamedSlot('actions'),
       })}
       part="dialog-header-base"
     >
@@ -392,7 +392,7 @@ export class CoreDialog extends CharmDismissibleElement {
       <div
         class=${classMap({
           'dialog-body': true,
-          'dialog-body--has-header': this.heading || this.slotController.hasNamedSlot('heading'),
+          'dialog-body--has-header': this.heading || this.hasNamedSlot('heading'),
         })}
         part="dialog-body"
       >
@@ -407,7 +407,7 @@ export class CoreDialog extends CharmDismissibleElement {
       <div
         class=${classMap({
           'dialog-footer': true,
-          'dialog-footer--has-footer': this.slotController.hasNamedSlot('footer'),
+          'dialog-footer--has-footer': this.hasNamedSlot('footer'),
         })}
         part="dialog-footer"
       >
