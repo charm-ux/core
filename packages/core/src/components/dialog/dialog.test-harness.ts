@@ -265,7 +265,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   const el = this.component;
                   // Use a duration long enough that transitionend fires reliably on every browser.
                   // The fixture's 1ms transition is sub-frame and Firefox skips the transition.
-                  el.style.setProperty('--dialog-transition', 'opacity 300ms');
+                  el.style.setProperty('--charm-dialog-transition', 'opacity 300ms');
                   el.open = true;
                   await waitUntil(
                     () => el.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
