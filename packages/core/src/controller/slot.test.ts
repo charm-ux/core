@@ -42,6 +42,21 @@ describe('HasSlotController', () => {
     expect(queryCount).to.equal(1);
   });
 
+  it('uses slot names from the host constructor when none are passed', () => {
+    const host = createHost();
+    host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot><slot name="label"></slot>';
+    Object.defineProperty(host, 'constructor', {
+      value: { slotNames: ['[default]', 'label'] },
+    });
+    host.append(document.createElement('span'));
+    const controller = new HasSlotController(host);
+
+    controller.hostConnected();
+
+    expect(controller.hasDefaultSlot()).to.equal(true);
+    expect(controller.hasNamedSlot('label')).to.equal(false);
+  });
+
   it('requests an update only when a watched slot changes', async () => {
     const host = createHost();
     host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot><slot name="label"></slot>';

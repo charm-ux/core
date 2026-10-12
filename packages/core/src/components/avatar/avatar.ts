@@ -43,6 +43,7 @@ import styles from './avatar.styles.js';
 export class CoreAvatar extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'avatar';
+  public static override slotNames = ['status-indicator', 'image'];
 
   /** The alt text for the avatar. */
   @property({ reflect: true }) public label?: string;
@@ -58,7 +59,7 @@ export class CoreAvatar extends CharmElement {
 
   @state() protected hasError = false;
 
-  protected readonly hasSlotController = new HasSlotController(this, 'status-indicator', 'image');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   protected statusIndicatorSlotName = 'status-indicator';
 

@@ -220,11 +220,6 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     // Ensure the anchor is set after the component is updated
     this.updateAnchorElement();
-
-    if (this.open) {
-      this.hasOpened = true;
-      this.activateTooltip();
-    }
   }
 
   public override disconnectedCallback() {
@@ -348,9 +343,17 @@ export class CoreTooltip extends CharmDismissibleElement {
         return;
       }
 
-      this.body.hidden = true;
+      this.finalizeHide(waitId);
+      return;
     }
 
+    super.settleTransition(waitId);
+  }
+
+  /** Completes the tooltip hide after the tooltip and nested popup transitions settle. */
+  protected finalizeHide(waitId: number) {
+    this.waitingForPopupHide = false;
+    this.body.hidden = true;
     super.settleTransition(waitId);
   }
 
@@ -358,9 +361,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   protected handlePopupAfterHide() {
     if (!this.waitingForPopupHide) return;
 
-    this.waitingForPopupHide = false;
-    this.body.hidden = true;
-    super.settleTransition(this.transitionWaitId);
+    this.finalizeHide(this.transitionWaitId);
   }
 
   /** Handles popup options changing */

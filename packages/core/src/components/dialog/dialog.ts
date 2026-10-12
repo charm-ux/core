@@ -84,6 +84,7 @@ export class CoreDialog extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'dialog';
+  public static override slotNames = ['actions', 'footer', 'heading'];
 
   /** Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock. */
   protected static bodyScrollLockCount = 0;
@@ -122,7 +123,7 @@ export class CoreDialog extends CharmDismissibleElement {
   /** Keeps the closed initial render to the native dialog shell until first open. */
   protected hasOpened = false;
 
-  protected readonly hasSlotController = new HasSlotController(this, 'actions', 'footer', 'heading');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   /** Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert. */
   private renderedWatcher?: RenderedWatcher;

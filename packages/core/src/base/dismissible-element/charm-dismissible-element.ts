@@ -3,7 +3,6 @@ import CharmElement from '../charm-element/charm-element.js';
 import { DEFAULT_THEME_PREFIX, getThemePrefix } from '../../utilities/theme.js';
 
 const TRANSITION_TIME = /[-+]?(?:\d+\.?\d*|\.\d+)(?:ms|s)\b/gi;
-const transitionPropertyPatterns = new WeakMap<Function, RegExp>();
 
 function splitTransitionList(value: string): string[] {
   const entries: string[] = [];
@@ -90,25 +89,14 @@ export class CharmDismissibleElement extends CharmElement {
 
   protected getTransitionStyles() {
     const baseName = (<any>this.constructor).baseName;
-    let transitionPropertyNamePattern = transitionPropertyPatterns.get(this.constructor);
-    if (!transitionPropertyNamePattern) {
-      const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      transitionPropertyNamePattern = new RegExp(
-        `^--(?:[a-z0-9-]+-)?${escapedBaseName}(?:-(?:show|hide|position))?-transition$`,
-        'i'
-      );
-      transitionPropertyPatterns.set(this.constructor, transitionPropertyNamePattern);
-    }
-
     const style = getComputedStyle(this);
     const transitions: string[] = [];
 
     const names = ['transition', 'show-transition', 'hide-transition', 'position-transition'];
-    const prefixes = ['', getThemePrefix(), DEFAULT_THEME_PREFIX];
+    const prefixes = new Set(['', getThemePrefix(), DEFAULT_THEME_PREFIX]);
     for (const prefix of prefixes) {
       for (const name of names) {
         const candidate = `--${prefix ? `${prefix}-` : ''}${baseName}-${name}`;
-        if (!transitionPropertyNamePattern.test(candidate)) continue;
         const value = style.getPropertyValue(candidate).trim();
         if (value && value !== 'none') transitions.push(value);
       }

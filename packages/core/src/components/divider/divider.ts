@@ -27,6 +27,7 @@ import styles from './divider.styles.js';
 export class CoreDivider extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'divider';
+  public static override slotNames = ['[default]'];
 
   /** Determines the alignment of the content within the divider. */
   @property({ reflect: true, attribute: 'align-content' })
@@ -44,7 +45,7 @@ export class CoreDivider extends CharmElement {
   @property({ type: Boolean, reflect: true })
   public inset?: boolean;
 
-  protected readonly hasSlotController = new HasSlotController(this, '[default]');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   protected override willUpdate() {
     if (this.presentation) {

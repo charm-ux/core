@@ -73,6 +73,7 @@ import styles from './menu-item.styles.js';
 export class CoreMenuItem extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'menu-item';
+  public static override slotNames = ['radio-indicator'];
 
   /** Indicates whether the menu item contains a submenu. */
   @state()
@@ -119,7 +120,7 @@ export class CoreMenuItem extends CharmElement {
   /** Reference to the parent menu element, if available. */
   protected parentMenu?: CoreMenu | null;
 
-  protected readonly hasSlotController = new HasSlotController(this, 'radio-indicator');
+  protected readonly hasSlotController = new HasSlotController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon, CoreMenu, CorePopup];

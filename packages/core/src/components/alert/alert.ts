@@ -57,6 +57,7 @@ type PolitenessType = (typeof politenessLevels)[number];
 export class CoreAlert extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'alert';
+  public static override slotNames = ['[default]', 'action', 'heading', 'icon'];
 
   /** Shows the close button. */
   @property({ type: Boolean, reflect: true }) public dismissible: boolean = false;
@@ -71,7 +72,7 @@ export class CoreAlert extends CharmDismissibleElement {
   @query('.alert-message-container') protected messageContainer?: HTMLElement;
   @query('.alert-message-inner-container') protected messageContent?: HTMLElement;
 
-  protected hasSlotController = new HasSlotController(this, '[default]', 'action', 'heading', 'icon');
+  protected hasSlotController = new HasSlotController(this);
   protected originalTrigger?: HTMLElement | null;
   protected _politeness: PolitenessType = 'polite';
 

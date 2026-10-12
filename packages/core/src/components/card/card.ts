@@ -50,6 +50,7 @@ import styles from './card.styles.js';
 export class CoreCard extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'card';
+  public static override slotNames = ['[default]', 'media', 'footer', 'heading', 'subheading'];
 
   /**
    * A flag used to change visual positioning of any media (default 'top').
@@ -65,14 +66,7 @@ export class CoreCard extends CharmElement {
   @property()
   public subheading?: string;
 
-  protected readonly hasSlotController = new HasSlotController(
-    this,
-    '[default]',
-    'media',
-    'footer',
-    'heading',
-    'subheading'
-  );
+  protected readonly hasSlotController = new HasSlotController(this);
 
   /** Generate HTML template for card media. */
   protected mediaTemplate() {
