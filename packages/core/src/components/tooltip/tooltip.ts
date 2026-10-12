@@ -87,6 +87,10 @@ export class CoreTooltip extends CharmDismissibleElement {
   // Set when the anchor is pressed to light dismiss the tooltip. While true, hover and focus won't reopen it. Cleared
   // when the pointer fully leaves the anchor and tooltip or when the anchor blurs.
   protected dismissedByPress = false;
+  protected waitingForPopupHide = false;
+
+  /** Keeps the closed initial render to the anchor until the tooltip is first shown. */
+  protected hasOpened = false;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CorePopup];
@@ -158,6 +162,7 @@ export class CoreTooltip extends CharmDismissibleElement {
     this.removeListeners();
     this.anchorEl = target;
     this.attachListeners();
+    this.updateAnchorDescription();
   }
 
   /** Disables/enables the tooltip */
@@ -215,13 +220,6 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     // Ensure the anchor is set after the component is updated
     this.updateAnchorElement();
-
-    this.body.hidden = !this.open;
-
-    if (this.open) {
-      this.popup.open = true;
-      this.popup.reposition();
-    }
   }
 
   public override disconnectedCallback() {
@@ -276,11 +274,14 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (open && this.disabled) return;
 
     if (open) {
+      this.hasOpened = true;
+      this.requestUpdate();
       // Make the popup content accessible immediately, then activate the visible
       // class on the next render so the initial open transition can reliably
       // animate from the closed state instead of snapping in.
-      if (this.body) this.body.hidden = false;
-      if (this.popup) this.popup.open = true;
+      this.updateComplete.then(() => {
+        if (this.open) this.activateTooltip();
+      });
       this.visible = false;
       requestAnimationFrame(() => {
         if (this.open) {
@@ -300,6 +301,27 @@ export class CoreTooltip extends CharmDismissibleElement {
     super.onOpenChange(open);
   }
 
+  /** Makes the lazily rendered popup available before the opening transition. */
+  protected activateTooltip() {
+    if (!this.body || !this.popup) return;
+
+    this.body.hidden = false;
+    this.popup.open = true;
+    this.updateAnchorDescription();
+    this.announceTooltip();
+    this.popup.reposition();
+  }
+
+  /** References the live tooltip content after its first render. */
+  protected updateAnchorDescription() {
+    if (!this.hasOpened || !this.anchorEl) return;
+
+    const describedBy = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
+    if (!describedBy.includes('tooltip')) {
+      this.anchorEl.setAttribute('aria-describedby', [...describedBy, 'tooltip'].join(' '));
+    }
+  }
+
   /** Announces the tooltip content to screen readers */
   protected announceTooltip() {
     if (this.body) {
@@ -311,16 +333,40 @@ export class CoreTooltip extends CharmDismissibleElement {
     if (waitId !== this.transitionWaitId || !this.pendingAfterEvent) return;
 
     if (this.pendingAfterEvent === 'after-hide') {
-      this.body.hidden = true;
-      this.popup.open = false;
+      if (this.popup?.open) {
+        this.waitingForPopupHide = true;
+        if (this.transitionSettleTimer) {
+          clearTimeout(this.transitionSettleTimer);
+          this.transitionSettleTimer = undefined;
+        }
+        this.popup.open = false;
+        return;
+      }
+
+      this.finalizeHide(waitId);
+      return;
     }
 
     super.settleTransition(waitId);
   }
 
+  /** Completes the tooltip hide after the tooltip and nested popup transitions settle. */
+  protected finalizeHide(waitId: number) {
+    this.waitingForPopupHide = false;
+    this.body.hidden = true;
+    super.settleTransition(waitId);
+  }
+
+  /** Finishes the tooltip hide after the nested popup's exit transition. */
+  protected handlePopupAfterHide() {
+    if (!this.waitingForPopupHide) return;
+
+    this.finalizeHide(this.transitionWaitId);
+  }
+
   /** Handles popup options changing */
   protected handleOptionsChange() {
-    if (this.hasUpdated) {
+    if (this.hasUpdated && this.hasOpened && this.popup) {
       this.popup.reposition();
     }
   }
@@ -442,10 +488,15 @@ export class CoreTooltip extends CharmDismissibleElement {
     // Use the first assigned element as the anchor (slots use display:contents so the slot itself can't be positioned)
     const assigned = slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
     this.anchorEl = assigned;
+    this.updateAnchorDescription();
   }
 
   /** Generates the template for the tooltip */
   protected tooltipTemplate() {
+    if (!this.hasOpened && !this.open) {
+      return this.html`<slot @slotchange=${this.handleSlotChange}></slot>`;
+    }
+
     return this.html`
       <scoped-popup
         part="tooltip-base"
@@ -468,6 +519,7 @@ export class CoreTooltip extends CharmDismissibleElement {
         shift
         skidding=${this.skidding ?? 0}
         strategy=${this.fixedPlacement ? 'fixed' : 'absolute'}
+        @popup-after-hide=${this.handlePopupAfterHide}
       >
         <slot slot="anchor" @slotchange=${this.handleSlotChange}></slot>
         ${this.tooltipBodyTemplate()}

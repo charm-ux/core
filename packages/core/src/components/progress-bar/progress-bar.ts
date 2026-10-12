@@ -5,7 +5,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { html } from 'lit/static-html.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import formControlStyles from '../../base/form-control-element/form-control.styles.js';
-import { HasSlotController } from '../../controller/index.js';
 import styles from './progress-bar.styles.js';
 
 /** Fallback text used to name the progress bar for assistive tech when no label is provided. */
@@ -46,6 +45,7 @@ export class CoreProgressBar extends CharmElement {
   public static override styles = [...super.styles, formControlStyles, styles];
 
   public static override baseName = 'progress-bar';
+  public static override watchedSlots = ['[default]', 'help-text'];
 
   /** The current progress, 0 to `max` or 100 if max is not defined. */
   @property({ type: Number, reflect: true }) public value?: number;
@@ -68,19 +68,17 @@ export class CoreProgressBar extends CharmElement {
   /** Update the role of the progress bar from 'progressbar' to 'meter' to indicate that it measures a specific value instead of progress towards a specific task. */
   @property({ type: Boolean, reflect: true }) public meter?: boolean;
 
-  protected readonly hasSlotController = new HasSlotController(this, '[default]', 'help-text');
-
   /** The id of the pending animation frame that defers the width sync, if one is scheduled. */
   private _syncRangeFrame?: number;
 
   /** Whether a label is present via the `label` attribute or the default slot. */
   protected get hasLabel(): boolean {
-    return !!this.label || this.hasSlotController.hasDefaultSlot();
+    return !!this.label || this.hasDefaultSlot();
   }
 
   /** Whether help text is present via the `help-text` attribute or the `help-text` slot. */
   protected get hasHelpText(): boolean {
-    return !!this.helpText || this.hasSlotController.hasNamedSlot('help-text');
+    return !!this.helpText || this.hasNamedSlot('help-text');
   }
 
   public override disconnectedCallback() {

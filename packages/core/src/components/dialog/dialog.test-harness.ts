@@ -41,11 +41,14 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               hideCloseButton: {
                 description: 'should hide the close button',
                 test: async () => {
+                  expect(this.component.shadowRoot!.querySelector('.close-btn')).to.be.null;
+                  this.component.open = true;
+                  await elementUpdated(this.component);
                   const button = this.component.shadowRoot!.querySelector('.close-btn')!;
                   expect(getComputedStyle(button).display).to.equal('block');
                   this.component.hideCloseButton = true;
                   await elementUpdated(this.component);
-                  expect(getComputedStyle(button).display).to.equal('');
+                  expect(this.component.shadowRoot!.querySelector('.close-btn')).to.be.null;
                 },
               },
               notAlertRole: {
@@ -262,7 +265,7 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   const el = this.component;
                   // Use a duration long enough that transitionend fires reliably on every browser.
                   // The fixture's 1ms transition is sub-frame and Firefox skips the transition.
-                  el.style.setProperty('--dialog-transition', 'opacity 300ms');
+                  el.style.setProperty('--charm-dialog-transition', 'opacity 300ms');
                   el.open = true;
                   await waitUntil(
                     () => el.shadowRoot?.querySelector('dialog')?.hasAttribute('open') === true,
@@ -402,9 +405,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                 test: async () => {
                   if (isSafari()) return;
                   const el = this.component;
-                  const closeButton = el.shadowRoot?.querySelector('.close-btn');
                   setTimeout(() => this.component.show(), 10);
                   await oneEvent(this.component, 'dialog-after-show');
+                  const closeButton = el.shadowRoot?.querySelector('.close-btn');
                   expect(el.shadowRoot?.activeElement).to.equal(closeButton);
                 },
               },

@@ -2,7 +2,6 @@ import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../focusable-element/charm-focusable-element.js';
-import { HasSlotController } from '../../controller/slot.js';
 import styles from './form-control.styles.js';
 
 /**
@@ -47,6 +46,7 @@ import styles from './form-control.styles.js';
  * @event change - fired when the user modifies the element's value
  */
 export class CharmFormControlElement extends CharmFocusableElement {
+  public static override watchedSlots = ['label', 'help-text'];
   public static override styles = [...super.styles, styles];
   protected static formAssociated = true;
 
@@ -95,7 +95,6 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
-  protected readonly hasSlotController = new HasSlotController(this, 'label', 'help-text');
   protected validityUpdatePending = false;
 
   public constructor() {
@@ -311,8 +310,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   protected override willUpdate(_changedProperties: Map<string | number | symbol, unknown>): void {
-    this.hasLabel = !!(this.label || this.hasSlotController.hasNamedSlot('label'));
-    this.hasHelpText = !!(this.helpText || this.hasSlotController.hasNamedSlot('help-text'));
+    this.hasLabel = !!(this.label || this.hasNamedSlot('label'));
+    this.hasHelpText = !!(this.helpText || this.hasNamedSlot('help-text'));
   }
 
   protected override firstUpdated(): void {

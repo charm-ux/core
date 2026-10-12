@@ -5,7 +5,6 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
-import { HasSlotController } from '../../controller/index.js';
 import styles from './push-pane.styles.js';
 
 export type PushPaneCloseSource = 'close-button' | 'keyboard';
@@ -82,6 +81,7 @@ export class CorePushPane extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'push-pane';
+  public static override watchedSlots = ['actions', 'footer'];
 
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
@@ -102,8 +102,6 @@ export class CorePushPane extends CharmDismissibleElement {
   /** Removes the header. This will also remove the default close button. If using prevent default on he-fly-in-request-close please provide a way for the user to close the fly-in-panel. */
   @property({ attribute: 'no-header', type: Boolean, reflect: true })
   public noHeader?: boolean;
-
-  protected readonly hasSlotController = new HasSlotController(this, '[actions], [footer]');
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -179,8 +177,8 @@ export class CorePushPane extends CharmDismissibleElement {
       <div
         class=${classMap({
           body: true,
-          'body--has-actions': this.hasSlotController.hasNamedSlot('actions'),
-          'body--has-footer': this.hasSlotController.hasNamedSlot('footer'),
+          'body--has-actions': this.hasNamedSlot('actions'),
+          'body--has-footer': this.hasNamedSlot('footer'),
         })}
       >
         <slot aria-live=${this.open ? 'polite' : 'off'}></slot>
@@ -214,7 +212,7 @@ export class CorePushPane extends CharmDismissibleElement {
     return this.html` <header
       class=${classMap({
         'header-base': true,
-        'header-base--no-actions': !this.hasSlotController.hasNamedSlot('actions'),
+        'header-base--no-actions': !this.hasNamedSlot('actions'),
       })}
       part="push-pane-header"
     >
