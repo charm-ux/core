@@ -77,16 +77,21 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                 description: 'renders image slot with content and hides initials',
                 test: async () => {
                   const el = this.component;
-                  const imageUrl = loadableImage;
                   const initialsValue = 'AB';
 
-                  el.innerHTML = `<img slot="image" src="${imageUrl}" alt="User Avatar" />`;
+                  const image = document.createElement('img');
+                  image.slot = 'image';
+                  image.src = loadableImage;
+                  image.alt = 'User Avatar';
+                  el.remove();
+                  el.append(image);
+                  document.body.append(el);
                   el.initials = initialsValue;
                   await elementUpdated(el);
 
                   const imageSlot = el.querySelector('[slot="image"]') as HTMLImageElement;
                   expect(imageSlot).to.not.be.null;
-                  expect(imageSlot.src).to.equal(imageUrl);
+                  expect(imageSlot.src).to.equal(loadableImage);
 
                   const initialsElement = el.shadowRoot?.querySelector('[part="avatar-initials"]');
                   expect(initialsElement).to.be.null;
