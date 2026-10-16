@@ -1,6 +1,6 @@
 import { LitElement } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { property, query, state } from 'lit/decorators.js';
+import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 // import { FocusTrapController } from '../../controller/focus-trap.js';
 import { HasSlotController } from '../../controller/slot.js';
@@ -72,6 +72,7 @@ export interface DialogRequestCloseEvent {
  * @cssprop --charm-dialog-margin-top - determines dialog's top margin when it has a header or footer.
  * @cssprop --charm-dialog-max-height - determines dialog's max height.
  * @cssprop --charm-dialog-max-width - determines dialog's max width.
+ * @cssprop --charm-dialog-min-width - determines dialog's minimum width.
  * @cssprop --charm-dialog-padding-x - determines dialog's inline padding.
  * @cssprop --charm-dialog-padding-y - determines dialog's block padding.
  * @cssprop --charm-dialog-shadow - determines dialog's shadow.
@@ -113,9 +114,6 @@ export class CoreDialog extends CharmDismissibleElement {
   @property({ attribute: 'alert', type: Boolean, reflect: true })
   public alert?: boolean;
 
-  @state()
-  protected visible = false;
-
   @query('dialog')
   protected dialog?: HTMLDialogElement;
 
@@ -123,6 +121,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Watches whether the dialog is actually rendered while open, so third-party CSS can't leave the page inert. */
   private renderedWatcher?: RenderedWatcher;
+
+  /** Whether this instance currently contributes one reference-counted body scroll lock. */
+  private bodyScrollLocked = false;
 
   // protected readonly focusTrapController = new FocusTrapController(this);
 
@@ -165,13 +166,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
       this.dialog?.showModal();
 
-      requestAnimationFrame(() => {
-        this.visible = true;
-      });
       this.lockBodyScrolling();
       this.startRenderedWatcher();
     } else {
-      this.visible = false;
       this.stopRenderedWatcher();
       this.unlockBodyScrolling();
       // the dialog will be closed in handleTransitionEnd if there is animation
@@ -203,6 +200,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Lock body scrolling. */
   protected lockBodyScrolling() {
+    if (this.bodyScrollLocked) return;
+
+    this.bodyScrollLocked = true;
     if (CoreDialog.bodyScrollLockCount === 0) {
       CoreDialog.previousBodyOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
@@ -212,6 +212,9 @@ export class CoreDialog extends CharmDismissibleElement {
 
   /** Unlock body scrolling. */
   protected unlockBodyScrolling() {
+    if (!this.bodyScrollLocked) return;
+
+    this.bodyScrollLocked = false;
     CoreDialog.bodyScrollLockCount = Math.max(0, CoreDialog.bodyScrollLockCount - 1);
     if (CoreDialog.bodyScrollLockCount === 0) {
       document.body.style.overflow = CoreDialog.previousBodyOverflow;
@@ -401,7 +404,6 @@ export class CoreDialog extends CharmDismissibleElement {
     return this.html`<dialog
       class=${classMap({
         base: true,
-        'base--visible': this.visible,
       })}
       part="dialog-base"
       aria-labelledby="header"

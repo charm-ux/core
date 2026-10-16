@@ -13,6 +13,16 @@ export default css`
     vertical-align: middle;
   }
 
+  :host([flip='x']),
+  :host([flip='both']) {
+    --icon-scale-x: -1;
+  }
+
+  :host([flip='y']),
+  :host([flip='both']) {
+    --icon-scale-y: -1;
+  }
+
   svg {
     display: block;
     height: 100%;

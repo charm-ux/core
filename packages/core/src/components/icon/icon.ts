@@ -242,11 +242,7 @@ export class CoreIcon extends CharmElement {
 
     svg.setAttribute('aria-hidden', 'true');
 
-    const scaleX = this.flip === 'x' || this.flip === 'both' ? -1 : 1;
-    const scaleY = this.flip === 'y' || this.flip === 'both' ? -1 : 1;
     this.style.setProperty('--icon-rotate', `${this.rotate}deg`);
-    this.style.setProperty('--icon-scale-x', `${scaleX}`);
-    this.style.setProperty('--icon-scale-y', `${scaleY}`);
   }
 }
 

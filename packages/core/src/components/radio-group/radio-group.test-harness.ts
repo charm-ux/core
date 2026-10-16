@@ -106,6 +106,24 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     );
                   },
                 },
+                horizontalStackedUsesCssChildLayout: {
+                  description: 'lays out radio labels vertically without setting child layout properties',
+                  test: async () => {
+                    const el = this.component;
+                    const radio = el.querySelector('ch-radio') as CoreRadio;
+
+                    el.layout = 'horizontal-stacked';
+                    await elementUpdated(el);
+
+                    const radioContent = radio.shadowRoot?.querySelector('.radio');
+                    expect(getComputedStyle(radioContent!).flexDirection).to.equal('column');
+                    expect(radio.hasAttribute('vertical')).to.be.false;
+
+                    el.layout = 'horizontal';
+                    await elementUpdated(el);
+                    expect(getComputedStyle(radioContent!).flexDirection).to.equal('row');
+                  },
+                },
               },
             },
             validation: {

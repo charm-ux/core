@@ -38,6 +38,106 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(dialogElement?.getAttribute('open')).to.equal(null);
                 },
               },
+              wrapperCentered: {
+                description: 'centers the dialog surface inside the native dialog box',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const dialog = el.shadowRoot?.querySelector('dialog');
+                  const wrapper = el.shadowRoot?.querySelector('.dialog-wrapper');
+                  expect(dialog).to.not.be.null;
+                  expect(wrapper).to.not.be.null;
+
+                  const dialogRect = dialog!.getBoundingClientRect();
+                  const wrapperRect = wrapper!.getBoundingClientRect();
+                  expect(wrapperRect.left + wrapperRect.width / 2).to.be.closeTo(
+                    dialogRect.left + dialogRect.width / 2,
+                    1
+                  );
+                  expect(wrapperRect.top + wrapperRect.height / 2).to.be.closeTo(
+                    dialogRect.top + dialogRect.height / 2,
+                    1
+                  );
+                  expect(getComputedStyle(dialog!).borderWidth).to.equal('0px');
+                },
+              },
+              defaultBodyDoesNotGrow: {
+                description: 'keeps short default dialog content from filling the dialog shell',
+                test: async () => {
+                  const el = this.component;
+                  const dialog = el.shadowRoot?.querySelector('dialog');
+                  const body = el.shadowRoot?.querySelector('.dialog-body');
+
+                  el.open = true;
+                  await elementUpdated(el);
+                  expect(body!.clientHeight).to.be.lessThan(dialog!.clientHeight);
+
+                  el.position = 'bottom';
+                  await elementUpdated(el);
+                  expect(getComputedStyle(body!).flexGrow).to.equal('1');
+                },
+              },
+              surfaceMinimumWidth: {
+                description: 'uses the theme min-width token without overflowing its dialog box',
+                test: async () => {
+                  const el = this.component;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const dialog = el.shadowRoot?.querySelector('dialog');
+                  const wrapper = el.shadowRoot?.querySelector('.dialog-wrapper');
+                  const defaultWidth = wrapper!.getBoundingClientRect().width;
+                  expect(defaultWidth).to.be.at.least(340);
+                  expect(defaultWidth).to.be.closeTo(dialog!.getBoundingClientRect().width, 1);
+                  expect(getComputedStyle(dialog!).overflow).to.equal('visible');
+                  expect(getComputedStyle(wrapper!).overflow).to.equal('hidden');
+
+                  el.style.setProperty('--charm-dialog-min-width', '400px');
+                  const wrapperWidth = wrapper!.getBoundingClientRect().width;
+                  expect(wrapperWidth).to.be.at.least(400);
+                  expect(wrapperWidth).to.be.closeTo(dialog!.getBoundingClientRect().width, 1);
+
+                  el.style.setProperty('--charm-dialog-min-width', '800px');
+                  const resizedWidth = wrapper!.getBoundingClientRect().width;
+                  expect(resizedWidth).to.be.at.most(dialog!.getBoundingClientRect().width + 1);
+                  expect(resizedWidth).to.be.closeTo(dialog!.getBoundingClientRect().width, 1);
+                },
+              },
+              sectionSpacingUsesThemeToken: {
+                description: 'uses compact token spacing between the header, body, and footer',
+                test: async () => {
+                  const el = this.component;
+                  const body = el.shadowRoot?.querySelector('.dialog-body');
+                  const footer = el.shadowRoot?.querySelector('.dialog-footer--has-footer');
+
+                  expect(getComputedStyle(body!).marginTop).to.equal('16px');
+                  expect(getComputedStyle(footer!).marginTop).to.equal('16px');
+                },
+              },
+              longContentScrollsInsideDialog: {
+                description: 'constrains long content to a scrollable body instead of clipping it',
+                test: async () => {
+                  const el = this.component;
+                  el.insertAdjacentHTML(
+                    'beforeend',
+                    Array.from({ length: 40 }, (_, index) => `<p>Long content line ${index}</p>`).join('')
+                  );
+                  await aTimeout(0);
+                  await elementUpdated(el);
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const dialog = el.shadowRoot?.querySelector('dialog');
+                  const wrapper = el.shadowRoot?.querySelector('.dialog-wrapper');
+                  const body = el.shadowRoot?.querySelector('.dialog-body');
+
+                  expect(wrapper!.getBoundingClientRect().height).to.be.at.most(dialog!.clientHeight + 1);
+                  expect(body!.scrollHeight).to.be.greaterThan(body!.clientHeight);
+                  expect(getComputedStyle(body!).overflowY).to.equal('auto');
+                },
+              },
               hideCloseButton: {
                 description: 'should hide the close button',
                 test: async () => {
@@ -215,6 +315,28 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(document.body.style.overflow).to.equal(previous);
 
                   nested.remove();
+                },
+              },
+              initiallyOpenBodyScrollLock: {
+                description: 'releases the body scroll lock after an initially open dialog is dismissed',
+                test: async () => {
+                  const previous = document.body.style.overflow;
+                  const dialog = document.createElement(project.scope.tagName('dialog')) as CoreDialog;
+                  dialog.style.setProperty('--charm-dialog-transition', 'none');
+                  dialog.open = true;
+                  document.body.append(dialog);
+
+                  await waitUntil(
+                    () => dialog.shadowRoot?.querySelector('dialog')?.open === true,
+                    'initially open dialog should be shown',
+                    { timeout: 2500 }
+                  );
+                  expect(document.body.style.overflow).to.equal('hidden');
+
+                  dialog.open = false;
+                  await elementUpdated(dialog);
+                  expect(document.body.style.overflow).to.equal(previous);
+                  dialog.remove();
                 },
               },
               suspendAndResume: {

@@ -2,6 +2,14 @@ import { css } from 'lit';
 import { component } from '../../utilities/theme.js';
 
 export default css`
+  ::slotted(*) {
+    --_charm-radio-group-direction: row;
+  }
+
+  :host([layout='horizontal-stacked']) ::slotted(*) {
+    --_charm-radio-group-direction: column;
+  }
+
   ::slotted(.he-radio:not(:last-of-type)) {
     margin-bottom: ${component('radio', 'groupRadioGap')};
   }

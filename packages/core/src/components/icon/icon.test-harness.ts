@@ -60,8 +60,8 @@ export class CoreIconTests<T extends CoreIcon> extends CharmElementTests<T> {
                   el.flip = 'both';
                   await elementUpdated(el);
                   expect(el.style.getPropertyValue('--icon-rotate')).to.equal('90deg');
-                  expect(el.style.getPropertyValue('--icon-scale-x')).to.equal('-1');
-                  expect(el.style.getPropertyValue('--icon-scale-y')).to.equal('-1');
+                  expect(getComputedStyle(el).getPropertyValue('--icon-scale-x').trim()).to.equal('-1');
+                  expect(getComputedStyle(el).getPropertyValue('--icon-scale-y').trim()).to.equal('-1');
                 },
               },
               svgStableAcrossUpdates: {

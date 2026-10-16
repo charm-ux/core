@@ -103,6 +103,9 @@ async function waitForTreeUpdate(root: HTMLElement): Promise<void> {
 
     stablePasses = treeIsStable ? stablePasses + 1 : 0;
   }
+
+  // Include one layout flush so CSS-driven sizing and positioning are part of each sample.
+  root.getBoundingClientRect();
 }
 
 async function measureMount(create: () => HTMLElement): Promise<number> {

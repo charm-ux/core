@@ -31,16 +31,19 @@ export default css`
     width: ${component('dialog', 'size')};
     max-width: ${component('dialog', 'maxWidth')};
     max-height: var(--dialog-max-height, ${component('dialog', 'maxHeight')});
+    min-width: min(${component('dialog', 'minWidth')}, 100%);
     background: none;
-    border: ${component('dialog', 'borderWidth')} ${component('dialog', 'borderStyle')}
-      ${component('dialog', 'borderColor')};
-    overflow: hidden;
+    border: 0;
+    overflow: visible;
     opacity: 0;
+    padding: 0;
     transition: ${component('dialog', 'transition')};
   }
 
   dialog[open] {
     display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   :host([open]) dialog {
@@ -49,17 +52,17 @@ export default css`
   }
 
   /*
-   * Entry transition. showModal() flips the dialog from display:none to
-   * display:flex in the same frame that [open] lands on the host, so the box is
-   * rendered for the first time already at its open style and there is no
-   * before-change value to interpolate from - the dialog snapped in and only
-   * faded out. @starting-style supplies that value.
-   *
-   * The backdrop does not need this: it is gated on .base--visible, which
-   * dialog.ts sets a frame later, so it already has a real prior style.
+   * Entry transitions. showModal() flips the dialog from display:none to
+   * display:flex in the same frame that [open] lands on the host, so neither
+   * the dialog nor its backdrop has a before-change value to interpolate from.
+   * @starting-style supplies that value for both boxes.
    */
   @starting-style {
     :host([open]) dialog {
+      opacity: 0;
+    }
+
+    :host([open]) dialog::backdrop {
       opacity: 0;
     }
   }
@@ -73,6 +76,10 @@ export default css`
     box-shadow: ${component('dialog', 'shadow')};
     flex-direction: column;
     justify-content: center;
+    max-height: var(--dialog-max-height, ${component('dialog', 'maxHeight')});
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
     pointer-events: none;
     padding-inline: ${component('dialog', 'paddingX')};
     padding-block: ${component('dialog', 'paddingY')};
@@ -80,6 +87,8 @@ export default css`
 
   .dialog-body {
     overflow: auto;
+    flex: 1 1 auto;
+    min-height: 0;
     width: 100%;
   }
 
@@ -171,10 +180,6 @@ export default css`
     pointer-events: inherit;
   }
 
-  .base--visible::backdrop {
-    opacity: 1;
-  }
-
   dialog::backdrop {
     opacity: 0;
     background: ${component('dialog', 'backdropColor')};
@@ -182,6 +187,7 @@ export default css`
   }
 
   :host([open]) dialog::backdrop {
+    opacity: 1;
     pointer-events: inherit;
     transition: ${component('dialog', 'transition')};
   }
@@ -249,13 +255,6 @@ export default css`
     transform: translateY(100%);
   }
 
-  /*
-   * The second selector here used to be :host([position]) .base--visible dialog,
-   * which never matched anything: base--visible is a class on the dialog itself,
-   * so that asked for a dialog nested inside a dialog. Dropped rather than
-   * corrected - :host([position][open]) dialog already covers every frame the
-   * class is present.
-   */
   :host([position][open]) dialog {
     transform: translate(0, 0);
   }
@@ -307,15 +306,11 @@ export default css`
     width: 100%;
   }
 
-  :host(:not([position='center'])) .dialog-body {
-    flex: 1 1 auto;
-  }
-
-  :host(:not([position='center'])) .dialog-footer {
+  :host([position]:not([position='center'])) .dialog-footer {
     position: sticky;
   }
 
-  :host(:not([position='center'])) .dialog-footer--has-footer {
+  :host([position]:not([position='center'])) .dialog-footer--has-footer {
     margin-top: 16px;
   }
 
