@@ -22542,11 +22542,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "setInputPadding",
-              "privacy": "protected"
-            },
-            {
               "kind": "field",
               "name": "shadowRootOptions",
               "type": {
