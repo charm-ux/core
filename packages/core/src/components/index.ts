@@ -9,6 +9,7 @@ export * from './button-group-overflow/button-group-overflow.js';
 export * from './button/button.js';
 export * from './card/card.js';
 export * from './checkbox/checkbox.js';
+export * from './checkbox-group/checkbox-group.js';
 export * from './dialog/dialog.js';
 export * from './disclosure/disclosure.js';
 export * from './divider/divider.js';

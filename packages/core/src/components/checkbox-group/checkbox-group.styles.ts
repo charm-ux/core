@@ -1,0 +1,35 @@
+import { css } from 'lit';
+import { component } from '../../utilities/theme.js';
+
+export default css`
+  ::slotted(*) {
+    --_charm-checkbox-group-direction: row;
+  }
+
+  :host([layout='horizontal-stacked']) ::slotted(*) {
+    --_charm-checkbox-group-direction: column;
+  }
+
+  fieldset {
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .form-control-input {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: ${component('checkbox', 'groupCheckboxGap')};
+    height: auto;
+    border: 0;
+    background: transparent;
+  }
+
+  :host([layout='horizontal']) .form-control-input,
+  :host([layout='horizontal-stacked']) .form-control-input {
+    flex-direction: row;
+  }
+`;

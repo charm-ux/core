@@ -1,6 +1,6 @@
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { live } from 'lit/directives/live.js';
-import { property, query } from 'lit/decorators.js';
+import { property, query, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
@@ -64,6 +64,14 @@ export class CoreCheckbox extends CharmFormControlElement {
   @property({ type: Boolean, reflect: true })
   public indeterminate?: boolean;
 
+  /** @internal Disables the checkbox while preserving its own `disabled` state. */
+  @state()
+  public forceDisabled = false;
+
+  /** @internal Makes the checkbox readonly while preserving its own `readonly` state. */
+  @state()
+  public forceReadonly = false;
+
   @query('.input')
   protected override input?: HTMLInputElement;
 
@@ -71,9 +79,19 @@ export class CoreCheckbox extends CharmFormControlElement {
     return [CoreIcon];
   }
 
+  /** Whether the checkbox is disabled by itself or by its containing group. */
+  protected get effectivelyDisabled() {
+    return !!(this.disabled || this.forceDisabled);
+  }
+
+  /** Whether the checkbox is readonly by itself or by its containing group. */
+  protected get effectivelyReadonly() {
+    return !!(this.readonly || this.forceReadonly);
+  }
+
   /** @internal Click the checkbox. */
   public override click() {
-    if (this.disabled || this.readonly) {
+    if (this.effectivelyDisabled || this.effectivelyReadonly) {
       return;
     }
 
@@ -101,9 +119,12 @@ export class CoreCheckbox extends CharmFormControlElement {
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
 
-    if (changedProperties.has('checked')) {
-      this.internals.setFormValue(this.checked ? this.value || 'on' : null);
+    if (changedProperties.has('checked') || changedProperties.has('forceDisabled')) {
+      this.internals.setFormValue(this.effectivelyDisabled ? null : this.checked ? this.value || 'on' : null);
       this.validate();
+    }
+    if (changedProperties.has('forceDisabled')) {
+      this.toggleAttribute('force-disabled', this.forceDisabled);
     }
     if (changedProperties.has('hasFocus')) {
       this.validate();
@@ -124,7 +145,11 @@ export class CoreCheckbox extends CharmFormControlElement {
 
   /** Handles the 'click' event on the checkbox. Toggles the checked state and emits the 'change' event. */
   protected handleClick() {
-    if (this.disabled || this.readonly) return;
+    if (this.effectivelyDisabled) return;
+    if (this.effectivelyReadonly) {
+      if (this.input) this.input.checked = !!this.checked;
+      return;
+    }
     this.checked = !this.checked;
     this.indeterminate = false;
     this.emitChange();
@@ -163,8 +188,8 @@ export class CoreCheckbox extends CharmFormControlElement {
             value=${ifDefined(this.value)}
             ?autofocus=${this.autofocus}
             ?checked=${this.checked}
-            ?disabled=${this.disabled}
-            ?readonly=${this.readonly}
+            ?disabled=${this.effectivelyDisabled}
+            ?readonly=${this.effectivelyReadonly}
             ?required=${this.required}
             .indeterminate=${live(this.indeterminate ?? false)}
             @click=${this.handleClick}

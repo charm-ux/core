@@ -23,7 +23,7 @@ export default css`
 
   .control-label-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: var(--_charm-checkbox-group-direction, row);
     align-items: flex-start;
     position: relative;
     gap: ${semantic('formControl', 'label', 'gap')};
@@ -72,13 +72,15 @@ export default css`
     border-color: ${component('checkbox', 'checked', 'active', 'borderColor')};
   }
 
-  :host([disabled]) .control-label-wrapper .control {
+  :host([disabled]) .control-label-wrapper .control,
+  :host([force-disabled]) .control-label-wrapper .control {
     background-color: ${component('checkbox', 'disabled', 'bgColor')};
     border-color: ${component('checkbox', 'disabled', 'borderColor')};
     color: ${component('checkbox', 'disabled', 'fgColor')};
   }
 
-  :host([disabled]) .control-label-wrapper .label {
+  :host([disabled]) .control-label-wrapper .label,
+  :host([force-disabled]) .control-label-wrapper .label {
     color: ${component('checkbox', 'disabled', 'fgColor')};
   }
 
@@ -105,7 +107,8 @@ export default css`
     border-color: ${component('checkbox', 'checked', 'borderColor')};
   }
 
-  :host([disabled]) .checkbox {
+  :host([disabled]) .checkbox,
+  :host([force-disabled]) .checkbox {
     cursor: not-allowed;
     pointer-events: none;
   }
@@ -120,7 +123,7 @@ export default css`
   }
 
   /* Focus */
-  :host(:not([disabled])) .input:focus-visible ~ .control-label-wrapper {
+  :host(:not([disabled]):not([force-disabled])) .input:focus-visible ~ .control-label-wrapper {
     outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
       ${semantic('focus', 'outlineColor')};
     outline-offset: ${semantic('focus', 'outlineOffset')};

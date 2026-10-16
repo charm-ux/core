@@ -1,0 +1,86 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Checkbox Group" />
+
+# Checkbox Group
+
+A checkbox group lets users select any number of options from a related set. The group exposes the selected checkbox values as a `string[]` through its `selectedValues` property.
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" name="interests" help-text="Select all that apply.">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Setting selected values
+
+Set the `selectedValues` property to an array of checkbox values to initialize or control the selection. The property is set from JavaScript rather than an HTML attribute.
+
+<code-bubble>
+
+```js
+const group = document.querySelector('ch-checkbox-group');
+group.selectedValues = ['books', 'travel'];
+
+group.addEventListener('change', () => {
+  console.log(group.selectedValues);
+});
+```
+
+</code-bubble>
+
+## Required
+
+Set `required` to require at least one checkbox to be selected.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Contact methods" name="contact" required>
+  <ch-checkbox value="email">Email</ch-checkbox>
+  <ch-checkbox value="phone">Phone</ch-checkbox>
+  <ch-checkbox value="mail">Mail</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Disabling options
+
+Disable an individual checkbox to prevent it from being changed, or disable the group to disable all of its checkboxes.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" disabled>
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Layout
+
+Set `layout="horizontal"` to place the options in a row, or `layout="horizontal-stacked"` to arrange the checkboxes horizontally with each label below its checkbox.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" layout="horizontal">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
