@@ -4,12 +4,17 @@ import { defaultReporter } from '@web/test-runner';
 import { junitReporter } from '@web/test-runner-junit-reporter';
 import { globbySync } from 'globby';
 import { resolvePlaywrightLaunchers } from './test/playwrightLaunchers.js';
+import { resolveTestShard, selectTestShard } from './test/test-sharding.js';
 
 const testFilePatterns = ['src/**/*.test.ts'];
+const testShard = resolveTestShard();
+const testFiles = selectTestShard(globbySync(testFilePatterns), testShard);
 const browsers = resolvePlaywrightLaunchers();
 
 export default {
   rootDir: '.',
+  files: testFiles,
+  concurrency: 1,
   plugins: [
     esbuildPlugin({ ts: true, json: true, tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url)) }),
   ],
@@ -18,20 +23,20 @@ export default {
   reporters: [
     defaultReporter({ reportTestResults: true, reportTestProgress: true }),
     junitReporter({
-      outputPath: './results/test-results.xml',
+      outputPath: `./results/test-results-${testShard.label}.xml`,
       reportLogs: true,
     }),
   ],
   coverage: true,
   coverageConfig: {
-    include: testFilePatterns,
+    include: testFiles,
     exclude: [],
     report: true,
-    reportDir: './results',
+    reportDir: `./results/coverage-${testShard.label}`,
   },
   // Create a named group for every test file to enable running single tests.
   // If a test file is `search-box.test.ts` then you can run `pnpm run test -- --group search-box` to run only that file's tests
-  groups: globbySync(testFilePatterns).map(path => {
+  groups: testFiles.map(path => {
     const groupName = path.match(/^.*\/(?<fileName>.*)\.test/).groups.fileName;
     return {
       name: groupName,

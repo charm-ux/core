@@ -3,7 +3,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
-import { HasSlotController } from '../../controller/slot.js';
 import CoreRadio from '../radio/radio.js';
 import { keys } from '../../utilities/key-map.js';
 import { findNextEnabledIndex } from '../../utilities/helpers.js';
@@ -41,6 +40,7 @@ import styles from './radio-group.styles.js';
 export class CoreRadioGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'radio-group';
+  public static override watchedSlots = ['help-text', 'label'];
 
   /**
    * The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus
@@ -53,8 +53,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
   @property({ reflect: true }) public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
   protected radios: CoreRadio[] = [];
-  protected override readonly hasSlotController = new HasSlotController(this, 'help-text', 'label');
-
   public constructor() {
     super();
     this.useBlurHandler = false;

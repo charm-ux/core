@@ -2,7 +2,6 @@ import { html } from 'lit/static-html.js';
 import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
-import { HasSlotController } from '../../controller/slot.js';
 import styles from './divider.styles.js';
 
 /**
@@ -27,6 +26,7 @@ import styles from './divider.styles.js';
 export class CoreDivider extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'divider';
+  public static override watchedSlots = ['[default]'];
 
   /** Determines the alignment of the content within the divider. */
   @property({ reflect: true, attribute: 'align-content' })
@@ -43,8 +43,6 @@ export class CoreDivider extends CharmElement {
   /** Adds padding to the beginning and end of the divider. */
   @property({ type: Boolean, reflect: true })
   public inset?: boolean;
-
-  protected readonly hasSlotController = new HasSlotController(this, '[default]');
 
   protected override willUpdate() {
     if (this.presentation) {
@@ -72,7 +70,7 @@ export class CoreDivider extends CharmElement {
       <span
         class=${classMap({
           content: true,
-          text: this.hasSlotController.hasDefaultSlot(),
+          text: this.hasDefaultSlot(),
         })}
         part="divider-content"
       >

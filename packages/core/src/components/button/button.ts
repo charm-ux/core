@@ -3,7 +3,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import { html, literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
-import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
 import { type CharmDismissibleElement } from '../../base/index.js';
 import styles from './button.styles.js';
@@ -197,7 +196,6 @@ export class CoreButton extends CharmFocusableElement {
   public constructor() {
     super();
     this._internals = this.attachInternals();
-    new HasSlotController(this, '[default]', 'start', 'end');
   }
 
   /**

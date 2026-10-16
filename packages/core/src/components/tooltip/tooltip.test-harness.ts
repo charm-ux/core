@@ -52,11 +52,49 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   el.open = false;
                   await elementUpdated(el);
                   await aTimeout(500);
+                  expect(el.shadowRoot!.querySelector('[part="body"]')).to.be.null;
+                },
+              },
+              lazyContent: {
+                description: 'should render content and accessibility description on first show',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  expect(el.shadowRoot!.querySelector('[part="body"]')).to.be.null;
+                  expect(anchor.hasAttribute('aria-describedby')).to.be.false;
+
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
+                  expect(anchor.getAttribute('aria-describedby')).to.contain('tooltip');
+                  el.open = false;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
+                },
+              },
+              preservesContentDuringHide: {
+                description: 'should preserve tooltip text until the hide transition completes',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  el.style.setProperty('--charm-tooltip-hide-transition', 'opacity 0.1s');
+                  el.style.setProperty('--charm-popup-hide-transition', 'opacity 1s');
+                  el.open = true;
+                  await oneEvent(el, 'tooltip-after-show');
+
                   const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
-                  expect(body.hidden).to.be.true;
-                  await waitUntil(() => getComputedStyle(body).opacity === '0', undefined, {
-                    timeout: SETTLE_WAIT_TIMEOUT,
-                  });
+                  expect(body.textContent).to.contain('This is a tooltip');
+
+                  const afterHide = oneEvent(el, 'tooltip-after-hide');
+                  el.hide();
+                  await elementUpdated(el);
+                  await aTimeout(200);
+
+                  expect(body.hidden).to.be.false;
+                  expect(body.textContent).to.contain('This is a tooltip');
+                  await afterHide;
                 },
               },
               disabled: {
@@ -114,7 +152,6 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   const showHandler = sinon.spy();
                   const afterShowHandler = sinon.spy();
 
@@ -125,6 +162,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => showHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
                   await waitUntil(() => afterShowHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.false;
                   await waitUntil(() => getComputedStyle(body).opacity === '1', undefined, {
                     timeout: SETTLE_WAIT_TIMEOUT,
@@ -141,7 +179,6 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
                   await aTimeout(200);
 
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   const showHandler = sinon.spy();
                   const afterShowHandler = sinon.spy();
 
@@ -152,6 +189,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await waitUntil(() => showHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
                   await waitUntil(() => afterShowHandler.calledOnce, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
 
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
                   expect(body.hidden).to.be.false;
                   await waitUntil(() => getComputedStyle(body).opacity === '1', undefined, {
                     timeout: SETTLE_WAIT_TIMEOUT,
@@ -255,11 +293,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 test: async () => {
                   const el = this.component;
                   const anchor = el.querySelector('button')!;
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
-                  expect(body).to.exist;
-
                   anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
                   await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
 
                   anchor.dispatchEvent(
                     new MouseEvent('mouseout', { bubbles: true, composed: true, relatedTarget: body })
@@ -275,11 +311,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 test: async () => {
                   const el = this.component;
                   const anchor = el.querySelector('button')!;
-                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
-                  expect(body).to.exist;
-
                   anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
                   await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  const body = el.shadowRoot!.querySelector<HTMLElement>('[part="body"]')!;
 
                   body.dispatchEvent(
                     new MouseEvent('mouseout', { bubbles: true, composed: true, relatedTarget: anchor })

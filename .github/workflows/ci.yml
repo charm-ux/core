@@ -94,7 +94,11 @@ jobs:
         run: pnpm prettier:check
 
   test:
-    name: Test
+    name: Test (shard ${{ matrix.shard }})
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -134,5 +138,19 @@ jobs:
       - name: Run build
         run: pnpm build
 
+      - name: Run shard assignment tests
+        run: pnpm --filter @charm-ux/core test:sharding
+
       - name: Run tests
         run: pnpm test
+        env:
+          TEST_SHARD_INDEX: ${{ matrix.shard }}
+          TEST_SHARD_COUNT: 2
+
+      - name: Upload test results and coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-shard-${{ matrix.shard }}
+          path: packages/core/results/
+          if-no-files-found: warn

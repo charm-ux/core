@@ -1,5 +1,26 @@
 import { property } from 'lit/decorators.js';
 import CharmElement from '../charm-element/charm-element.js';
+import { DEFAULT_THEME_PREFIX, getThemePrefix } from '../../utilities/theme.js';
+
+const TRANSITION_TIME = /[-+]?(?:\d+\.?\d*|\.\d+)(?:ms|s)\b/gi;
+
+function splitTransitionList(value: string): string[] {
+  const entries: string[] = [];
+  let start = 0;
+  let depth = 0;
+
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === '(') depth += 1;
+    if (value[index] === ')') depth -= 1;
+    if (value[index] === ',' && depth === 0) {
+      entries.push(value.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+
+  entries.push(value.slice(start).trim());
+  return entries;
+}
 
 /**
  * Base class for components that can be shown or hidden. They have `show`, `hide`, and `toggle` methods, an `open`
@@ -56,7 +77,6 @@ export class CharmDismissibleElement extends CharmElement {
 
   public override connectedCallback() {
     super.connectedCallback();
-    this.updateTransitionState();
   }
 
   public override disconnectedCallback() {
@@ -69,33 +89,14 @@ export class CharmDismissibleElement extends CharmElement {
 
   protected getTransitionStyles() {
     const baseName = (<any>this.constructor).baseName;
-    const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const transitionPropertyNamePattern = new RegExp(
-      `^--(?:[a-z0-9-]+-)?${escapedBaseName}(?:-(?:show|hide|position))?-transition$`,
-      'i'
-    );
     const style = getComputedStyle(this);
     const transitions: string[] = [];
 
-    for (let i = 0; i < style.length; i++) {
-      const property = style.item(i);
-      if (!transitionPropertyNamePattern.test(property)) continue;
-
-      const value = style.getPropertyValue(property).trim();
-      if (!value || value === 'none') continue;
-      transitions.push(value);
-    }
-
-    // Fallback: some browsers don't enumerate custom properties via item()
-    // (e.g. older Safari). Try a direct lookup on unprefixed candidates.
-    if (transitions.length === 0) {
-      const candidates = [
-        `--${baseName}-transition`,
-        `--${baseName}-show-transition`,
-        `--${baseName}-hide-transition`,
-        `--${baseName}-position-transition`,
-      ];
-      for (const candidate of candidates) {
+    const names = ['transition', 'show-transition', 'hide-transition', 'position-transition'];
+    const prefixes = new Set(['', getThemePrefix(), DEFAULT_THEME_PREFIX]);
+    for (const prefix of prefixes) {
+      for (const name of names) {
+        const candidate = `--${prefix ? `${prefix}-` : ''}${baseName}-${name}`;
         const value = style.getPropertyValue(candidate).trim();
         if (value && value !== 'none') transitions.push(value);
       }
@@ -121,28 +122,15 @@ export class CharmDismissibleElement extends CharmElement {
   protected getMaxTransitionTime(transitionStyles: string[]) {
     if (!transitionStyles.length) return 0;
 
-    const div = Object.assign(document.createElement('span'), {
-      class: 'transition',
-      style: `transition: ${transitionStyles.join(', ')}`,
-    });
-    this.appendChild(div);
-
-    const divStyle = getComputedStyle(div);
-    const durations = divStyle
-      .getPropertyValue('transition-duration')
-      .split(',')
-      .map(value => value.trim());
-    const delays = divStyle
-      .getPropertyValue('transition-delay')
-      .split(',')
-      .map(value => value.trim());
-
-    this.removeChild(div);
-
-    return durations.reduce((max, duration, index) => {
-      const delay = delays[index] ?? delays[0] ?? '0s';
-      const total = this.parseTimeToMilliseconds(duration) + this.parseTimeToMilliseconds(delay);
-      return Math.max(max, total);
+    return transitionStyles.reduce((max, transition) => {
+      for (const entry of splitTransitionList(transition)) {
+        const times = entry.match(TRANSITION_TIME) ?? [];
+        if (!times.length) continue;
+        const duration = this.parseTimeToMilliseconds(times[0] ?? '0s');
+        const delay = this.parseTimeToMilliseconds(times[1] ?? '0s');
+        max = Math.max(max, duration + delay);
+      }
+      return max;
     }, 0);
   }
 

@@ -108,7 +108,7 @@ export default css`
     background: ${component('pushPane', 'closeButton', 'focus', 'bgColor')};
   }
 
-  .close-button svg {
+  .close-button > * {
     pointer-events: none;
     width: 24px;
     height: 24px;

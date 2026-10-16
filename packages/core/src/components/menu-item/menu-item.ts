@@ -3,7 +3,6 @@ import { literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
-import { HasSlotController } from '../../controller/index.js';
 import { startContentEndTemplate } from '../../templates/index.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { CorePopup } from '../popup/popup.js';
@@ -73,6 +72,7 @@ import styles from './menu-item.styles.js';
 export class CoreMenuItem extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'menu-item';
+  public static override watchedSlots = ['radio-indicator'];
 
   /** Indicates whether the menu item contains a submenu. */
   @state()
@@ -118,8 +118,6 @@ export class CoreMenuItem extends CharmElement {
 
   /** Reference to the parent menu element, if available. */
   protected parentMenu?: CoreMenu | null;
-
-  protected readonly hasSlotController = new HasSlotController(this, 'radio-indicator');
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon, CoreMenu, CorePopup];
@@ -359,7 +357,7 @@ export class CoreMenuItem extends CharmElement {
 
   /** Generates and returns a template for rendering the radio indicator within a menu item, conditional on the menu item's role being 'menuitemradio'. */
   protected radioIndicatorTemplate() {
-    const hasRadioIndicator = this.hasSlotController.hasNamedSlot('radio-indicator');
+    const hasRadioIndicator = this.hasNamedSlot('radio-indicator');
 
     return this.role === 'menuitemradio'
       ? this.html`

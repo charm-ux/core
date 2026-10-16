@@ -190,12 +190,12 @@ export class CharmElementTests<T extends CharmElement> {
    * Iterates over each of the tests defined in the `tests` property in this test harness and executes them.
    * @param config the group of tests to run for this component
    */
-  protected async runComponentTests(config: TestConfig = this.tests) {
-    Object.entries(config).forEach(async ([_, value]) => {
+  protected runComponentTests(config: TestConfig = this.tests) {
+    Object.entries(config).forEach(([_, value]) => {
       if (typeof (value as ComponentTest).test === 'function') {
-        await this.runTest(value as ComponentTest);
+        this.runTest(value as ComponentTest);
       } else {
-        await this.runTestGroup(value as TestGroup);
+        this.runTestGroup(value as TestGroup);
       }
     });
   }
@@ -204,7 +204,7 @@ export class CharmElementTests<T extends CharmElement> {
    * Runs an individual test.
    * @param test the test object to run
    */
-  protected async runTest(test: ComponentTest) {
+  protected runTest(test: ComponentTest) {
     if (test.skip) {
       return it.skip(test.description, async () => {});
     }
@@ -231,7 +231,7 @@ export class CharmElementTests<T extends CharmElement> {
    * Runs a group of tests.
    * @param group the object of tests to run
    */
-  protected async runTestGroup(group: TestGroup) {
+  protected runTestGroup(group: TestGroup) {
     if (group.skip) {
       return describe.skip(group.description, () => this.runComponentTests(group.tests));
     }
@@ -240,7 +240,7 @@ export class CharmElementTests<T extends CharmElement> {
       return describe.only(group.description, () => this.runComponentTests(group.tests));
     }
 
-    return describe(group.description, async () => {
+    return describe(group.description, () => {
       if (group.before) {
         before(group.before);
       }
@@ -254,7 +254,7 @@ export class CharmElementTests<T extends CharmElement> {
         afterEach(group.afterEach);
       }
 
-      await this.runComponentTests(group.tests);
+      this.runComponentTests(group.tests);
     });
   }
 
