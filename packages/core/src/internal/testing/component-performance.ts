@@ -89,6 +89,25 @@ async function settleTree(root: HTMLElement): Promise<void> {
   }
 }
 
+async function waitForTreeUpdate(root: HTMLElement): Promise<void> {
+  let stablePasses = 0;
+
+  for (let pass = 0; pass < 10 && stablePasses < 2; pass++) {
+    const elements = collectRenderableElements(root);
+    await Promise.all(elements.map(waitForUpdate));
+    await Promise.resolve();
+
+    const nextElements = collectRenderableElements(root);
+    const treeIsStable =
+      elements.length === nextElements.length && elements.every((element, index) => element === nextElements[index]);
+
+    stablePasses = treeIsStable ? stablePasses + 1 : 0;
+  }
+
+  // Include one layout flush so CSS-driven sizing and positioning are part of each sample.
+  root.getBoundingClientRect();
+}
+
 async function measureMount(create: () => HTMLElement): Promise<number> {
   const host = document.createElement('div');
   document.body.append(host);
@@ -96,7 +115,7 @@ async function measureMount(create: () => HTMLElement): Promise<number> {
   const start = performance.now();
   const element = create();
   host.append(element);
-  await waitForUpdate(element);
+  await waitForTreeUpdate(host);
   const duration = performance.now() - start;
 
   await settleTree(host);
@@ -109,11 +128,11 @@ async function measureRerender(component: ComponentPerformanceCase, iteration: n
   const element = component.create();
   host.append(element);
   document.body.append(host);
-  await waitForUpdate(element);
+  await waitForTreeUpdate(host);
 
   const start = performance.now();
   component.update(element, iteration);
-  await waitForUpdate(element);
+  await waitForTreeUpdate(host);
   const duration = performance.now() - start;
 
   await settleTree(host);
@@ -131,7 +150,7 @@ async function measureBulkMount(create: () => HTMLElement, count: number): Promi
     fragment.append(create());
   }
   host.append(fragment);
-  await Promise.all([...host.children].map(element => waitForUpdate(element as HTMLElement)));
+  await waitForTreeUpdate(host);
   const duration = performance.now() - start;
 
   await settleTree(host);

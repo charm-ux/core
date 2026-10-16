@@ -13,25 +13,37 @@ export default css`
 
   .form-control-input {
     cursor: pointer;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
     line-height: 1;
-    padding: 0;
+    padding-block: 0;
+    padding-inline: ${semantic('formControl', 'paddingX')};
   }
 
   .end-icons {
-    position: absolute;
+    align-items: center;
+    display: flex;
+    grid-column: 3;
+    grid-row: 1;
     pointer-events: none;
-    inset-inline-end: ${semantic('formControl', 'paddingX')};
   }
 
   .start {
-    inset-inline-start: ${semantic('formControl', 'paddingX')};
+    grid-column: 1;
+    grid-row: 1;
     pointer-events: none;
-    position: absolute;
   }
 
   .chevron {
     height: ${component('select', 'iconSize')};
     width: ${component('select', 'iconSize')};
+  }
+
+  .input-control {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    padding-inline: 0;
   }
 
   option {

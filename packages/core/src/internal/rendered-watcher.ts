@@ -6,7 +6,9 @@
  */
 export class RenderedWatcher {
   private observer: ResizeObserver | undefined;
+  private mutationObserver: MutationObserver | undefined;
   private initialCheckHandle: number | undefined;
+  private observing = false;
 
   public constructor(
     private readonly element: HTMLElement,
@@ -18,9 +20,26 @@ export class RenderedWatcher {
    * as change signals, e.g. an internal element that always has a non-zero box when rendered.
    */
   public start(...additionalTargets: Element[]): void {
+    this.observing = true;
     this.observer ??= new ResizeObserver(() => this.check());
+    this.mutationObserver ??= new MutationObserver(() => this.check());
 
     this.observer.observe(this.element);
+
+    // ResizeObserver does not reliably signal display:none toggles in every engine when the
+    // observed box remains at zero size. Observe visibility-affecting attributes on the element
+    // and its composed ancestors as a second change signal.
+    this.mutationObserver.disconnect();
+    let ancestor: Element | null = this.element;
+    while (ancestor) {
+      this.mutationObserver.observe(ancestor, {
+        attributes: true,
+        attributeFilter: ['class', 'hidden', 'style'],
+      });
+
+      const root = ancestor.getRootNode();
+      ancestor = ancestor.parentElement ?? (root instanceof ShadowRoot ? root.host : null);
+    }
 
     for (const target of additionalTargets) {
       this.observer.observe(target);
@@ -37,15 +56,19 @@ export class RenderedWatcher {
 
   /** Stops watching. */
   public stop(): void {
+    this.observing = false;
+
     if (this.initialCheckHandle !== undefined) {
       cancelAnimationFrame(this.initialCheckHandle);
       this.initialCheckHandle = undefined;
     }
 
     this.observer?.disconnect();
+    this.mutationObserver?.disconnect();
   }
 
   private check(): void {
+    if (!this.observing || !this.element.isConnected) return;
     this.callback(this.element.getClientRects().length > 0);
   }
 }

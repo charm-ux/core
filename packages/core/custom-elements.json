@@ -9496,6 +9496,10 @@
               "name": "--charm-dialog-max-width"
             },
             {
+              "description": "determines dialog's minimum width.",
+              "name": "--charm-dialog-min-width"
+            },
+            {
               "description": "determines dialog's inline padding.",
               "name": "--charm-dialog-padding-x"
             },
@@ -9651,6 +9655,16 @@
               "static": true,
               "default": "0",
               "description": "Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock."
+            },
+            {
+              "kind": "field",
+              "name": "bodyScrollLocked",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false",
+              "description": "Whether this instance currently contributes one reference-counted body scroll lock."
             },
             {
               "kind": "field",
@@ -10230,15 +10244,6 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "visible",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false"
             },
             {
               "kind": "field",
@@ -19755,11 +19760,6 @@
             },
             {
               "kind": "method",
-              "name": "handleLayoutChange",
-              "privacy": "protected"
-            },
-            {
-              "kind": "method",
               "name": "handleRadioSelected",
               "privacy": "protected",
               "parameters": [
@@ -22634,11 +22634,6 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "setInputPadding",
-              "privacy": "protected"
             },
             {
               "kind": "field",

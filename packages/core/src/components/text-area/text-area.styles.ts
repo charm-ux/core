@@ -51,4 +51,10 @@ export default css`
     overflow-y: hidden;
     resize: none;
   }
+
+  @supports (field-sizing: content) {
+    :host([resize='auto']) .form-control-base-input {
+      field-sizing: content;
+    }
+  }
 `;

@@ -150,7 +150,12 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     el.value = 'line 1\nline 2\nline 3\nline 4\nline 5\nline 6\nline 7\nline 8\nline 9\nline 10';
                     await el.updateComplete;
                     expect(textarea.offsetHeight).to.be.greaterThan(initialHeight);
-                    expect(textarea.style.height).to.not.equal('');
+                    if (CSS.supports('field-sizing', 'content')) {
+                      expect(getComputedStyle(textarea).getPropertyValue('field-sizing')).to.equal('content');
+                      expect(textarea.style.height).to.equal('');
+                    } else {
+                      expect(textarea.style.height).to.not.equal('');
+                    }
 
                     el.resize = 'none';
                     await el.updateComplete;

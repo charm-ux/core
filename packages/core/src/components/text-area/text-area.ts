@@ -8,6 +8,8 @@ import { CoreIcon } from '../icon/icon.js';
 import styles from './text-area.styles.js';
 import type { PropertyValues } from 'lit';
 
+const supportsFieldSizingContent = CSS.supports('field-sizing', 'content');
+
 /**
  * A text field that allows multiple lines of text entry.
  *
@@ -217,7 +219,7 @@ export class CoreTextArea extends CharmFormControlElement {
       this.resizeObserver = undefined;
     }
 
-    if (!this.isConnected || this.resize !== 'auto' || !this.input) return;
+    if (!this.isConnected || this.resize !== 'auto' || supportsFieldSizingContent || !this.input) return;
 
     this.lastObservedWidth = 0;
     this.resizeObserver = new ResizeObserver(entries => {
@@ -246,6 +248,7 @@ export class CoreTextArea extends CharmFormControlElement {
    * the textarea switches back to a manual resize mode.
    */
   private setTextareaDimensions() {
+    if (supportsFieldSizingContent) return;
     if (!this.input) return;
 
     if (this.resize !== 'auto') {

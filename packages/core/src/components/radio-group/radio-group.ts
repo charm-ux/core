@@ -118,9 +118,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this.setAttribute('tabindex', '0');
     this.addEventListener('focus', this.handleHostFocus);
     this.addEventListener('blur', this.handleHostBlur);
-    this.updateComplete.then(() => {
-      this.handleLayoutChange();
-    });
   }
 
   /** Checks for validity but doesn't report a validation message when invalid. */
@@ -139,9 +136,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
     if (changedProperties.has('value')) {
       this.handleValueChange();
     }
-    if (changedProperties.has('layout')) {
-      this.handleLayoutChange();
-    }
     if (changedProperties.has('readonly')) {
       this.radios.forEach(radio => (radio.readonly = this.readonly));
     }
@@ -153,16 +147,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
         this.focusOnFirstFocusableElement();
       }
     }
-  }
-
-  protected handleLayoutChange() {
-    this.radios.forEach(radio => {
-      if (this.layout === 'horizontal-stacked') {
-        radio.vertical = true;
-      } else {
-        radio.vertical = false;
-      }
-    });
   }
 
   protected handleValueChange() {

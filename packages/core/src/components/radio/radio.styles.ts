@@ -13,6 +13,7 @@ export default css`
     gap: ${semantic('formControl', 'label', 'gap')};
     align-items: center;
     cursor: pointer;
+    flex-direction: var(--_charm-radio-group-direction, row);
   }
 
   .radio-label {
@@ -44,7 +45,7 @@ export default css`
 
   :host([vertical]) .radio {
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: var(--_charm-radio-group-direction, column);
     align-items: center;
     gap: ${semantic('formControl', 'label', 'gap')};
   }

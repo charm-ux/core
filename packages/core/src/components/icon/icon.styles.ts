@@ -32,7 +32,6 @@ export default css`
       background-color: CanvasText;
     }
   }
-
   svg {
     display: block;
     height: 100%;

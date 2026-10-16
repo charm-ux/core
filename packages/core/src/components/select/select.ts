@@ -4,7 +4,6 @@ import { classMap } from 'lit/directives/class-map.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import { CoreIcon } from '../icon/icon.js';
-import { tokens } from '../../utilities/theme.js';
 import styles from './select.styles.js';
 
 type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
@@ -63,11 +62,6 @@ export class CoreSelect extends CharmFormControlElement {
     return [CoreIcon];
   }
 
-  protected override firstUpdated(): void {
-    super.firstUpdated();
-    this.setInputPadding();
-  }
-
   /** Gets all the options for the select. */
   protected getOptions() {
     return Array.from(this.querySelectorAll<HTMLOptionElement>('option'));
@@ -89,16 +83,6 @@ export class CoreSelect extends CharmFormControlElement {
   protected handleInput(e: Event) {
     e.stopImmediatePropagation();
     this.emitInput();
-  }
-
-  protected setInputPadding() {
-    const startIconsWidth = this.shadowRoot?.querySelector('.start')?.clientWidth ?? 0;
-    const endIconsWidth = this.shadowRoot?.querySelector('.end-icons')?.clientWidth ?? 0;
-    if (this.input) {
-      const paddingX = tokens.var.semantic('formControl', 'paddingX');
-      this.input.style.paddingInlineStart = `calc( ${paddingX} + ${startIconsWidth}px`;
-      this.input.style.paddingInlineEnd = `calc( ${paddingX} + ${endIconsWidth}px`;
-    }
   }
 
   /** Handles the change of the options in the default slot */

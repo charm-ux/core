@@ -91,6 +91,42 @@ export const composedComponentCases = {
     },
     update: requestUpdate,
   },
+  dialogOpen: {
+    name: 'dialog-open-after-mount',
+    create: () => {
+      const element = document.createElement('ch-dialog');
+      element.innerHTML = '<span slot="heading">Heading</span><p>Dialog body</p>';
+      return element;
+    },
+    update: element => element.setAttribute('open', ''),
+  },
+  radioGroupStacked: {
+    name: 'radio-group-horizontal-stacked',
+    create: () => {
+      const element = document.createElement('ch-radio-group');
+      element.setAttribute('layout', 'horizontal-stacked');
+      element.innerHTML = Array.from(
+        { length: 5 },
+        (_, index) => `<ch-radio value="${index}">Option ${index}</ch-radio>`
+      ).join('');
+      return element;
+    },
+    update: requestUpdate,
+  },
+  textAreaAuto: {
+    name: 'text-area-auto-resize',
+    create: () => {
+      const element = document.createElement('ch-text-area');
+      element.setAttribute('resize', 'auto');
+      element.setAttribute('value', 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6');
+      return element;
+    },
+    update: (element, iteration) =>
+      element.setAttribute(
+        'value',
+        Array.from({ length: (iteration % 10) + 1 }, (_, index) => `Line ${index}`).join('\n')
+      ),
+  },
 } satisfies Record<string, ComponentPerformanceCase>;
 
 export const composedPerformanceOptions = { iterations: 10, warmups: 2, bulkCounts: [10, 50] };

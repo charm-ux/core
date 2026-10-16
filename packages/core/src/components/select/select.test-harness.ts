@@ -39,6 +39,43 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
               await expect(el).to.be.accessible();
             },
           },
+          slottedAdornmentLayout: {
+            description: 'reserves space for dynamically sized slotted adornments with CSS grid',
+            test: async () => {
+              const el = this.component;
+              el.innerHTML =
+                '<svg slot="start" width="24" height="24"></svg>' +
+                '<svg slot="end" width="18" height="18"></svg>' +
+                '<option value="1">Option One</option>';
+              await aTimeout(0);
+              await elementUpdated(el);
+
+              const wrapper = el.shadowRoot?.querySelector('.form-control-input');
+              const start = el.shadowRoot?.querySelector('.start');
+              const input = el.shadowRoot?.querySelector('#input');
+              const end = el.shadowRoot?.querySelector('.end-icons');
+              const icon = el.querySelector('svg[slot="start"]');
+
+              expect(wrapper).to.not.be.null;
+              expect(getComputedStyle(wrapper!).display).to.equal('grid');
+
+              const before = start!.getBoundingClientRect();
+              const control = input!.getBoundingClientRect();
+              const endSlot = end!.getBoundingClientRect();
+
+              expect(icon!.getBoundingClientRect().width).to.equal(24);
+              expect(before.right).to.be.at.most(control.left);
+              expect(control.right).to.be.at.most(endSlot.left);
+
+              icon?.setAttribute('width', '32');
+              const resizedStart = start!.getBoundingClientRect();
+              const resizedControl = input!.getBoundingClientRect();
+
+              expect(icon!.getBoundingClientRect().width).to.equal(32);
+              expect(resizedStart.width).to.be.greaterThan(before.width);
+              expect(resizedStart.right).to.be.at.most(resizedControl.left);
+            },
+          },
           // attribute and property tests
           properties: {
             description: 'properties',

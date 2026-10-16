@@ -30,13 +30,19 @@ The core dialog has a default layout with three different sections, a header, a 
 
 ## Setting a size
 
-Sizing of dialog can be adjusted by setting the `--dialog-size` CSS property on the element. The default size is `340px`.
+The dialog sizes to its content, with a minimum width of `340px` and a maximum width of `512px` by default. It shrinks to fit a narrower viewport.
+Set `--charm-dialog-min-width` to change the minimum, or `--charm-dialog-size` to set an explicit size.
 
 <code-bubble>
 
 ```html
 <ch-button shows="size-dialog">Open small dialog</ch-button>
-<ch-dialog id="size-dialog" position="start" heading="Drawer header" style="--dialog-size: 940px;">
+<ch-dialog
+  id="size-dialog"
+  position="start"
+  heading="Drawer header"
+  style="--charm-dialog-size: 400px;"
+>
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
   repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
 </ch-dialog>
