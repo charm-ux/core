@@ -30,7 +30,6 @@ import styles from './checkbox-group.styles.js';
  * @csspart checkbox-group-label - The checkbox group's label.
  *
  * @omit placeholder
- * @omit value
  */
 export class CoreCheckboxGroup extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
@@ -42,17 +41,34 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   @property({ reflect: true })
   public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
-  /** The checkbox group's selected values. Set this property to control or initialize the selection. */
-  @property({ attribute: false })
-  public selectedValues: string[] = [];
-
+  protected _valueAsArray: string[] = [];
+  protected _valueDelimiter = ',';
+  protected pendingValue = '';
+  protected valueAssignmentPending = false;
   protected checkboxes: CoreCheckbox[] = [];
-  protected initialSelectedValues: string[] = [];
+  protected initialValueAsArray: string[] = [];
 
   public constructor() {
     super();
     this.useBlurHandler = false;
     this.useFocusHandler = false;
+  }
+
+  /** The checkbox group's selected values as an array. */
+  @property({ attribute: false })
+  public get valueAsArray(): string[] {
+    return this._valueAsArray;
+  }
+
+  /** The delimiter used to parse and serialize `value`. Defaults to a comma. */
+  @property({ attribute: 'value-delimiter' })
+  public get valueDelimiter(): string {
+    return this._valueDelimiter;
+  }
+
+  /** The selected values serialized using the configured delimiter. */
+  public override get value(): string {
+    return this.valueAsArray.join(this.valueDelimiter);
   }
 
   /** Gets the current validation message, if one exists. */
@@ -62,7 +78,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
   /** Gets group validity, where a required group must have at least one selected checkbox. */
   public override get validity(): ValidityState {
-    const valueMissing = this.required && this.selectedValues.length === 0 && !this.disabled;
+    const valueMissing = this.required && this.valueAsArray.length === 0 && !this.disabled;
     const customError = this.customErrorMessage !== '';
 
     return {
@@ -78,6 +94,36 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       valid: !valueMissing && !customError,
       valueMissing,
     };
+  }
+
+  public set valueDelimiter(delimiter: string) {
+    const nextDelimiter = delimiter || ',';
+    if (nextDelimiter === this._valueDelimiter) return;
+
+    const oldDelimiter = this._valueDelimiter;
+    const oldValue = this.value;
+    this._valueDelimiter = nextDelimiter;
+    this.requestUpdate('valueDelimiter', oldDelimiter);
+    this.requestUpdate('value', oldValue);
+  }
+
+  public set valueAsArray(values: string[]) {
+    const oldValue = this.value;
+    const oldValueAsArray = [...this._valueAsArray];
+    this.valueAssignmentPending = false;
+    this._valueAsArray = [...values];
+    this.requestUpdate('valueAsArray', oldValueAsArray);
+    this.requestUpdate('value', oldValue);
+  }
+
+  public override set value(value: string) {
+    const oldValue = this.value;
+    const oldValueAsArray = [...this._valueAsArray];
+    this.pendingValue = value;
+    this.valueAssignmentPending = true;
+    this._valueAsArray = this.parseValueAsArray(value);
+    this.requestUpdate('valueAsArray', oldValueAsArray);
+    this.requestUpdate('value', oldValue);
   }
 
   public override connectedCallback() {
@@ -111,16 +157,16 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   }
 
   protected override syncInitialFormValue() {
-    this.initialSelectedValues = [...this.selectedValues];
+    this.initialValueAsArray = [...this.valueAsArray];
   }
 
   protected override restoreInitialFormValue() {
-    this.selectedValues = [...this.initialSelectedValues];
+    this.valueAsArray = [...this.initialValueAsArray];
   }
 
   protected override formStateRestoreCallback(state: string | File | FormData | null) {
     if (state instanceof FormData && this.name) {
-      this.selectedValues = state.getAll(this.name).map(value => String(value));
+      this.valueAsArray = state.getAll(this.name).map(value => String(value));
       return;
     }
 
@@ -128,10 +174,10 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       try {
         const value: unknown = JSON.parse(state);
         if (Array.isArray(value) && value.every(item => typeof item === 'string')) {
-          this.selectedValues = value;
+          this.valueAsArray = value;
         }
       } catch {
-        this.selectedValues = [state];
+        this.valueAsArray = [state];
       }
     }
   }
@@ -143,16 +189,30 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     const enabledValues = this.getAllCheckboxes()
       .filter(checkbox => !checkbox.disabled && !checkbox.forceDisabled)
       .map(checkbox => this.getCheckboxValue(checkbox))
-      .filter(value => this.selectedValues.includes(value));
+      .filter(value => this.valueAsArray.includes(value));
 
     enabledValues.forEach(value => formValue.append(this.name!, value));
     return enabledValues.length ? formValue : null;
   }
 
+  protected parseValueAsArray(value: string): string[] {
+    return value
+      ? value
+          .split(this.valueDelimiter)
+          .map(item => item.trim())
+          .filter(Boolean)
+      : [];
+  }
+
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
 
-    if (changedProperties.has('selectedValues')) {
+    if (this.valueAssignmentPending) {
+      this._valueAsArray = this.parseValueAsArray(this.pendingValue);
+      this.valueAssignmentPending = false;
+    }
+
+    if (changedProperties.has('valueAsArray')) {
       void this.syncCheckboxElements();
       this.internals.setFormValue(this.getFormValue());
       if (this.hasUpdated) this.updateGroupValidity();
@@ -198,7 +258,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.required = this.required;
-    input.checked = this.selectedValues.length > 0;
+    input.checked = this.valueAsArray.length > 0;
     return input.validationMessage;
   }
 
@@ -219,16 +279,16 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
     const checkboxValue = this.getCheckboxValue(checkbox);
     const nextValue = checkbox.checked
-      ? [...this.selectedValues, checkboxValue]
-      : this.selectedValues.filter(value => value !== checkboxValue);
+      ? [...this.valueAsArray, checkboxValue]
+      : this.valueAsArray.filter(value => value !== checkboxValue);
 
     if (
-      nextValue.length === this.selectedValues.length &&
-      nextValue.every((value, index) => value === this.selectedValues[index])
+      nextValue.length === this.valueAsArray.length &&
+      nextValue.every((value, index) => value === this.valueAsArray[index])
     )
       return;
 
-    this.selectedValues = nextValue;
+    this.valueAsArray = nextValue;
     this.emitInput();
     this.emitChange();
   }
@@ -267,7 +327,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     await Promise.all(checkboxes.map(checkbox => checkbox.updateComplete));
 
     checkboxes.forEach(checkbox => {
-      checkbox.checked = this.selectedValues.includes(this.getCheckboxValue(checkbox));
+      checkbox.checked = this.valueAsArray.includes(this.getCheckboxValue(checkbox));
     });
     await Promise.all(checkboxes.map(checkbox => checkbox.updateComplete));
   }
@@ -312,7 +372,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
   /** Generates the HTML template for the checkbox slot. */
   protected checkboxesTemplate() {
-    return this.html`<div part="checkbox-group-checkboxes" class="form-control-input">
+    return this.html`<div part="checkbox-group-checkboxes" class="checkboxes">
       <slot
         @slotchange=${this.handleSlotChange}
         @change=${this.handleCheckboxChange}

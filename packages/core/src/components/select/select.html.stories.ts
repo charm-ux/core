@@ -93,3 +93,18 @@ export const WithDisabledOption: Story = {
     name: 'disabledSelect',
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args =>
+    template(
+      args,
+      html` <option value="">Choose a country</option>
+        <option value="ca">Canada</option>
+        <option value="us">United States</option>`
+    ),
+  args: {
+    label: 'Country',
+    'help-text': 'Select the country where you live.',
+    'error-message': 'Choose a country to continue.',
+  },
+};

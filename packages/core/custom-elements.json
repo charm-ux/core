@@ -8215,6 +8215,24 @@
             },
             {
               "kind": "field",
+              "name": "_valueAsArray",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "_valueDelimiter",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "','"
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -8771,15 +8789,6 @@
             },
             {
               "kind": "field",
-              "name": "initialSelectedValues",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "protected",
-              "default": "[]"
-            },
-            {
-              "kind": "field",
               "name": "initialValue",
               "type": {
                 "text": "string"
@@ -8790,6 +8799,15 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "initialValueAsArray",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
             },
             {
               "kind": "field",
@@ -8904,6 +8922,33 @@
               }
             },
             {
+              "kind": "method",
+              "name": "parseValueAsArray",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "pendingValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
               "kind": "field",
               "name": "readonly",
               "type": {
@@ -8980,16 +9025,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "selectedValues",
-              "type": {
-                "text": "string[]"
-              },
-              "privacy": "public",
-              "default": "[]",
-              "description": "The checkbox group's selected values. Set this property to control or initialize the selection."
             },
             {
               "kind": "method",
@@ -9123,13 +9158,41 @@
                 "text": "string"
               },
               "privacy": "public",
-              "description": "The input's value attribute.",
+              "description": "The selected values serialized using the configured delimiter.",
               "attribute": "value",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "valueAsArray",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "description": "The checkbox group's selected values as an array."
+            },
+            {
+              "kind": "field",
+              "name": "valueAssignmentPending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "valueDelimiter",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The delimiter used to parse and serialize `value`. Defaults to a comma.",
+              "attribute": "value-delimiter"
             },
             {
               "kind": "field",
@@ -9348,6 +9411,14 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "name": "value-delimiter",
+              "type": {
+                "text": "string"
+              },
+              "description": "The delimiter used to parse and serialize `value`. Defaults to a comma.",
+              "fieldName": "valueDelimiter"
             }
           ],
           "superclass": {
@@ -9359,10 +9430,6 @@
           "omit": [
             {
               "name": "placeholder",
-              "description": ""
-            },
-            {
-              "name": "value",
               "description": ""
             }
           ],

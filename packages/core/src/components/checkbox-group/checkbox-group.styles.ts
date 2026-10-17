@@ -17,19 +17,20 @@ export default css`
     border: 0;
   }
 
-  .form-control-input {
+  .checkboxes {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
+    grid-area: control;
     gap: ${component('checkbox', 'groupCheckboxGap')};
     height: auto;
     border: 0;
     background: transparent;
   }
 
-  :host([layout='horizontal']) .form-control-input,
-  :host([layout='horizontal-stacked']) .form-control-input {
+  :host([layout='horizontal']) .checkboxes,
+  :host([layout='horizontal-stacked']) .checkboxes {
     flex-direction: row;
   }
 `;

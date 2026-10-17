@@ -51,7 +51,40 @@ export const Preselected: Story = {
     ),
   args: {
     label: 'Interests',
-    selectedValues: ['books', 'travel'],
+    valueAsArray: ['books', 'travel'],
+  },
+};
+
+export const CommaSeparatedValue: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    value: 'books,travel',
+  },
+};
+
+export const AlternativeDelimiter: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    value: 'books|travel',
+    'value-delimiter': '|',
   },
 };
 
@@ -100,5 +133,22 @@ export const Layout: Story = {
   args: {
     label: 'Interests',
     layout: 'horizontal',
+  },
+};
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    'help-text': 'Select all that apply.',
+    'error-message': 'Select at least one interest.',
   },
 };
