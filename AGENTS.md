@@ -21,6 +21,8 @@ touch:
   [`.agents/rules/accessibility/`](.agents/rules/accessibility/)
 - **CODE** — enforced TypeScript / lint / import conventions (hard CI failures). →
   [`.agents/rules/code/`](.agents/rules/code/)
+- **PERF** — performance-first engineering constraints; optimize aggressively by default. →
+  [`.agents/rules/performance/`](.agents/rules/performance/)
 - **PROC** — changesets, PR, and release process. →
   [`.agents/rules/process/`](.agents/rules/process/)
 
@@ -58,6 +60,9 @@ These activate when you edit matching files:
   `getStorybookHelpers`. Scaffold new components with `pnpm plop`. (CHARM-005, DOC-001/002)
 - **Tests** run in real browsers via `@web/test-runner` + `@open-wc/testing` using the
   test-harness pattern. Run outside the ZD sandbox (Chromium can't launch inside it). (TEST-\*)
+- **Performance** is ruthlessly prioritized in every change: choose lower-cost designs,
+  avoid unnecessary render/update work, minimize layout/reflow churn, and preserve
+  performance budgets through explicit tests and thresholds. (PERF-001, PERF-002, TEST-004)
 - **Code style** is CI-enforced (`--max-warnings 0`): relative imports must end in `.js`,
   every class member needs an explicit accessibility modifier + `override` where it applies,
   imports are ordered/sorted, no enums/namespaces, type-only imports marked `type`. (CODE-\*)

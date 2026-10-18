@@ -23,6 +23,7 @@ for the category.
 | `TEST`  | `testing/`          | web-test-runner + `@open-wc/testing` harness pattern, performance budgets                               |
 | `DOC`   | `documentation/`    | Storybook stories, manifest docs, docs pages, scaffolding                                               |
 | `CODE`  | `code/`             | Enforced TypeScript / lint / import conventions                                                         |
+| `PERF`  | `performance/`      | Performance-first engineering constraints for all changes                                               |
 | `PROC`  | `process/`          | Changesets, PR, and release process                                                                     |
 | `ADR`   | `adr/`              | When and how to record architecture decisions                                                           |
 
@@ -32,7 +33,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 `.claude/rules/`):
 
 - **Always loaded** — foundational rules injected for every task: `CHARM-*`, `A11Y-*`,
-  `CODE-*`, `PROC-*`.
+  `CODE-*`, `PERF-*`, `PROC-*`.
 - **Path-gated** — activated when the files being edited match a glob: `COMP-*`, `PROP-*`,
   `STYLE-*`, `I18N-*`, `TEST-*`, `DOC-*`.
 - **Reference** — consulted on demand rather than injected: `ADR-*` (read when making or
@@ -136,6 +137,11 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CODE-005](code/CODE-005.md) — Respect module boundaries — never edit generated entrypoints, don't rely on deep imports
 - [CODE-006](code/CODE-006.md) — Re-export external dependency types through the owning module
 
+### PERF — performance (always loaded)
+
+- [PERF-001](performance/PERF-001.md) — Ruthlessly prioritize performance in every change
+- [PERF-002](performance/PERF-002.md) — Enforce performance with explicit tests and budgets
+
 ### PROC — process (always loaded)
 
 - [PROC-001](process/PROC-001.md) — Add a changeset for consumer-affecting changes
@@ -155,7 +161,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 2. Add it to the **Rule index** above.
 3. Add a one-line summary to the corresponding `.claude/rules/<category>.md` file, linking
    back to the rule.
-4. If it belongs to an always-loaded category (`CHARM`, `A11Y`, `CODE`, `PROC`), it is
+4. If it belongs to an always-loaded category (`CHARM`, `A11Y`, `CODE`, `PERF`, `PROC`), it is
    already covered by `AGENTS.md`; otherwise confirm the path-gated glob in
    `.claude/rules/<category>.md` matches where the rule applies.
 
