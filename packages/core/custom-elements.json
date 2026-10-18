@@ -8307,6 +8307,14 @@
               "description": "Generates the HTML template for the checkbox group."
             },
             {
+              "kind": "field",
+              "name": "checkboxListbox",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
               "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
@@ -8333,6 +8341,14 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "defaultSlot",
+              "type": {
+                "text": "HTMLSlotElement | undefined"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -8452,6 +8468,72 @@
               }
             },
             {
+              "kind": "method",
+              "name": "findLastEnabledListboxIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "checkboxes",
+                  "type": {
+                    "text": "CoreCheckbox[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "findNextListboxIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "checkboxes",
+                  "type": {
+                    "text": "CoreCheckbox[]"
+                  }
+                },
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "1 | -1"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "findNextListboxMatch",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "checkboxes",
+                  "type": {
+                    "text": "CoreCheckbox[]"
+                  }
+                },
+                {
+                  "name": "prefix",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "focusableEventOptions",
               "type": {
@@ -8531,6 +8613,16 @@
             },
             {
               "kind": "method",
+              "name": "getActiveListboxOptionId",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | undefined"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "getAllCheckboxes",
               "privacy": "protected",
               "return": {
@@ -8581,6 +8673,44 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "getListboxDescription",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getListboxLabel",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getListboxOptionLabel",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "checkbox",
+                  "type": {
+                    "text": "CoreCheckbox"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -8635,7 +8765,15 @@
             {
               "kind": "method",
               "name": "handleBlurElement",
-              "privacy": "protected"
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "FocusEvent"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -8673,6 +8811,56 @@
               "kind": "field",
               "name": "handleHostFocus",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxFocus",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxKeyDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxTypeahead",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "character",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "checkboxes",
+                  "type": {
+                    "text": "CoreCheckbox[]"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -8850,6 +9038,25 @@
               }
             },
             {
+              "kind": "method",
+              "name": "isListboxOptionEnabled",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "checkbox is CoreCheckbox"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "checkbox",
+                  "optional": true,
+                  "type": {
+                    "text": "CoreCheckbox"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
@@ -8908,6 +9115,66 @@
             },
             {
               "kind": "field",
+              "name": "listbox",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Presents the choices as a single-tab-stop listbox with arrow-key navigation.",
+              "attribute": "listbox",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "listboxActiveIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "listboxAttributes",
+              "privacy": "protected",
+              "default": "new WeakMap<CoreCheckbox, Map<string, string | null>>()"
+            },
+            {
+              "kind": "field",
+              "name": "listboxHostAttributes",
+              "privacy": "protected",
+              "default": "new Map<string, string | null>()"
+            },
+            {
+              "kind": "field",
+              "name": "listboxId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "default": "++checkboxGroupId"
+            },
+            {
+              "kind": "field",
+              "name": "listboxTypeahead",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "listboxTypeaheadTimer",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "name",
               "type": {
                 "text": "string | undefined"
@@ -8920,6 +9187,24 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "normalizeValueAsArray",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -8962,6 +9247,19 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "rememberListboxAttributes",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "checkbox",
+                  "type": {
+                    "text": "CoreCheckbox"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -9015,6 +9313,19 @@
               }
             },
             {
+              "kind": "method",
+              "name": "restoreListboxOption",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "checkbox",
+                  "type": {
+                    "text": "CoreCheckbox"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -9043,6 +9354,32 @@
               }
             },
             {
+              "kind": "method",
+              "name": "setInitialListboxActiveOption",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "checkboxes",
+                  "type": {
+                    "text": "CoreCheckbox[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "setListboxActiveIndex",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "shadowRootOptions",
               "type": {
@@ -9055,6 +9392,19 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "shouldSyncListboxHostAttributes",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -9071,6 +9421,16 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "syncListboxHostAttributes",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "syncListboxOptions",
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -9362,6 +9722,15 @@
               },
               "description": "How the checkboxes are laid out in the group.",
               "fieldName": "layout"
+            },
+            {
+              "name": "listbox",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Presents the choices as a single-tab-stop listbox with arrow-key navigation.",
+              "fieldName": "listbox"
             },
             {
               "name": "name",
@@ -10217,6 +10586,11 @@
             },
             {
               "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
               "name": "getInitialFormValue",
               "privacy": "protected",
               "return": {
@@ -10289,6 +10663,11 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxLabelClick",
+              "privacy": "protected"
             },
             {
               "kind": "field",

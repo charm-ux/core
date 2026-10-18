@@ -88,6 +88,45 @@ export const AlternativeDelimiter: Story = {
   },
 };
 
+export const Listbox: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+        <ch-checkbox value="sports">Sports</ch-checkbox>
+        <ch-checkbox value="cooking">Cooking</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    'help-text': 'Use the arrow keys to move and Space to select.',
+    listbox: true,
+  },
+};
+
+export const ListboxWithPreselectedValues: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+        <ch-checkbox value="sports">Sports</ch-checkbox>
+        <ch-checkbox value="cooking">Cooking</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    'help-text': 'Use arrow keys to move, then Space to select.',
+    listbox: true,
+    valueAsArray: ['music', 'sports'],
+  },
+};
+
 export const Required: Story = {
   render: args =>
     template(
@@ -133,6 +172,37 @@ export const Layout: Story = {
   args: {
     label: 'Interests',
     layout: 'horizontal',
+  },
+};
+
+export const HorizontalStackedLayout: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books">Books</ch-checkbox>
+        <ch-checkbox value="music">Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
+    layout: 'horizontal-stacked',
+  },
+};
+
+export const DisabledOptionsOnly: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-checkbox value="books" checked>Books</ch-checkbox>
+        <ch-checkbox value="music" disabled>Music</ch-checkbox>
+        <ch-checkbox value="travel">Travel</ch-checkbox>
+      `
+    ),
+  args: {
+    label: 'Interests',
   },
 };
 

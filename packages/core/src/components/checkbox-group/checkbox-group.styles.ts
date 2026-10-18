@@ -1,5 +1,5 @@
 import { css } from 'lit';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   ::slotted(*) {
@@ -32,5 +32,11 @@ export default css`
   :host([layout='horizontal']) .checkboxes,
   :host([layout='horizontal-stacked']) .checkboxes {
     flex-direction: row;
+  }
+
+  :host([listbox]:focus-visible) ::slotted([data-listbox-active]) {
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 `;
