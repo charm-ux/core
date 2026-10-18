@@ -21,7 +21,7 @@ describe('checkbox-group performance', () => {
         return element;
       },
       update: (element, iteration) => {
-        (element as InstanceType<typeof coreCheckboxGroup>).value = [String(iteration % 5)];
+        (element as InstanceType<typeof coreCheckboxGroup>).valueAsArray = [String(iteration % 5)];
       },
     });
   });

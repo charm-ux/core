@@ -72,6 +72,10 @@ export class CoreCheckbox extends CharmFormControlElement {
   @state()
   public forceReadonly = false;
 
+  /** @internal Hides the native checkbox from assistive technology when exposed as a listbox option. */
+  @state()
+  public listboxOption = false;
+
   @query('.input')
   protected override input?: HTMLInputElement;
 
@@ -89,9 +93,19 @@ export class CoreCheckbox extends CharmFormControlElement {
     return !!(this.readonly || this.forceReadonly);
   }
 
+  public override connectedCallback() {
+    super.connectedCallback();
+    this.internals.setFormValue(this.getFormAssociatedValue());
+  }
+
   /** @internal Click the checkbox. */
   public override click() {
     if (this.effectivelyDisabled || this.effectivelyReadonly) {
+      return;
+    }
+
+    if (this.listboxOption) {
+      this.handleClick();
       return;
     }
 
@@ -119,8 +133,18 @@ export class CoreCheckbox extends CharmFormControlElement {
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
 
-    if (changedProperties.has('checked') || changedProperties.has('forceDisabled')) {
-      this.internals.setFormValue(this.effectivelyDisabled ? null : this.checked ? this.value || 'on' : null);
+    if (this.listboxOption) {
+      this.setAttribute('aria-selected', String(this.checked));
+      if (this.effectivelyDisabled) this.setAttribute('aria-disabled', 'true');
+      else this.removeAttribute('aria-disabled');
+    }
+
+    if (
+      changedProperties.has('checked') ||
+      changedProperties.has('forceDisabled') ||
+      changedProperties.has('listboxOption')
+    ) {
+      this.internals.setFormValue(this.getFormAssociatedValue());
       this.validate();
     }
     if (changedProperties.has('forceDisabled')) {
@@ -130,8 +154,12 @@ export class CoreCheckbox extends CharmFormControlElement {
       this.validate();
     }
     if (changedProperties.has('value')) {
-      this.internals.setFormValue(this.checked ? this.value || 'on' : null);
+      this.internals.setFormValue(this.getFormAssociatedValue());
     }
+  }
+
+  protected getFormAssociatedValue() {
+    return this.effectivelyDisabled || this.listboxOption ? null : this.checked ? this.value || 'on' : null;
   }
 
   protected validate() {
@@ -153,6 +181,10 @@ export class CoreCheckbox extends CharmFormControlElement {
     this.checked = !this.checked;
     this.indeterminate = false;
     this.emitChange();
+  }
+
+  protected handleListboxLabelClick() {
+    if (this.listboxOption) this.handleClick();
   }
 
   /** Generates the HTML template for the checkbox'S checked icon and indeterminate icon. */
@@ -180,6 +212,7 @@ export class CoreCheckbox extends CharmFormControlElement {
         <label class="checkbox form-control-label" part="checkbox">
           <input
             aria-describedby=${ifDefined(this.describedBy)}
+            aria-hidden=${ifDefined(this.listboxOption ? 'true' : undefined)}
             aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
             aria-invalid=${this.invalid}
             class="input"
@@ -188,7 +221,7 @@ export class CoreCheckbox extends CharmFormControlElement {
             value=${ifDefined(this.value)}
             ?autofocus=${this.autofocus}
             ?checked=${this.checked}
-            ?disabled=${this.effectivelyDisabled}
+            ?disabled=${this.effectivelyDisabled || this.listboxOption}
             ?readonly=${this.effectivelyReadonly}
             ?required=${this.required}
             .indeterminate=${live(this.indeterminate ?? false)}
@@ -196,7 +229,7 @@ export class CoreCheckbox extends CharmFormControlElement {
             @invalid=${(e: Event) => e.preventDefault()}
           />
 
-          <span class="control-label-wrapper" part="checkbox-visual-base">
+          <span class="control-label-wrapper" part="checkbox-visual-base" @click=${this.handleListboxLabelClick}>
             ${this.iconTemplate()}
 
             <span
