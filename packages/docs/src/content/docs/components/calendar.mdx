@@ -1,0 +1,130 @@
+---
+title: Calendar
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Calendar is an accessible date-selection grid for inline forms and date-picker inputs. It supports single dates, continuous ranges, and multiple separate dates. The month and year remain directly editable in the heading; use the chevrons to change months. Adjacent-month dates remain blank, and the date grid supports keyboard navigation.
+
+## Single date
+
+The `value` uses an ISO date-only string (`YYYY-MM-DD`). When no value is set, focus starts on today or the date supplied with `focus-date`.
+
+<code-bubble>
+
+```html
+<ch-calendar value="2025-06-15"></ch-calendar>
+```
+
+</code-bubble>
+
+## Date range
+
+Set `selection-mode="range"`. A range is represented in JavaScript by a two-item array containing its start and end dates. The string attribute form uses `start/end`.
+
+<code-bubble>
+
+```html
+<ch-calendar selection-mode="range" value="2025-06-10/2025-06-15"></ch-calendar>
+```
+
+</code-bubble>
+
+The first selection starts a range; the second completes it. Selecting again after a complete range starts a new range.
+
+## Multiple separate dates
+
+Set `selection-mode="multiple"`. Selected dates are represented as a sorted array in JavaScript. The string attribute form uses comma-separated ISO dates.
+
+<code-bubble>
+
+```html
+<ch-calendar selection-mode="multiple" value="2025-06-10,2025-06-15"></ch-calendar>
+```
+
+</code-bubble>
+
+In multiple mode, selecting a date toggles it in the selection.
+
+## Controlled usage
+
+The `input` event fires when a selection changes. The `change` event fires when the selection is committed; in range mode, it fires after the end date is selected. Both events include the `value` and `selectionMode` in `event.detail`.
+
+```js
+const calendar = document.querySelector('ch-calendar');
+
+calendar.addEventListener('change', event => {
+  calendar.value = event.detail.value;
+});
+
+// Set array values through the JavaScript property.
+calendar.selectionMode = 'multiple';
+calendar.value = ['2025-06-10', '2025-06-15'];
+```
+
+## Keyboard navigation
+
+| Key                         | Action                                                            |
+| --------------------------- | ----------------------------------------------------------------- |
+| Arrow keys                  | Move focus by one day or one week; unavailable dates are skipped. |
+| Home / End                  | Move focus to the first / last day of the current week.           |
+| Page Up / Page Down         | Move to the previous / next month.                                |
+| Shift + Page Up / Page Down | Move to the previous / next year.                                 |
+| Enter / Space               | Select the focused date.                                          |
+
+Only the active date is in the tab order. Left and right arrow behavior follows the text direction.
+
+## Bounds and unavailable dates
+
+Use `min` and `max` to limit the selectable date range. `disabled-dates` accepts comma- or whitespace-separated ISO dates; `disabled-week-days` accepts weekday numbers from `0` (Sunday) to `6` (Saturday).
+
+```html
+<ch-calendar
+  min="2025-06-01"
+  max="2025-06-30"
+  disabled-dates="2025-06-12 2025-06-19"
+  disabled-week-days="0,6"
+></ch-calendar>
+```
+
+## Localization
+
+Set `locale` or the inherited `lang` attribute to localize month, weekday, and full-date labels. The first weekday follows the locale; set `first-day-of-week` (0–6) to override it. Use the label slots to translate the month, year, and navigation controls.
+
+```html
+<ch-calendar locale="fr-FR" first-day-of-week="1">
+  <span slot="previous-month-label">Mois précédent</span>
+  <span slot="next-month-label">Mois suivant</span>
+  <span slot="month-label">Mois</span>
+  <span slot="year-label">Année</span>
+</ch-calendar>
+```
+
+## Custom day content
+
+Add a `day-YYYY-MM-DD` slot for date-specific content. The date button keeps its full localized accessible name.
+
+```html
+<ch-calendar focus-date="2025-06-15">
+  <span slot="day-2025-06-18" aria-hidden="true">•</span>
+</ch-calendar>
+```
+
+## Styling
+
+Selected dates, range interiors, today, unavailable dates, and outside-month dates expose separate CSS parts. Theme tokens can be overridden with CSS custom properties:
+
+```css
+ch-calendar {
+  --charm-calendar-selected-bg-color: rebeccapurple;
+  --charm-calendar-day-size: 2.75rem;
+}
+```
+
+## API
+
+The calendar is not form-associated; use its `value` property and events to connect it to a form. A date-picker input can compose it inside a popover and manage form submission and validation.
+
+## Component metadata
+
+<ComponentMetadata />

@@ -417,6 +417,83 @@ const charmTokensBase = defineTokens(
         gap: primitive('spacing', 'xs'),
       },
 
+      // Calendar
+      calendar: {
+        day: {
+          size: '32px',
+          rowSize: '40px',
+          borderRadius: primitive('borderRadius', 'md'),
+          fontSize: primitive('fontSize', 'sm'),
+          fgColor: semantic('text', 'primary'),
+          hover: {
+            bgColor: semantic('surface', 'secondary'),
+            fgColor: semantic('text', 'primary'),
+          },
+          active: {
+            bgColor: semantic('surface', 'tertiary'),
+            fgColor: semantic('text', 'primary'),
+          },
+          selected: {
+            bgColor: semantic('action', 'primary', 'color'),
+            borderColor: semantic('action', 'primary', 'color'),
+            fgColor: primitive('color', 'white'),
+            hover: {
+              bgColor: semantic('action', 'primary', 'hover', 'color'),
+              borderColor: semantic('action', 'primary', 'hover', 'color'),
+              fgColor: primitive('color', 'white'),
+            },
+            active: {
+              bgColor: semantic('action', 'primary', 'active', 'color'),
+              borderColor: semantic('action', 'primary', 'active', 'color'),
+              fgColor: primitive('color', 'white'),
+            },
+          },
+          range: {
+            bgColor: semantic('surface', 'tertiary'),
+            fgColor: semantic('text', 'primary'),
+          },
+          today: {
+            borderColor: semantic('action', 'primary', 'color'),
+          },
+          disabled: {
+            bgColor: primitive('color', 'transparent'),
+            fgColor: semantic('disabled', 'fgColor'),
+            cursor: 'not-allowed',
+          },
+        },
+        weekday: {
+          fgColor: semantic('text', 'secondary'),
+          fontSize: primitive('fontSize', 'sm'),
+        },
+        heading: {
+          fgColor: semantic('text', 'primary'),
+          fontSize: primitive('fontSize', 'lg'),
+          disabled: {
+            bgColor: primitive('color', 'transparent'),
+            fgColor: semantic('disabled', 'fgColor'),
+            cursor: 'not-allowed',
+          },
+          navigation: {
+            fgColor: semantic('text', 'primary'),
+            borderRadius: primitive('borderRadius', 'md'),
+            fontSize: primitive('fontSize', 'lg'),
+            hover: {
+              bgColor: semantic('surface', 'secondary'),
+              fgColor: semantic('text', 'primary'),
+            },
+            active: {
+              bgColor: semantic('surface', 'tertiary'),
+              fgColor: semantic('text', 'primary'),
+            },
+            disabled: {
+              bgColor: primitive('color', 'transparent'),
+              fgColor: semantic('disabled', 'fgColor'),
+              cursor: 'not-allowed',
+            },
+          },
+        },
+      },
+
       // Breadcrumb
       breadcrumb: {
         item: {

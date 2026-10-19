@@ -7435,6 +7435,1334 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/calendar/calendar.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An accessible calendar grid for selecting a date, a date range, or multiple separate dates.\nThe calendar is designed to work inline in forms and as the calendar surface inside a date-picker input.",
+          "name": "CoreCalendar",
+          "cssProperties": [
+            {
+              "description": "The default text color for day buttons.",
+              "name": "--charm-calendar-day-fg-color"
+            },
+            {
+              "description": "The background color of hovered, unselected day buttons.",
+              "name": "--charm-calendar-day-hover-bg-color"
+            },
+            {
+              "description": "The text color of hovered, unselected day buttons.",
+              "name": "--charm-calendar-day-hover-fg-color"
+            },
+            {
+              "description": "The background color of pressed, unselected day buttons.",
+              "name": "--charm-calendar-day-active-bg-color"
+            },
+            {
+              "description": "The text color of pressed, unselected day buttons.",
+              "name": "--charm-calendar-day-active-fg-color"
+            },
+            {
+              "description": "The background color of selected day buttons.",
+              "name": "--charm-calendar-day-selected-bg-color"
+            },
+            {
+              "description": "The border color of selected day buttons.",
+              "name": "--charm-calendar-day-selected-border-color"
+            },
+            {
+              "description": "The text color of selected day buttons.",
+              "name": "--charm-calendar-day-selected-fg-color"
+            },
+            {
+              "description": "The background color of hovered selected day buttons.",
+              "name": "--charm-calendar-day-selected-hover-bg-color"
+            },
+            {
+              "description": "The border color of hovered selected day buttons.",
+              "name": "--charm-calendar-day-selected-hover-border-color"
+            },
+            {
+              "description": "The text color of hovered selected day buttons.",
+              "name": "--charm-calendar-day-selected-hover-fg-color"
+            },
+            {
+              "description": "The background color of pressed selected day buttons.",
+              "name": "--charm-calendar-day-selected-active-bg-color"
+            },
+            {
+              "description": "The border color of pressed selected day buttons.",
+              "name": "--charm-calendar-day-selected-active-border-color"
+            },
+            {
+              "description": "The text color of pressed selected day buttons.",
+              "name": "--charm-calendar-day-selected-active-fg-color"
+            },
+            {
+              "description": "The background color of day buttons inside a selected range.",
+              "name": "--charm-calendar-day-range-bg-color"
+            },
+            {
+              "description": "The text color of day buttons inside a selected range.",
+              "name": "--charm-calendar-day-range-fg-color"
+            },
+            {
+              "description": "The border color for today's day button.",
+              "name": "--charm-calendar-day-today-border-color"
+            },
+            {
+              "description": "The background color of unavailable day buttons.",
+              "name": "--charm-calendar-day-disabled-bg-color"
+            },
+            {
+              "description": "The text color for unavailable day buttons.",
+              "name": "--charm-calendar-day-disabled-fg-color"
+            },
+            {
+              "description": "The cursor for unavailable day buttons.",
+              "name": "--charm-calendar-day-disabled-cursor"
+            },
+            {
+              "description": "The text color for weekday headings.",
+              "name": "--charm-calendar-weekday-fg-color"
+            },
+            {
+              "description": "The weekday heading font size.",
+              "name": "--charm-calendar-weekday-font-size"
+            },
+            {
+              "description": "The text color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-fg-color"
+            },
+            {
+              "description": "The month navigation button font size.",
+              "name": "--charm-calendar-heading-navigation-font-size"
+            },
+            {
+              "description": "The border radius of previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-border-radius"
+            },
+            {
+              "description": "The hover background color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-hover-bg-color"
+            },
+            {
+              "description": "The hover text color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-hover-fg-color"
+            },
+            {
+              "description": "The active background color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-active-bg-color"
+            },
+            {
+              "description": "The active text color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-active-fg-color"
+            },
+            {
+              "description": "The disabled background color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-disabled-bg-color"
+            },
+            {
+              "description": "The disabled text color for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-disabled-fg-color"
+            },
+            {
+              "description": "The disabled cursor for previous/next month buttons.",
+              "name": "--charm-calendar-heading-navigation-disabled-cursor"
+            },
+            {
+              "description": "The text color for the month/year controls.",
+              "name": "--charm-calendar-heading-fg-color"
+            },
+            {
+              "description": "The month/year heading font size.",
+              "name": "--charm-calendar-heading-font-size"
+            },
+            {
+              "description": "The disabled background color for month/year inputs.",
+              "name": "--charm-calendar-heading-disabled-bg-color"
+            },
+            {
+              "description": "The disabled text color for month/year inputs.",
+              "name": "--charm-calendar-heading-disabled-fg-color"
+            },
+            {
+              "description": "The disabled cursor for month/year inputs.",
+              "name": "--charm-calendar-heading-disabled-cursor"
+            },
+            {
+              "description": "The day button border radius.",
+              "name": "--charm-calendar-day-border-radius"
+            },
+            {
+              "description": "The inline and block size of day buttons.",
+              "name": "--charm-calendar-day-size"
+            },
+            {
+              "description": "The block size of a calendar week row.",
+              "name": "--charm-calendar-day-row-size"
+            },
+            {
+              "description": "The calendar's internal padding.",
+              "name": "--charm-calendar-padding"
+            },
+            {
+              "description": "The day button font size.",
+              "name": "--charm-calendar-day-font-size"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The calendar wrapper.",
+              "name": "calendar-base"
+            },
+            {
+              "description": "A date button.",
+              "name": "day"
+            },
+            {
+              "description": "A disabled date.",
+              "name": "day-disabled"
+            },
+            {
+              "description": "A date inside a selected range.",
+              "name": "day-range-inner"
+            },
+            {
+              "description": "A selected date or range endpoint.",
+              "name": "day-selected"
+            },
+            {
+              "description": "Today's date.",
+              "name": "day-today"
+            },
+            {
+              "description": "The date grid.",
+              "name": "grid"
+            },
+            {
+              "description": "The month/year controls and navigation buttons.",
+              "name": "header"
+            },
+            {
+              "description": "The month selector.",
+              "name": "month-select"
+            },
+            {
+              "description": "The next-month button.",
+              "name": "next"
+            },
+            {
+              "description": "The previous-month button.",
+              "name": "previous"
+            },
+            {
+              "description": "A weekday heading.",
+              "name": "weekday"
+            },
+            {
+              "description": "The year input.",
+              "name": "year-input"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Optional content rendered inside a matching date cell.",
+              "name": "day-YYYY-MM-DD"
+            },
+            {
+              "description": "Translated label for the month selector.",
+              "name": "month-label"
+            },
+            {
+              "description": "Translated accessible name for the next-month button.",
+              "name": "next-month-label"
+            },
+            {
+              "description": "Translated accessible name for the previous-month button.",
+              "name": "previous-month-label"
+            },
+            {
+              "description": "Translated label for the year field.",
+              "name": "year-label"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "attribute": "autofocus",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              },
+              "default": "'calendar'"
+            },
+            {
+              "kind": "field",
+              "name": "calendarDays",
+              "type": {
+                "text": "(Date | undefined)[]"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "calendarTemplate",
+              "privacy": "protected",
+              "description": "Generates the calendar wrapper."
+            },
+            {
+              "kind": "field",
+              "name": "changeEventDetail",
+              "type": {
+                "text": "CalendarChangeEventDetail"
+              },
+              "privacy": "private",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "changeMonth",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "amount",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "currentLocale",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "currentMonth",
+              "privacy": "private"
+            },
+            {
+              "kind": "method",
+              "name": "dayTemplate",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date | undefined"
+                  }
+                },
+                {
+                  "name": "selectedDates",
+                  "type": {
+                    "text": "Date[]"
+                  }
+                },
+                {
+                  "name": "todayValue",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "dateFormatter",
+                  "type": {
+                    "text": "Intl.DateTimeFormat"
+                  }
+                }
+              ],
+              "description": "Generates one date cell."
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
+              },
+              "privacy": "public",
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Prevents date selection and calendar navigation.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabledDates",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable dates in `YYYY-MM-DD` format.",
+              "attribute": "disabled-dates"
+            },
+            {
+              "kind": "field",
+              "name": "disabledDateSet",
+              "privacy": "private",
+              "default": "new Set<string>()"
+            },
+            {
+              "kind": "field",
+              "name": "disabledWeekDays",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable weekdays, from 0 (Sunday) to 6 (Saturday).",
+              "attribute": "disabled-week-days"
+            },
+            {
+              "kind": "field",
+              "name": "disabledWeekDaySet",
+              "privacy": "private",
+              "default": "new Set<number>()"
+            },
+            {
+              "kind": "method",
+              "name": "emitChange",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "emitInput",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "firstDayOfWeek",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "public",
+              "description": "The first weekday, from 0 (Sunday) to 6 (Saturday). Defaults to the locale's first weekday.",
+              "attribute": "first-day-of-week"
+            },
+            {
+              "kind": "field",
+              "name": "firstWeekday",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "focus",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "FocusOptions"
+                  }
+                }
+              ],
+              "description": "Focuses the currently active date in the grid."
+            },
+            {
+              "kind": "field",
+              "name": "focusableEventOptions",
+              "type": {
+                "text": "CustomEventInit"
+              },
+              "privacy": "protected",
+              "default": "{}",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "focusDate",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The date initially focused when the calendar has no selected value.",
+              "attribute": "focus-date"
+            },
+            {
+              "kind": "field",
+              "name": "focusedDate",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "focusedDateButton",
+              "type": {
+                "text": "HTMLButtonElement | null"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "goToDate",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string | Date"
+                  }
+                }
+              ],
+              "description": "Moves the visible calendar and keyboard focus to a date without selecting it."
+            },
+            {
+              "kind": "method",
+              "name": "gridTemplate",
+              "privacy": "protected",
+              "description": "Generates the weekday headings and month-sized date grid."
+            },
+            {
+              "kind": "field",
+              "name": "hadFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleBlur",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleDayClick",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleDayKeyDown",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                },
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleFocus",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleMonthChange",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleNextMonth",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handlePreviousMonth",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleYearChange",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "headerTemplate",
+              "privacy": "protected",
+              "description": "Generates the month and year controls."
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "initializeFocusedDate",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "preferValue",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "isDateDisabled",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "isMonthOutsideRange",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "month",
+                  "type": {
+                    "text": "Date"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "isSelected",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                },
+                {
+                  "name": "selected",
+                  "default": "this.selectedDates"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "locale",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The locale used to format month, weekday, and date labels. Defaults to the inherited `lang` or browser locale.",
+              "attribute": "locale"
+            },
+            {
+              "kind": "field",
+              "name": "max",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The latest selectable date, in `YYYY-MM-DD` format.",
+              "attribute": "max"
+            },
+            {
+              "kind": "field",
+              "name": "maxDate",
+              "type": {
+                "text": "Date | undefined"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "min",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The earliest selectable date, in `YYYY-MM-DD` format.",
+              "attribute": "min"
+            },
+            {
+              "kind": "field",
+              "name": "minDate",
+              "type": {
+                "text": "Date | undefined"
+              },
+              "privacy": "private"
+            },
+            {
+              "kind": "field",
+              "name": "monthLabel",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "monthOptions",
+              "type": {
+                "text": "{ value: number; label: string }[]"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "pageDate",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "Date"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                },
+                {
+                  "name": "amount",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "rangePart",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                },
+                {
+                  "name": "selected",
+                  "type": {
+                    "text": "Date[]"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "readOnly",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Prevents date selection while allowing navigation.",
+              "attribute": "readonly",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "any"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selectedDates",
+              "type": {
+                "text": "Date[]"
+              },
+              "privacy": "private",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "selectionMode",
+              "type": {
+                "text": "CalendarSelectionMode"
+              },
+              "privacy": "public",
+              "default": "'single'",
+              "description": "Whether the calendar selects one date, a continuous range, or separate dates.",
+              "attribute": "selection-mode",
+              "reflects": true,
+              "parsedType": {
+                "text": "'single' | 'range' | 'multiple'"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setFocusedDate",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "date",
+                  "type": {
+                    "text": "Date"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true }",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "skipValueFocusSync",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "useBlurHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "useFocusHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "CalendarValue | undefined"
+              },
+              "privacy": "public",
+              "description": "The selected date (`YYYY-MM-DD`) or date list. Range values contain the start and end dates.",
+              "attribute": "value",
+              "parsedType": {
+                "text": "string | string[] | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "weekdayFormat",
+              "type": {
+                "text": "'narrow' | 'short' | 'long'"
+              },
+              "privacy": "public",
+              "default": "'short'",
+              "description": "The visible format for weekday headings.",
+              "attribute": "weekday-format"
+            },
+            {
+              "kind": "field",
+              "name": "weekdayOptions",
+              "type": {
+                "text": "{ label: string; fullLabel: string }[]"
+              },
+              "privacy": "private",
+              "readonly": true
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "CalendarChangeEventDetail"
+              },
+              "description": "Emitted when a selection is committed. In range mode, this fires after the second date is selected.",
+              "name": "change",
+              "parsedType": {
+                "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
+              }
+            },
+            {
+              "type": {
+                "text": "CalendarChangeEventDetail"
+              },
+              "description": "Emitted when a selection changes during interaction.",
+              "name": "input",
+              "parsedType": {
+                "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
+              }
+            },
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "fieldName": "autofocus",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "name": "dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | ''"
+              },
+              "description": "The dir global attribute is an enumerated attribute that indicates the directionality of the element's text.\n\nMirrors native `HTMLElement.dir`: reading returns the attribute's value (or `''` when\nunset) and does no layout or style work, and writing reflects back to the attribute. Use\nresolvedDir for the effective `'ltr' | 'rtl'` direction, including inherited directionality.",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Prevents date selection and calendar navigation.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "disabled-dates",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable dates in `YYYY-MM-DD` format.",
+              "fieldName": "disabledDates"
+            },
+            {
+              "name": "disabled-week-days",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable weekdays, from 0 (Sunday) to 6 (Saturday).",
+              "fieldName": "disabledWeekDays"
+            },
+            {
+              "name": "first-day-of-week",
+              "type": {
+                "text": "number | undefined"
+              },
+              "description": "The first weekday, from 0 (Sunday) to 6 (Saturday). Defaults to the locale's first weekday.",
+              "fieldName": "firstDayOfWeek"
+            },
+            {
+              "name": "focus-date",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The date initially focused when the calendar has no selected value.",
+              "fieldName": "focusDate"
+            },
+            {
+              "name": "locale",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The locale used to format month, weekday, and date labels. Defaults to the inherited `lang` or browser locale.",
+              "fieldName": "locale"
+            },
+            {
+              "name": "max",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The latest selectable date, in `YYYY-MM-DD` format.",
+              "fieldName": "max"
+            },
+            {
+              "name": "min",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The earliest selectable date, in `YYYY-MM-DD` format.",
+              "fieldName": "min"
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Prevents date selection while allowing navigation.",
+              "fieldName": "readOnly"
+            },
+            {
+              "name": "selection-mode",
+              "type": {
+                "text": "CalendarSelectionMode"
+              },
+              "default": "'single'",
+              "description": "Whether the calendar selects one date, a continuous range, or separate dates.",
+              "fieldName": "selectionMode",
+              "parsedType": {
+                "text": "'single' | 'range' | 'multiple'"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "CalendarValue | undefined"
+              },
+              "description": "The selected date (`YYYY-MM-DD`) or date list. Range values contain the start and end dates.",
+              "fieldName": "value",
+              "parsedType": {
+                "text": "string | string[] | undefined"
+              }
+            },
+            {
+              "name": "weekday-format",
+              "type": {
+                "text": "'narrow' | 'short' | 'long'"
+              },
+              "default": "'short'",
+              "description": "The visible format for weekday headings.",
+              "fieldName": "weekdayFormat"
+            }
+          ],
+          "superclass": {
+            "name": "CharmFocusableElement",
+            "module": "/src/base/focusable-element/charm-focusable-element.js"
+          },
+          "tagName": "ch-calendar",
+          "customElement": true,
+          "since": {
+            "name": "0.6.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            }
+          ],
+          "modulePath": "src/components/calendar/calendar.ts"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreCalendar",
+          "declaration": {
+            "name": "CoreCalendar",
+            "module": "src/components/calendar/calendar.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreCalendar",
+            "module": "src/components/calendar/calendar.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/card/card.ts",
       "declarations": [
         {
@@ -13285,7 +14613,7 @@
               "privacy": "public",
               "attribute": "type",
               "parsedType": {
-                "text": "'number' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
+                "text": "'number' | 'range' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | undefined"
               }
             },
             {
@@ -13722,7 +15050,7 @@
               },
               "fieldName": "type",
               "parsedType": {
-                "text": "'number' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'range' | undefined"
+                "text": "'number' | 'range' | 'date' | 'datetime-local' | 'email' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | undefined"
               }
             },
             {

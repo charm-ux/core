@@ -34,3 +34,4 @@ export * from './text-area/text-area.js';
 export * from './scoped-styles/scoped-styles.js';
 export * from './tooltip/tooltip.js';
 export * from './alert/alert.js';
+export * from './calendar/calendar.js';
