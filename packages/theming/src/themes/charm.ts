@@ -494,6 +494,76 @@ const charmTokensBase = defineTokens(
         },
       },
 
+      // Date Picker
+      datePicker: {
+        popover: {
+          maxWidth: '320px',
+          bgColor: semantic('surface', 'primary'),
+          border: `${primitive('borderWidth', 'thin')} solid ${semantic('border', 'primary')}`,
+          borderRadius: primitive('borderRadius', 'md'),
+          padding: primitive('spacing', 'sm'),
+        },
+        footer: {
+          clear: {
+            fgColor: semantic('text', 'secondary'),
+            hover: {
+              bgColor: semantic('surface', 'secondary'),
+              fgColor: semantic('text', 'primary'),
+            },
+            active: {
+              bgColor: semantic('surface', 'tertiary'),
+              fgColor: semantic('text', 'primary'),
+            },
+          },
+          today: {
+            fgColor: semantic('action', 'primary', 'color'),
+            hover: {
+              bgColor: semantic('surface', 'secondary'),
+              fgColor: semantic('action', 'primary', 'hover', 'color'),
+            },
+            active: {
+              bgColor: semantic('surface', 'tertiary'),
+              fgColor: semantic('action', 'primary', 'active', 'color'),
+            },
+          },
+        },
+      },
+
+      // Date Range Picker
+      dateRangePicker: {
+        popover: {
+          maxWidth: '320px',
+          bgColor: semantic('surface', 'primary'),
+          border: `${primitive('borderWidth', 'thin')} solid ${semantic('border', 'primary')}`,
+          borderRadius: primitive('borderRadius', 'md'),
+          padding: primitive('spacing', 'sm'),
+        },
+        footer: {
+          clear: {
+            fgColor: semantic('text', 'secondary'),
+            hover: {
+              bgColor: semantic('surface', 'secondary'),
+              fgColor: semantic('text', 'primary'),
+            },
+            active: {
+              bgColor: semantic('surface', 'tertiary'),
+              fgColor: semantic('text', 'primary'),
+            },
+          },
+          today: {
+            fgColor: semantic('action', 'primary', 'color'),
+            hover: {
+              bgColor: semantic('surface', 'secondary'),
+              fgColor: semantic('action', 'primary', 'hover', 'color'),
+            },
+            active: {
+              bgColor: semantic('surface', 'tertiary'),
+              fgColor: semantic('action', 'primary', 'active', 'color'),
+            },
+          },
+        },
+      },
+
       // Breadcrumb
       breadcrumb: {
         item: {

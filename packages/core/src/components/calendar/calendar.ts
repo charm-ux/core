@@ -72,6 +72,12 @@ function compareDates(first: Date, second: Date): number {
   return first.getTime() - second.getTime();
 }
 
+function rangeLengthDays(first: Date, second: Date): number {
+  const start = compareDates(first, second) <= 0 ? first : second;
+  const end = compareDates(first, second) <= 0 ? second : first;
+  return Math.floor((end.getTime() - start.getTime()) / 86_400_000) + 1;
+}
+
 function todayDate(): Date {
   const today = new Date();
   return createDate(today.getFullYear(), today.getMonth(), today.getDate());
@@ -196,10 +202,6 @@ export class CoreCalendar extends CharmFocusableElement {
   @property({ attribute: 'disabled-week-days' })
   public disabledWeekDays = '';
 
-  /** The locale used to format month, weekday, and date labels. Defaults to the inherited `lang` or browser locale. */
-  @property()
-  public locale?: string;
-
   /** The first weekday, from 0 (Sunday) to 6 (Saturday). Defaults to the locale's first weekday. */
   @property({ attribute: 'first-day-of-week', type: Number })
   public firstDayOfWeek?: number;
@@ -207,6 +209,14 @@ export class CoreCalendar extends CharmFocusableElement {
   /** The visible format for weekday headings. */
   @property({ attribute: 'weekday-format' })
   public weekdayFormat: 'narrow' | 'short' | 'long' = 'short';
+
+  /** The minimum allowed range length in days, inclusive of both start and end dates. `0` disables this constraint. */
+  @property({ attribute: 'min-range', type: Number })
+  public minRange = 0;
+
+  /** The maximum allowed range length in days, inclusive of both start and end dates. `0` disables this constraint. */
+  @property({ attribute: 'max-range', type: Number })
+  public maxRange = 0;
 
   /** Prevents date selection and calendar navigation. */
   @property({ type: Boolean, reflect: true })
@@ -237,7 +247,7 @@ export class CoreCalendar extends CharmFocusableElement {
   }
 
   private get currentLocale(): string {
-    return this.locale || this.lang || navigator.language || 'en';
+    return this.lang || navigator.language || 'en';
   }
 
   private get firstWeekday(): number {
@@ -465,7 +475,7 @@ export class CoreCalendar extends CharmFocusableElement {
     const isoDate = toIsoDate(date);
     const selected = this.isSelected(date, selectedDates);
     const isToday = isoDate === todayValue;
-    const isDisabled = this.isDateDisabled(date);
+    const isDisabled = this.isDateDisabled(date, selectedDates);
     const rangePart = this.rangePart(date, selectedDates);
     const parts = [
       'day',
@@ -508,7 +518,9 @@ export class CoreCalendar extends CharmFocusableElement {
 
   /** Generates the calendar wrapper. */
   protected calendarTemplate() {
-    return html`<div class="calendar-base" part="calendar-base">${this.headerTemplate()} ${this.gridTemplate()}</div>`;
+    return html`<div class="calendar-base" part="calendar-base" lang=${this.currentLocale}>
+      ${this.headerTemplate()} ${this.gridTemplate()}
+    </div>`;
   }
 
   protected override render() {
@@ -523,17 +535,32 @@ export class CoreCalendar extends CharmFocusableElement {
     this.setFocusedDate(initialDate);
   }
 
-  private isDateDisabled(date: Date): boolean {
+  private isDateDisabled(date: Date, selected = this.selectedDates): boolean {
     if (this.disabled) return true;
 
     const isoDate = toIsoDate(date);
 
-    return (
+    const blockedByBaseRules =
       (this.minDate !== undefined && compareDates(date, this.minDate) < 0) ||
       (this.maxDate !== undefined && compareDates(date, this.maxDate) > 0) ||
       this.disabledDateSet.has(isoDate) ||
-      this.disabledWeekDaySet.has(date.getUTCDay())
-    );
+      this.disabledWeekDaySet.has(date.getUTCDay());
+
+    if (blockedByBaseRules) return true;
+
+    if (this.selectionMode !== 'range' || selected.length !== 1) return false;
+
+    const anchor = selected[0]!;
+    if (toIsoDate(anchor) === isoDate) return false;
+
+    const length = rangeLengthDays(anchor, date);
+    const minRange = Number.isFinite(this.minRange) && this.minRange > 0 ? this.minRange : 0;
+    const maxRange = Number.isFinite(this.maxRange) && this.maxRange > 0 ? this.maxRange : 0;
+
+    if (minRange > 0 && length < minRange) return true;
+    if (maxRange > 0 && length > maxRange) return true;
+
+    return false;
   }
 
   private setFocusedDate(date: Date): void {
@@ -671,12 +698,12 @@ export class CoreCalendar extends CharmFocusableElement {
     event.preventDefault();
     const step = compareDates(target, dateValue) >= 0 ? 1 : -1;
     let attempts = 0;
-    while (this.isDateDisabled(target) && attempts < 366) {
+    while (this.isDateDisabled(target, this.selectedDates) && attempts < 366) {
       target = addDays(target, step);
       attempts++;
     }
 
-    if (this.isDateDisabled(target)) return;
+    if (this.isDateDisabled(target, this.selectedDates)) return;
     this.setFocusedDate(target);
     void this.updateComplete.then(() => this.focusedDateButton?.focus());
   }
@@ -691,7 +718,7 @@ export class CoreCalendar extends CharmFocusableElement {
   }
 
   private handleDayClick(date: Date): void {
-    if (this.disabled || this.readOnly || this.isDateDisabled(date)) return;
+    if (this.disabled || this.readOnly || this.isDateDisabled(date, this.selectedDates)) return;
 
     const isoDate = toIsoDate(date);
     const selected = this.selectedDates.map(toIsoDate);

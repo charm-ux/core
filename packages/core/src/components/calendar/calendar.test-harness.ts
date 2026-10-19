@@ -52,6 +52,42 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(this.getCell('2025-06-12').getAttribute('aria-selected')).to.equal('true');
                 },
               },
+              minRangeConstraint: {
+                description: 'blocks range endpoints shorter than min-range',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.minRange = 3;
+                  await elementUpdated(this.component);
+
+                  this.getDay('2025-06-10').click();
+                  await elementUpdated(this.component);
+
+                  const tooShort = this.getDay('2025-06-11');
+                  expect(tooShort.disabled).to.equal(true);
+
+                  this.getDay('2025-06-12').click();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-12']);
+                },
+              },
+              maxRangeConstraint: {
+                description: 'blocks range endpoints longer than max-range',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.maxRange = 3;
+                  await elementUpdated(this.component);
+
+                  this.getDay('2025-06-10').click();
+                  await elementUpdated(this.component);
+
+                  const tooLong = this.getDay('2025-06-14');
+                  expect(tooLong.disabled).to.equal(true);
+
+                  this.getDay('2025-06-12').click();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-12']);
+                },
+              },
               multipleDates: {
                 description: 'toggles independently selected dates in multiple mode',
                 test: async () => {

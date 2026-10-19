@@ -1,0 +1,217 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Date Range Picker" />
+
+# Date Range Picker
+
+Date range picker combines segmented date entry and a popup calendar for selecting a start and end date.
+
+## Basic usage
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range"></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Initial value
+
+Set `value` with two ISO dates (`YYYY-MM-DD/YYYY-MM-DD`) to pre-populate the segments and calendar.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range" value="2026-10-18/2026-10-24"></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Required, help text, and validation
+
+Use `required` with optional `help-text` for forms.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Travel dates"
+  help-text="Select a start and end date"
+  required
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Date limits
+
+Use `min` and `max` to constrain selectable dates.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range" min="2026-01-01" max="2026-12-31"></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Range length limits
+
+Use `min-range` and `max-range` to constrain how many days can be selected.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Stay" min-range="3" max-range="14"></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Focus month when opening
+
+Use `focus-date` to control the month shown first when no value is selected.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range" focus-date="2027-03-01"></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Disabled dates and weekdays
+
+Use `disabled-dates` for specific dates and `disabled-week-days` for recurring weekdays.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Date range"
+  disabled-dates="2026-07-04 2026-12-25"
+  disabled-week-days="0,6"
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Readonly and disabled
+
+`readonly` keeps the field focusable but not editable. `disabled` removes interaction.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Readonly"
+  value="2026-10-18/2026-10-24"
+  readonly
+></ch-date-range-picker>
+<ch-date-range-picker
+  label="Disabled"
+  value="2026-10-18/2026-10-24"
+  disabled
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Start and end decorations
+
+Use `start` and `end` slots for adornments.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range">
+  <span slot="start">From</span>
+  <span slot="end">To</span>
+</ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Popup placement
+
+Use `placement` and `fixed-placement` to control overlay behavior.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range" placement="top-start"></ch-date-range-picker>
+<ch-date-range-picker
+  label="Date range"
+  placement="bottom-end"
+  fixed-placement
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Calendar header and weekday options
+
+Customize weekday labels and week start.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Date range"
+  first-day-of-week="1"
+  weekday-format="long"
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Footer actions
+
+The calendar footer includes Clear and Today actions.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Date range" value="2026-10-18/2026-10-24">
+  <span slot="clear-label">Reset</span>
+  <span slot="today-label">This Week</span>
+</ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Languages
+
+The component adapts segment order, separators, and month/day labels from `lang`.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="US English"
+  lang="en-US"
+  value="2026-01-23/2026-01-30"
+></ch-date-range-picker>
+<ch-date-range-picker
+  label="French"
+  lang="fr-FR"
+  value="2026-01-23/2026-01-30"
+></ch-date-range-picker>
+<ch-date-range-picker
+  label="German"
+  lang="de-DE"
+  value="2026-01-23/2026-01-30"
+></ch-date-range-picker>
+<ch-date-range-picker
+  label="Japanese"
+  lang="ja-JP"
+  value="2026-01-23/2026-01-30"
+></ch-date-range-picker>
+<ch-date-range-picker
+  label="Arabic"
+  lang="ar-SA"
+  value="2026-01-23/2026-01-30"
+></ch-date-range-picker>
+```
+
+</code-bubble>

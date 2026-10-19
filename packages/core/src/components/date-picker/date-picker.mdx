@@ -1,0 +1,169 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Date Picker" />
+
+# Date Picker
+
+Date picker combines segmented date entry and a popup calendar for choosing one date.
+
+## Basic usage
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Initial value
+
+Set `value` with an ISO date (`YYYY-MM-DD`) to pre-populate the segments and calendar.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" value="2026-10-18"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Required, help text, and validation
+
+Use `required` with optional `help-text` for forms.
+
+<code-bubble>
+
+```html
+<ch-date-picker
+  label="Billing date"
+  help-text="Use format that matches your language"
+  required
+></ch-date-picker>
+```
+
+</code-bubble>
+
+## Date limits
+
+Use `min` and `max` to constrain selectable dates.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" min="2026-01-01" max="2026-12-31"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Focus month when opening
+
+Use `focus-date` to control the month shown first when no value is selected.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" focus-date="2027-03-01"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Disabled dates and weekdays
+
+Use `disabled-dates` for specific dates and `disabled-week-days` for recurring weekdays.
+
+<code-bubble>
+
+```html
+<ch-date-picker
+  label="Date"
+  disabled-dates="2026-07-04 2026-12-25"
+  disabled-week-days="0,6"
+></ch-date-picker>
+```
+
+</code-bubble>
+
+## Readonly and disabled
+
+`readonly` keeps the field focusable but not editable. `disabled` removes interaction.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Readonly" value="2026-10-18" readonly></ch-date-picker>
+<ch-date-picker label="Disabled" value="2026-10-18" disabled></ch-date-picker>
+```
+
+</code-bubble>
+
+## Start and end decorations
+
+Use `start` and `end` slots for adornments.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date">
+  <span slot="start">Date:</span>
+  <span slot="end">UTC</span>
+</ch-date-picker>
+```
+
+</code-bubble>
+
+## Popup placement
+
+Use `placement` and `fixed-placement` to control overlay behavior.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" placement="top-start"></ch-date-picker>
+<ch-date-picker label="Date" placement="bottom-end" fixed-placement></ch-date-picker>
+```
+
+</code-bubble>
+
+## Calendar header and weekday options
+
+Customize weekday labels and week start.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" first-day-of-week="1" weekday-format="long"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Footer actions
+
+The calendar footer includes Clear and Today actions.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date" value="2026-10-18">
+  <span slot="clear-label">Reset</span>
+  <span slot="today-label">Use Today</span>
+</ch-date-picker>
+```
+
+</code-bubble>
+
+## Languages
+
+The component adapts segment order, separators, and month/day labels from `lang`.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="US English" lang="en-US" value="2026-01-23"></ch-date-picker>
+<ch-date-picker label="French" lang="fr-FR" value="2026-01-23"></ch-date-picker>
+<ch-date-picker label="German" lang="de-DE" value="2026-01-23"></ch-date-picker>
+<ch-date-picker label="Japanese" lang="ja-JP" value="2026-01-23"></ch-date-picker>
+<ch-date-picker label="Arabic" lang="ar-SA" value="2026-01-23"></ch-date-picker>
+```
+
+</code-bubble>

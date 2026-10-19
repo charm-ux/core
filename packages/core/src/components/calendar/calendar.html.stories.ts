@@ -37,6 +37,16 @@ export const DateRange: Story = {
   },
 };
 
+export const DateRangeWithLengthConstraints: Story = {
+  render: args => template(args),
+  args: {
+    focusDate: '2025-06-15',
+    selectionMode: 'range',
+    minRange: 3,
+    maxRange: 7,
+  },
+};
+
 export const MultipleDates: Story = {
   render: args => template(args),
   args: {
@@ -59,7 +69,7 @@ export const Localized: Story = {
   render: args => template(args),
   args: {
     focusDate: '2025-06-15',
-    locale: 'fr-FR',
+    lang: 'fr-FR',
     firstDayOfWeek: 1,
   },
 };
