@@ -32,6 +32,17 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(this.component.open).to.equal(false);
                 },
               },
+              spaceOpensCalendar: {
+                description: 'opens the popup when space is pressed on a segment',
+                test: async () => {
+                  const startMonth = this.segmentInput('start', 'month');
+                  startMonth.focus();
+                  startMonth.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+                  await elementUpdated(this.component);
+
+                  expect(this.component.open).to.equal(true);
+                },
+              },
               segmentInput: {
                 description: 'builds an ISO range value from segmented input',
                 test: async () => {
@@ -282,6 +293,26 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(this.component.value).to.equal('2025-06-10/2025-06-15');
                   expect(this.component.open).to.equal(false);
                   expect(changeSpy).to.have.been.called;
+                },
+              },
+              calendarKeepsFocusAfterFirstRangeSelection: {
+                description: 'keeps focus in calendar after selecting range start',
+                test: async () => {
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+
+                  const start = this.component.shadowRoot
+                    ?.querySelector('.calendar')
+                    ?.shadowRoot?.querySelector<HTMLButtonElement>('[data-date="2025-06-10"]');
+                  if (!start) throw new Error('Expected calendar day button to render.');
+
+                  start.click();
+                  await elementUpdated(this.component);
+
+                  const active = this.component.shadowRoot?.querySelector('.calendar')?.shadowRoot
+                    ?.activeElement as HTMLElement | null;
+                  expect(active?.matches('[data-date]') ?? false).to.equal(true);
+                  expect(this.component.open).to.equal(true);
                 },
               },
               clear: {

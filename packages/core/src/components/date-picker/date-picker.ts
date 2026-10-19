@@ -869,6 +869,12 @@ export class CoreDatePicker extends CharmFormControlElement {
       return;
     }
 
+    if (!isModifier && event.key === keys.Space) {
+      event.preventDefault();
+      if (!this.open) this.show();
+      return;
+    }
+
     if (!isModifier && event.key === keys.Escape) {
       if (this.open) {
         event.preventDefault();

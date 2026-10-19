@@ -13132,6 +13132,14 @@
               "privacy": "protected"
             },
             {
+              "kind": "field",
+              "name": "calendarDraftValue",
+              "type": {
+                "text": "string[] | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
               "kind": "method",
               "name": "calendarValue",
               "privacy": "protected",
@@ -13173,6 +13181,16 @@
               "return": {
                 "type": {
                   "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "committedCalendarValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string[] | undefined"
                 }
               }
             },

@@ -31,6 +31,17 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                   expect(this.component.open).to.equal(false);
                 },
               },
+              spaceOpensCalendar: {
+                description: 'opens the popup when space is pressed on a segment',
+                test: async () => {
+                  const month = this.segmentInput('month');
+                  month.focus();
+                  month.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true }));
+                  await elementUpdated(this.component);
+
+                  expect(this.component.open).to.equal(true);
+                },
+              },
               segmentInput: {
                 description: 'builds an ISO value from segmented input',
                 test: async () => {

@@ -199,6 +199,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   protected disabledWeekDaySet = new Set<number>();
   protected suppressInputEvent = false;
   protected committedValue = '';
+  protected calendarDraftValue?: string[];
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreCalendar, CoreIcon, CorePopup];
@@ -305,6 +306,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
 
   public show(): void {
     if (this.disabled) return;
+    this.calendarDraftValue = this.committedCalendarValue();
     this.open = true;
     void this.updateComplete.then(() => this.calendar?.focus());
   }
@@ -312,6 +314,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   public hide(): void {
     if (!this.open) return;
     this.open = false;
+    this.calendarDraftValue = undefined;
     this.commitChange();
   }
 
@@ -324,6 +327,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     this.endMonth = '';
     this.endYear = '';
     this.value = '';
+    this.calendarDraftValue = undefined;
     this.open = false;
     this.updateControlFromState();
     this.emitInput();
@@ -662,6 +666,14 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   }
 
   protected calendarValue(): string[] | undefined {
+    if (this.open && this.calendarDraftValue?.length) {
+      return [...this.calendarDraftValue];
+    }
+
+    return this.committedCalendarValue();
+  }
+
+  protected committedCalendarValue(): string[] | undefined {
     const [start, end] = this.rangeDates();
     if (!start && !end) return undefined;
     if (start && end) return [toIsoDate(start), toIsoDate(end)];
@@ -998,6 +1010,12 @@ export class CoreDateRangePicker extends CharmFormControlElement {
       return;
     }
 
+    if (!isModifier && event.key === keys.Space) {
+      event.preventDefault();
+      if (!this.open) this.show();
+      return;
+    }
+
     if (!isModifier && event.key === keys.Escape && this.open) {
       event.preventDefault();
       this.hide();
@@ -1017,6 +1035,10 @@ export class CoreDateRangePicker extends CharmFormControlElement {
 
     const start = parseIsoDate(values[0]);
     const end = parseIsoDate(values[1]);
+    const pendingRangeEnd = Boolean(start) && !end;
+    this.calendarDraftValue = [start, end]
+      .filter((date): date is Date => date !== undefined)
+      .map(date => toIsoDate(date));
 
     if (start) {
       const parts = partsFromDate(start);
@@ -1042,6 +1064,10 @@ export class CoreDateRangePicker extends CharmFormControlElement {
 
     this.updateControlFromState();
     this.emitInput();
+
+    if (this.open && pendingRangeEnd) {
+      void this.updateComplete.then(() => this.calendar?.focus());
+    }
   };
 
   protected isRangeLengthValid(start: Date, end: Date): boolean {
@@ -1073,6 +1099,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   protected handleCalendarChange = (): void => {
     this.handleCalendarInput();
     this.open = false;
+    this.calendarDraftValue = undefined;
     this.commitChange();
     this.segmentInput('start', this.firstSegmentKind)?.focus();
   };
