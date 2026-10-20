@@ -4,6 +4,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
 import { keys } from '../../utilities/key-map.js';
+import { normalizeLocale } from '../../utilities/locale.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './calendar.styles.js';
 import type { CharmElement } from '../../base/charm-element/charm-element.js';
@@ -247,7 +248,7 @@ export class CoreCalendar extends CharmFocusableElement {
   }
 
   private get currentLocale(): string {
-    return this.lang || navigator.language || 'en';
+    return normalizeLocale(this.lang || navigator.language || 'en');
   }
 
   private get firstWeekday(): number {

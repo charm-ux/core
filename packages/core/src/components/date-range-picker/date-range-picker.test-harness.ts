@@ -43,6 +43,19 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(this.component.open).to.equal(true);
                 },
               },
+              normalizesPosixLocaleSuffix: {
+                description: 'normalizes a POSIX locale suffix before formatting segments',
+                test: async () => {
+                  this.component.setAttribute('lang', 'en-US@posix');
+                  this.component.requestUpdate();
+                  await elementUpdated(this.component);
+
+                  const kinds = Array.from(
+                    this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.range-input .segment') ?? []
+                  ).map(segment => segment.dataset.segment);
+                  expect(kinds.slice(0, 3)).to.deep.equal(['month', 'day', 'year']);
+                },
+              },
               segmentInput: {
                 description: 'builds an ISO range value from segmented input',
                 test: async () => {

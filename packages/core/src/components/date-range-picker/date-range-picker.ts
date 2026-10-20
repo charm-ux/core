@@ -4,6 +4,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { keys } from '../../utilities/key-map.js';
+import { normalizeLocale } from '../../utilities/locale.js';
 import { CoreCalendar } from '../calendar/calendar.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
@@ -205,8 +206,12 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     return [CoreCalendar, CoreIcon, CorePopup];
   }
 
+  public override get value(): string {
+    return this._value ?? this.defaultValue ?? '';
+  }
+
   protected get currentLocale(): string {
-    return this.lang || navigator.language || 'en';
+    return normalizeLocale(this.lang || navigator.language || 'en');
   }
 
   protected get dateSegments(): DateInputSegment[] {
@@ -279,8 +284,9 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     return lengths.some(length => length > 0) && !this.startComplete && !this.endComplete;
   }
 
-  public override get value(): string {
-    return this._value ?? this.defaultValue ?? '';
+  protected get todayUnavailable(): boolean {
+    const today = todayDate();
+    return this.isUnavailableDate(today) || !this.isRangeLengthValid(today, today);
   }
 
   public override set value(val: string) {
@@ -297,11 +303,6 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   public override disconnectedCallback(): void {
     super.disconnectedCallback();
     document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
-  }
-
-  protected override firstUpdated(): void {
-    super.firstUpdated();
-    this.committedValue = this.value;
   }
 
   public show(): void {
@@ -336,6 +337,11 @@ export class CoreDateRangePicker extends CharmFormControlElement {
 
   public override focus(options?: FocusOptions): void {
     this.segmentInput('start', 'month')?.focus(options);
+  }
+
+  protected override firstUpdated(): void {
+    super.firstUpdated();
+    this.committedValue = this.value;
   }
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
@@ -689,11 +695,6 @@ export class CoreDateRangePicker extends CharmFormControlElement {
       this.disabledDateSet.has(isoDate) ||
       this.disabledWeekDaySet.has(date.getUTCDay())
     );
-  }
-
-  protected get todayUnavailable(): boolean {
-    const today = todayDate();
-    return this.isUnavailableDate(today) || !this.isRangeLengthValid(today, today);
   }
 
   protected updateControlFromState(): void {

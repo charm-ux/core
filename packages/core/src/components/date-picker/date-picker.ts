@@ -4,6 +4,7 @@ import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
 import { keys } from '../../utilities/key-map.js';
+import { normalizeLocale } from '../../utilities/locale.js';
 import { CoreCalendar } from '../calendar/calendar.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
@@ -186,6 +187,15 @@ export class CoreDatePicker extends CharmFormControlElement {
     return [CoreCalendar, CoreIcon, CorePopup];
   }
 
+  public override get value(): string {
+    return this._value ?? this.defaultValue ?? '';
+  }
+
+  /** Gets or sets the current value as a `Date` object. */
+  public get valueAsDate(): Date | null {
+    return parseIsoDate(this.value) ?? null;
+  }
+
   protected get dateSegments(): DateInputSegment[] {
     const sample = createDate(2038, 10, 24);
     const formatter = new Intl.DateTimeFormat(this.currentLocale, {
@@ -224,7 +234,7 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   protected get currentLocale(): string {
-    return this.lang || navigator.language || 'en';
+    return normalizeLocale(this.lang || navigator.language || 'en');
   }
 
   protected get hasCompleteSegments(): boolean {
@@ -239,19 +249,14 @@ export class CoreDatePicker extends CharmFormControlElement {
     return this.value.length > 0;
   }
 
-  public override get value(): string {
-    return this._value ?? this.defaultValue ?? '';
+  protected get todayUnavailable(): boolean {
+    return this.isUnavailableDate(todayDate());
   }
 
   public override set value(val: string) {
     if (this._value === val) return;
     this._value = val;
     this.requestUpdate('value');
-  }
-
-  /** Gets or sets the current value as a `Date` object. */
-  public get valueAsDate(): Date | null {
-    return parseIsoDate(this.value) ?? null;
   }
 
   public set valueAsDate(newValue: Date | null) {
@@ -266,11 +271,6 @@ export class CoreDatePicker extends CharmFormControlElement {
   public override disconnectedCallback(): void {
     super.disconnectedCallback();
     document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
-  }
-
-  protected override firstUpdated(): void {
-    super.firstUpdated();
-    this.committedValue = this.value;
   }
 
   /** Opens the popup calendar. */
@@ -303,6 +303,11 @@ export class CoreDatePicker extends CharmFormControlElement {
   /** Focuses the first segment. */
   public override focus(options?: FocusOptions): void {
     this.segmentInput('month')?.focus(options);
+  }
+
+  protected override firstUpdated(): void {
+    super.firstUpdated();
+    this.committedValue = this.value;
   }
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
@@ -596,10 +601,6 @@ export class CoreDatePicker extends CharmFormControlElement {
       this.disabledDateSet.has(isoDate) ||
       this.disabledWeekDaySet.has(date.getUTCDay())
     );
-  }
-
-  protected get todayUnavailable(): boolean {
-    return this.isUnavailableDate(todayDate());
   }
 
   protected updateControlFromState(): void {

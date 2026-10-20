@@ -42,6 +42,19 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                   expect(this.component.open).to.equal(true);
                 },
               },
+              normalizesPosixLocaleSuffix: {
+                description: 'normalizes a POSIX locale suffix before formatting segments',
+                test: async () => {
+                  this.component.setAttribute('lang', 'en-US@posix');
+                  this.component.requestUpdate();
+                  await elementUpdated(this.component);
+
+                  const kinds = Array.from(
+                    this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.segments .segment') ?? []
+                  ).map(segment => segment.dataset.segment);
+                  expect(kinds).to.deep.equal(['month', 'day', 'year']);
+                },
+              },
               segmentInput: {
                 description: 'builds an ISO value from segmented input',
                 test: async () => {

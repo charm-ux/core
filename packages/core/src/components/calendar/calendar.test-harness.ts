@@ -258,6 +258,18 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(getComputedStyle(row!).blockSize).to.equal('36px');
                 },
               },
+              normalizesPosixLocaleSuffix: {
+                description: 'normalizes the inherited POSIX locale suffix for calendar content',
+                test: async () => {
+                  this.component.setAttribute('lang', 'en-US@posix');
+                  this.component.requestUpdate();
+                  await elementUpdated(this.component);
+
+                  expect(this.component.shadowRoot?.querySelector('.calendar-base')?.getAttribute('lang')).to.equal(
+                    'en-US'
+                  );
+                },
+              },
             },
           },
         },
