@@ -70,6 +70,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [COMP-013](component-design/COMP-013.md) — Bind optional attributes with `ifDefined()` so they collapse when unset
 - [COMP-014](component-design/COMP-014.md) — Position overlays through `ch-popup`, never import a positioning library directly
 - [COMP-015](component-design/COMP-015.md) — Drive show/hide from a `visible` state settled on `transitionend` with a fallback timer
+- [COMP-016](component-design/COMP-016.md) — Prefer `protected` members for component extension points
 
 ### PROP — properties, attributes, events (path-gated)
 
