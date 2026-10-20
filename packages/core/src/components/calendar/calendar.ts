@@ -488,13 +488,22 @@ export class CoreCalendar extends CharmFocusableElement {
       .filter(Boolean)
       .join(' ');
     const label = dateFormatter.format(date);
+    const hasRange =
+      this.selectionMode === 'range' &&
+      selectedDates.length > 1 &&
+      toIsoDate(selectedDates[0]!) !== toIsoDate(selectedDates[1]!);
+    const weekColumn = (date.getUTCDay() - this.firstWeekday + DAYS_IN_WEEK) % DAYS_IN_WEEK;
+    const startsRow = weekColumn === 0 || date.getUTCDate() === 1;
+    const endsRow = weekColumn === DAYS_IN_WEEK - 1 || date.getUTCDate() === daysInMonth(date);
 
     return html`
       <td
         class=${classMap({
-          'range-inner-cell': rangePart === 'day-range-inner',
-          'range-start-cell': rangePart === 'day-range-start' && selectedDates.length > 1,
-          'range-end-cell': rangePart === 'day-range-end',
+          'range-inner-cell': hasRange && rangePart === 'day-range-inner',
+          'range-start-cell': hasRange && rangePart === 'day-range-start',
+          'range-end-cell': hasRange && rangePart === 'day-range-end',
+          'range-row-start': hasRange && startsRow,
+          'range-row-end': hasRange && endsRow,
         })}
         role="gridcell"
         aria-selected=${selected}
@@ -506,9 +515,9 @@ export class CoreCalendar extends CharmFocusableElement {
           class=${classMap({
             day: true,
             selected,
-            'range-inner': rangePart === 'day-range-inner',
-            'range-start': rangePart === 'day-range-start',
-            'range-end': rangePart === 'day-range-end',
+            'range-inner': hasRange && rangePart === 'day-range-inner',
+            'range-start': hasRange && rangePart === 'day-range-start',
+            'range-end': hasRange && rangePart === 'day-range-end',
             today: isToday,
             disabled: isDisabled,
           })}

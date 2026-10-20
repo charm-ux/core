@@ -449,7 +449,7 @@ const charmTokensBase = defineTokens(
             },
           },
           range: {
-            bgColor: semantic('surface', 'tertiary'),
+            bgColor: semantic('surface', 'secondary'),
             fgColor: semantic('text', 'primary'),
           },
           today: {

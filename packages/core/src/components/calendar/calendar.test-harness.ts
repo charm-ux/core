@@ -55,6 +55,33 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(this.getCell('2025-06-15').classList.contains('range-end-cell')).to.equal(true);
                 },
               },
+              rangeTrackWeekEdges: {
+                description: 'trims the range track to the date buttons where the range wraps between weeks',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.firstDayOfWeek = 0;
+                  this.component.value = ['2025-06-10', '2025-06-17'];
+                  await elementUpdated(this.component);
+
+                  expect(this.getCell('2025-06-10').classList.contains('range-row-start')).to.equal(false);
+                  expect(this.getCell('2025-06-14').classList.contains('range-row-end')).to.equal(true);
+                  expect(this.getCell('2025-06-15').classList.contains('range-row-start')).to.equal(true);
+                  expect(this.getCell('2025-06-17').classList.contains('range-row-end')).to.equal(false);
+                },
+              },
+              singleDayRangeHasNoTrack: {
+                description: 'does not draw a range track or square corners for a single-day range',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.value = ['2025-06-10', '2025-06-10'];
+                  await elementUpdated(this.component);
+
+                  const cell = this.getCell('2025-06-10');
+                  expect(cell.classList.contains('range-start-cell')).to.equal(false);
+                  expect(cell.classList.contains('range-end-cell')).to.equal(false);
+                  expect(this.getDay('2025-06-10').classList.contains('range-start')).to.equal(false);
+                },
+              },
               minRangeConstraint: {
                 description: 'blocks range endpoints shorter than min-range',
                 test: async () => {

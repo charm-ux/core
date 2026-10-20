@@ -161,52 +161,47 @@ export default css`
     vertical-align: middle;
   }
 
-  .grid td.range-inner-cell {
-    background-image: linear-gradient(
-      ${component('calendar', 'day', 'range', 'bgColor')},
-      ${component('calendar', 'day', 'range', 'bgColor')}
-    );
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% ${component('calendar', 'day', 'size')};
+  .grid td.range-inner-cell,
+  .grid td.range-start-cell,
+  .grid td.range-end-cell {
+    /* Inline insets of the range track. Cells overlap by half a pixel so adjacent tracks never leave a seam. */
+    --calendar-range-inset-start: -0.5px;
+    --calendar-range-inset-end: -0.5px;
+    --calendar-range-button-inset: calc((100% - ${component('calendar', 'day', 'size')}) / 2);
+
+    position: relative;
   }
 
+  /* The track starts/ends at the center of the endpoint so it hides behind the endpoint's square edge. */
   .grid td.range-start-cell {
-    background-image: linear-gradient(
-      to right,
-      transparent calc((100% - ${component('calendar', 'day', 'size')}) / 2),
-      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% - ${component('calendar', 'day', 'size')}) / 2)
-    );
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% ${component('calendar', 'day', 'size')};
+    --calendar-range-inset-start: 50%;
   }
 
   .grid td.range-end-cell {
-    background-image: linear-gradient(
-      to right,
-      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% + ${component('calendar', 'day', 'size')}) / 2),
-      transparent calc((100% + ${component('calendar', 'day', 'size')}) / 2)
-    );
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100% ${component('calendar', 'day', 'size')};
+    --calendar-range-inset-end: 50%;
   }
 
-  :host(:dir(rtl)) .grid td.range-start-cell {
-    background-image: linear-gradient(
-      to left,
-      transparent calc((100% - ${component('calendar', 'day', 'size')}) / 2),
-      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% - ${component('calendar', 'day', 'size')}) / 2)
-    );
+  /* Where the range wraps to another week, trim the track to the edge of the date button. */
+  .grid td.range-row-start:not(.range-start-cell) {
+    --calendar-range-inset-start: var(--calendar-range-button-inset);
   }
 
-  :host(:dir(rtl)) .grid td.range-end-cell {
-    background-image: linear-gradient(
-      to left,
-      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% + ${component('calendar', 'day', 'size')}) / 2),
-      transparent calc((100% + ${component('calendar', 'day', 'size')}) / 2)
-    );
+  .grid td.range-row-end:not(.range-end-cell) {
+    --calendar-range-inset-end: var(--calendar-range-button-inset);
+  }
+
+  .grid td.range-inner-cell::before,
+  .grid td.range-start-cell::before,
+  .grid td.range-end-cell::before {
+    background-color: ${component('calendar', 'day', 'range', 'bgColor')};
+    block-size: ${component('calendar', 'day', 'size')};
+    content: '';
+    inset-block-start: var(--calendar-range-button-inset);
+    inset-inline-end: var(--calendar-range-inset-end);
+    inset-inline-start: var(--calendar-range-inset-start);
+    pointer-events: none;
+    position: absolute;
+    z-index: 0;
   }
 
   .day {
