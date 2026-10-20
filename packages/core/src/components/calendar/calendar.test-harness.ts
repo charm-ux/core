@@ -50,6 +50,9 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
 
                   expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-15']);
                   expect(this.getCell('2025-06-12').getAttribute('aria-selected')).to.equal('true');
+                  expect(this.getCell('2025-06-10').classList.contains('range-start-cell')).to.equal(true);
+                  expect(this.getCell('2025-06-12').classList.contains('range-inner-cell')).to.equal(true);
+                  expect(this.getCell('2025-06-15').classList.contains('range-end-cell')).to.equal(true);
                 },
               },
               minRangeConstraint: {

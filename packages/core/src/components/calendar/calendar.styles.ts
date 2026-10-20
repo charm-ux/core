@@ -161,6 +161,54 @@ export default css`
     vertical-align: middle;
   }
 
+  .grid td.range-inner-cell {
+    background-image: linear-gradient(
+      ${component('calendar', 'day', 'range', 'bgColor')},
+      ${component('calendar', 'day', 'range', 'bgColor')}
+    );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% ${component('calendar', 'day', 'size')};
+  }
+
+  .grid td.range-start-cell {
+    background-image: linear-gradient(
+      to right,
+      transparent calc((100% - ${component('calendar', 'day', 'size')}) / 2),
+      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% - ${component('calendar', 'day', 'size')}) / 2)
+    );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% ${component('calendar', 'day', 'size')};
+  }
+
+  .grid td.range-end-cell {
+    background-image: linear-gradient(
+      to right,
+      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% + ${component('calendar', 'day', 'size')}) / 2),
+      transparent calc((100% + ${component('calendar', 'day', 'size')}) / 2)
+    );
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% ${component('calendar', 'day', 'size')};
+  }
+
+  :host(:dir(rtl)) .grid td.range-start-cell {
+    background-image: linear-gradient(
+      to left,
+      transparent calc((100% - ${component('calendar', 'day', 'size')}) / 2),
+      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% - ${component('calendar', 'day', 'size')}) / 2)
+    );
+  }
+
+  :host(:dir(rtl)) .grid td.range-end-cell {
+    background-image: linear-gradient(
+      to left,
+      ${component('calendar', 'day', 'range', 'bgColor')} calc((100% + ${component('calendar', 'day', 'size')}) / 2),
+      transparent calc((100% + ${component('calendar', 'day', 'size')}) / 2)
+    );
+  }
+
   .day {
     align-items: center;
     background-color: transparent;
@@ -177,11 +225,13 @@ export default css`
     line-height: 1;
     padding: 0;
     inline-size: min(100%, ${component('calendar', 'day', 'size')});
+    position: relative;
+    z-index: 1;
   }
 
   .day.selected {
     background-color: ${component('calendar', 'day', 'selected', 'bgColor')};
-    border-color: ${component('calendar', 'day', 'selected', 'borderColor')};
+    /* border-color: ${component('calendar', 'day', 'selected', 'borderColor')}; */
     color: ${component('calendar', 'day', 'selected', 'fgColor')};
   }
 
@@ -198,17 +248,24 @@ export default css`
   }
 
   .day.range-inner {
-    background-color: ${component('calendar', 'day', 'range', 'bgColor')};
+    background-color: transparent;
     border-radius: 0;
     color: ${component('calendar', 'day', 'range', 'fgColor')};
   }
 
+  .day.range-inner:hover:not(:disabled) {
+    background-color: transparent;
+    color: ${component('calendar', 'day', 'range', 'fgColor')};
+  }
+
   .day.range-start {
+    border-radius: ${component('calendar', 'day', 'borderRadius')};
     border-end-end-radius: 0;
     border-start-end-radius: 0;
   }
 
   .day.range-end {
+    border-radius: ${component('calendar', 'day', 'borderRadius')};
     border-end-start-radius: 0;
     border-start-start-radius: 0;
   }

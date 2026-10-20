@@ -489,7 +489,16 @@ export class CoreCalendar extends CharmFocusableElement {
     const label = dateFormatter.format(date);
 
     return html`
-      <td role="gridcell" aria-selected=${selected} aria-current=${ifDefined(isToday ? 'date' : undefined)}>
+      <td
+        class=${classMap({
+          'range-inner-cell': rangePart === 'day-range-inner',
+          'range-start-cell': rangePart === 'day-range-start' && selectedDates.length > 1,
+          'range-end-cell': rangePart === 'day-range-end',
+        })}
+        role="gridcell"
+        aria-selected=${selected}
+        aria-current=${ifDefined(isToday ? 'date' : undefined)}
+      >
         <button
           type="button"
           part=${parts}
