@@ -292,7 +292,43 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
           // interaction tests
           interactions: {
             description: 'interactions',
-            tests: {},
+            tests: {
+              focusTrap: {
+                description: 'wraps focus between the first and last focusable elements',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = `
+                    <span slot="anchor"></span>
+                    <button id="first">First</button>
+                    <button id="last">Last</button>
+                  `;
+                  el.focusTrap = true;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const first = el.querySelector<HTMLButtonElement>('#first');
+                  const last = el.querySelector<HTMLButtonElement>('#last');
+                  if (!first || !last) throw new Error('Expected focusable elements to render.');
+
+                  last.focus();
+                  last.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true, cancelable: true })
+                  );
+                  expect(document.activeElement).to.equal(first);
+
+                  first.dispatchEvent(
+                    new KeyboardEvent('keydown', {
+                      key: 'Tab',
+                      shiftKey: true,
+                      bubbles: true,
+                      composed: true,
+                      cancelable: true,
+                    })
+                  );
+                  expect(document.activeElement).to.equal(last);
+                },
+              },
+            },
           },
         },
       },

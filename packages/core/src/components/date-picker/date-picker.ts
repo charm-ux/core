@@ -1,81 +1,35 @@
-import { html, type PropertyValues } from 'lit';
+import { html, nothing, type PropertyValues } from 'lit';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
+import {
+  addDays,
+  clampDate,
+  compareDates,
+  createDateConstraints,
+  dateFromParts,
+  getDateInputLayout,
+  getMonthName,
+  isDateUnavailable,
+  normalizeInputDigits,
+  parseIsoDate,
+  partsFromDate,
+  shiftDatePart,
+  todayDate,
+  toIsoDate,
+} from '../../internal/date.js';
 import { keys } from '../../utilities/key-map.js';
 import { normalizeLocale } from '../../utilities/locale.js';
 import { CoreCalendar } from '../calendar/calendar.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
 import styles from './date-picker.styles.js';
-
-interface DateInputSegment {
-  kind: 'day' | 'month' | 'year' | 'literal';
-  literal?: string;
-}
-
-interface DateParts {
-  day: string;
-  month: string;
-  year: string;
-}
+import type { CalendarChangeEventDetail } from '../calendar/calendar.js';
+import type { DateConstraints, DateInputSegment } from '../../internal/date.js';
 
 interface DatePickerTodayEventDetail {
   value: string;
-}
-
-const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-
-function createDate(year: number, month: number, day: number): Date {
-  const date = new Date(0);
-  date.setUTCFullYear(year, month, day);
-  date.setUTCHours(0, 0, 0, 0);
-  return date;
-}
-
-function parseIsoDate(value: string | undefined): Date | undefined {
-  if (!value) return undefined;
-
-  const match = ISO_DATE_PATTERN.exec(value);
-  if (!match) return undefined;
-
-  const [, year, month, day] = match;
-  const parsed = createDate(Number(year), Number(month) - 1, Number(day));
-
-  return parsed.getUTCFullYear() === Number(year) &&
-    parsed.getUTCMonth() === Number(month) - 1 &&
-    parsed.getUTCDate() === Number(day)
-    ? parsed
-    : undefined;
-}
-
-function toIsoDate(date: Date): string {
-  const year = date.getUTCFullYear().toString().padStart(4, '0');
-  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-  const day = date.getUTCDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function normalizeInputDigits(value: string): string {
-  return value.replace(/\D/g, '');
-}
-
-function partsFromDate(date: Date): DateParts {
-  return {
-    day: date.getUTCDate().toString().padStart(2, '0'),
-    month: (date.getUTCMonth() + 1).toString().padStart(2, '0'),
-    year: date.getUTCFullYear().toString().padStart(4, '0'),
-  };
-}
-
-function compareDateOnly(first: Date, second: Date): number {
-  return first.getTime() - second.getTime();
-}
-
-function todayDate(): Date {
-  const today = new Date();
-  return createDate(today.getFullYear(), today.getMonth(), today.getDate());
 }
 
 /**
@@ -176,12 +130,11 @@ export class CoreDatePicker extends CharmFormControlElement {
   @query('.calendar')
   protected calendar?: CoreCalendar;
 
-  protected minDate?: Date;
-  protected maxDate?: Date;
-  protected disabledDateSet = new Set<string>();
-  protected disabledWeekDaySet = new Set<number>();
+  protected constraints: DateConstraints = createDateConstraints();
   protected suppressInputEvent = false;
+  protected suppressSegmentSync = false;
   protected committedValue = '';
+  protected hasOpened = false;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreCalendar, CoreIcon, CorePopup];
@@ -196,41 +149,16 @@ export class CoreDatePicker extends CharmFormControlElement {
     return parseIsoDate(this.value) ?? null;
   }
 
-  protected get dateSegments(): DateInputSegment[] {
-    const sample = createDate(2038, 10, 24);
-    const formatter = new Intl.DateTimeFormat(this.currentLocale, {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'UTC',
-    });
-
-    const segments: DateInputSegment[] = [];
-    for (const part of formatter.formatToParts(sample)) {
-      if (part.type === 'month') segments.push({ kind: 'month' });
-      if (part.type === 'day') segments.push({ kind: 'day' });
-      if (part.type === 'year') segments.push({ kind: 'year' });
-      if (part.type === 'literal' && part.value) segments.push({ kind: 'literal', literal: part.value });
-    }
-
-    return segments;
+  protected get dateSegments(): readonly DateInputSegment[] {
+    return getDateInputLayout(this.currentLocale).segments;
   }
 
   protected get firstSegmentKind(): 'day' | 'month' | 'year' {
-    const first = this.dateSegments.find(
-      (segment): segment is DateInputSegment & { kind: 'day' | 'month' | 'year' } => segment.kind !== 'literal'
-    );
-    return first?.kind ?? 'month';
+    return getDateInputLayout(this.currentLocale).first;
   }
 
-  protected get segmentKindsInOrder(): ('day' | 'month' | 'year')[] {
-    return this.dateSegments
-      .filter((segment): segment is { kind: 'day' | 'month' | 'year' } => segment.kind !== 'literal')
-      .map(segment => segment.kind);
-  }
-
-  protected get isRtlDirection(): boolean {
-    return this.matches(':dir(rtl)');
+  protected get segmentKindsInOrder(): readonly ('day' | 'month' | 'year')[] {
+    return getDateInputLayout(this.currentLocale).order;
   }
 
   protected get currentLocale(): string {
@@ -289,7 +217,7 @@ export class CoreDatePicker extends CharmFormControlElement {
 
   /** Clears the current value and emits `input` and `change`. */
   public clear(): void {
-    if (this.disabled || this.readonly || (!this.hasValue && !this.hasCompleteSegments)) return;
+    if (this.disabled || this.readonly || (this.allSegmentsEmpty && !this.hasValue)) return;
     this.day = '';
     this.month = '';
     this.year = '';
@@ -302,7 +230,7 @@ export class CoreDatePicker extends CharmFormControlElement {
 
   /** Focuses the first segment. */
   public override focus(options?: FocusOptions): void {
-    this.segmentInput('month')?.focus(options);
+    this.segmentInput(this.firstSegmentKind)?.focus(options);
   }
 
   protected override firstUpdated(): void {
@@ -313,24 +241,21 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties);
 
-    if (!this.hasUpdated || changedProperties.has('min')) this.minDate = parseIsoDate(this.min);
-    if (!this.hasUpdated || changedProperties.has('max')) this.maxDate = parseIsoDate(this.max);
-    if (!this.hasUpdated || changedProperties.has('disabledDates')) {
-      this.disabledDateSet = new Set(this.disabledDates.split(/[\s,]+/).filter(Boolean));
-    }
-    if (!this.hasUpdated || changedProperties.has('disabledWeekDays')) {
-      this.disabledWeekDaySet = new Set(
-        this.disabledWeekDays
-          .split(/[\s,]+/)
-          .filter(Boolean)
-          .map(Number)
-          .filter(day => Number.isInteger(day) && day >= 0 && day <= 6)
-      );
+    if (
+      !this.hasUpdated ||
+      changedProperties.has('min') ||
+      changedProperties.has('max') ||
+      changedProperties.has('disabledDates') ||
+      changedProperties.has('disabledWeekDays')
+    ) {
+      this.constraints = createDateConstraints(this.min, this.max, this.disabledDates, this.disabledWeekDays);
     }
 
-    if (!this.hasUpdated || changedProperties.has('value')) {
-      this.syncSegmentsFromValue();
-    }
+    if (this.open) this.hasOpened = true;
+
+    const shouldSyncSegments = changedProperties.has('value') && !this.suppressSegmentSync;
+    this.suppressSegmentSync = false;
+    if (!this.hasUpdated || shouldSyncSegments) this.syncSegmentsFromValue();
   }
 
   protected override updated(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -398,6 +323,9 @@ export class CoreDatePicker extends CharmFormControlElement {
         flip
         shift
         auto-size="vertical"
+        content-role="dialog"
+        focus-trap
+        @popup-hide=${this.handlePopupHide}
       >
         <div
           class="form-control-input"
@@ -442,32 +370,12 @@ export class CoreDatePicker extends CharmFormControlElement {
         </div>
 
         <div>
-          <scoped-calendar
-            class="calendar"
-            .value=${this.value || undefined}
-            .focusDate=${this.focusDate || this.value || undefined}
-            .min=${this.min}
-            .max=${this.max}
-            .disabledDates=${this.disabledDates}
-            .disabledWeekDays=${this.disabledWeekDays}
-            .lang=${this.currentLocale}
-            .firstDayOfWeek=${this.firstDayOfWeek}
-            .weekdayFormat=${this.weekdayFormat}
-            .disabled=${this.disabled}
-            .readOnly=${this.readonly}
-            @input=${this.handleCalendarInput}
-            @change=${this.handleCalendarChange}
-          >
-            <slot name="previous-month-label" slot="previous-month-label"></slot>
-            <slot name="next-month-label" slot="next-month-label"></slot>
-            <slot name="month-label" slot="month-label"></slot>
-            <slot name="year-label" slot="year-label"></slot>
-          </scoped-calendar>
+          ${this.hasOpened ? this.calendarTemplate() : nothing}
           <div class="footer" part="date-picker-footer">
             <button
               type="button"
               class="footer-button footer-clear"
-              ?disabled=${this.disabled || this.readonly || !this.hasValue}
+              ?disabled=${this.disabled || this.readonly || (this.allSegmentsEmpty && !this.hasValue)}
               @click=${this.handleClearClick}
             >
               <slot name="clear-label">Clear</slot>
@@ -485,6 +393,32 @@ export class CoreDatePicker extends CharmFormControlElement {
           </div>
         </div>
       </scoped-popup>
+    `;
+  }
+
+  protected calendarTemplate() {
+    return this.html`
+      <scoped-calendar
+        class="calendar"
+        .value=${this.value || undefined}
+        .focusDate=${this.focusDate || this.value || undefined}
+        .min=${this.min}
+        .max=${this.max}
+        .disabledDates=${this.disabledDates}
+        .disabledWeekDays=${this.disabledWeekDays}
+        .lang=${this.currentLocale}
+        .firstDayOfWeek=${this.firstDayOfWeek}
+        .weekdayFormat=${this.weekdayFormat}
+        .disabled=${this.disabled}
+        .readOnly=${this.readonly}
+        @input=${this.handleCalendarInput}
+        @change=${this.handleCalendarChange}
+      >
+        <slot name="previous-month-label" slot="previous-month-label"></slot>
+        <slot name="next-month-label" slot="next-month-label"></slot>
+        <slot name="month-label" slot="month-label"></slot>
+        <slot name="year-label" slot="year-label"></slot>
+      </scoped-calendar>
     `;
   }
 
@@ -557,8 +491,7 @@ export class CoreDatePicker extends CharmFormControlElement {
     const value = Number(this.month);
     if (!Number.isInteger(value) || value < 1 || value > 12) return undefined;
 
-    const formatter = new Intl.DateTimeFormat(this.currentLocale, { month: 'long', timeZone: 'UTC' });
-    return formatter.format(createDate(2000, value - 1, 1));
+    return getMonthName(this.currentLocale, value - 1);
   }
 
   protected syncSegmentsFromValue(): void {
@@ -578,29 +511,11 @@ export class CoreDatePicker extends CharmFormControlElement {
 
   protected parsedSegmentsDate(): Date | undefined {
     if (!this.hasCompleteSegments) return undefined;
-    const month = Number(this.month);
-    const day = Number(this.day);
-    const year = Number(this.year);
-
-    if (!Number.isInteger(month) || !Number.isInteger(day) || !Number.isInteger(year)) return undefined;
-    if (year < 1 || year > 9999) return undefined;
-
-    const parsed = createDate(year, month - 1, day);
-    if (parsed.getUTCFullYear() !== year || parsed.getUTCMonth() !== month - 1 || parsed.getUTCDate() !== day) {
-      return undefined;
-    }
-
-    return parsed;
+    return dateFromParts(this.day, this.month, this.year);
   }
 
   protected isUnavailableDate(date: Date): boolean {
-    const isoDate = toIsoDate(date);
-    return (
-      (this.minDate !== undefined && compareDateOnly(date, this.minDate) < 0) ||
-      (this.maxDate !== undefined && compareDateOnly(date, this.maxDate) > 0) ||
-      this.disabledDateSet.has(isoDate) ||
-      this.disabledWeekDaySet.has(date.getUTCDay())
-    );
+    return isDateUnavailable(date, this.constraints);
   }
 
   protected updateControlFromState(): void {
@@ -609,6 +524,7 @@ export class CoreDatePicker extends CharmFormControlElement {
 
     if (this.value !== nextValue) {
       this.suppressInputEvent = true;
+      this.suppressSegmentSync = true;
       this.value = nextValue;
       this.suppressInputEvent = false;
     }
@@ -713,24 +629,13 @@ export class CoreDatePicker extends CharmFormControlElement {
 
   protected stepSegment(kind: 'day' | 'month' | 'year', direction: 1 | -1): void {
     const parsed = this.parsedSegmentsDate() ?? parseIsoDate(this.value) ?? parseIsoDate(this.focusDate) ?? todayDate();
-    let nextDate: Date;
-
-    if (kind === 'day') {
-      nextDate = createDate(parsed.getUTCFullYear(), parsed.getUTCMonth(), parsed.getUTCDate() + direction);
-    } else if (kind === 'month') {
-      nextDate = createDate(parsed.getUTCFullYear(), parsed.getUTCMonth() + direction, parsed.getUTCDate());
-    } else {
-      nextDate = createDate(parsed.getUTCFullYear() + direction, parsed.getUTCMonth(), parsed.getUTCDate());
-    }
-
-    if (this.minDate && compareDateOnly(nextDate, this.minDate) < 0) nextDate = this.minDate;
-    if (this.maxDate && compareDateOnly(nextDate, this.maxDate) > 0) nextDate = this.maxDate;
+    let nextDate = clampDate(shiftDatePart(parsed, kind, direction), this.constraints);
 
     let attempts = 0;
     while (this.isUnavailableDate(nextDate) && attempts < 366) {
-      nextDate = createDate(nextDate.getUTCFullYear(), nextDate.getUTCMonth(), nextDate.getUTCDate() + direction);
-      if (this.minDate && compareDateOnly(nextDate, this.minDate) < 0) return;
-      if (this.maxDate && compareDateOnly(nextDate, this.maxDate) > 0) return;
+      nextDate = addDays(nextDate, direction);
+      if (this.constraints.minDate && compareDates(nextDate, this.constraints.minDate) < 0) return;
+      if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) return;
       attempts += 1;
     }
 
@@ -842,13 +747,13 @@ export class CoreDatePicker extends CharmFormControlElement {
 
     if (!isModifier && event.key === keys.ArrowRight) {
       event.preventDefault();
-      this.isRtlDirection ? this.focusPreviousSegment(kind) : this.focusNextSegment(kind);
+      this.resolvedDir === 'rtl' ? this.focusPreviousSegment(kind) : this.focusNextSegment(kind);
       return;
     }
 
     if (!isModifier && event.key === keys.ArrowLeft) {
       event.preventDefault();
-      this.isRtlDirection ? this.focusNextSegment(kind) : this.focusPreviousSegment(kind);
+      this.resolvedDir === 'rtl' ? this.focusNextSegment(kind) : this.focusPreviousSegment(kind);
       return;
     }
 
@@ -885,21 +790,32 @@ export class CoreDatePicker extends CharmFormControlElement {
     }
   }
 
-  protected handleCalendarInput = (): void => {
-    if (!this.calendar) return;
-    const next = Array.isArray(this.calendar.value) ? this.calendar.value[0] : this.calendar.value;
+  protected applyCalendarValue(detail: CalendarChangeEventDetail): void {
+    const next = Array.isArray(detail.value) ? detail.value[0] : detail.value;
     if (!next || typeof next !== 'string') return;
     this.value = next;
     this.syncSegmentsFromValue();
     this.updateControlFromState();
+  }
+
+  protected handleCalendarInput = (event: CustomEvent<CalendarChangeEventDetail>): void => {
+    event.stopPropagation();
+    this.applyCalendarValue(event.detail);
     this.emitInput();
   };
 
-  protected handleCalendarChange = (): void => {
-    this.handleCalendarInput();
+  protected handleCalendarChange = (event: CustomEvent<CalendarChangeEventDetail>): void => {
+    event.stopPropagation();
+    this.applyCalendarValue(event.detail);
     this.open = false;
     this.commitChange();
     this.segmentInput(this.firstSegmentKind)?.focus();
+  };
+
+  protected handlePopupHide = (): void => {
+    if (!this.open) return;
+    this.open = false;
+    this.commitChange();
   };
 
   protected handleDocumentPointerDown = (event: PointerEvent): void => {

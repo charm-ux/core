@@ -30,19 +30,16 @@ export default css`
     background-color: transparent;
     border: ${primitive('borderWidth', 'thin')} solid transparent;
     border-radius: ${component('calendar', 'heading', 'navigation', 'borderRadius')};
+    block-size: ${component('calendar', 'day', 'size')};
     color: ${component('calendar', 'heading', 'navigation', 'fgColor')};
     cursor: pointer;
     display: inline-flex;
     font-family: inherit;
     font-size: ${component('calendar', 'heading', 'navigation', 'fontSize')};
+    inline-size: ${component('calendar', 'day', 'size')};
     justify-content: center;
     line-height: 1;
     padding: 0;
-  }
-
-  .navigation-button {
-    block-size: ${component('calendar', 'day', 'size')};
-    inline-size: ${component('calendar', 'day', 'size')};
   }
 
   .navigation-button.previous {
@@ -226,7 +223,6 @@ export default css`
 
   .day.selected {
     background-color: ${component('calendar', 'day', 'selected', 'bgColor')};
-    /* border-color: ${component('calendar', 'day', 'selected', 'borderColor')}; */
     color: ${component('calendar', 'day', 'selected', 'fgColor')};
   }
 

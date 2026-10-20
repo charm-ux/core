@@ -395,7 +395,7 @@ export class CorePopup extends CharmDismissibleElement {
       return;
     }
 
-    const currentFocusableElement = document.activeElement;
+    const currentFocusableElement = this.deepActiveElement();
 
     const focusableChildren = this.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [focusable]'
@@ -407,18 +407,13 @@ export class CorePopup extends CharmDismissibleElement {
     const lastFocusableElement = focusableChildren[focusableChildren.length - 1];
     const firstFocusableElement = focusableChildren[0];
 
-    const requestCloseWithTab = () => {
-      this.emitRequestClose('tab');
-      this.anchorEl?.focus();
-      e.preventDefault();
-    };
-
     if (
       e.key === keys.Tab &&
       !e.shiftKey &&
       (lastFocusableElement === currentFocusableElement || this === currentFocusableElement)
     ) {
-      requestCloseWithTab();
+      (firstFocusableElement as HTMLElement).focus();
+      e.preventDefault();
       return;
     }
     if (
@@ -426,8 +421,17 @@ export class CorePopup extends CharmDismissibleElement {
       e.shiftKey &&
       (firstFocusableElement === currentFocusableElement || this === currentFocusableElement)
     ) {
-      requestCloseWithTab();
+      (lastFocusableElement as HTMLElement).focus();
+      e.preventDefault();
     }
+  }
+
+  protected deepActiveElement(): Element | null {
+    let active = document.activeElement;
+    while (active?.shadowRoot?.activeElement) {
+      active = active.shadowRoot.activeElement;
+    }
+    return active;
   }
 
   protected override async updated(changedProps: Map<string, unknown>) {

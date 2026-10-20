@@ -328,6 +328,121 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(this.component.open).to.equal(true);
                 },
               },
+              calendarMountedLazily: {
+                description: 'mounts the calendar only after the popup is first opened',
+                test: async () => {
+                  expect(this.component.shadowRoot?.querySelector('.calendar')).to.equal(null);
+
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.querySelector('.calendar')).to.not.equal(null);
+
+                  this.component.open = false;
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.querySelector('.calendar')).to.not.equal(null);
+                },
+              },
+              calendarSelectionEmitsSingleInputPerStep: {
+                description: 'emits one input event for each calendar selection step',
+                test: async () => {
+                  const inputSpy = sinon.spy();
+                  const changeSpy = sinon.spy();
+                  this.component.addEventListener('input', inputSpy);
+                  this.component.addEventListener('change', changeSpy);
+
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+
+                  const calendarRoot = this.component.shadowRoot?.querySelector('.calendar')?.shadowRoot;
+                  const start = calendarRoot?.querySelector<HTMLButtonElement>('[data-date="2025-06-10"]');
+                  const end = calendarRoot?.querySelector<HTMLButtonElement>('[data-date="2025-06-15"]');
+                  if (!start || !end) throw new Error('Expected calendar day buttons to render.');
+
+                  start.click();
+                  await elementUpdated(this.component);
+                  expect(inputSpy.callCount).to.equal(1);
+
+                  end.click();
+                  await elementUpdated(this.component);
+                  expect(inputSpy.callCount).to.equal(2);
+                  expect(changeSpy.callCount).to.equal(1);
+                },
+              },
+              preservesPartialSegmentInput: {
+                description: 'does not clear partially edited segments when the value becomes incomplete',
+                test: async () => {
+                  this.component.value = '2026-08-05/2026-08-10';
+                  await elementUpdated(this.component);
+
+                  const endDay = this.segmentInput('end', 'day');
+                  endDay.value = '';
+                  endDay.dispatchEvent(new Event('input', { bubbles: true }));
+                  await elementUpdated(this.component);
+
+                  expect(endDay.value).to.equal('');
+                  expect(this.component.value).to.equal('');
+                },
+              },
+              popupHideSyncsOpenState: {
+                description: 'closes the picker when the popup requests a close',
+                test: async () => {
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+
+                  const popup = this.component.shadowRoot?.querySelector<HTMLElement & { hide(): void }>(
+                    '[part="date-range-picker-popup"]'
+                  );
+                  if (!popup) throw new Error('Expected popup to render.');
+
+                  popup.hide();
+                  await elementUpdated(this.component);
+
+                  expect(this.component.open).to.equal(false);
+                },
+              },
+              calendarPopupIsFocusTrappedDialog: {
+                description: 'renders the calendar popup as a focus-trapped dialog',
+                test: async () => {
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+
+                  const popup = this.component.shadowRoot?.querySelector<
+                    HTMLElement & { focusTrap?: boolean; shadowRoot: ShadowRoot | null }
+                  >('[part="date-range-picker-popup"]');
+                  if (!popup) throw new Error('Expected popup to render.');
+
+                  expect(popup.focusTrap).to.equal(true);
+                  expect(popup.shadowRoot?.querySelector('dialog')?.getAttribute('role')).to.equal('dialog');
+
+                  const today = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
+                  if (!today) throw new Error('Expected today button to render.');
+
+                  today.focus();
+                  today.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true, cancelable: true })
+                  );
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(true);
+                  expect((this.component.shadowRoot?.activeElement as HTMLElement | null)?.id).to.equal(
+                    'segment-start-month'
+                  );
+
+                  const month = this.segmentInput('start', 'month');
+                  month.focus();
+                  month.dispatchEvent(
+                    new KeyboardEvent('keydown', {
+                      key: 'Tab',
+                      shiftKey: true,
+                      bubbles: true,
+                      composed: true,
+                      cancelable: true,
+                    })
+                  );
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(true);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(today);
+                },
+              },
               clear: {
                 description: 'clears value with the footer clear button',
                 test: async () => {
@@ -339,6 +454,23 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
 
                   clear.click();
                   await elementUpdated(this.component);
+                  expect(this.component.value).to.equal('');
+                },
+              },
+              clearPartialInput: {
+                description: 'clears partially entered segments with the footer clear button',
+                test: async () => {
+                  this.fillDate('start', '2026', '08', '05');
+                  await elementUpdated(this.component);
+
+                  const clear = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-clear');
+                  if (!clear) throw new Error('Expected clear button to render.');
+                  expect(clear.disabled).to.equal(false);
+
+                  clear.click();
+                  await elementUpdated(this.component);
+                  expect(this.segmentInput('start', 'year').value).to.equal('');
+                  expect(this.segmentInput('end', 'year').value).to.equal('');
                   expect(this.component.value).to.equal('');
                 },
               },

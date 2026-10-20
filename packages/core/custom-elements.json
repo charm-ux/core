@@ -7620,7 +7620,7 @@
               "type": {
                 "text": "(Date | undefined)[]"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
@@ -7635,7 +7635,7 @@
               "type": {
                 "text": "CalendarChangeEventDetail"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true,
               "parsedType": {
                 "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
@@ -7644,7 +7644,7 @@
             {
               "kind": "method",
               "name": "changeMonth",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -7661,17 +7661,56 @@
             },
             {
               "kind": "field",
+              "name": "constraints",
+              "type": {
+                "text": "DateConstraints"
+              },
+              "privacy": "protected",
+              "parsedType": {
+                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "createDayContext",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CalendarDayContext"
+                }
+              }
+            },
+            {
+              "kind": "field",
               "name": "currentLocale",
               "type": {
                 "text": "string"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
               "kind": "field",
               "name": "currentMonth",
-              "privacy": "private"
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "dateFromEvent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Date | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -7685,21 +7724,12 @@
                   }
                 },
                 {
-                  "name": "selectedDates",
+                  "name": "context",
                   "type": {
-                    "text": "Date[]"
-                  }
-                },
-                {
-                  "name": "todayValue",
-                  "type": {
-                    "text": "string"
-                  }
-                },
-                {
-                  "name": "dateFormatter",
-                  "type": {
-                    "text": "Intl.DateTimeFormat"
+                    "text": "CalendarDayContext"
+                  },
+                  "parsedType": {
+                    "text": "{ selected: readonly Date[], selectedIso: ReadonlySet<string>, rangeStart?: string, rangeEnd?: string, today: string, dateFormatter: DateTimeFormat, firstWeekday: number, hasRange: false | true, lastDayOfMonth: number }"
                   }
                 }
               ],
@@ -7751,12 +7781,6 @@
             },
             {
               "kind": "field",
-              "name": "disabledDateSet",
-              "privacy": "private",
-              "default": "new Set<string>()"
-            },
-            {
-              "kind": "field",
               "name": "disabledWeekDays",
               "type": {
                 "text": "string"
@@ -7767,15 +7791,9 @@
               "attribute": "disabled-week-days"
             },
             {
-              "kind": "field",
-              "name": "disabledWeekDaySet",
-              "privacy": "private",
-              "default": "new Set<number>()"
-            },
-            {
               "kind": "method",
               "name": "emitChange",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -7785,7 +7803,7 @@
             {
               "kind": "method",
               "name": "emitInput",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -7808,7 +7826,7 @@
               "type": {
                 "text": "number"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
@@ -7860,7 +7878,7 @@
               "type": {
                 "text": "string"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "''"
             },
             {
@@ -7869,7 +7887,7 @@
               "type": {
                 "text": "HTMLButtonElement | null"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
@@ -7945,7 +7963,7 @@
             {
               "kind": "method",
               "name": "handleDayClick",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -7963,7 +7981,7 @@
             {
               "kind": "method",
               "name": "handleDayKeyDown",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -7995,8 +8013,44 @@
             },
             {
               "kind": "method",
+              "name": "handleGridClick",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleGridKeyDown",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "handleMonthChange",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8014,7 +8068,7 @@
             {
               "kind": "method",
               "name": "handleNextMonth",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8024,7 +8078,7 @@
             {
               "kind": "method",
               "name": "handlePreviousMonth",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8034,7 +8088,7 @@
             {
               "kind": "method",
               "name": "handleYearChange",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8100,7 +8154,7 @@
             {
               "kind": "method",
               "name": "initializeFocusedDate",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8118,7 +8172,7 @@
             {
               "kind": "method",
               "name": "isDateDisabled",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "boolean"
@@ -8133,14 +8187,17 @@
                 },
                 {
                   "name": "selected",
-                  "default": "this.selectedDates"
+                  "default": "this.selectedDates",
+                  "type": {
+                    "text": "readonly Date[]"
+                  }
                 }
               ]
             },
             {
               "kind": "method",
               "name": "isMonthOutsideRange",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "boolean"
@@ -8156,28 +8213,6 @@
               ]
             },
             {
-              "kind": "method",
-              "name": "isSelected",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "boolean"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "date",
-                  "type": {
-                    "text": "Date"
-                  }
-                },
-                {
-                  "name": "selected",
-                  "default": "this.selectedDates"
-                }
-              ]
-            },
-            {
               "kind": "field",
               "name": "max",
               "type": {
@@ -8186,14 +8221,6 @@
               "privacy": "public",
               "description": "The latest selectable date, in `YYYY-MM-DD` format.",
               "attribute": "max"
-            },
-            {
-              "kind": "field",
-              "name": "maxDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "private"
             },
             {
               "kind": "field",
@@ -8218,14 +8245,6 @@
             },
             {
               "kind": "field",
-              "name": "minDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "private"
-            },
-            {
-              "kind": "field",
               "name": "minRange",
               "type": {
                 "text": "number"
@@ -8241,7 +8260,7 @@
               "type": {
                 "text": "string"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
@@ -8250,56 +8269,8 @@
               "type": {
                 "text": "{ value: number; label: string }[]"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
-            },
-            {
-              "kind": "method",
-              "name": "pageDate",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "Date"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "date",
-                  "type": {
-                    "text": "Date"
-                  }
-                },
-                {
-                  "name": "amount",
-                  "type": {
-                    "text": "number"
-                  }
-                }
-              ]
-            },
-            {
-              "kind": "method",
-              "name": "rangePart",
-              "privacy": "private",
-              "return": {
-                "type": {
-                  "text": "string"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "date",
-                  "type": {
-                    "text": "Date"
-                  }
-                },
-                {
-                  "name": "selected",
-                  "type": {
-                    "text": "Date[]"
-                  }
-                }
-              ]
             },
             {
               "kind": "field",
@@ -8331,7 +8302,7 @@
               "type": {
                 "text": "Date[]"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             },
             {
@@ -8352,7 +8323,7 @@
             {
               "kind": "method",
               "name": "setFocusedDate",
-              "privacy": "private",
+              "privacy": "protected",
               "return": {
                 "type": {
                   "text": "void"
@@ -8387,8 +8358,18 @@
               "type": {
                 "text": "boolean"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "updateRovingTabIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
             },
             {
               "kind": "field",
@@ -8446,7 +8427,7 @@
               "type": {
                 "text": "{ label: string; fullLabel: string }[]"
               },
-              "privacy": "private",
+              "privacy": "protected",
               "readonly": true
             }
           ],
@@ -10803,6 +10784,27 @@
               "readonly": true
             },
             {
+              "kind": "method",
+              "name": "applyCalendarValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "detail",
+                  "type": {
+                    "text": "CalendarChangeEventDetail"
+                  },
+                  "parsedType": {
+                    "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -10854,6 +10856,11 @@
             },
             {
               "kind": "method",
+              "name": "calendarTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -10898,6 +10905,17 @@
               "default": "''"
             },
             {
+              "kind": "field",
+              "name": "constraints",
+              "type": {
+                "text": "DateConstraints"
+              },
+              "privacy": "protected",
+              "parsedType": {
+                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+              }
+            },
+            {
               "kind": "method",
               "name": "controlTemplate",
               "privacy": "protected"
@@ -10928,7 +10946,7 @@
               "kind": "field",
               "name": "dateSegments",
               "type": {
-                "text": "DateInputSegment[]"
+                "text": "readonly DateInputSegment[]"
               },
               "privacy": "protected",
               "readonly": true
@@ -11018,12 +11036,6 @@
             },
             {
               "kind": "field",
-              "name": "disabledDateSet",
-              "privacy": "protected",
-              "default": "new Set<string>()"
-            },
-            {
-              "kind": "field",
               "name": "disabledWeekDays",
               "type": {
                 "text": "string"
@@ -11032,12 +11044,6 @@
               "default": "''",
               "description": "A comma- or whitespace-separated list of unavailable weekdays, from 0 (Sunday) to 6 (Saturday).",
               "attribute": "disabled-week-days"
-            },
-            {
-              "kind": "field",
-              "name": "disabledWeekDaySet",
-              "privacy": "protected",
-              "default": "new Set<number>()"
             },
             {
               "kind": "method",
@@ -11413,6 +11419,11 @@
             },
             {
               "kind": "field",
+              "name": "handlePopupHide",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "handleSegmentBlur",
               "privacy": "protected"
             },
@@ -11532,6 +11543,15 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "hasOpened",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -11676,15 +11696,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "isRtlDirection",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "readonly": true
-            },
-            {
               "kind": "method",
               "name": "isUnavailableDate",
               "privacy": "protected",
@@ -11765,14 +11776,6 @@
             },
             {
               "kind": "field",
-              "name": "maxDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
               "name": "min",
               "type": {
                 "text": "string | undefined"
@@ -11780,14 +11783,6 @@
               "privacy": "public",
               "description": "The earliest selectable date, in `YYYY-MM-DD` format.",
               "attribute": "min"
-            },
-            {
-              "kind": "field",
-              "name": "minDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -11876,7 +11871,7 @@
                     "text": "DateInputSegment"
                   },
                   "parsedType": {
-                    "text": "{ kind: 'day' | 'month' | 'year' | 'literal', literal?: string }"
+                    "text": "{ kind: DateSegmentKind | 'literal', literal?: string }"
                   }
                 }
               ]
@@ -11984,7 +11979,7 @@
               "kind": "field",
               "name": "segmentKindsInOrder",
               "type": {
-                "text": "('day' | 'month' | 'year')[]"
+                "text": "readonly ('day' | 'month' | 'year')[]"
               },
               "privacy": "protected",
               "readonly": true
@@ -12104,6 +12099,15 @@
             {
               "kind": "field",
               "name": "suppressInputEvent",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "suppressSegmentSync",
               "type": {
                 "text": "boolean"
               },
@@ -13082,6 +13086,27 @@
               "readonly": true
             },
             {
+              "kind": "method",
+              "name": "applyCalendarValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "detail",
+                  "type": {
+                    "text": "CalendarChangeEventDetail"
+                  },
+                  "parsedType": {
+                    "text": "{ value?: CalendarValue | undefined, selectionMode: CalendarSelectionMode }"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -13137,6 +13162,11 @@
               "type": {
                 "text": "string[] | undefined"
               },
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "calendarTemplate",
               "privacy": "protected"
             },
             {
@@ -13204,6 +13234,17 @@
               "default": "''"
             },
             {
+              "kind": "field",
+              "name": "constraints",
+              "type": {
+                "text": "DateConstraints"
+              },
+              "privacy": "protected",
+              "parsedType": {
+                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+              }
+            },
+            {
               "kind": "method",
               "name": "controlTemplate",
               "privacy": "protected"
@@ -13234,7 +13275,7 @@
               "kind": "field",
               "name": "dateSegments",
               "type": {
-                "text": "DateInputSegment[]"
+                "text": "readonly DateInputSegment[]"
               },
               "privacy": "protected",
               "readonly": true
@@ -13314,12 +13355,6 @@
             },
             {
               "kind": "field",
-              "name": "disabledDateSet",
-              "privacy": "protected",
-              "default": "new Set<string>()"
-            },
-            {
-              "kind": "field",
               "name": "disabledWeekDays",
               "type": {
                 "text": "string"
@@ -13327,12 +13362,6 @@
               "privacy": "public",
               "default": "''",
               "attribute": "disabled-week-days"
-            },
-            {
-              "kind": "field",
-              "name": "disabledWeekDaySet",
-              "privacy": "protected",
-              "default": "new Set<number>()"
             },
             {
               "kind": "method",
@@ -13788,6 +13817,11 @@
             },
             {
               "kind": "field",
+              "name": "handlePopupHide",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "handleSegmentBlur",
               "privacy": "protected"
             },
@@ -13901,12 +13935,12 @@
             },
             {
               "kind": "field",
-              "name": "hasPartialSegments",
+              "name": "hasOpened",
               "type": {
                 "text": "boolean"
               },
               "privacy": "protected",
-              "readonly": true
+              "default": "false"
             },
             {
               "kind": "field",
@@ -14074,15 +14108,6 @@
               ]
             },
             {
-              "kind": "field",
-              "name": "isRtlDirection",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "readonly": true
-            },
-            {
               "kind": "method",
               "name": "isUnavailableDate",
               "privacy": "protected",
@@ -14162,14 +14187,6 @@
             },
             {
               "kind": "field",
-              "name": "maxDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "field",
               "name": "maxRange",
               "type": {
                 "text": "number"
@@ -14187,14 +14204,6 @@
               },
               "privacy": "public",
               "attribute": "min"
-            },
-            {
-              "kind": "field",
-              "name": "minDate",
-              "type": {
-                "text": "Date | undefined"
-              },
-              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -14316,7 +14325,7 @@
                     "text": "DateInputSegment"
                   },
                   "parsedType": {
-                    "text": "{ kind: 'literal' | SegmentKind, literal?: string }"
+                    "text": "{ kind: DateSegmentKind | 'literal', literal?: string }"
                   }
                 }
               ]
@@ -14448,7 +14457,7 @@
               "kind": "field",
               "name": "segmentKindsInOrder",
               "type": {
-                "text": "SegmentKind[]"
+                "text": "readonly SegmentKind[]"
               },
               "privacy": "protected",
               "readonly": true
@@ -14639,6 +14648,15 @@
             {
               "kind": "field",
               "name": "suppressInputEvent",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "suppressSegmentSync",
               "type": {
                 "text": "boolean"
               },
@@ -22619,6 +22637,16 @@
               "default": "'dialog'",
               "description": "Sets the role of the overlay content.",
               "attribute": "content-role"
+            },
+            {
+              "kind": "method",
+              "name": "deepActiveElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              }
             },
             {
               "kind": "field",
