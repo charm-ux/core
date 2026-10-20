@@ -118,3 +118,20 @@ export const Layout: Story = {
     layout: 'horizontal-stacked',
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-radio value="birds">Birds</ch-radio>
+        <ch-radio value="cats">Cats</ch-radio>
+        <ch-radio value="dogs">Dogs</ch-radio>
+      `
+    ),
+  args: {
+    label: 'Favorite pet',
+    'help-text': 'Choose one option.',
+    'error-message': 'Select a pet to continue.',
+  },
+};

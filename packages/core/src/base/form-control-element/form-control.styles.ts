@@ -159,7 +159,7 @@ export default css`
   /* Error text */
   .form-control-error-text {
     display: none;
-    margin-top: 4px;
+    margin-block-start: ${semantic('formControl', 'invalid', 'message', 'gap')};
     color: ${semantic('formControl', 'invalid', 'message', 'color')};
     grid-area: error;
     font-size: ${semantic('formControl', 'invalid', 'message', 'fontSize')};
@@ -205,7 +205,7 @@ export default css`
   }
 
   .form-control-group .form-control-error-text {
-    margin-top: 12px;
+    margin-block-start: ${semantic('formControl', 'invalid', 'message', 'gap')};
   }
 
   /* Group items */

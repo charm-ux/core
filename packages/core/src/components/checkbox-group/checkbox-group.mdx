@@ -1,0 +1,198 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Checkbox Group" />
+
+# Checkbox Group
+
+A checkbox group lets users select any number of options from a related set. Read and set the selected checkbox values as a `string[]` through its `valueAsArray` property, or use the `value` property or attribute with a configurable delimiter (comma by default).
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" name="interests" help-text="Select all that apply.">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Setting selected values
+
+Set the `valueAsArray` property to an array of checkbox values to initialize or control the selection. You can also use `value` as a delimited string in HTML or JavaScript; set `value-delimiter` to change the default comma.
+
+<code-bubble>
+
+```js
+const group = document.querySelector('ch-checkbox-group');
+group.valueAsArray = ['books', 'travel'];
+
+group.addEventListener('change', () => {
+  console.log(group.valueAsArray);
+});
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<ch-checkbox-group value="books,travel">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<ch-checkbox-group value="books|travel" value-delimiter="|">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Form submission behavior
+
+When `name` is set on the group, the group submits one entry per selected value under that name.
+
+- In standard mode, nested checkboxes can still submit independently if they also have their own `name`.
+- In `listbox` mode, options submit through the group only; nested checkbox controls do not submit independently.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-checkbox-group name="interests" value="books,travel">
+    <ch-checkbox value="books">Books</ch-checkbox>
+    <ch-checkbox value="music">Music</ch-checkbox>
+    <ch-checkbox value="travel">Travel</ch-checkbox>
+  </ch-checkbox-group>
+</form>
+
+<!-- FormData entries: interests=books, interests=travel -->
+```
+
+</code-bubble>
+
+## Listbox navigation
+
+Use `listbox` for dense sets of choices. The checkboxes keep their appearance, while keyboard users enter through one Tab stop. Up/down arrows move between options (left/right in horizontal layouts), Home/End jump to the first/last enabled option, and Space immediately toggles the active option. Typing a character jumps to the next matching option. Assistive technology receives listbox and option semantics.
+
+Teams usually enable `listbox` when they have many options and want faster keyboard throughput with fewer Tab stops. It works well for settings panels, preference centers, and admin screens where users make several selections in sequence and need predictable, high-speed navigation.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group
+  listbox
+  label="Interests"
+  help-text="Use arrow keys to move and Space to select."
+>
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<ch-checkbox-group
+  listbox
+  label="Interests"
+  value="music|sports"
+  value-delimiter="|"
+  help-text="Use arrow keys to move and Space to select."
+>
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+  <ch-checkbox value="sports">Sports</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Required
+
+Set `required` to require at least one checkbox to be selected.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Contact methods" name="contact" required>
+  <ch-checkbox value="email">Email</ch-checkbox>
+  <ch-checkbox value="phone">Phone</ch-checkbox>
+  <ch-checkbox value="mail">Mail</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Disabling options
+
+Disable an individual checkbox to prevent it from being changed, or disable the group to disable all of its checkboxes.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests">
+  <ch-checkbox value="books" checked>Books</ch-checkbox>
+  <ch-checkbox value="music" disabled>Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" disabled>
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+## Layout
+
+Set `layout="horizontal"` to place the options in a row, or `layout="horizontal-stacked"` to arrange the checkboxes horizontally with each label below its checkbox.
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" layout="horizontal">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```html
+<ch-checkbox-group label="Interests" layout="horizontal-stacked">
+  <ch-checkbox value="books">Books</ch-checkbox>
+  <ch-checkbox value="music">Music</ch-checkbox>
+  <ch-checkbox value="travel">Travel</ch-checkbox>
+</ch-checkbox-group>
+```
+
+</code-bubble>

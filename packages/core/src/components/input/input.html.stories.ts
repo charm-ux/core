@@ -141,3 +141,14 @@ export const ResetForm: Story = {
     value: 'test',
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Email address',
+    type: 'email',
+    value: 'not-an-email',
+    'help-text': 'Enter the email address associated with your account.',
+    'error-message': 'Enter a valid email address.',
+  },
+};
