@@ -9,6 +9,7 @@ export * from './button-group-overflow/button-group-overflow.js';
 export * from './button/button.js';
 export * from './card/card.js';
 export * from './checkbox/checkbox.js';
+export * from './checkbox-group/checkbox-group.js';
 export * from './date-picker/date-picker.js';
 export * from './date-range-picker/date-range-picker.js';
 export * from './dialog/dialog.js';

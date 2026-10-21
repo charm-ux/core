@@ -85,3 +85,12 @@ export const Readonly: Story = {
     value: 'This text area is readonly',
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Feedback',
+    'help-text': 'Share a few details about your experience.',
+    'error-message': 'Please add more detail before submitting.',
+  },
+};

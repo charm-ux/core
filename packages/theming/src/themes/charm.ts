@@ -680,6 +680,7 @@ const charmTokensBase = defineTokens(
         borderRadius: primitive('borderRadius', 'sm'),
         size: '20px',
         iconSize: '14px',
+        groupCheckboxGap: primitive('spacing', 'md'),
         bgColor: semantic('surface', 'primary'),
         fgColor: semantic('text', 'primary'),
         borderColor: semantic('border', 'secondary'),

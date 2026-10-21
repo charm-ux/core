@@ -94,3 +94,12 @@ export const ResetForm: Story = {
     checked: true,
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args => template(args),
+  args: {
+    label: 'I agree to the terms and conditions',
+    'help-text': 'You must agree before creating an account.',
+    'error-message': 'Please agree to continue.',
+  },
+};

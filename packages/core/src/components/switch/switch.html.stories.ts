@@ -60,3 +60,14 @@ export const LabelPosition: Story = {
     'unchecked-message-slot': 'Off',
   },
 };
+
+export const HelpTextAndErrorMessage: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'Enable notifications',
+    'help-text': 'Turn on to receive account updates.',
+    'error-message': 'Choose whether to enable notifications.',
+    'checked-message-slot': 'On',
+    'unchecked-message-slot': 'Off',
+  },
+};
