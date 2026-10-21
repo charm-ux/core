@@ -467,7 +467,7 @@ const charmTokensBase = defineTokens(
         },
         heading: {
           fgColor: semantic('text', 'primary'),
-          fontSize: primitive('fontSize', 'lg'),
+          fontSize: primitive('fontSize', 'md'),
           disabled: {
             bgColor: primitive('color', 'transparent'),
             fgColor: semantic('disabled', 'fgColor'),

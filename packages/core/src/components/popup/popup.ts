@@ -397,33 +397,79 @@ export class CorePopup extends CharmDismissibleElement {
 
     const currentFocusableElement = this.deepActiveElement();
 
-    const focusableChildren = this.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [focusable]'
-    );
+    const focusableChildren = this.getFocusableElements();
 
-    if (focusableChildren.length === 0) {
+    if (e.key !== keys.Tab || focusableChildren.length === 0) {
       return;
     }
+
     const lastFocusableElement = focusableChildren[focusableChildren.length - 1];
     const firstFocusableElement = focusableChildren[0];
+    const currentIndex =
+      currentFocusableElement instanceof HTMLElement ? focusableChildren.indexOf(currentFocusableElement) : -1;
 
-    if (
-      e.key === keys.Tab &&
-      !e.shiftKey &&
-      (lastFocusableElement === currentFocusableElement || this === currentFocusableElement)
-    ) {
-      (firstFocusableElement as HTMLElement).focus();
+    // Focus outside the trapped content (for example, the popup anchor) is sent back into the popup.
+    if (currentIndex === -1) {
+      (e.shiftKey ? lastFocusableElement : firstFocusableElement).focus();
       e.preventDefault();
       return;
     }
-    if (
-      e.key === keys.Tab &&
-      e.shiftKey &&
-      (firstFocusableElement === currentFocusableElement || this === currentFocusableElement)
-    ) {
-      (lastFocusableElement as HTMLElement).focus();
+
+    if (!e.shiftKey && currentIndex === focusableChildren.length - 1) {
+      firstFocusableElement.focus();
+      e.preventDefault();
+      return;
+    }
+
+    if (e.shiftKey && currentIndex === 0) {
+      lastFocusableElement.focus();
       e.preventDefault();
     }
+  }
+
+  protected getFocusableElements(): HTMLElement[] {
+    const selector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [focusable]';
+    const focusable: HTMLElement[] = [];
+
+    const collect = (node: Node): boolean => {
+      if (node instanceof HTMLSlotElement) {
+        let found = false;
+        for (const assigned of Array.from(node.assignedNodes({ flatten: true }))) {
+          found = collect(assigned) || found;
+        }
+        return found;
+      }
+
+      if (node instanceof Element && node.shadowRoot) {
+        let found = false;
+        for (const child of Array.from(node.shadowRoot.children)) {
+          found = collect(child) || found;
+        }
+        if (found || !node.matches(selector)) {
+          return found;
+        }
+        focusable.push(node as HTMLElement);
+        return true;
+      }
+
+      let found = false;
+      if (node instanceof Element && node.matches(selector)) {
+        focusable.push(node as HTMLElement);
+        found = true;
+      }
+
+      for (const child of Array.from(node.childNodes)) {
+        found = collect(child) || found;
+      }
+
+      return found;
+    };
+
+    if (this.popup) {
+      collect(this.popup);
+    }
+
+    return focusable;
   }
 
   protected deepActiveElement(): Element | null {

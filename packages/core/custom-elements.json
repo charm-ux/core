@@ -1446,6 +1446,12 @@
             },
             {
               "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI."
+            },
+            {
+              "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
               "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid."
@@ -10633,6 +10639,16 @@
             },
             {
               "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "updateGroupValidity",
               "privacy": "protected"
             },
@@ -12217,6 +12233,16 @@
               "name": "syncInitialFormValue",
               "privacy": "protected",
               "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -14161,6 +14187,16 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -16710,6 +16746,16 @@
                 "type": {
                   "text": "void"
                 }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -21291,6 +21337,16 @@
             },
             {
               "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
               "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
@@ -24815,6 +24871,16 @@
             },
             {
               "kind": "method",
+              "name": "getFocusableElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLElement[]"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "getMaxTransitionTime",
               "privacy": "protected",
               "parameters": [
@@ -28121,6 +28187,16 @@
             },
             {
               "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
               "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
@@ -30601,6 +30677,16 @@
             },
             {
               "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
               "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
@@ -32791,6 +32877,16 @@
               "name": "unCheckedMessageTemplate",
               "privacy": "protected",
               "description": "Generates the template for the unchecked message."
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -35489,6 +35585,16 @@
               "name": "textAreaTemplate",
               "privacy": "protected",
               "description": "Generates the template for the text area"
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",

@@ -332,7 +332,7 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                 },
               },
               calendarPopupIsFocusTrappedDialog: {
-                description: 'renders the calendar popup as a focus-trapped dialog',
+                description: 'traps focus within the popup dialog content, excluding the input controls',
                 test: async () => {
                   this.component.open = true;
                   await elementUpdated(this.component);
@@ -348,19 +348,45 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                   const today = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
                   if (!today) throw new Error('Expected today button to render.');
 
+                  const calendar = this.component.shadowRoot?.querySelector<HTMLElement>('.calendar');
+                  if (!calendar?.shadowRoot) throw new Error('Expected calendar to render.');
+
+                  const previous = calendar.shadowRoot.querySelector<HTMLButtonElement>('.navigation-button.previous');
+                  if (!previous) throw new Error('Expected previous month button to render.');
+
                   today.focus();
                   today.dispatchEvent(
                     new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true, cancelable: true })
                   );
                   await elementUpdated(this.component);
                   expect(this.component.open).to.equal(true);
-                  expect((this.component.shadowRoot?.activeElement as HTMLElement | null)?.id).to.equal(
-                    'segment-month'
-                  );
+                  expect(calendar.shadowRoot.activeElement).to.equal(previous);
 
                   const month = this.segmentInput('month');
                   month.focus();
                   month.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, composed: true, cancelable: true })
+                  );
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(true);
+                  expect(calendar.shadowRoot.activeElement).to.equal(previous);
+
+                  month.focus();
+                  month.dispatchEvent(
+                    new KeyboardEvent('keydown', {
+                      key: 'Tab',
+                      shiftKey: true,
+                      bubbles: true,
+                      composed: true,
+                      cancelable: true,
+                    })
+                  );
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(true);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(today);
+
+                  previous.focus();
+                  previous.dispatchEvent(
                     new KeyboardEvent('keydown', {
                       key: 'Tab',
                       shiftKey: true,
@@ -404,6 +430,28 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                   await elementUpdated(this.component);
                   expect(this.segmentInput('month').value).to.equal('');
                   expect(this.component.value).to.equal('');
+                },
+              },
+              requiredShowsErrorMessageOnBlur: {
+                description: 'shows the validation message after a required field is blurred',
+                test: async () => {
+                  this.component.required = true;
+                  await elementUpdated(this.component);
+
+                  const input = this.component.shadowRoot?.querySelector<HTMLInputElement>('#native-input');
+                  if (!input) throw new Error('Expected native input to render.');
+                  const reportValidity = sinon.spy(input, 'reportValidity');
+
+                  const month = this.segmentInput('month');
+                  month.focus();
+                  month.blur();
+                  await new Promise(resolve => requestAnimationFrame(resolve));
+                  await elementUpdated(this.component);
+
+                  const message = this.component.shadowRoot?.querySelector('.form-control-error-text-message');
+                  expect(reportValidity).to.not.have.been.called;
+                  expect(message?.textContent?.trim()).to.equal(input.validationMessage);
+                  expect(message?.textContent?.trim()).to.not.equal('');
                 },
               },
               today: {

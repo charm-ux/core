@@ -82,6 +82,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   @property({ type: Boolean, reflect: true })
   public required = false;
 
+  @state() protected _errorMessage = '';
   @state() protected autofocusinvalid?: boolean;
   @state() protected customErrorMessage: string = '';
   @state() protected hasLabel = false;
@@ -91,7 +92,6 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected internals: ElementInternals;
   protected initialValue: string = '';
   protected defaultValue: string | null = null;
-  protected _errorMessage = '';
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
@@ -175,9 +175,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.hadFocus = true;
     if (!this.customErrorMessage) {
       this.invalid = !this.input?.reportValidity();
-      if (this.input?.validationMessage) {
-        this._errorMessage = this.input?.validationMessage;
-      }
+      this.updateErrorMessage();
     }
     return !this.invalid;
   }
@@ -194,6 +192,12 @@ export class CharmFormControlElement extends CharmFocusableElement {
     super.connectedCallback();
     this.syncInitialFormValue();
     this.internals.setFormValue(this.value);
+  }
+
+  /** Updates the displayed validation message without showing the browser's validation UI. */
+  protected updateErrorMessage() {
+    if (this.customErrorMessage) return;
+    this._errorMessage = this.input?.validationMessage ?? '';
   }
 
   /** Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values. */
@@ -227,6 +231,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.disabled = disabled;
   }
 
+  protected override handleBlur() {
+    super.handleBlur();
+    this.updateValidity();
+  }
+
   /** Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid. */
   protected updateValidity() {
     if (!this.validityUpdatePending) {
@@ -238,7 +247,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
         this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
         this.invalid = this.disabled || this.readonly ? false : !this.checkValidity();
         if (this.hadFocus || this.hasFocus) {
-          this.reportValidity();
+          this.updateErrorMessage();
         }
       });
     }
@@ -286,7 +295,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Generates the template for form control error message */
   protected errorMessageTemplate() {
-    const errorText = this.customErrorMessage || this.errorMessage;
+    const errorText = this.errorMessage;
     return this.html`
       <div
         part="form-control-error-text"
