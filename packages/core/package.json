@@ -36,7 +36,7 @@
     "analyze:dev": "cem analyze --watch",
     "build": "pnpm analyze && pnpm generate:kitchen-sink && tsc && pnpm generate:theme && vite build && pnpm copy-assets",
     "copy-assets": "node ./scripts/copy-assets.js",
-    "dev": "run-p analyze:dev storybook:dev",
+    "dev": "pnpm --filter @charm-ux/theming build && pnpm generate:theme && run-p analyze:dev storybook:dev",
     "generate:kitchen-sink": "node --disable-warning=ExperimentalWarning ./scripts/make-kitchen-sink.js",
     "generate:theme": "pnpx tsx ./scripts/make-themes.ts",
     "prepare": "pnpx playwright install-deps",

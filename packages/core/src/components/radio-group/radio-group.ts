@@ -131,6 +131,10 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this.invalid = !this.checkValidity();
   }
 
+  protected override updateErrorMessage() {
+    this.reportValidity();
+  }
+
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
     if (changedProperties.has('value')) {
