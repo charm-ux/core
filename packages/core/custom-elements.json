@@ -12842,6 +12842,16 @@
             },
             {
               "kind": "field",
+              "name": "autocomplete",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "Autofill hint for the date segments. Set to `bday` to autofill a birthday.",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -13995,6 +14005,24 @@
             },
             {
               "kind": "method",
+              "name": "segmentAutocomplete",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "kind",
+                  "type": {
+                    "text": "'day' | 'month' | 'year'"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "segmentInput",
               "privacy": "protected",
               "return": {
@@ -14387,6 +14415,14 @@
             }
           ],
           "attributes": [
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "Autofill hint for the date segments. Set to `bday` to autofill a birthday.",
+              "fieldName": "autocomplete"
+            },
             {
               "name": "autofocus",
               "type": {
@@ -29852,6 +29888,16 @@
             },
             {
               "kind": "field",
+              "name": "autocomplete",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "Permission the user agent has to provide automated assistance in filling out the select's value.",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
               "name": "autofocus",
               "type": {
                 "text": "boolean"
@@ -30816,6 +30862,14 @@
             }
           ],
           "attributes": [
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "Permission the user agent has to provide automated assistance in filling out the select's value.",
+              "fieldName": "autocomplete"
+            },
             {
               "name": "autofocus",
               "type": {
@@ -34763,10 +34817,10 @@
               "kind": "field",
               "name": "autocomplete",
               "type": {
-                "text": "'off' | 'on' | undefined"
+                "text": "string | undefined"
               },
               "privacy": "public",
-              "description": "This attribute specifies whether the browser can automatically fill in the control's value.",
+              "description": "Permission the user agent has to provide automated assistance in filling out form field values and the type of\ninformation expected in the field.",
               "attribute": "autocomplete"
             },
             {
@@ -35757,9 +35811,9 @@
             {
               "name": "autocomplete",
               "type": {
-                "text": "'off' | 'on' | undefined"
+                "text": "string | undefined"
               },
-              "description": "This attribute specifies whether the browser can automatically fill in the control's value.",
+              "description": "Permission the user agent has to provide automated assistance in filling out form field values and the type of\ninformation expected in the field.",
               "fieldName": "autocomplete"
             },
             {

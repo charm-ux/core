@@ -136,6 +136,17 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
                   },
                 },
+                autocomplete: {
+                  description: 'forwards autocomplete tokens to the textarea',
+                  test: async () => {
+                    const el = this.component;
+                    el.autocomplete = 'street-address';
+                    await el.updateComplete;
+
+                    const textarea = el.shadowRoot?.querySelector('textarea');
+                    expect(textarea).attribute('autocomplete', 'street-address');
+                  },
+                },
                 resizeAuto: {
                   description: 'grows the textarea to fit its content when resize is auto',
                   test: async () => {

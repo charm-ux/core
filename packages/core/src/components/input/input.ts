@@ -362,7 +362,7 @@ export class CoreInput extends CharmFormControlElement {
     return html`
       <input
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
-        autocomplete=${ifDefined(this.type === 'password' ? 'off' : this.autocomplete) as any}
+        autocomplete=${ifDefined(this.autocomplete) as any}
         aria-describedby=${ifDefined(this.describedBy)}
         aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid=${this.invalid}

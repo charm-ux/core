@@ -49,6 +49,10 @@ export class CoreSelect extends CharmFormControlElement {
   @property({ type: Number, reflect: true })
   public size?: number;
 
+  /** Permission the user agent has to provide automated assistance in filling out the select's value. */
+  @property()
+  public autocomplete?: string;
+
   @query('#input')
   protected override input?: HTMLInputElement | HTMLSelectElement | undefined;
 
@@ -145,6 +149,7 @@ export class CoreSelect extends CharmFormControlElement {
           aria-describedby=${ifDefined(this.describedBy)}
           aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
+          autocomplete=${ifDefined(this.autocomplete)}
           class="input-control form-control-base-input"
           id="input"
           name=${ifDefined(this.name)}

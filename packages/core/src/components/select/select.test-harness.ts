@@ -110,6 +110,15 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
                   expect(selectedOption.value).to.equal('2');
                 },
               },
+              autocomplete: {
+                description: 'forwards autocomplete to the native select',
+                test: async () => {
+                  const el = this.component;
+                  el.autocomplete = 'country';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('select')).attribute('autocomplete', 'country');
+                },
+              },
               valueAfterUpdate: {
                 description: 'keeps value in sync when internal select updates',
                 test: async () => {

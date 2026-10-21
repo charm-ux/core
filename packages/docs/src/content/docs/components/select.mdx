@@ -84,6 +84,23 @@ Native select allows for the amount of options shown to the user via changing th
 
 </code-bubble>
 
+## Autocomplete
+
+Use `autocomplete` to tell browsers which value they may fill in, such as `country` or `address-level1`.
+
+<code-bubble>
+
+```html
+<ch-select label="Country" autocomplete="country">
+  <option value="us">United States</option>
+  <option value="ca">Canada</option>
+  <option value="mx">Mexico</option>
+  <option value="br">Brazil</option>
+</ch-select>
+```
+
+</code-bubble>
+
 ## Disabling options
 
 A Select can include disabled options by setting the disabled attribute on any nested option element.

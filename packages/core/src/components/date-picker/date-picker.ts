@@ -115,6 +115,10 @@ export class CoreDatePicker extends CharmFormControlElement {
   @property({ attribute: 'fixed-placement', type: Boolean, reflect: true })
   public fixedPlacement = false;
 
+  /** Autofill hint for the date segments. Set to `bday` to autofill a birthday. */
+  @property()
+  public autocomplete?: string;
+
   @state()
   protected day = '';
 
@@ -451,6 +455,7 @@ export class CoreDatePicker extends CharmFormControlElement {
           data-segment=${segment.kind}
           inputmode="numeric"
           maxlength=${maxLength}
+          autocomplete=${ifDefined(this.segmentAutocomplete(segment.kind))}
           aria-describedby=${ifDefined(this.describedBy)}
           aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
@@ -467,6 +472,12 @@ export class CoreDatePicker extends CharmFormControlElement {
         />
       </span>
     `;
+  }
+
+  protected segmentAutocomplete(kind: 'day' | 'month' | 'year'): string | undefined {
+    if (!this.autocomplete) return undefined;
+    if (this.autocomplete === 'bday') return `bday-${kind}`;
+    return this.autocomplete;
   }
 
   protected segmentValue(kind: 'day' | 'month' | 'year'): string {

@@ -62,6 +62,18 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(this.component.shadowRoot?.querySelector('input')).attribute('type', 'password');
                 },
               },
+              autocomplete: {
+                description: 'forwards autocomplete to password inputs',
+                test: async () => {
+                  this.component.type = 'password';
+                  this.component.autocomplete = 'current-password';
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.querySelector('input')).attribute(
+                    'autocomplete',
+                    'current-password'
+                  );
+                },
+              },
               clearButton: {
                 description: 'shows a clear button and clears the value when activated',
                 test: async () => {
