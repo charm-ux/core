@@ -227,6 +227,11 @@ export class CorePopup extends CharmDismissibleElement {
   protected anchorEl?: HTMLElement | null;
   protected cleanup: ReturnType<typeof autoUpdate> | undefined;
 
+  /** Whether the content is labelled. Presentational content must not carry a label, since the label makes browsers drop the presentational role. */
+  protected get isContentLabelled(): boolean {
+    return this.contentRole !== 'presentation' && this.contentRole !== 'none';
+  }
+
   public override connectedCallback() {
     super.connectedCallback();
     this.setAnchorElement();
@@ -572,7 +577,7 @@ export class CorePopup extends CharmDismissibleElement {
         class="popup"
         part="popup-base"
         role=${ifDefined(this.contentRole)}
-        aria-labelledby="popup-label"
+        aria-labelledby=${ifDefined(this.isContentLabelled ? 'popup-label' : undefined)}
         @transitionend=${this.handleTransitionEnd}
       >
         <span id="popup-label" class="visually-hidden">${this.label}</span>

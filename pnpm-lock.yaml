@@ -108,6 +108,9 @@ importers:
       '@floating-ui/dom':
         specifier: ^1.6.11
         version: 1.7.4
+      '@github/arianotify-polyfill':
+        specifier: ^2.4.0
+        version: 2.4.0
       composed-offset-position:
         specifier: ^0.0.6
         version: 0.0.6(@floating-ui/utils@0.2.10)
@@ -1146,6 +1149,9 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@github/arianotify-polyfill@2.4.0':
+    resolution: {integrity: sha512-pUhesPIflu3FpabgU55EUZVdowrsT5ax1k818Ffoo0TgxBKXkTy+HT74I3wk9VZKf++JdbBikHB2+tTwu2GwWg==}
 
   '@github/catalyst@1.7.0':
     resolution: {integrity: sha512-qOAxrDdRZz9+v4y2WoAfh11rpRY/x4FRofPNmJyZFzAjubtzE3sCa/tAycWWufmQGoYiwwzL/qJBBgyg7avxPw==}
@@ -8514,6 +8520,8 @@ snapshots:
       '@floating-ui/utils': 0.2.10
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@github/arianotify-polyfill@2.4.0': {}
 
   '@github/catalyst@1.7.0': {}
 

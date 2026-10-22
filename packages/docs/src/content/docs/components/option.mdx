@@ -1,0 +1,78 @@
+---
+title: Option
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+<ComponentMetadata />
+
+An option is a single choice inside a `<ch-combobox>`. Options are slotted into the combobox's
+listbox and render their own content, start and end slots, and state.
+
+## Adding options
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" name="fruit">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Provide a stable `value` when the option is submitted or read programmatically.
+- Provide a plain-text `label` when the option content includes decorative or rich markup.
+
+**_Don't_**
+
+- Use an option outside a `<ch-combobox>`; it is not a standalone control.
+- Place interactive controls inside option content.
+
+## Value and label
+
+`value` is submitted with the form and used to match selections. When it is omitted, the option's
+text content is used. Set `label` to provide plain text for filtering, typeahead, and selected-value
+display when the option contains rich content such as icons.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Notifications">
+  <ch-option value="email" label="Email">
+    <ch-icon name="mail"></ch-icon>
+    Email
+  </ch-option>
+  <ch-option value="sms" label="SMS">
+    <ch-icon name="chat"></ch-icon>
+    SMS
+  </ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Disabled and selected
+
+Set `disabled` to prevent an option from being selected or focused. Set `selected` to preselect an
+option; the parent combobox keeps `selected` in sync as the selection changes.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit">
+  <ch-option value="apple" selected>Apple</ch-option>
+  <ch-option value="banana" disabled>Banana (out of stock)</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## API

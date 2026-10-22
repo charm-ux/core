@@ -80,6 +80,7 @@
   "dependencies": {
     "@charm-ux/theming": "workspace:*",
     "@floating-ui/dom": "^1.6.11",
+    "@github/arianotify-polyfill": "^2.4.0",
     "composed-offset-position": "^0.0.6",
     "lit": "^3.2.1"
   },

@@ -1,0 +1,66 @@
+---
+title: Option Group
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+<ComponentMetadata />
+
+An option group labels and groups related `<ch-option>` elements inside a `<ch-combobox>`. Groups
+render their own label and slot their options into the combobox's listbox. Use the `label` slot when
+the label comes from translated or otherwise dynamic DOM content; the `label` property is a
+convenience fallback.
+
+## Grouping options
+
+<code-bubble>
+
+```html
+<ch-combobox label="Produce" name="produce">
+  <ch-option-group label="Citrus">
+    <ch-option value="orange">Orange</ch-option>
+    <ch-option value="lemon">Lemon</ch-option>
+  </ch-option-group>
+  <ch-option-group label="Berries">
+    <ch-option value="strawberry">Strawberry</ch-option>
+    <ch-option value="blueberry">Blueberry</ch-option>
+  </ch-option-group>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Use a short, descriptive label for each group.
+- Group options only when the categories help people scan the collection.
+
+**_Don't_**
+
+- Nest option groups; groups contain `<ch-option>` elements directly.
+- Use a group when the collection does not benefit from categories.
+
+## Disabling a group
+
+Set `disabled` to disable every option in the group without changing each option's own `disabled`
+state.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Produce">
+  <ch-option-group label="Citrus" disabled>
+    <ch-option value="orange">Orange</ch-option>
+    <ch-option value="lemon">Lemon</ch-option>
+  </ch-option-group>
+  <ch-option-group label="Berries">
+    <ch-option value="strawberry">Strawberry</ch-option>
+  </ch-option-group>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## API

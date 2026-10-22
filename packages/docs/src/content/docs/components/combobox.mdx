@@ -1,0 +1,283 @@
+---
+title: Combobox
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+<ComponentMetadata />
+
+A combobox pairs a text input with a listbox so people can filter and choose from a collection of
+options. Options are authored as `<ch-option>` elements, optionally grouped with
+`<ch-option-group>`. Options are slotted into the combobox's listbox and render themselves. The
+combobox marks the active option and announces it as it moves, because focus stays in the input.
+
+## Adding options
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" name="fruit" placeholder="Search fruit">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Give the combobox a visible or visually hidden label and a `name` when its value belongs in a form.
+- Use `label` on rich `<ch-option>` content so filtering and selected-value display use plain text.
+
+**_Don't_**
+
+- Put interactive controls inside an option; listbox options should act as a single choice.
+- Use `multiple` together with `allows-custom-value`; custom values are supported for single selection.
+
+## Providing a selected value
+
+Use the `value` attribute or property for a single selection, or select an option initially with
+the `selected` attribute.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" name="fruit" value="cherry">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Select-only behavior
+
+Set `mode="select-only"` to prevent free-text editing while keeping the control keyboard operable. Printable
+keys search option labels without changing the displayed value. ArrowDown opens the listbox at the
+current selection; ArrowUp opens at the first option. Home and End move to either edge. Enter or
+Space opens the listbox when closed and commits the active option when open. Escape closes without
+changing the current selection, and Tab commits the active option while moving focus onward. The input remains the combobox focus target, and the
+chevron button is available to assistive technology and touch users. Typeahead searches option
+labels and opens the listbox regardless of `menu-trigger`; it does not apply the editable-mode
+`filter` function.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" name="fruit" value="banana" mode="select-only">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Autocomplete modes
+
+`mode` controls how typed text relates to option suggestions:
+
+- `both` (default) filters the listbox and completes the matching option inline.
+- `list` filters and displays the listbox without inline completion.
+- `inline` completes a matching option inline without automatically opening a filtered listbox.
+- `none` leaves typed text unchanged and does not filter. With the default `menu-trigger="input"`,
+  typing opens the full, unfiltered option list.
+
+The chevron (or `menu-trigger="focus"`) can still open the option list in `inline` and `none` modes.
+Use `allows-custom-value` to commit text that does not match an option. `mode="select-only"` disables
+text editing and ignores the other autocomplete behaviors. Unlike the APG examples, Charm keeps
+unmatched-text acceptance opt-in; set `allows-custom-value` when users should be able to commit
+arbitrary text.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" mode="list">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Multiple selection
+
+Set `multiple` to select more than one option. Selected values are displayed as removable tags.
+Read or write the selection as an array with `valueAsArray`, or as a delimited string with `value`
+and `value-delimiter`.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruits" name="fruits" multiple with-clear>
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+<code-bubble>
+
+```js
+const combobox = document.querySelector('ch-combobox');
+combobox.valueAsArray = ['apple', 'cherry'];
+
+combobox.addEventListener('change', () => {
+  console.log(combobox.valueAsArray);
+});
+```
+
+</code-bubble>
+
+## Grouping options
+
+Wrap related options in `<ch-option-group>`. Each group label is announced before its options.
+Disabling a group disables every option inside it.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Produce" name="produce">
+  <ch-option-group label="Citrus">
+    <ch-option value="orange">Orange</ch-option>
+    <ch-option value="lemon">Lemon</ch-option>
+  </ch-option-group>
+  <ch-option-group label="Berries">
+    <ch-option value="strawberry">Strawberry</ch-option>
+    <ch-option value="blueberry">Blueberry</ch-option>
+  </ch-option-group>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Filtering
+
+By default the listbox filters options by their `label` (falling back to text content) as the
+person types. Provide a `filter` function to customize matching. The function receives the source
+`<ch-option>` and the current input value.
+
+<code-bubble>
+
+```js
+const combobox = document.querySelector('ch-combobox');
+combobox.filter = (option, inputValue) =>
+  option.resolvedValue.toLowerCase().startsWith(inputValue.toLowerCase());
+```
+
+</code-bubble>
+
+Set `allows-empty-collection` to allow the listbox to open with no matching options and show the
+`no-results` slot. Without it, the combobox won't open automatically when the current filter has no
+matches.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" allows-empty-collection>
+  <ch-option value="apple">Apple</ch-option>
+  <span slot="no-results">No fruit matches your search.</span>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Custom values
+
+Set `allows-custom-value` on a single-select combobox to let people commit text that does not match
+an option. Pressing Enter or blurring the input commits the typed value.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" name="fruit" allows-custom-value>
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Opening the listbox
+
+Use `menu-trigger` to control when the listbox opens:
+
+- `input` (default) opens while typing.
+- `focus` opens when the input receives focus.
+- `manual` does not open automatically on focus or while typing. Use `show()`, the chevron, or
+  keyboard navigation (`ArrowDown` / `ArrowUp`, including `Alt` shortcuts) to open it. Typed text
+  remains the active filter when the listbox opens.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" menu-trigger="manual">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Keyboard interactions
+
+- `ArrowDown` / `ArrowUp` open the listbox and move the active option.
+- `Alt+ArrowDown` / `Alt+ArrowUp` open the listbox and jump to the first or last option.
+- `Home` / `End` move to the first or last enabled option.
+- `PageDown` / `PageUp` move by a page of options.
+- `Enter` commits the active option or a custom value.
+- `Tab` commits the active option as focus leaves the combobox.
+- `Escape` closes the listbox and restores the selected value.
+- `Backspace` in a multiple combobox removes the last tag when the input is empty.
+
+Set `should-focus-wrap` to wrap navigation from the last option to the first and vice versa.
+
+## Forms and validation
+
+The combobox is form-associated. Set `name` to submit the selected value, or one entry per selected
+value when `multiple` is set. Set `required` to require at least one selection. Use `error-message`
+or `setCustomValidity()` for custom validation.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-combobox label="Fruit" name="fruit" required error-message="Choose a fruit to continue.">
+    <ch-option value="apple">Apple</ch-option>
+    <ch-option value="banana">Banana</ch-option>
+  </ch-combobox>
+</form>
+```
+
+</code-bubble>
+
+## Loading
+
+Set `loading` to show a spinner in the listbox while options are being fetched. Replace the default
+spinner with the `loading` slot.
+
+<code-bubble>
+
+```html
+<ch-combobox label="Fruit" loading>
+  <ch-option value="apple">Apple</ch-option>
+  <span slot="loading">Loading fruit…</span>
+</ch-combobox>
+```
+
+</code-bubble>
+
+## Slots and parts
+
+Use the `start` slot for leading content, `label` and `help-text` for form-control text, `toggle-label`
+to customize the accessible listbox button name, and `clear-label` to customize the accessible label
+of the clear button. Style the component through
+its `combobox-*` CSS parts and `--charm-combobox-*` custom properties.
+
+## API
