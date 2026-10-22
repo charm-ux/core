@@ -55,6 +55,47 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CharmElementT
                   expect(kinds).to.deep.equal(['month', 'day', 'year']);
                 },
               },
+              bdayAutocomplete: {
+                description: 'maps bday to the matching segment autocomplete tokens',
+                test: async () => {
+                  this.component.setAttribute('autocomplete', 'bday');
+                  await elementUpdated(this.component);
+
+                  const segments = Array.from(
+                    this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.segments .segment') ?? []
+                  );
+                  expect(segments.map(segment => segment.getAttribute('autocomplete'))).to.deep.equal([
+                    'bday-month',
+                    'bday-day',
+                    'bday-year',
+                  ]);
+                },
+              },
+              forwardsAutocomplete: {
+                description: 'forwards other autocomplete values to every segment',
+                test: async () => {
+                  this.component.setAttribute('autocomplete', 'off');
+                  await elementUpdated(this.component);
+
+                  const segments = Array.from(
+                    this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.segments .segment') ?? []
+                  );
+                  expect(segments.map(segment => segment.getAttribute('autocomplete'))).to.deep.equal([
+                    'off',
+                    'off',
+                    'off',
+                  ]);
+                },
+              },
+              omitsAutocompleteByDefault: {
+                description: 'omits autocomplete from segments when not set',
+                test: async () => {
+                  const segments = Array.from(
+                    this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.segments .segment') ?? []
+                  );
+                  expect(segments.every(segment => !segment.hasAttribute('autocomplete'))).to.equal(true);
+                },
+              },
               segmentInput: {
                 description: 'builds an ISO value from segmented input',
                 test: async () => {

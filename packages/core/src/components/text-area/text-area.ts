@@ -53,9 +53,12 @@ export class CoreTextArea extends CharmFormControlElement {
   @property({ reflect: true })
   public override autocapitalize: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters' = 'none';
 
-  /** This attribute specifies whether the browser can automatically fill in the control's value. */
+  /**
+   * Permission the user agent has to provide automated assistance in filling out form field values and the type of
+   * information expected in the field.
+   */
   @property()
-  public autocomplete?: 'off' | 'on';
+  public autocomplete?: string;
 
   /** Used to customize the label or icon of the Enter key on virtual keyboards. */
   @property({ reflect: true })
