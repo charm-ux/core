@@ -4,6 +4,7 @@ import { property } from 'lit/decorators.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { DEFAULT_THEME_PREFIX, getScope, getThemePrefix } from '../../utilities/index.js';
 import styles from './charm-element.styles.js';
+import type { CharmScope } from '../../utilities/scope.js';
 
 /** Matches an opening or closing `<scoped-*>` tag, capturing the slash and the component base name. */
 const SCOPED_TAG = /<(\/?)scoped-([a-z][a-z0-9-]*)/g;
@@ -49,7 +50,7 @@ export class CharmElement extends LitElement {
    */
   private static _scopedTemplateStrings = new WeakMap<TemplateStringsArray, Map<string, TemplateStringsArray>>();
 
-  protected scope: any;
+  protected scope!: CharmScope;
 
   /** @internal Tracks the presence of watched slotted content. */
   protected readonly slotController = new HasSlotController(this);
@@ -58,16 +59,23 @@ export class CharmElement extends LitElement {
 
   public constructor() {
     super();
-    this.scope = getScope(this);
-    if (!this.scope) {
+    const scope = getScope(this);
+    if (!scope) {
       throw new Error(
         `"${this.tagName}" is not registered with a Charm scope. ` +
           'Register the component with project.scope.registerComponent() (import it from its index.ts barrel) ' +
           'instead of using @customElement() / customElements.define().'
       );
     }
-    // @ts-ignore
-    this.constructor.dependencies?.forEach(component => this.scope.registerComponent(component));
+    this.scope = scope;
+    let elementClass: typeof CharmElement | null = this.constructor as typeof CharmElement;
+    while (elementClass) {
+      if (Object.prototype.hasOwnProperty.call(elementClass, 'dependencies')) {
+        elementClass.dependencies.forEach(component => this.scope.registerComponent(component));
+      }
+      if (elementClass === CharmElement) break;
+      elementClass = Object.getPrototypeOf(elementClass) as typeof CharmElement | null;
+    }
   }
 
   /** @internal An array of components used within this component that will need to match the host scoping */
@@ -122,12 +130,6 @@ export class CharmElement extends LitElement {
     }
   }
 
-  /** @internal Gets scoped tag name */
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  public get customTag() {
-    return `${this.scope.prefix}-${CharmElement.baseName}${this.scope.suffix ? `_${this.scope.suffix}` : ''}`;
-  }
-
   public override connectedCallback() {
     super.connectedCallback();
     if (this.scope) {
@@ -168,8 +170,10 @@ export class CharmElement extends LitElement {
     let sheets = byPrefix.get(prefix);
     if (!sheets) {
       sheets = (ctor as unknown as typeof LitElement).elementStyles.map(style => {
+        const cssText = cssTextOf(style);
+        if (!cssText.includes(`--${DEFAULT_THEME_PREFIX}-`)) return style as CSSStyleSheet;
         const sheet = new CSSStyleSheet();
-        sheet.replaceSync(rewriteThemePrefix(cssTextOf(style), prefix));
+        sheet.replaceSync(rewriteThemePrefix(cssText, prefix));
         return sheet;
       });
       byPrefix.set(prefix, sheets);

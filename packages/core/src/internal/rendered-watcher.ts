@@ -10,10 +10,13 @@ export class RenderedWatcher {
   private initialCheckHandle: number | undefined;
   private observing = false;
 
-  public constructor(
-    private readonly element: HTMLElement,
-    private readonly callback: (isRendered: boolean) => void
-  ) {}
+  private readonly element: HTMLElement;
+  private readonly callback: (isRendered: boolean) => void;
+
+  public constructor(element: HTMLElement, callback: (isRendered: boolean) => void) {
+    this.element = element;
+    this.callback = callback;
+  }
 
   /**
    * Starts watching and reports the current state on the next frame. Additional targets also act
@@ -24,6 +27,7 @@ export class RenderedWatcher {
     this.observer ??= new ResizeObserver(() => this.check());
     this.mutationObserver ??= new MutationObserver(() => this.check());
 
+    this.observer.disconnect();
     this.observer.observe(this.element);
 
     // ResizeObserver does not reliably signal display:none toggles in every engine when the

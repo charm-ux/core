@@ -168,18 +168,14 @@ export async function benchmarkComponentPerformance(
 
   const mount = await measureSamples(() => measureMount(component.create), iterations, warmups);
   const rerender = await measureSamples(iteration => measureRerender(component, iteration), iterations, warmups);
-  const bulk = Object.fromEntries(
-    await Promise.all(
-      bulkCounts.map(async count => [
-        count,
-        await measureSamples(
-          () => measureBulkMount(component.create, count),
-          Math.max(5, Math.floor(iterations / 2)),
-          warmups
-        ),
-      ])
-    )
-  );
+  const bulk: Record<number, TimingSummary> = {};
+  for (const count of bulkCounts) {
+    bulk[count] = await measureSamples(
+      () => measureBulkMount(component.create, count),
+      Math.max(5, Math.floor(iterations / 2)),
+      warmups
+    );
+  }
 
   const header = 'Scenario'.padEnd(10) + ' | Samples |    Median |        P95 |        Min |        Max';
   const separator = '-'.repeat(header.length);

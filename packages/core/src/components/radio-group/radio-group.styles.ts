@@ -34,7 +34,8 @@ export default css`
     justify-content: flex-start;
   }
 
-  :host([disabled]) .form-control-input {
+  :host([disabled]) .form-control-input,
+  :host([form-disabled]) .form-control-input {
     height: auto;
   }
 `;

@@ -68,8 +68,8 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   const getIcon = () => getError()?.querySelector('[part="form-control-error-text-icon"]');
 
                   expect(getError()).to.not.be.null;
-                  expect(getError()?.getAttribute('role')).to.equal('alert');
-                  expect(getError()?.getAttribute('aria-live')).to.equal('assertive');
+                  expect(getError()?.getAttribute('role')).to.be.null;
+                  expect(getError()?.getAttribute('aria-live')).to.equal('polite');
                   expect(getIcon()).to.be.null;
                   await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
 
@@ -163,6 +163,22 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   value: 'test',
                 },
               },
+              fieldsetDisabledReset: {
+                description: 'restores enabled state when the containing fieldset is enabled again',
+                test: async () => {
+                  const el = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form><fieldset>${el}</fieldset></form>`);
+                  const fieldset = form.querySelector('fieldset')!;
+                  fieldset.disabled = true;
+                  await elementUpdated(el);
+                  expect(el.disabled).to.be.true;
+
+                  fieldset.disabled = false;
+                  await elementUpdated(el);
+                  expect(el.disabled).to.be.false;
+                  expect(el.hasAttribute('disabled')).to.be.false;
+                },
+              },
             },
           },
 
@@ -207,9 +223,24 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   await elementUpdated(el);
 
                   const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text');
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
                   expect(el.invalid).to.be.true;
+                  expect(el.checkValidity()).to.be.false;
+                  expect(form.checkValidity()).to.be.false;
                   expect(errorMessage).to.be.visible;
                   expect(errorMessage?.textContent?.trim()).to.equal('Custom validation message');
+                },
+              },
+              preRenderCustomErrorBlocksSubmit: {
+                description: 'reflects an error-message attribute set before rendering to form validity',
+                test: async () => {
+                  const element = document.createElement(this.component.tagName.toLowerCase()) as T;
+                  element.setAttribute('error-message', 'Taken');
+                  const form = await fixture<HTMLFormElement>(html`<form>${element}</form>`);
+                  await elementUpdated(element);
+
+                  expect(form.checkValidity()).to.be.false;
+                  expect(element.checkValidity()).to.be.false;
                 },
               },
             },

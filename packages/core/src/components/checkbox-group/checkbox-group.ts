@@ -190,7 +190,9 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   }
 
   protected override syncInitialFormValue() {
+    if (this.hasCapturedInitialValue) return;
     this.initialValueAsArray = [...this.valueAsArray];
+    this.hasCapturedInitialValue = true;
   }
 
   protected override restoreInitialFormValue() {
@@ -228,6 +230,10 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     return enabledValues.length ? formValue : null;
   }
 
+  protected override getFormAssociatedValue(): FormData | null {
+    return this.getFormValue();
+  }
+
   protected parseValueAsArray(value: string): string[] {
     return this.normalizeValueAsArray(
       value
@@ -261,7 +267,11 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       this.internals.setFormValue(this.getFormValue());
       if (this.hasUpdated) this.updateGroupValidity();
     }
-    if (changedProperties.has('disabled') || changedProperties.has('readonly')) {
+    if (
+      changedProperties.has('disabled') ||
+      changedProperties.has('formDisabled') ||
+      changedProperties.has('readonly')
+    ) {
       void this.syncCheckboxElements();
       this.internals.setFormValue(this.getFormValue());
     }

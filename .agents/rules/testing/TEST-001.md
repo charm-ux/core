@@ -13,6 +13,10 @@ Component tests follow a two-file pattern:
 This gives every component baseline coverage for free and keeps custom tests organized and
 reusable. Don't write ad-hoc `describe`/`it` blocks in the `.test.ts` entry file.
 
+When a test group is focused or skipped, register its `before`/`after`/`beforeEach`/`afterEach`
+hooks exactly as for a normal group. A shared assertion must assert the returned value's actual
+contract (for example, `hasAttribute()` is boolean and should be asserted with `.to.be.true`).
+
 **Do:**
 
 ```ts

@@ -158,7 +158,7 @@ export class CoreCheckbox extends CharmFormControlElement {
     }
   }
 
-  protected getFormAssociatedValue() {
+  protected override getFormAssociatedValue() {
     return this.effectivelyDisabled || this.listboxOption ? null : this.checked ? this.value || 'on' : null;
   }
 

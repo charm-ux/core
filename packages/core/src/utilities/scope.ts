@@ -20,20 +20,25 @@ export type CharmGlobalScope = {
   tagMap: Map<string, CharmScope>;
 };
 
-if (!window.CharmComponents) {
-  window.CharmComponents = {};
+const globalWindow = typeof window === 'undefined' ? undefined : window;
+
+if (globalWindow && !globalWindow.CharmComponents) {
+  globalWindow.CharmComponents = {};
 }
 
 // We use a global object to track scope collisions since users may be using different origins and versions
-window.CharmComponents.scope ??= {
-  baseNameMap: new Map<string, typeof CharmElement>(),
-  tagMap: new Map<string, CharmScope>(),
-};
+globalWindow?.CharmComponents &&
+  (globalWindow.CharmComponents.scope ??= {
+    baseNameMap: new Map<string, typeof CharmElement>(),
+    tagMap: new Map<string, CharmScope>(),
+  });
 
-const { baseNameMap, tagMap } = window.CharmComponents.scope;
+const baseNameMap = globalWindow?.CharmComponents.scope?.baseNameMap ?? new Map<string, typeof CharmElement>();
+const tagMap = globalWindow?.CharmComponents.scope?.tagMap ?? new Map<string, CharmScope>();
 
 export interface ScopeOptions {
   basePath?: string;
+  /** Tag suffix; also marks `rootElement` with `scope-${suffix}` as a consumer CSS hook. */
   suffix?: string;
   components?: Array<typeof CharmElement>;
   rootElement?: Element;
@@ -71,35 +76,37 @@ export function setProjectConfig(config: ProjectConfiguration) {
  * const scope = getScope(el);
  * const tagName = scope.tagName('button'); // outputs "ch-button" or "ch-button_suffix"
  */
-export function getScope(elementOrTagName: Element | string): any {
+export function getScope(elementOrTagName: Element | string): CharmScope | undefined {
   const tagName = typeof elementOrTagName === 'string' ? elementOrTagName : elementOrTagName.tagName.toLowerCase();
   return tagMap.get(tagName);
 }
 
 export class CharmScope implements ScopeOptions {
-  private static instance: CharmScope | null = null;
-
   public components?: (typeof CharmElement)[] | [];
   public basePath?: string = '';
   public prefix: string = '';
   public suffix: string = '';
-  public rootElement?: Element = document.documentElement;
+  public rootElement?: Element = typeof document === 'undefined' ? undefined : document.documentElement;
 
-  protected suffixes = (window.CharmComponents.suffixes ||= []);
+  protected suffixes = globalWindow ? (globalWindow.CharmComponents.suffixes ||= []) : [];
   protected registeredComponents = new Set<typeof CharmElement>();
 
   public constructor(options?: ScopeOptions) {
-    if (!CharmScope.instance) {
-      CharmScope.instance = this;
-    }
     this.updateOptions(options);
-    return CharmScope.instance;
   }
 
   public updateOptions(options: ScopeOptions = {}) {
+    this.assertPrefixChangeAllowed(projectConfig.prefix ?? 'ch');
     this.initProperties(options);
     this.setSuffix(options.suffix);
     this.components?.map(component => this.registerComponent(component));
+  }
+
+  /** @internal Guards prefix changes that would invalidate already-registered custom element tags. */
+  public assertPrefixChangeAllowed(prefix: string) {
+    if (prefix !== this.prefix && this.registeredComponents.size > 0) {
+      throw new Error('Cannot change the custom-element prefix after components have been registered.');
+    }
   }
 
   public getComponent(baseName: string) {
@@ -107,7 +114,7 @@ export class CharmScope implements ScopeOptions {
   }
 
   public getBaseName(elementOrTagName: Element | string) {
-    const tagName = elementOrTagName instanceof Element ? elementOrTagName.tagName.toLowerCase() : elementOrTagName;
+    const tagName = typeof elementOrTagName === 'string' ? elementOrTagName : elementOrTagName.tagName.toLowerCase();
 
     return tagName
       .replace(`${this.prefix}-`, '') // remove prefix
@@ -122,26 +129,32 @@ export class CharmScope implements ScopeOptions {
   public registerComponent(...components: Array<typeof CharmElement>) {
     components.forEach(component => {
       const baseName = component.baseName;
+      if (!baseName) {
+        console.error(`No basename set for a component: ${component.name}. Set static override baseName = '<name>'.`);
+        return;
+      }
       const tagName = `${this.prefix}-${baseName}${this.suffix ? `_${this.suffix}` : ''}`;
-
-      // Keep track of components that were attempted to register - if the scope options are updated later the components will be re-registered
-      this.registeredComponents.add(component);
-
       if (tagMap.has(tagName)) {
         return;
       }
-
-      if (!baseName) {
-        console.error(`No basename set for: ${tagName}.
-            The component does not have: static override baseName = '<name>' in its class definition.`);
-        return;
-      }
-
+      if (typeof customElements === 'undefined')
+        throw new Error('Charm components can only be registered in a browser.');
+      if (customElements.get(tagName))
+        throw new Error(`The custom element "${tagName}" is already defined outside this scope.`);
+      const previousBaseComponent = baseNameMap.get(baseName);
       tagMap.set(tagName, this);
       baseNameMap.set(baseName, component);
-      if (!customElements.get(tagName)) {
+      try {
         customElements.define(tagName, class extends component {});
+      } catch (error) {
+        if (tagMap.get(tagName) === this) tagMap.delete(tagName);
+        if (baseNameMap.get(baseName) === component) {
+          if (previousBaseComponent) baseNameMap.set(baseName, previousBaseComponent);
+          else baseNameMap.delete(baseName);
+        }
+        throw error;
       }
+      this.registeredComponents.add(component);
     });
   }
 
@@ -156,11 +169,11 @@ export class CharmScope implements ScopeOptions {
   public tagName(baseName: string): string {
     if (baseName === null) throw Error('No base name given');
 
-    if (baseName.startsWith(this.prefix)) {
+    if (baseName.startsWith(`${this.prefix}-`)) {
       console.error(
         `Invalid base name: "${baseName}". Avoid using the "${this.prefix}" prefix when calling scope.tag() or scope.tagName().`
       );
-      baseName = baseName.replace(this.prefix, '');
+      baseName = baseName.slice(this.prefix.length + 1);
     }
 
     return `${this.prefix}-${baseName}${this.suffix ? `_${this.suffix}` : ''}`;
@@ -170,7 +183,10 @@ export class CharmScope implements ScopeOptions {
     this.prefix = projectConfig.prefix ?? 'ch';
     this.basePath = options?.basePath ?? this.basePath;
     this.components = options?.components ?? [];
-    this.rootElement = options.rootElement ?? document.documentElement;
+    this.rootElement =
+      options.rootElement ??
+      this.rootElement ??
+      (typeof document === 'undefined' ? undefined : document.documentElement);
     if (options?.suffix) {
       this.rootElement?.setAttribute(`scope-${options?.suffix}`, '');
     }

@@ -8,6 +8,7 @@ export class HasSlotController implements ReactiveController {
   protected readonly watchedSlots: readonly string[];
   private readonly cachedSlots = new Map<string, boolean>();
   private readonly warnedSlotNames = new Set<string>();
+  private mutationObserver?: MutationObserver;
 
   public constructor(host: CharmReactiveControllerHost, ...slotNames: string[]) {
     if (hostsWithSlotControllers.has(host)) {
@@ -30,10 +31,17 @@ export class HasSlotController implements ReactiveController {
     if (this.watchedSlots.length === 0) return;
     this.updateWatchedSlots();
     this.host.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
+    if (this.watchedSlots.includes('[default]')) {
+      this.mutationObserver ??= new MutationObserver(() => {
+        if (this.host.isConnected && this.updateWatchedSlots()) this.host.requestUpdate();
+      });
+      this.mutationObserver.observe(this.host, { childList: true, characterData: true, subtree: true });
+    }
   }
 
   public hostDisconnected() {
     this.host.shadowRoot?.removeEventListener('slotchange', this.handleSlotChange);
+    this.mutationObserver?.disconnect();
   }
 
   public hasDefaultSlot() {
@@ -96,11 +104,14 @@ export class HasSlotController implements ReactiveController {
         const el = node as Node & Element;
 
         // Ignore visually hidden elements since they aren't rendered.
-        if ('classList' in el && (el.tagName.includes('visually-hidden') || el.classList.contains('visually-hidden'))) {
+        if (
+          'classList' in el &&
+          (el.localName.includes('visually-hidden') || el.classList.contains('visually-hidden'))
+        ) {
           return false;
         }
 
-        return 'hasAttribute' in el && !el.hasAttribute('slot');
+        return 'getAttribute' in el && !el.getAttribute('slot');
       }
 
       return false;
@@ -130,7 +141,11 @@ export function getInnerHTML(slot: HTMLSlotElement): string {
     }
 
     if (node.nodeType === Node.TEXT_NODE) {
-      html += node.textContent;
+      html += (node.textContent ?? '').replace(/[&<>]/g, character => {
+        if (character === '&') return '&amp;';
+        if (character === '<') return '&lt;';
+        return '&gt;';
+      });
     }
   });
 

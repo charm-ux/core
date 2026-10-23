@@ -233,7 +233,6 @@ export class CoreAlertTests<T extends CoreAlert> extends CharmElementTests<T> {
               },
               dismissButton: {
                 description: 'should render and click dismiss button if dismissible',
-                only: true,
                 test: async () => {
                   const handler = sinon.spy();
                   const el = this.component;

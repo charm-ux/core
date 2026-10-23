@@ -1,8 +1,10 @@
 import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import CoreIcon from '../../components/icon/icon.js';
 import CharmFocusableElement from '../focusable-element/charm-focusable-element.js';
 import styles from './form-control.styles.js';
+import type CharmElement from '../charm-element/charm-element.js';
 
 /**
  * Base class for input components.
@@ -49,11 +51,6 @@ export class CharmFormControlElement extends CharmFocusableElement {
   public static override watchedSlots = ['label', 'help-text'];
   public static override styles = [...super.styles, styles];
   protected static formAssociated = true;
-
-  /** Focus on the input on page load. */
-  @property({ type: Boolean, reflect: true })
-  public override autofocus = false;
-
   /** The input's help text. Alternatively, you can use the help-text slot. */
   @property({ attribute: 'help-text' })
   public helpText?: string;
@@ -83,23 +80,29 @@ export class CharmFormControlElement extends CharmFocusableElement {
   public required = false;
 
   @state() protected _errorMessage = '';
-  @state() protected autofocusinvalid?: boolean;
   @state() protected customErrorMessage: string = '';
   @state() protected hasLabel = false;
   @state() protected hasHelpText = false;
+  @state() protected formDisabled = false;
 
   protected input?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
   protected internals: ElementInternals;
+  protected describedBy?: string;
   protected initialValue: string = '';
   protected defaultValue: string | null = null;
   protected _value: string = '';
   protected _disabled: boolean = false;
   protected _readonly: boolean = false;
   protected validityUpdatePending = false;
+  protected hasCapturedInitialValue = false;
 
   public constructor() {
     super();
     this.internals = this.attachInternals();
+  }
+
+  public static override get dependencies(): (typeof CharmElement)[] {
+    return [CoreIcon];
   }
 
   public get value(): string {
@@ -107,7 +110,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   public get disabled(): boolean {
-    return this._disabled;
+    return this._disabled || this.formDisabled;
   }
 
   public get readonly(): boolean {
@@ -126,11 +129,6 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Gets the current validation message, if one exists. */
   public get validationMessage() {
     return this.internals.validationMessage;
-  }
-
-  /** Computes the `aria-describedby` value for the native control, referencing the help text when present. */
-  protected get describedBy(): string | undefined {
-    return this.hasHelpText ? 'help-text' : undefined;
   }
 
   /** The input's error message. */
@@ -184,14 +182,25 @@ export class CharmFormControlElement extends CharmFocusableElement {
   public setCustomValidity(message = '') {
     this.hadFocus = true;
     this.customErrorMessage = message;
-    this.invalid = message !== '';
     this.input?.setCustomValidity(message);
+    if (this.input) {
+      this.internals.setValidity(this.input.validity, message || this.input.validationMessage, this.input);
+      this.updateErrorMessage();
+      this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
+    } else {
+      this.invalid = message !== '' && !this.disabled && !this.readonly;
+    }
   }
 
   public override connectedCallback() {
     super.connectedCallback();
     this.syncInitialFormValue();
-    this.internals.setFormValue(this.value);
+    this.internals.setFormValue(this.getFormAssociatedValue());
+  }
+
+  /** Form-associated value; checkbox-like subclasses override for checked-dependent submission. */
+  protected getFormAssociatedValue(): string | File | FormData | null {
+    return this.value || null;
   }
 
   /** Updates the displayed validation message without showing the browser's validation UI. */
@@ -207,8 +216,10 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Saves the current form value as the initial reset state. */
   protected syncInitialFormValue() {
+    if (this.hasCapturedInitialValue) return;
     this.defaultValue = this.getAttribute('value') ?? null;
     this.initialValue = this.getInitialFormValue();
+    this.hasCapturedInitialValue = true;
   }
 
   /** Restores the control's initial form value. Subclasses can override for checked-backed values. */
@@ -228,7 +239,9 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Reflects the disabled state when the control is disabled via a parent `<fieldset>`. */
   protected formDisabledCallback(disabled: boolean) {
-    this.disabled = disabled;
+    this.formDisabled = disabled;
+    this.toggleAttribute('form-disabled', disabled);
+    this.updateValidity();
   }
 
   protected override handleBlur() {
@@ -244,17 +257,16 @@ export class CharmFormControlElement extends CharmFocusableElement {
         this.validityUpdatePending = false;
         if (!this.isConnected) return;
 
+        this.input?.setCustomValidity(this.customErrorMessage);
         this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
-        this.invalid = this.disabled || this.readonly ? false : !this.checkValidity();
         if (this.hadFocus || this.hasFocus) {
           this.updateErrorMessage();
         }
+        this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
       });
     }
 
-    if (this.value) {
-      this.internals.setFormValue(this.value);
-    }
+    this.internals.setFormValue(this.getFormAssociatedValue());
   }
 
   protected emitInput(options?: CustomEventInit) {
@@ -300,9 +312,12 @@ export class CharmFormControlElement extends CharmFocusableElement {
       <div
         part="form-control-error-text"
         id="error-text"
-        class="form-control-error-text"
-        aria-live="assertive"
-        role="alert"
+        class=${classMap({
+          'form-control-error-text': true,
+          'visually-hidden': !(this.invalid && this.hadFocus),
+        })}
+        aria-live="polite"
+        role=${ifDefined(this.getAttribute('role') === 'listbox' ? 'group' : undefined)}
       >
         ${
           this.invalid && this.hadFocus
@@ -318,14 +333,30 @@ export class CharmFormControlElement extends CharmFocusableElement {
     `;
   }
 
-  protected override willUpdate(_changedProperties: Map<string | number | symbol, unknown>): void {
+  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
     this.hasLabel = !!(this.label || this.hasNamedSlot('label'));
     this.hasHelpText = !!(this.helpText || this.hasNamedSlot('help-text'));
+    const ids = [this.hasHelpText ? 'help-text' : '', this.invalid ? 'error-text' : ''].filter(Boolean);
+    this.describedBy = ids.length ? ids.join(' ') : undefined;
+  }
+
+  protected override updated(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.updated(changedProperties);
+    if (
+      ['value', 'required', 'disabled', 'readonly', 'customErrorMessage'].some(property =>
+        changedProperties.has(property)
+      )
+    ) {
+      this.updateValidity();
+    }
   }
 
   protected override firstUpdated(): void {
     super.firstUpdated();
+    this.input?.setCustomValidity(this.customErrorMessage);
     this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
+    this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
     this.input?.addEventListener('input', () => this.updateValidity());
   }
 }

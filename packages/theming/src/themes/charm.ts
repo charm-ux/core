@@ -261,8 +261,8 @@ const charmTokensBase = defineTokens(
         // Base state
         bgColor: { light: primitive('color', 'white'), dark: primitive('color', 'neutral', 800) },
         fgColor: { light: primitive('color', 'neutral', 900), dark: primitive('color', 'neutral', 50) },
-        borderColor: { light: primitive('color', 'neutral', 300), dark: primitive('color', 'neutral', 600) },
-        placeholderColor: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) },
+        borderColor: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) },
+        placeholderColor: { light: primitive('color', 'neutral', 600), dark: primitive('color', 'neutral', 300) },
         shadow: primitive('shadow', 'none'),
         // Static properties
         borderWidth: primitive('borderWidth', 'thin'),

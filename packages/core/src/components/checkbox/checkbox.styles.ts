@@ -73,6 +73,7 @@ export default css`
   }
 
   :host([disabled]) .control-label-wrapper .control,
+  :host([form-disabled]) .control-label-wrapper .control,
   :host([force-disabled]) .control-label-wrapper .control {
     background-color: ${component('checkbox', 'disabled', 'bgColor')};
     border-color: ${component('checkbox', 'disabled', 'borderColor')};
@@ -80,6 +81,7 @@ export default css`
   }
 
   :host([disabled]) .control-label-wrapper .label,
+  :host([form-disabled]) .control-label-wrapper .label,
   :host([force-disabled]) .control-label-wrapper .label {
     color: ${component('checkbox', 'disabled', 'fgColor')};
   }
@@ -108,6 +110,7 @@ export default css`
   }
 
   :host([disabled]) .checkbox,
+  :host([form-disabled]) .checkbox,
   :host([force-disabled]) .checkbox {
     cursor: not-allowed;
     pointer-events: none;

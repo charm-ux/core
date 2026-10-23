@@ -9,7 +9,7 @@ const browsers = resolvePlaywrightLaunchers().slice(0, 1);
 export default /** @type {import("@web/test-runner").TestRunnerConfig} */ ({
   concurrency: 1,
   concurrentBrowsers: 1,
-  files: ['./src/**/*.performance.ts'],
+  files: ['./src/**/*.performance.ts', '!./src/internal/testing/component-production.performance.ts'],
   nodeResolve: true,
   browsers,
   plugins: [

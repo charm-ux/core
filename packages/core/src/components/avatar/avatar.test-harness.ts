@@ -97,6 +97,27 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   expect(initialsElement).to.be.null;
                 },
               },
+              imageSlotAddedAfterRender: {
+                description: 'shows an image added to the image slot after the first render',
+                test: async () => {
+                  const el = this.component;
+                  el.initials = 'JD';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('slot[name="image"]')).to.not.be.null;
+
+                  const image = document.createElement('img');
+                  image.slot = 'image';
+                  image.alt = 'User avatar';
+                  el.append(image);
+                  await new Promise(resolve => setTimeout(resolve, 0));
+                  await elementUpdated(el);
+
+                  expect(el.shadowRoot?.querySelector('[part="avatar-initials"]')).to.be.null;
+                  expect(
+                    (el.shadowRoot?.querySelector('slot[name="image"]') as HTMLSlotElement | null)?.assignedElements()
+                  ).to.include(image);
+                },
+              },
               statusIndicator: {
                 description: 'renders status-indicator slot with content',
                 test: async () => {
@@ -296,7 +317,9 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
                   el.innerHTML = '<span>Default Content</span>';
                   await elementUpdated(el);
 
-                  const defaultSlot = el.shadowRoot?.querySelector('slot:not([initials])') as HTMLSlotElement | null;
+                  const defaultSlot = el.shadowRoot?.querySelector(
+                    'slot:not([name]):not([initials])'
+                  ) as HTMLSlotElement | null;
 
                   let slotContent = '';
                   if (defaultSlot) {

@@ -1,4 +1,4 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { DEFAULT_THEME_PREFIX, setThemePrefix } from '../../../utilities/theme.js';
 import '../../../components/accordion-item/index.js';
@@ -13,7 +13,6 @@ import '../../../components/tooltip/index.js';
 type DismissibleInternals = {
   getMaxTransitionTime: (styles: string[]) => number;
   getTransitionStyles: () => string[];
-  parseTimeToMilliseconds: (value: string) => number;
 };
 
 const tags = [
@@ -67,13 +66,64 @@ describe('CharmDismissibleElement', () => {
     expect(internals.getTransitionStyles()).to.deep.equal(['opacity 2ms 3ms', 'opacity 1ms']);
   });
 
-  it('parses none, comma-separated transitions, units, delays, and bare seconds', async () => {
+  it('parses none, comma-separated transitions, units, and delays', async () => {
     const element = await mount('ch-alert');
     const getMaxTransitionTime = (element as unknown as DismissibleInternals).getMaxTransitionTime;
 
     expect(getMaxTransitionTime.call(element, ['none'])).to.equal(0);
     expect(getMaxTransitionTime.call(element, ['opacity 0.2s 50ms, transform 300ms 0.1s'])).to.equal(400);
-    expect((element as unknown as DismissibleInternals).parseTimeToMilliseconds('2')).to.equal(2000);
+  });
+
+  it('waits for the initial render before emitting after-show for an initially open component', async () => {
+    const element = document.createElement('ch-alert');
+    element.setAttribute('open', '');
+    const afterShow = oneEvent(element, 'alert-after-show');
+    document.body.append(element);
+
+    await afterShow;
+    expect(element.hasAttribute('open')).to.be.true;
+    expect(element.shadowRoot?.querySelector('.alert-wrapper')).to.not.be.null;
+  });
+
+  it('does not settle on a shorter or pseudo-element transition end', async () => {
+    const element = await mount('ch-alert', '--alert-transition: opacity 100ms, transform 500ms;');
+    const internals = element as unknown as {
+      open: boolean;
+      handleTransitionEnd: (event: TransitionEvent) => void;
+      pendingAfterEvent?: string;
+    };
+    internals.open = true;
+    const event = (elapsedTime: number, pseudoElement = '') =>
+      ({ target: element, currentTarget: element, elapsedTime, pseudoElement }) as unknown as TransitionEvent;
+
+    internals.handleTransitionEnd(event(0.1));
+    expect(internals.pendingAfterEvent).to.equal('after-show');
+    internals.handleTransitionEnd(event(0.5, '::before'));
+    expect(internals.pendingAfterEvent).to.equal('after-show');
+    element.remove();
+  });
+
+  it('restarts a pending after event after reconnecting during a transition', async () => {
+    const element = await mount('ch-alert', '--alert-transition: opacity 1ms;');
+    const afterShow = oneEvent(element, 'alert-after-show');
+    (element as HTMLElement & { open: boolean }).open = true;
+    element.remove();
+    document.body.append(element);
+
+    await afterShow;
+    expect((element as HTMLElement & { open: boolean }).open).to.be.true;
+  });
+
+  it('keeps the closed state when a show listener immediately hides the element', async () => {
+    const element = await mount('ch-alert');
+    const afterHide = oneEvent(element, 'alert-after-hide');
+    element.addEventListener('alert-show', () => ((element as HTMLElement & { open: boolean }).open = false), {
+      once: true,
+    });
+    (element as HTMLElement & { open: boolean }).open = true;
+
+    await afterHide;
+    expect((element as HTMLElement & { open: boolean }).open).to.be.false;
   });
 
   it('measures starts-open elements after firstUpdated and reacts to theme changes', async () => {

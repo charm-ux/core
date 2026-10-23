@@ -7,6 +7,11 @@ names to watch — it self-registers via `host.addController(this)` and triggers
 when slotted content changes. Use the `'[default]'` sentinel for the default (unnamed)
 slot.
 
+`slotchange` only fires for slots that exist in the shadow tree. If slotted content may be
+added after the first render, render the slot unconditionally and toggle only its fallback;
+conditionally creating the `<slot>` makes late content invisible to the controller. For the
+default slot, treat `slot=""` as default content and account for text that changes in place.
+
 **Do:**
 
 ```ts
@@ -21,6 +26,9 @@ export class CoreButton extends CharmFocusableElement {
 **Don't:**
 
 ```ts
+// Conditional slots cannot receive slotchange before they exist, so late content is missed.
+return this.hasImage ? html`<slot name="image"></slot>` : html`<span>Fallback</span>`;
+
 // Manual slotchange plumbing — easy to leak listeners and to miss the default slot.
 public override connectedCallback() {
   super.connectedCallback();

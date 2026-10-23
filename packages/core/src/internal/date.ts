@@ -49,10 +49,16 @@ export const DAYS_IN_WEEK = 7;
 
 const MS_PER_DAY = 86_400_000;
 
-const monthYearOptions: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric', timeZone: 'UTC' };
-const monthOptions: Intl.DateTimeFormatOptions = { month: 'long', timeZone: 'UTC' };
-const fullDateOptions: Intl.DateTimeFormatOptions = { dateStyle: 'full', timeZone: 'UTC' };
+const monthYearOptions: Intl.DateTimeFormatOptions = {
+  calendar: 'gregory',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+};
+const monthOptions: Intl.DateTimeFormatOptions = { calendar: 'gregory', month: 'long', timeZone: 'UTC' };
+const fullDateOptions: Intl.DateTimeFormatOptions = { calendar: 'gregory', dateStyle: 'full', timeZone: 'UTC' };
 const segmentOptions: Intl.DateTimeFormatOptions = {
+  calendar: 'gregory',
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',
@@ -205,7 +211,11 @@ export function normalizeRangeBounds(minRange: number, maxRange: number): DayRan
 }
 
 export function normalizeInputDigits(value: string): string {
-  return value.replace(/\D/g, '');
+  return value
+    .normalize('NFKC')
+    .replace(/[٠-٩]/g, digit => String(digit.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, digit => String(digit.charCodeAt(0) - 0x6f0))
+    .replace(/\D/g, '');
 }
 
 /** Parses the `disabled-dates` attribute into an ISO-date set. */
@@ -257,8 +267,9 @@ export function getLocaleFirstDay(locale: string): number {
   try {
     const localeInfo = new Intl.Locale(locale) as Intl.Locale & {
       getWeekInfo?: () => { firstDay: number };
+      weekInfo?: { firstDay: number };
     };
-    const value = localeInfo.getWeekInfo?.().firstDay;
+    const value = localeInfo.getWeekInfo?.().firstDay ?? localeInfo.weekInfo?.firstDay;
     if (value !== undefined) firstDay = value % DAYS_IN_WEEK;
   } catch {
     firstDay = 0;
@@ -292,8 +303,16 @@ export function getWeekdayNames(locale: string, format: 'narrow' | 'short' | 'lo
   const cacheKey = `${locale}|${format}`;
   let names = weekdayNameCache.get(cacheKey);
   if (!names) {
-    const labelFormatter = getFormatter(locale, `weekday-${format}`, { weekday: format, timeZone: 'UTC' });
-    const fullFormatter = getFormatter(locale, 'weekday-long', { weekday: 'long', timeZone: 'UTC' });
+    const labelFormatter = getFormatter(locale, `weekday-${format}`, {
+      calendar: 'gregory',
+      weekday: format,
+      timeZone: 'UTC',
+    });
+    const fullFormatter = getFormatter(locale, 'weekday-long', {
+      calendar: 'gregory',
+      weekday: 'long',
+      timeZone: 'UTC',
+    });
     names = Array.from({ length: DAYS_IN_WEEK }, (_, index) => {
       const date = addDays(WEEK_START_SAMPLE, index);
       return { label: labelFormatter.format(date), fullLabel: fullFormatter.format(date) };

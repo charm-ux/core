@@ -57,6 +57,19 @@ describe('HasSlotController', () => {
     expect(controller.hasNamedSlot('label')).to.equal(false);
   });
 
+  it('counts an empty slot attribute as default-slot content', () => {
+    const host = createHost();
+    host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    const child = document.createElement('span');
+    child.setAttribute('slot', '');
+    host.append(child);
+    const controller = new HasSlotController(host, '[default]');
+
+    controller.hostConnected();
+
+    expect(controller.hasDefaultSlot()).to.be.true;
+  });
+
   it('requests an update only when a watched slot changes', async () => {
     const host = createHost();
     host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot><slot name="label"></slot>';

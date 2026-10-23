@@ -83,9 +83,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
-              "privacy": "protected"
+              "privacy": "protected",
+              "default": "scope"
             }
           ],
           "events": [
@@ -200,6 +201,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -209,12 +215,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`."
@@ -336,19 +342,6 @@
               "reflects": true
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ]
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -358,11 +351,20 @@
             },
             {
               "kind": "field",
+              "name": "resumeAfterEvent",
+              "type": {
+                "text": "'after-show' | 'after-hide' | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -386,6 +388,19 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component."
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -545,15 +560,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}"
-            },
-            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -637,9 +643,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -929,21 +936,13 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -989,13 +988,21 @@
             },
             {
               "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "typeof CharmElement[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "describedBy",
               "type": {
                 "text": "string | undefined"
               },
-              "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -1065,19 +1072,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -1085,6 +1079,15 @@
               "privacy": "protected",
               "static": true,
               "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "method",
@@ -1118,6 +1121,17 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill)."
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission."
             },
             {
               "kind": "method",
@@ -1183,6 +1197,15 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -1404,9 +1427,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -1555,7 +1579,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -1947,6 +1971,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -1956,12 +1985,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -2190,23 +2219,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -2220,11 +2232,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -2252,6 +2277,23 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -2605,9 +2647,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -2958,6 +3001,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -2967,12 +3015,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -3167,23 +3215,6 @@
               "privacy": "protected"
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -3221,11 +3252,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -3253,6 +3297,23 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -3630,6 +3691,16 @@
             },
             {
               "kind": "method",
+              "name": "fallbackTemplate",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
               "return": {
@@ -3755,9 +3826,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4062,9 +4134,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4361,19 +4434,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -4498,9 +4558,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -4859,9 +4920,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -5616,9 +5678,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -6194,9 +6257,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -6722,19 +6786,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -6974,9 +7025,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -7857,19 +7909,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "focusDate",
               "type": {
                 "text": "string | undefined"
@@ -8294,9 +8333,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -8937,9 +8977,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -9448,24 +9489,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -9574,13 +9603,25 @@
             },
             {
               "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "typeof CharmElement[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "describedBy",
               "type": {
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -9739,19 +9780,6 @@
               ]
             },
             {
-              "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "focusOnFirstFocusableElement",
               "privacy": "protected",
@@ -9766,6 +9794,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -9853,6 +9894,21 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -10071,6 +10127,19 @@
               "kind": "method",
               "name": "handleSlotChange",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -10534,9 +10603,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -10825,7 +10895,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -11498,24 +11568,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -11594,11 +11652,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -11607,8 +11669,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -11716,19 +11776,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -11736,6 +11783,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -11794,7 +11854,17 @@
             {
               "kind": "method",
               "name": "getFormAssociatedValue",
-              "privacy": "protected"
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -11875,6 +11945,19 @@
               "kind": "method",
               "name": "handleListboxLabelClick",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -12190,9 +12273,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -12398,7 +12482,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -12858,24 +12942,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -13023,11 +13095,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -13036,8 +13112,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -13209,19 +13283,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "focusDate",
               "type": {
                 "text": "string | undefined"
@@ -13281,6 +13342,19 @@
               }
             },
             {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "formDisabledCallback",
               "privacy": "protected",
@@ -13320,6 +13394,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -13541,6 +13630,19 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -13977,9 +14079,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -14429,7 +14532,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -15196,24 +15299,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -15379,11 +15470,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -15392,8 +15487,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -15620,19 +15713,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "focusDate",
               "type": {
                 "text": "string | undefined"
@@ -15715,6 +15795,19 @@
               }
             },
             {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "formDisabledCallback",
               "privacy": "protected",
@@ -15754,6 +15847,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -15975,6 +16083,19 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -16467,9 +16588,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -16969,7 +17091,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -17878,6 +18000,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -17887,12 +18014,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -18135,23 +18262,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -18213,11 +18323,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -18265,6 +18388,23 @@
               "name": "startRenderedWatcher",
               "privacy": "protected",
               "description": "Starts watching the dialog's render state, tearing down any previous watcher first."
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -18688,6 +18828,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -18697,12 +18842,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -18876,23 +19021,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -18906,11 +19034,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -18944,6 +19085,23 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -19330,9 +19488,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -19697,9 +19856,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -20307,24 +20467,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -20392,11 +20540,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -20405,8 +20557,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20519,19 +20669,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -20539,6 +20676,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20584,6 +20734,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -20757,6 +20922,19 @@
               "name": "handleSlotChange",
               "privacy": "protected",
               "description": "Handles the change in the default slot."
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -21190,9 +21368,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -21558,7 +21737,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -22090,9 +22269,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -22669,9 +22849,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23070,6 +23251,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -23079,12 +23265,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -23364,23 +23550,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -23437,11 +23606,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -23522,6 +23704,23 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -24249,9 +24448,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -24795,6 +24995,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -24804,12 +25009,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -25103,23 +25308,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -25194,11 +25382,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -25315,6 +25516,23 @@
               "kind": "method",
               "name": "start",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -26014,9 +26232,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -26476,6 +26695,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -26485,12 +26709,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -26704,23 +26928,6 @@
               "description": "Generates the template for the push pane itself."
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -26768,11 +26975,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -26810,6 +27030,23 @@
               "name": "show",
               "privacy": "public",
               "description": "Shows/opens the component.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -27432,24 +27669,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -27511,11 +27736,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -27524,8 +27753,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -27618,19 +27845,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "focusOnFirstFocusableElement",
               "privacy": "protected",
@@ -27645,6 +27859,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -27699,6 +27926,21 @@
               "kind": "method",
               "name": "getAllRadios",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -27829,6 +28071,19 @@
               "kind": "method",
               "name": "handleValueChange",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -28166,9 +28421,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -28386,7 +28642,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -28940,9 +29196,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -29368,9 +29625,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -29904,24 +30162,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -29989,11 +30235,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -30002,8 +30252,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30103,19 +30351,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -30123,6 +30358,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30168,6 +30416,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30286,6 +30549,19 @@
               "name": "handleSlotChange",
               "privacy": "protected",
               "description": "Handles the change of the options in the default slot"
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -30650,9 +30926,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -30876,7 +31153,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -31235,9 +31512,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -31554,9 +31832,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -32143,24 +32422,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -32263,11 +32530,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -32276,8 +32547,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -32371,19 +32640,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -32391,6 +32647,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -32441,6 +32710,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -32562,6 +32846,19 @@
                 }
               ],
               "description": "Handles the keydown event on the switch."
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -32872,9 +33169,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -33096,7 +33394,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -33477,9 +33775,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -33808,9 +34107,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -34234,9 +34534,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -34831,24 +35132,12 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "attribute": "autofocus",
               "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "autofocusinvalid",
-              "type": {
-                "text": "boolean | undefined"
-              },
-              "privacy": "protected",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -34916,11 +35205,15 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "(typeof CharmElement)[]"
+                "text": "typeof CharmElement[]"
               },
               "privacy": "public",
               "static": true,
-              "readonly": true
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -34929,8 +35222,6 @@
                 "text": "string | undefined"
               },
               "privacy": "protected",
-              "description": "Computes the `aria-describedby` value for the native control, referencing the help text when present.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -35035,19 +35326,6 @@
             },
             {
               "kind": "field",
-              "name": "focusableEventOptions",
-              "type": {
-                "text": "CustomEventInit"
-              },
-              "privacy": "protected",
-              "default": "{}",
-              "inheritedFrom": {
-                "name": "CharmFocusableElement",
-                "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -35055,6 +35333,19 @@
               "privacy": "protected",
               "static": true,
               "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -35100,6 +35391,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -35188,6 +35494,19 @@
               "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -35580,9 +35899,10 @@
               "kind": "field",
               "name": "scope",
               "type": {
-                "text": "any"
+                "text": "CharmScope"
               },
               "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -35822,7 +36142,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Focus on the input on page load.",
+              "description": "Auto focuses the component on page load.",
               "fieldName": "autofocus",
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
@@ -36418,6 +36738,11 @@
               "kind": "method",
               "name": "emitScopedEvent",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CustomEvent<T>"
+                }
+              },
               "parameters": [
                 {
                   "name": "name",
@@ -36427,12 +36752,12 @@
                   "description": "The name of the event to emit."
                 },
                 {
-                  "name": "detail",
+                  "name": "options",
                   "optional": true,
                   "type": {
-                    "text": "any"
+                    "text": "CustomEventInit<T>"
                   },
-                  "description": "The detail object to include with the event."
+                  "description": "Custom event initialization, including detail and cancelability."
                 }
               ],
               "description": "Emits event scoped to component `${this.baseName}-${name}`.",
@@ -36733,23 +37058,6 @@
               }
             },
             {
-              "kind": "method",
-              "name": "parseTimeToMilliseconds",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "string"
-                  }
-                }
-              ],
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
-              }
-            },
-            {
               "kind": "field",
               "name": "pendingAfterEvent",
               "type": {
@@ -36790,11 +37098,24 @@
             },
             {
               "kind": "field",
-              "name": "scope",
+              "name": "resumeAfterEvent",
               "type": {
-                "text": "any"
+                "text": "'after-show' | 'after-hide' | undefined"
               },
               "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
@@ -36836,6 +37157,23 @@
               "privacy": "public",
               "description": "The distance in pixels from which to offset the tooltip along its target.",
               "attribute": "skidding"
+            },
+            {
+              "kind": "method",
+              "name": "startTransitionWait",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "afterEvent",
+                  "type": {
+                    "text": "'after-show' | 'after-hide'"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
             },
             {
               "kind": "method",

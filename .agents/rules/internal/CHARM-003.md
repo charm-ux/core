@@ -5,8 +5,11 @@ When a component renders another Charm component in its shadow DOM, declare it i
 the current scope, so the nested component resolves to the correct scoped tag name
 regardless of import order — and consumers don't have to import it separately.
 
-Import the dependency's class and reference the scoped tag via `this.customTag`-style
-lookup rather than a hardcoded `<ch-icon>` literal.
+Import the dependency's class and reference the scoped tag through `this.html` with a
+`<scoped-*>` tag rather than a hardcoded `<ch-icon>` literal.
+
+The `customTag` convenience getter was removed; it always used the base class name rather than
+the subclass name and had no callers.
 
 Every direct dependency must also be documented with an `@dependency` JSDoc tag on the
 class — one tag per dependency, using the class name (see [CHARM-009](./CHARM-009.md)).

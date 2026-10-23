@@ -158,27 +158,31 @@ export default css`
   }
 
   /* Disabled */
-  :host([disabled]) .switch {
+  :host([disabled]) .switch,
+  :host([form-disabled]) .switch {
     opacity: ${semantic('formControl', 'disabled', 'opacity')};
     cursor: not-allowed;
   }
 
   @media screen and (forced-colors: active) {
-    :host([disabled]) .switch {
+    :host([disabled]) .switch,
+    :host([form-disabled]) .switch {
       opacity: 1;
     }
 
-    :host([disabled]) .switch-control {
+    :host([disabled]) .switch-control,
+    :host([form-disabled]) .switch-control {
       background-color: ${SystemColors.ButtonFace};
       border-color: ${SystemColors.GrayText};
     }
 
-    :host([disabled]) .switch-thumb {
+    :host([disabled]) .switch-thumb,
+    :host([form-disabled]) .switch-thumb {
       background-color: ${SystemColors.GrayText};
     }
 
-    :host(:not([disabled])) .switch:not(.switch-checked) .switch-thumb,
-    :host(:not([disabled])) .switch:not(.switch-checked):hover .switch-thumb {
+    :host(:not([disabled]):not([form-disabled])) .switch:not(.switch-checked) .switch-thumb,
+    :host(:not([disabled]):not([form-disabled])) .switch:not(.switch-checked):hover .switch-thumb {
       background-color: ${SystemColors.ButtonText};
     }
 

@@ -89,6 +89,55 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(this.component.value).to.equal('');
                 },
               },
+              clearedValueNotSubmitted: {
+                description: 'does not submit a value after it is cleared',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'field';
+                  el.value = 'abc';
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  await elementUpdated(el);
+                  expect(new FormData(form).get('field')).to.equal('abc');
+
+                  el.value = '';
+                  await elementUpdated(el);
+                  expect(new FormData(form).has('field')).to.be.false;
+                },
+              },
+              clearButtonRemovesSubmittedValue: {
+                description: 'removes the submitted value when the clear button is activated',
+                test: async () => {
+                  const el = this.component;
+                  el.withClear = true;
+                  el.name = 'field';
+                  el.value = 'abc';
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  await elementUpdated(el);
+                  expect(new FormData(form).get('field')).to.equal('abc');
+
+                  el.shadowRoot?.querySelector<HTMLButtonElement>('.form-control-clear')?.click();
+                  await elementUpdated(el);
+                  expect(new FormData(form).has('field')).to.be.false;
+                },
+              },
+              movingPreservesResetValue: {
+                description: 'preserves the original reset value when moved within the document',
+                test: async () => {
+                  const el = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  const staging = document.createElement('div');
+                  el.value = 'changed';
+                  await elementUpdated(el);
+                  staging.append(el);
+                  form.append(el);
+                  await elementUpdated(el);
+
+                  form.reset();
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('test');
+                },
+                config: { value: 'test' },
+              },
               passwordToggle: {
                 description: 'toggles password visibility when the password toggle is activated',
                 test: async () => {
@@ -119,7 +168,7 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   await elementUpdated(this.component);
                   expect(getInput()?.getAttribute('aria-invalid')).to.equal('true');
                   expect(getInput()?.getAttribute('aria-errormessage')).to.equal('error-text');
-                  expect(getInput()?.getAttribute('aria-describedby')).to.be.null;
+                  expect(getInput()?.getAttribute('aria-describedby')).to.equal('error-text');
 
                   this.component.errorMessage = '';
                   await elementUpdated(this.component);
@@ -175,6 +224,21 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                     <form><${unsafeStatic(tag)} required value=""></${unsafeStatic(tag)}><button type="submit">Submit</button></form>
                   `);
                   expect(form.reportValidity()).to.be.false;
+                },
+              },
+              requiredAddedAfterMount: {
+                description: 'revalidates when required is enabled after mounting',
+                test: async () => {
+                  const el = this.component;
+                  el.value = '';
+                  await elementUpdated(el);
+                  expect(el.checkValidity()).to.be.true;
+
+                  el.required = true;
+                  await elementUpdated(el);
+                  await Promise.resolve();
+                  expect(el.checkValidity()).to.be.false;
+                  expect(el.invalid).to.be.true;
                 },
               },
               enterKeyInvalid: {
@@ -243,6 +307,7 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
 
                   const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text');
                   expect(el.invalid).to.be.true;
+                  expect(el.checkValidity()).to.be.false;
                   expect(errorMessage).to.be.visible;
                   expect(errorMessage?.textContent?.trim()).to.equal('Custom validation message');
                 },

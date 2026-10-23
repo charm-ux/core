@@ -104,6 +104,10 @@ export class CoreSwitch extends CharmFormControlElement {
     return this.checked ? this.value || 'on' : '';
   }
 
+  protected override getFormAssociatedValue() {
+    return this.checked ? this.value || 'on' : null;
+  }
+
   protected override firstUpdated(): void {
     super.firstUpdated();
     this.syncInitialFormValue();

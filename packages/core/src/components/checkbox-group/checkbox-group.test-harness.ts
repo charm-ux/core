@@ -248,6 +248,59 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   expect(new FormData(form).getAll('options')).to.deep.equal(['birds', 'dogs']);
                 },
               },
+              requiredChangesPreserveFormData: {
+                description: 'keeps its multi-value FormData submission when validation constraints change',
+                test: async () => {
+                  const group = this.component;
+                  group.valueAsArray = ['birds', 'dogs'];
+                  await elementUpdated(group);
+                  const form = await fixture<HTMLFormElement>(html`<form>${group}</form>`);
+
+                  group.required = true;
+                  await elementUpdated(group);
+
+                  expect(new FormData(form).getAll('options')).to.deep.equal(['birds', 'dogs']);
+                },
+              },
+              movingPreservesResetValue: {
+                description: 'preserves the original reset value after the group is moved',
+                test: async () => {
+                  const group = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form>${group}</form>`);
+                  const staging = document.createElement('div');
+                  group.valueAsArray = ['dogs'];
+                  await elementUpdated(group);
+                  staging.append(group);
+                  form.append(group);
+                  await elementUpdated(group);
+
+                  form.reset();
+                  await elementUpdated(group);
+                  expect(group.valueAsArray).to.deep.equal(['birds']);
+                },
+                config: { value: 'birds' },
+              },
+              fieldsetDisableResynchronizesListboxOptions: {
+                description: 'updates listbox and child disabled state when a fieldset disables and enables the group',
+                test: async () => {
+                  const group = this.component;
+                  const options = [...group.children] as CoreCheckbox[];
+                  group.listbox = true;
+                  await elementUpdated(group);
+                  const form = await fixture<HTMLFormElement>(html`<form><fieldset>${group}</fieldset></form>`);
+                  const fieldset = form.querySelector('fieldset')!;
+
+                  fieldset.disabled = true;
+                  await elementUpdated(group);
+                  await waitUntil(() => options.every(option => option.forceDisabled));
+                  expect(group.getAttribute('aria-disabled')).to.equal('true');
+
+                  fieldset.disabled = false;
+                  await elementUpdated(group);
+                  await waitUntil(() => options.every(option => !option.forceDisabled));
+                  expect(group.hasAttribute('aria-disabled')).to.be.false;
+                },
+              },
               submitsListboxOptionsThroughTheGroup: {
                 description: 'submits listbox choices through the group rather than nested checkbox controls',
                 test: async () => {

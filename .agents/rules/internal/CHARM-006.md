@@ -10,6 +10,26 @@ and provides, once and correctly: `static formAssociated = true`,
 re-implement `ElementInternals` wiring on a component; delegate validity to the inner native
 control through the base.
 
+The base owns a `getFormAssociatedValue()` hook and calls `setFormValue()` on connection and
+when relevant state changes. Return `null` for an empty submission; do not skip synchronization
+when a value becomes empty. Override the hook for semantic values such as checked controls
+(`checked ? value || 'on' : null`) or multi-value `FormData` groups. Do not let the base's
+string value overwrite those values.
+
+Capture a control's initial/reset value once, not on every connection: a reflected `value`
+attribute may contain an edited value after a move in the DOM. `formDisabledCallback()` must
+track fieldset-disabled state separately from the reflected `disabled` property, then use the
+effective state (`disabled || formDisabled`) for rendering, validity, and submission.
+
+Synchronize native validity into `ElementInternals` after the inner control exists and whenever
+value or constraints change (`required`, `min`, `max`, `pattern`, `disabled`, `readonly`, custom
+validity). Apply custom validity to both the native input and `ElementInternals`. Refresh the
+cached validation message before deriving `invalid` so an update cannot expose stale state.
+
+Add browser regression tests for cleared `FormData`, custom errors before and after render,
+constraint changes, fieldset disable/enable, reset after moving, and checked/multi-value
+submissions. Component happy-path tests alone do not cover these lifecycle interactions.
+
 **Do:**
 
 ```ts
@@ -42,30 +62,24 @@ export class CoreCheckbox extends CharmFocusableElement {
 Note: `CoreButton` is a deliberate exception — it attaches its own internals for
 submit/reset behavior without being a full form control. Follow the base for actual inputs.
 
-**Checked-dependent form values.** Checkbox-like controls (checkbox, switch) submit different
-form values depending on `checked` (`checked ? value || 'on' : null`). The base syncs the form
-value from `value` in `connectedCallback`, so a bare `setFormValue` in the `checked` setter gets
-clobbered on (re)connection — re-parenting a control into a form is enough to lose the value.
-Re-apply the checked-dependent value after the base runs: set it in `willUpdate` when `checked`
-changes (checkbox), and/or override `connectedCallback` to re-apply it after `super` (switch).
+**Special form values.** Override `getFormAssociatedValue()` rather than writing form values
+from a property setter or lifecycle hook. Checkbox-like controls submit according to `checked`
+(`checked ? value || 'on' : null`); checkbox groups may return `FormData`. The hook is used for
+all base synchronization, including clearing and reconnection.
 
 **Do:**
 
 ```ts
-// checkbox.ts — re-applied on every update where checked changed, survives re-parenting
-protected override willUpdate(changedProperties: PropertyValues) {
-  super.willUpdate(changedProperties);
-  if (changedProperties.has('checked')) {
-    this.internals.setFormValue(this.checked ? this.value || 'on' : null);
-  }
+// checkbox.ts — one source of truth for updates, empty state, and reconnection
+protected override getFormAssociatedValue(): string | null {
+  return this.checked ? this.value || 'on' : null;
 }
 ```
 
 ```ts
-// switch.ts — connectedCallback in the base syncs from `value`; re-apply after super
-public override connectedCallback(): void {
-  super.connectedCallback();
-  this.internals.setFormValue(this.checked ? this.value || 'on' : null);
+// checkbox-group.ts — preserve its multi-value submission when base state changes
+protected override getFormAssociatedValue(): FormData | null {
+  return this.getFormValue();
 }
 ```
 

@@ -107,21 +107,24 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-006](accessibility/A11Y-006.md) — Return focus to the opener when a dismissible closes
 - [A11Y-007](accessibility/A11Y-007.md) — Use roving tabindex for composite widgets
 - [A11Y-008](accessibility/A11Y-008.md) — Compare `event.key` against the shared `keys` map, not string literals
-- [A11Y-009](accessibility/A11Y-009.md) — Honor `prefers-reduced-motion` (aspirational)
+- [A11Y-009](accessibility/A11Y-009.md) — Honor `prefers-reduced-motion`
 - [A11Y-010](accessibility/A11Y-010.md) — Reflect disabled state with `aria-disabled` on the widget host, and keep it in sync
 - [A11Y-011](accessibility/A11Y-011.md) — Make closed or off-screen content `inert`
+- [A11Y-012](accessibility/A11Y-012.md) — Meet contrast for text and essential control boundaries
 
 ### I18N — internationalization (path-gated)
 
 - [I18N-001](i18n/I18N-001.md) — Render user-facing text via slots and DOM, not attributes
 - [I18N-002](i18n/I18N-002.md) — Support RTL through direction-aware styling and behavior
+- [I18N-003](i18n/I18N-003.md) — Keep civil-date math Gregorian while localizing its presentation
 
 ### TEST — testing (path-gated)
 
 - [TEST-001](testing/TEST-001.md) — Use the test-harness pattern
 - [TEST-002](testing/TEST-002.md) — Use `@open-wc/testing` + web-test-runner, and await updates
 - [TEST-003](testing/TEST-003.md) — Assert events with `oneEvent`, keys with `sendKeys`, spies with `sinon`
-- [TEST-004](testing/TEST-004.md) — Ship a `*.performance.ts` render-time budget for every component
+- [TEST-004](testing/TEST-004.md) — Report component performance benchmarks accurately
+- [TEST-005](testing/TEST-005.md) — Unit-test foundation utilities directly
 
 ### DOC — documentation (path-gated)
 
