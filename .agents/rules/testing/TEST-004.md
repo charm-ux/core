@@ -10,6 +10,11 @@ Run these separately from unit tests: `pnpm test:core-performance`.
 Run bulk counts sequentially to avoid benchmark contention, and exclude production benchmark
 entries from the source-run glob when they import `dist`.
 
+Benchmarks must exercise the operation they claim to measure. A popup positioning benchmark must
+open the popup with a real anchor and wait for positioning; an overflow-resize benchmark must
+change available width and let the resize/reflow path run. A closed popup or label-only update is
+not evidence about positioning or resizing performance.
+
 **Do:**
 
 ```ts

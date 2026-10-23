@@ -11,6 +11,12 @@ only proceed to `hide()` when it wasn't prevented — this lets consumers veto a
 the base's `emitRequestClose` pattern; type the detail (e.g. `DialogRequestCloseEvent`,
 `DialogCloseSource`) per [PROP-006](./PROP-006.md).
 
+Route every user-driven close path through this event, including Escape, Tab/focus-out,
+selection, outside click, and optional scroll dismissal. Do not assign `open = false` directly
+from those handlers. If scrolling only needs to update placement, rely on the popup positioner;
+if scroll dismissal is an explicit feature, make it opt-in and report its source. Restore focus
+only after an accepted close and according to the close source.
+
 **Do:**
 
 ```ts

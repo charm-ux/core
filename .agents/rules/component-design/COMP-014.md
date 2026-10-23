@@ -6,6 +6,11 @@ positioning to `ch-popup`: it declares `CorePopup` in `static dependencies`, ren
 `this.html` with a `<scoped-popup>` tag, and forwards parts with `exportparts`. This keeps the
 shadow-DOM/`offsetParent` workarounds and the idempotent positioner lifecycle in one place.
 
+Scrolling is a positioning input, not an implicit dismissal request: let `autoUpdate` reposition
+the popup. Never assign to global browser APIs (for example `window.open`) from an unbound
+listener, and do not install page-wide scroll dismissal unless it is an explicit opt-in that uses
+the dismissible `request-close` flow.
+
 **Do:**
 
 ```ts

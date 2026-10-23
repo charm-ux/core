@@ -9,6 +9,13 @@ private internals.
   (`{ press: 'Enter' }`, `{ type: '...' }`) after focusing the element — this exercises the
   real accessibility path ([A11Y-003](../accessibility/A11Y-003.md)).
 - **Spies/stubs**: use `sinon` for callbacks and timers.
+- **Focus**: assert the resulting `document.activeElement` (or the relevant shadow root's
+  `activeElement`). Do not replace or spy on `.focus()`; that proves a method was called, not that
+  the browser moved focus.
+- **Forms**: assert submitted values at the consumer boundary, e.g. `new FormData(form).getAll(name)`
+  for multi-value controls, rather than checking only the component's `value` property.
+- **Lifecycle events**: await the exact public event (`dialog-after-hide`, not `after-close`) before
+  asserting its effects. A listener that is never awaited is not a regression test.
 
 **Do:**
 
@@ -28,6 +35,10 @@ expect(clickSpy.callCount).to.equal(1);
 // Keyboard
 el.focus();
 await sendKeys({ press: 'Enter' });
+
+// Focus and repeated form values
+expect(document.activeElement).to.equal(nextItem);
+expect(new FormData(form).getAll('choice')).to.deep.equal(['one', 'two']);
 ```
 
 **Don't:**
