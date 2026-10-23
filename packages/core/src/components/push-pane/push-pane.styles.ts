@@ -19,7 +19,7 @@ export default css`
     max-width: 100%;
     display: flex;
     flex-direction: column;
-    float: left;
+    float: inline-start;
     overflow: hidden;
     transition: ${component('pushPane', 'transition')};
     border-inline-end: 1px solid ${component('pushPane', 'dividerColor')};
@@ -43,7 +43,7 @@ export default css`
   }
 
   :host([position='end']) .base {
-    float: right;
+    float: inline-end;
   }
 
   :host([open][position='end']) .base {
@@ -157,7 +157,7 @@ export default css`
 
   :host([no-header]) .visually-hidden:focus-within .close-button {
     position: absolute;
-    right: 0px;
+    inset-inline-end: 0;
     z-index: 1;
   }
 `;

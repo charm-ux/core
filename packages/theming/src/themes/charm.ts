@@ -731,7 +731,7 @@ const charmTokensBase = defineTokens(
         inset: '0',
         size: 'fit-content',
         transition: 'opacity 0.2s ease, transform 0.2s ease',
-        positionTransition: 'top 0.2s ease, left 0.2s ease',
+        positionTransition: 'transform 0.2s ease',
         footerButtonGap: primitive('spacing', 'sm'),
         toolbarButtonGap: primitive('spacing', 'sm'),
         headerToolbarGap: primitive('spacing', 'md'),
@@ -870,6 +870,7 @@ const charmTokensBase = defineTokens(
           },
           radio: {
             bgColor: semantic('surface', 'primary'),
+            indicatorBgColor: semantic('text', 'primary'),
             active: {
               bgColor: semantic('action', 'primary', 'color'),
               borderColor: semantic('border', 'strong'),
@@ -926,7 +927,7 @@ const charmTokensBase = defineTokens(
         bodyMarginInline: primitive('spacing', 'lg'),
         headerPaddingX: primitive('spacing', 'lg'),
         headerPaddingY: primitive('spacing', 'md'),
-        footerPaddingX: primitive('spacing', 'lg'),
+        footerPaddingX: '0',
         footerPaddingY: primitive('spacing', 'md'),
         transition: 'width 0.3s ease, opacity 0.3s ease',
         toolbarButtonGap: primitive('spacing', 'sm'),

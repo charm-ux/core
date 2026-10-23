@@ -223,7 +223,7 @@ export default css`
     --dialog-position-transition: ${component('dialog', 'positionTransition')};
   }
 
-  :host([position]) dialog {
+  :host([position]:not([position='center'])) dialog {
     /*
      * Drawers slide rather than fade in place, so they get their own timing.
      * Without this the value above was declared and never used, leaving drawers
@@ -245,6 +245,14 @@ export default css`
 
   :host([position='end']) dialog {
     transform: translateX(100%);
+  }
+
+  :host(:dir(rtl)[position='start']) dialog {
+    transform: translateX(100%);
+  }
+
+  :host(:dir(rtl)[position='end']) dialog {
+    transform: translateX(-100%);
   }
 
   :host([position='top']) dialog {
@@ -275,6 +283,14 @@ export default css`
       transform: translateX(100%);
     }
 
+    :host(:dir(rtl)[position='start'][open]) dialog {
+      transform: translateX(100%);
+    }
+
+    :host(:dir(rtl)[position='end'][open]) dialog {
+      transform: translateX(-100%);
+    }
+
     :host([position='top'][open]) dialog {
       transform: translateY(-100%);
     }
@@ -287,7 +303,7 @@ export default css`
   :host([position='start']) dialog,
   :host([position='end']) dialog {
     height: 100%;
-    --dialog-max-height: 100vh;
+    --dialog-max-height: 100dvh;
   }
 
   :host([position='top']) dialog,
@@ -320,6 +336,14 @@ export default css`
 
   :host([position='end']) {
     --dialog-inset: 0px 0px auto auto;
+  }
+
+  :host(:dir(rtl)[position='start']) {
+    --dialog-inset: 0px 0px auto auto;
+  }
+
+  :host(:dir(rtl)[position='end']) {
+    --dialog-inset: 0px auto auto 0px;
   }
 
   :host([position='top']) {

@@ -44,6 +44,18 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                   expect(trigger.hasAttribute('expanded')).to.be.false;
                 },
               },
+              haspopupForwardedToNativeButton: {
+                description: 'forwards aria-haspopup from a Charm button trigger to its native button',
+                test: async () => {
+                  const el = this.component;
+                  const trigger = el.querySelector('#triggerId') as HTMLElement;
+                  await elementUpdated(el);
+                  await elementUpdated(trigger as HTMLElement);
+
+                  expect(trigger.getAttribute('haspopup')).to.equal('menu');
+                  expect(trigger.shadowRoot?.querySelector('button')?.getAttribute('aria-haspopup')).to.equal('menu');
+                },
+              },
               expandedNativeButton: {
                 description: 'should set "aria-expanded" on trigger when it is a native button',
                 test: async () => {
@@ -202,18 +214,15 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   const triggerElement = el.querySelector('#triggerId') as HTMLButtonElement;
-                  const handleFocus = sinon.spy();
                   const menuItems = el.querySelectorAll('[role="menuitem"]');
                   const lastMenuItem = menuItems[menuItems.length - 1] as HTMLElement;
-
-                  lastMenuItem.focus = handleFocus;
 
                   triggerElement.focus();
                   await elementUpdated(el);
                   await sendKeys({ press: 'ArrowUp' });
                   await elementUpdated(el);
 
-                  expect(handleFocus).to.have.been.calledOnce;
+                  expect(document.activeElement).to.equal(lastMenuItem);
                 },
               },
               triggerPressedArrowDown: {
@@ -234,34 +243,36 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   const triggerElement = el.querySelector('#triggerId') as HTMLButtonElement;
-                  const handleFocus = sinon.spy();
                   const menuItems = el.querySelectorAll('[role="menuitem"]');
                   const firstMenuItem = menuItems[0] as HTMLElement;
-
-                  firstMenuItem.focus = handleFocus;
 
                   triggerElement.focus();
                   await elementUpdated(el);
                   await sendKeys({ press: 'ArrowDown' });
                   await elementUpdated(el);
 
-                  expect(handleFocus).to.have.been.calledOnce;
+                  expect(document.activeElement).to.equal(firstMenuItem);
                 },
               },
               clickOutsideOfDropdown: {
                 description: 'should set "open" to false when clicking outside of the dropdown',
                 test: async () => {
                   const el = this.component;
+                  const input = document.createElement('input');
+                  document.body.append(input);
 
                   el.open = true;
                   await elementUpdated(el);
 
                   expect(el.open).to.be.true;
 
-                  document.querySelector('body')?.click();
+                  input.focus();
+                  input.click();
                   await elementUpdated(el);
 
                   expect(el.open).to.be.false;
+                  expect(document.activeElement).to.equal(input);
+                  input.remove();
                 },
               },
               pressEscapeInsideDropdown: {

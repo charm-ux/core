@@ -990,7 +990,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -5192,6 +5192,48 @@
               }
             },
             {
+              "kind": "method",
+              "name": "containsComposed",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "container",
+                  "type": {
+                    "text": "Node"
+                  }
+                },
+                {
+                  "name": "target",
+                  "type": {
+                    "text": "Node"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CoreOverflow",
+                "module": "src/components/overflow/overflow.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "deepActiveElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "inheritedFrom": {
+                "name": "CoreOverflow",
+                "module": "src/components/overflow/overflow.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "dependencies",
               "type": {
@@ -5214,19 +5256,6 @@
               "inheritedFrom": {
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "dropdownOpen",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false",
-              "inheritedFrom": {
-                "name": "CoreOverflow",
-                "module": "src/components/overflow/overflow.ts"
               }
             },
             {
@@ -5299,6 +5328,32 @@
             },
             {
               "kind": "method",
+              "name": "handleOverflowItemClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                },
+                {
+                  "name": "item",
+                  "type": {
+                    "text": "OverflowMenuItem"
+                  },
+                  "parsedType": {
+                    "text": "{ hostElement?: HTMLElement | undefined, tagName: string, text: string, icons: { name: string; slot: string | null; }[], disabled: false | true, subMenuItems: OverflowMenuItem[], id: string }"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CoreOverflow",
+                "module": "src/components/overflow/overflow.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "handleResize",
               "privacy": "protected",
               "description": "Handles the hiding/showing of overflowing elements, and emits the overflow event.",
@@ -5312,20 +5367,6 @@
               "name": "handleSlotChange",
               "privacy": "protected",
               "description": "Handles setting the internal slottedElements array.",
-              "inheritedFrom": {
-                "name": "CoreOverflow",
-                "module": "src/components/overflow/overflow.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "hasOverflow",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false",
-              "description": "Internal state tracking whether or not there are overflowing elements.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
                 "module": "src/components/overflow/overflow.ts"
@@ -5423,20 +5464,6 @@
             },
             {
               "kind": "field",
-              "name": "lastWidth",
-              "type": {
-                "text": "number"
-              },
-              "privacy": "protected",
-              "default": "0",
-              "description": "Used to determine resize direction.",
-              "inheritedFrom": {
-                "name": "CoreOverflow",
-                "module": "src/components/overflow/overflow.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "menuPosition",
               "type": {
                 "text": "'start' | 'end' | 'none'"
@@ -5485,9 +5512,12 @@
             {
               "kind": "field",
               "name": "overflowing",
+              "type": {
+                "text": "boolean"
+              },
               "privacy": "public",
-              "description": "Whether or not there are overflowing elements. Readonly.",
-              "readonly": true,
+              "default": "false",
+              "description": "Whether or not there are overflowing elements.",
               "attribute": "overflowing",
               "reflects": true,
               "inheritedFrom": {
@@ -5582,8 +5612,8 @@
               "kind": "field",
               "name": "overflowSet",
               "privacy": "protected",
-              "default": "new Map()",
-              "description": "Holds a map of all overflowed slottedElements that are hidden from view.",
+              "default": "new Set<HTMLElement>()",
+              "description": "Tracks slotted elements that this component has hidden in the overflow menu.",
               "inheritedFrom": {
                 "name": "CoreOverflow",
                 "module": "src/components/overflow/overflow.ts"
@@ -5919,8 +5949,11 @@
             },
             {
               "name": "overflowing",
-              "description": "Whether or not there are overflowing elements. Readonly.",
-              "readonly": true,
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether or not there are overflowing elements.",
               "fieldName": "overflowing",
               "inheritedFrom": {
                 "name": "CoreOverflow",
@@ -6901,6 +6934,16 @@
             },
             {
               "kind": "field",
+              "name": "haspopup",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "Sets `aria-haspopup` on the internal button or link.",
+              "attribute": "haspopup"
+            },
+            {
+              "kind": "field",
               "name": "hideHandler",
               "type": {
                 "text": "() => void | undefined"
@@ -7239,6 +7282,14 @@
               },
               "description": "Sets \"aria-expanded\" on the internal button or link.",
               "fieldName": "expanded"
+            },
+            {
+              "name": "haspopup",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "Sets `aria-haspopup` on the internal button or link.",
+              "fieldName": "haspopup"
             },
             {
               "name": "hides",
@@ -9605,7 +9656,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -11652,7 +11703,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -13095,7 +13146,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -15470,7 +15521,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -18093,6 +18144,12 @@
               ]
             },
             {
+              "kind": "field",
+              "name": "handlePointerDown",
+              "privacy": "protected",
+              "description": "Records whether a pointer gesture began outside the dialog."
+            },
+            {
               "kind": "method",
               "name": "handleRenderedChange",
               "privacy": "protected",
@@ -18116,11 +18173,10 @@
                   "name": "e",
                   "type": {
                     "text": "TransitionEvent"
-                  },
-                  "description": "The 'transitionend' event object."
+                  }
                 }
               ],
-              "description": "Handles the 'transitionend' event for CSS transitions.",
+              "description": "Handles transitionend event to emit `{baseName}-after-show` and `{baseName}-after-hide` events after transitions are complete. Should be added to the element with the CSS transition.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -18204,12 +18260,11 @@
                 {
                   "name": "e",
                   "type": {
-                    "text": "MouseEvent"
-                  },
-                  "description": "The 'pointerup' event object."
+                    "text": "PointerEvent"
+                  }
                 }
               ],
-              "description": "Dismisses the dialog when clicking outside of it."
+              "description": "Dismisses on pointer-up only when the gesture began and ended outside the dialog."
             },
             {
               "kind": "method",
@@ -18224,7 +18279,7 @@
                 "text": "boolean | undefined"
               },
               "privacy": "public",
-              "description": "Removes the header. This will also remove the default close button. If using prevent default on dialog-request-close please provide a way for the user to close the dialog.",
+              "description": "Hides the visible header; the heading and close button remain available to assistive technology.",
               "attribute": "no-header",
               "reflects": true
             },
@@ -18275,6 +18330,15 @@
             },
             {
               "kind": "field",
+              "name": "pointerStartedOutside",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
               "name": "position",
               "type": {
                 "text": "'start' | 'end' | 'top' | 'bottom' | 'center' | undefined"
@@ -18287,6 +18351,16 @@
             {
               "kind": "field",
               "name": "previousBodyOverflow",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "static": true,
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "previousBodyPaddingInlineEnd",
               "type": {
                 "text": "string"
               },
@@ -18594,7 +18668,7 @@
               "type": {
                 "text": "boolean | undefined"
               },
-              "description": "Removes the header. This will also remove the default close button. If using prevent default on dialog-request-close please provide a way for the user to close the dialog.",
+              "description": "Hides the visible header; the heading and close button remain available to assistive technology.",
               "fieldName": "noHeader"
             },
             {
@@ -20540,7 +20614,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -22160,16 +22234,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "focusIndex",
-              "type": {
-                "text": "number"
-              },
-              "privacy": "protected",
-              "default": "0",
-              "description": "Internal state that tracks the currently focused menu item."
-            },
-            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -22288,16 +22352,6 @@
               "description": "Determines if the elements inside the group are selectable as \"single\" (only one selected at a time) or \"multiple\" (checkbox behavior).",
               "attribute": "select",
               "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "selectedItem",
-              "type": {
-                "text": "CoreMenuItem | null"
-              },
-              "privacy": "protected",
-              "default": "null",
-              "description": "Internal state that tracks the currently selected menu item in single selection mode."
             },
             {
               "kind": "method",
@@ -22497,6 +22551,10 @@
               "name": "--charm-menu-item-radio-bg-color"
             },
             {
+              "description": "Determines the checked radio indicator color.",
+              "name": "--charm-menu-item-radio-indicator-bg-color"
+            },
+            {
               "description": "Determines the border color of the radio indicator when hovered.",
               "name": "--charm-menu-item-radio-hover-border-color"
             },
@@ -22671,6 +22729,12 @@
               "reflects": true
             },
             {
+              "kind": "method",
+              "name": "emitExpandedChange",
+              "privacy": "protected",
+              "description": "Emits the expanded-change event after the expanded state changes."
+            },
+            {
               "kind": "field",
               "name": "expanded",
               "type": {
@@ -22750,6 +22814,11 @@
               "name": "handleParentMenuHide",
               "privacy": "protected",
               "description": "Handles when the parent menu is closed"
+            },
+            {
+              "kind": "field",
+              "name": "handleSubmenuMenuHide",
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -22889,12 +22958,20 @@
             },
             {
               "kind": "field",
+              "name": "submenuObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "subMenuPlacement",
               "type": {
                 "text": "string"
               },
               "privacy": "public",
-              "default": "'right-start'",
+              "default": "'end-top'",
               "description": "Controls the placement of the submenu popup.",
               "attribute": "sub-menu-placement"
             },
@@ -22907,12 +22984,6 @@
               "privacy": "public",
               "description": "Tells the browser where to open the link. Only used when `href` is set.",
               "attribute": "target"
-            },
-            {
-              "kind": "method",
-              "name": "toggleSubmenuItems",
-              "privacy": "protected",
-              "description": "Toggles the visibility of the submenu items."
             },
             {
               "kind": "method",
@@ -23012,7 +23083,7 @@
               "type": {
                 "text": "string"
               },
-              "default": "'right-start'",
+              "default": "'end-top'",
               "description": "Controls the placement of the submenu popup.",
               "fieldName": "subMenuPlacement"
             },
@@ -23046,10 +23117,6 @@
             },
             {
               "name": "CoreMenu",
-              "description": ""
-            },
-            {
-              "name": "CorePopup",
               "description": ""
             }
           ],
@@ -23383,7 +23450,7 @@
               "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
-              "description": "Emits a custom keyboard event to request the menu to close"
+              "description": "Handles keyboard navigation and close requests."
             },
             {
               "kind": "field",
@@ -23402,20 +23469,6 @@
               "name": "handlePopupRequestClose",
               "privacy": "protected",
               "description": "Syncs the menu's open state when the popup requests to close itself (e.g. Escape or Tab-trap close)."
-            },
-            {
-              "kind": "method",
-              "name": "handleRadioMenuItemSelection",
-              "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ],
-              "description": "Handle radio menu item selection"
             },
             {
               "kind": "method",
@@ -23499,6 +23552,19 @@
               "name": "initializeItems",
               "privacy": "protected",
               "description": "Initialize menu items"
+            },
+            {
+              "kind": "method",
+              "name": "isEnabledItem",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "item",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -23600,9 +23666,18 @@
                   "parsedType": {
                     "text": "'change' | 'trigger' | 'document' | 'keyboard'"
                   }
+                },
+                {
+                  "name": "restoreFocus",
+                  "default": "source !== 'document'"
                 }
               ],
               "description": "Processes close request with associated source target and completes request"
+            },
+            {
+              "kind": "method",
+              "name": "resetRovingTabindex",
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -23647,11 +23722,8 @@
                   }
                 },
                 {
-                  "name": "parentGroup",
-                  "optional": true,
-                  "type": {
-                    "text": "CoreMenuGroup"
-                  }
+                  "name": "direction",
+                  "default": "targetIndex < this.focusIndex ? -1 : 1"
                 }
               ],
               "description": "Set focus on menu item"
@@ -23797,16 +23869,6 @@
               "description": "Query for the trigger element"
             },
             {
-              "kind": "field",
-              "name": "triggerIsDisabled",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Checks if the trigger is disabled",
-              "readonly": true
-            },
-            {
               "kind": "method",
               "name": "triggerSlotTemplate",
               "privacy": "protected",
@@ -23839,6 +23901,11 @@
               },
               "privacy": "protected",
               "description": "Handle for the timer that resets the type-ahead query after a pause in typing."
+            },
+            {
+              "kind": "method",
+              "name": "waitForItems",
+              "privacy": "protected"
             }
           ],
           "events": [
@@ -24078,6 +24145,40 @@
               "description": "parent container for the collapsible content."
             },
             {
+              "kind": "method",
+              "name": "containsComposed",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "container",
+                  "type": {
+                    "text": "Node"
+                  }
+                },
+                {
+                  "name": "target",
+                  "type": {
+                    "text": "Node"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "deepActiveElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "dependencies",
               "type": {
@@ -24097,15 +24198,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "dropdownOpen",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false"
             },
             {
               "kind": "method",
@@ -24161,6 +24253,28 @@
             },
             {
               "kind": "method",
+              "name": "handleOverflowItemClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                },
+                {
+                  "name": "item",
+                  "type": {
+                    "text": "OverflowMenuItem"
+                  },
+                  "parsedType": {
+                    "text": "{ hostElement?: HTMLElement | undefined, tagName: string, text: string, icons: { name: string; slot: string | null; }[], disabled: false | true, subMenuItems: OverflowMenuItem[], id: string }"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "handleResize",
               "privacy": "protected",
               "description": "Handles the hiding/showing of overflowing elements, and emits the overflow event."
@@ -24170,16 +24284,6 @@
               "name": "handleSlotChange",
               "privacy": "protected",
               "description": "Handles setting the internal slottedElements array."
-            },
-            {
-              "kind": "field",
-              "name": "hasOverflow",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false",
-              "description": "Internal state tracking whether or not there are overflowing elements."
             },
             {
               "kind": "method",
@@ -24257,16 +24361,6 @@
             },
             {
               "kind": "field",
-              "name": "lastWidth",
-              "type": {
-                "text": "number"
-              },
-              "privacy": "protected",
-              "default": "0",
-              "description": "Used to determine resize direction."
-            },
-            {
-              "kind": "field",
               "name": "menuPosition",
               "type": {
                 "text": "'start' | 'end' | 'none'"
@@ -24303,9 +24397,12 @@
             {
               "kind": "field",
               "name": "overflowing",
+              "type": {
+                "text": "boolean"
+              },
               "privacy": "public",
-              "description": "Whether or not there are overflowing elements. Readonly.",
-              "readonly": true,
+              "default": "false",
+              "description": "Whether or not there are overflowing elements.",
               "attribute": "overflowing",
               "reflects": true
             },
@@ -24376,8 +24473,8 @@
               "kind": "field",
               "name": "overflowSet",
               "privacy": "protected",
-              "default": "new Map()",
-              "description": "Holds a map of all overflowed slottedElements that are hidden from view."
+              "default": "new Set<HTMLElement>()",
+              "description": "Tracks slotted elements that this component has hidden in the overflow menu."
             },
             {
               "kind": "method",
@@ -24571,8 +24668,11 @@
             },
             {
               "name": "overflowing",
-              "description": "Whether or not there are overflowing elements. Readonly.",
-              "readonly": true,
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether or not there are overflowing elements.",
               "fieldName": "overflowing"
             }
           ],
@@ -24646,15 +24746,7 @@
             },
             {
               "description": "The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.",
-              "name": "--charm-popup-arrow-size"
-            },
-            {
-              "description": "A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.",
-              "name": "--charm-popup-auto-size-available-height"
-            },
-            {
-              "description": "A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.",
-              "name": "--charm-popup-auto-size-available-width"
+              "name": "--popup-arrow-size"
             },
             {
               "description": "The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.",
@@ -24708,6 +24800,15 @@
             },
             {
               "kind": "field",
+              "name": "_flipFallbackPlacements",
+              "type": {
+                "text": "Array<Placement | PopupPlacement>"
+              },
+              "privacy": "private",
+              "default": "[]"
+            },
+            {
+              "kind": "field",
               "name": "_open",
               "type": {
                 "text": "boolean"
@@ -24751,7 +24852,7 @@
               },
               "privacy": "public",
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using `--popup-arrow-size`, and its color follows `--popup-bg-color`. For additional customizations, target it with `::part(popup-arrow)`.",
               "attribute": "arrow",
               "reflects": true
             },
@@ -25052,8 +25153,7 @@
                 "text": "string"
               },
               "privacy": "public",
-              "default": "''",
-              "description": "If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. \"top bottom left\". If no placement fits, the flip fallback strategy will be used instead.",
+              "description": "Fallback placements tried when the preferred placement does not fit. The attribute accepts placements separated by spaces.",
               "attribute": "flip-fallback-placements"
             },
             {
@@ -25190,11 +25290,6 @@
             },
             {
               "kind": "method",
-              "name": "handleScrollDismiss",
-              "privacy": "protected"
-            },
-            {
-              "kind": "method",
               "name": "handleTransitionEnd",
               "privacy": "protected",
               "parameters": [
@@ -25202,11 +25297,10 @@
                   "name": "e",
                   "type": {
                     "text": "TransitionEvent"
-                  },
-                  "description": "The 'transitionend' event object."
+                  }
                 }
               ],
-              "description": "Handles the 'transitionend' event for CSS transitions.",
+              "description": "Handles transitionend event to emit `{baseName}-after-show` and `{baseName}-after-hide` events after transitions are complete. Should be added to the element with the CSS transition.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -25258,14 +25352,26 @@
               }
             },
             {
+              "kind": "method",
+              "name": "isFocusable",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "HTMLElement"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "label",
               "type": {
                 "text": "string | undefined"
               },
               "privacy": "public",
-              "default": "'popup'",
-              "description": "The `aria-label` of the popup for assistive technologies.",
+              "description": "Accessible name for the popup content.",
               "attribute": "label",
               "reflects": true
             },
@@ -25354,6 +25460,15 @@
               "name": "popupTemplate",
               "privacy": "protected",
               "description": "Generates the popup template"
+            },
+            {
+              "kind": "field",
+              "name": "positionRequest",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
             },
             {
               "kind": "method",
@@ -25454,6 +25569,7 @@
                   }
                 }
               ],
+              "description": "Hides the popup after its closing transition settles.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -25687,7 +25803,7 @@
                 "text": "boolean"
               },
               "default": "false",
-              "description": "Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.",
+              "description": "Attaches an arrow to the popup. The arrow's size can be customized using `--popup-arrow-size`, and its color follows `--popup-bg-color`. For additional customizations, target it with `::part(popup-arrow)`.",
               "fieldName": "arrow"
             },
             {
@@ -25772,8 +25888,7 @@
               "type": {
                 "text": "string"
               },
-              "default": "''",
-              "description": "If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. \"top bottom left\". If no placement fits, the flip fallback strategy will be used instead.",
+              "description": "Fallback placements tried when the preferred placement does not fit. The attribute accepts placements separated by spaces.",
               "fieldName": "flipFallbackPlacements"
             },
             {
@@ -25814,8 +25929,7 @@
               "type": {
                 "text": "string | undefined"
               },
-              "default": "'popup'",
-              "description": "The `aria-label` of the popup for assistive technologies.",
+              "description": "Accessible name for the popup content.",
               "fieldName": "label"
             },
             {
@@ -26652,6 +26766,16 @@
               "description": "Generates the template for the close button within the header."
             },
             {
+              "kind": "method",
+              "name": "deepActiveElement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "dependencies",
               "type": {
@@ -26878,13 +27002,31 @@
               }
             },
             {
+              "kind": "method",
+              "name": "isWithinPane",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "element",
+                  "type": {
+                    "text": "Element | null"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "noHeader",
               "type": {
                 "text": "boolean | undefined"
               },
               "privacy": "public",
-              "description": "Removes the header. This will also remove the default close button. If using prevent default on he-fly-in-request-close please provide a way for the user to close the fly-in-panel.",
+              "description": "Hides the visible header; the heading and close button remain available to assistive technology.",
               "attribute": "no-header",
               "reflects": true
             },
@@ -26920,6 +27062,14 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "opener",
+              "type": {
+                "text": "HTMLElement | null | undefined"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -27219,7 +27369,7 @@
               "type": {
                 "text": "boolean | undefined"
               },
-              "description": "Removes the header. This will also remove the default close button. If using prevent default on he-fly-in-request-close please provide a way for the user to close the fly-in-panel.",
+              "description": "Hides the visible header; the heading and close button remain available to assistive technology.",
               "fieldName": "noHeader"
             },
             {
@@ -27736,7 +27886,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -29751,7 +29901,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "A select lets people choose a single option from a list of at least four options. Selects use browser native styling for the listed options. They are ideal for data submission in forms and ease of use on mobile platforms. Classified as a form control.",
+          "description": "A select lets people choose one or more options from a list. Selects use browser native styling for the listed options and support form submission. Classified as a form control.",
           "name": "CoreSelect",
           "cssProperties": [
             {
@@ -30235,7 +30385,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -30604,6 +30754,15 @@
             },
             {
               "kind": "field",
+              "name": "hasUserSelection",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
               "name": "helpText",
               "type": {
                 "text": "string | undefined"
@@ -30822,10 +30981,26 @@
               "default": "[]"
             },
             {
+              "kind": "field",
+              "name": "optionsObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
               "kind": "method",
               "name": "optionsTemplate",
               "privacy": "protected",
               "description": "Generates the select options template"
+            },
+            {
+              "kind": "field",
+              "name": "pendingNativeValue",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -30936,6 +31111,15 @@
               }
             },
             {
+              "kind": "field",
+              "name": "selectedValues",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
               "kind": "method",
               "name": "selectTemplate",
               "privacy": "protected",
@@ -30956,6 +31140,19 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "setValueFromSelection",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -30997,6 +31194,19 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "syncSelectedValues",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "select",
+                  "type": {
+                    "text": "HTMLSelectElement"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -32530,7 +32740,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -35205,7 +35415,7 @@
               "kind": "field",
               "name": "dependencies",
               "type": {
-                "text": "typeof CharmElement[]"
+                "text": "(typeof CharmElement)[]"
               },
               "privacy": "public",
               "static": true,
@@ -36439,7 +36649,7 @@
             },
             {
               "description": "The amount of time to wait before hiding the tooltip when hovering.",
-              "name": "--charm-tooltip-hide-delay"
+              "name": "--tooltip-hide-delay"
             },
             {
               "description": "The maximum width of the tooltip.",
@@ -36451,7 +36661,7 @@
             },
             {
               "description": "The amount of time to wait before showing the tooltip when hovering.",
-              "name": "--charm-tooltip-show-delay"
+              "name": "--tooltip-show-delay"
             },
             {
               "description": "The transition effect when opening the tooltip",
@@ -36459,7 +36669,7 @@
             },
             {
               "description": "The transition effect when closing the tooltip",
-              "name": "--charm-tooltip-show-transition"
+              "name": "--charm-tooltip-hide-transition"
             }
           ],
           "cssParts": [
@@ -36676,6 +36886,14 @@
             },
             {
               "kind": "field",
+              "name": "descriptionElement",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "privacy": "public",
               "attribute": "dir",
@@ -36833,6 +37051,11 @@
             },
             {
               "kind": "method",
+              "name": "getTooltipText",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
               "name": "getTransitionStyles",
               "privacy": "protected",
               "inheritedFrom": {
@@ -36841,59 +37064,43 @@
               }
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleBlur",
               "privacy": "protected",
               "description": "Handles blur event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleClick",
               "privacy": "protected",
               "description": "Handles click event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleFocus",
               "privacy": "protected",
               "description": "Handles focus event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "KeyboardEvent"
-                  }
-                }
-              ],
               "description": "Handles keydown event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleMouseDown",
               "privacy": "protected",
               "description": "Handles mousedown event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleMouseOut",
               "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "event",
-                  "type": {
-                    "text": "MouseEvent"
-                  }
-                }
-              ],
               "description": "Handles mouseout event on the popup"
             },
             {
-              "kind": "method",
+              "kind": "field",
               "name": "handleMouseOver",
               "privacy": "protected",
               "description": "Handles mouseover event on the popup"
@@ -37014,6 +37221,24 @@
               }
             },
             {
+              "kind": "field",
+              "name": "isFocused",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "isHovering",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
               "kind": "method",
               "name": "lightDismiss",
               "privacy": "protected",
@@ -37088,6 +37313,11 @@
               "type": {
                 "text": "CorePopup"
               },
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "removeAnchorDescription",
               "privacy": "protected"
             },
             {
@@ -37269,7 +37499,7 @@
               "kind": "method",
               "name": "updateAnchorElement",
               "privacy": "protected",
-              "description": "Updates the trigger of the tooltip if the anchor is provided as a string."
+              "description": "Updates the trigger of the tooltip from the property or anchor slot."
             },
             {
               "kind": "method",

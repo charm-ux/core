@@ -68,7 +68,9 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                   await elementUpdated(el);
 
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
-                  expect(anchor.getAttribute('aria-describedby')).to.contain('tooltip');
+                  const descriptionId = anchor.getAttribute('aria-describedby')!;
+                  expect(descriptionId).to.match(/ch-tooltip-description-/);
+                  expect(document.getElementById(descriptionId)?.textContent).to.contain('This is a tooltip');
                   el.open = false;
                   await elementUpdated(el);
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
@@ -361,6 +363,23 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
 
                   anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
                   await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                },
+              },
+              escapeDismissesHoverTooltip: {
+                description: 'dismisses an open hover tooltip on Escape without swallowing the key event',
+                config: { trigger: 'hover' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+
+                  const outerListener = sinon.spy();
+                  document.addEventListener('keydown', outerListener, { once: true });
+                  document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+                  expect(el.open).to.be.false;
+                  expect(outerListener).to.have.been.calledOnce;
                 },
               },
             },

@@ -40,7 +40,9 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
                 description: 'should include a role of "menuitem"',
                 test: async () => {
                   const el = this.component;
-                  expect(el.getAttribute('role')).to.not.equal('menuitem');
+                  el.role = 'menuitem';
+                  await elementUpdated(el);
+                  expect(el.getAttribute('role')).to.equal('menuitem');
                 },
               },
               ariaDisabledWhenDisabled: {
@@ -68,6 +70,32 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
                   await elementUpdated(this.component);
 
                   expect(el.shadowRoot?.querySelector('a')).to.not.be.null;
+                },
+              },
+              submenuKeepsConsumerNodesInLightDom: {
+                description: 'keeps nested submenu items in the consumer light DOM while toggling',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<ch-menu-item>Child action</ch-menu-item>';
+                  const child = el.firstElementChild as HTMLElement;
+                  await elementUpdated(el);
+                  await aTimeout(0);
+
+                  el.expanded = true;
+                  await elementUpdated(el);
+                  expect(child.parentElement).to.equal(el);
+                  expect(child.slot).to.equal('submenu');
+                  expect(el.getAttribute('aria-haspopup')).to.equal('menu');
+                  expect(el.getAttribute('aria-expanded')).to.equal('true');
+                  const submenu = el.shadowRoot?.querySelector('.submenu') as HTMLElement | null;
+                  if (!submenu) throw new Error('Expected a rendered submenu menu.');
+                  await elementUpdated(submenu);
+                  const submenuSlot = submenu?.shadowRoot?.querySelector('slot:not([name])') as HTMLSlotElement | null;
+                  expect(submenuSlot?.assignedElements({ flatten: true })).to.include(child);
+
+                  el.expanded = false;
+                  await elementUpdated(el);
+                  expect(child.parentElement).to.equal(el);
                 },
               },
             },

@@ -3,9 +3,9 @@ import { literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
+import { findNextEnabledIndex } from '../../utilities/helpers.js';
 import { startContentEndTemplate } from '../../templates/index.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
-import { CorePopup } from '../popup/popup.js';
 import CoreIcon from '../icon/icon.js';
 import CoreMenu from '../menu/menu.js';
 import styles from './menu-item.styles.js';
@@ -61,13 +61,13 @@ import styles from './menu-item.styles.js';
  * @cssprop --charm-menu-item-padding-y - Determines list item's block padding.
  * @cssprop --charm-menu-item-radio-active-bg-color - Determines the background color of the radio indicator when active.
  * @cssprop --charm-menu-item-radio-bg-color - Determines the background color of the radio indicator.
+ * @cssprop --charm-menu-item-radio-indicator-bg-color - Determines the checked radio indicator color.
  * @cssprop --charm-menu-item-radio-hover-border-color - Determines the border color of the radio indicator when hovered.
  * @cssprop --charm-menu-item-submenu-icon-rotation - Determines the rotation of the submenu icon on expanded.
  * @cssprop --charm-menu-item-submenu-icon-size - Determines the size of the submenu icon.
  *
  * @dependency CoreIcon
  * @dependency CoreMenu
- * @dependency CorePopup
  **/
 export class CoreMenuItem extends CharmElement {
   public static override styles = [...super.styles, styles];
@@ -100,7 +100,7 @@ export class CoreMenuItem extends CharmElement {
 
   /** Controls the placement of the submenu popup. */
   @property({ attribute: 'sub-menu-placement' })
-  public subMenuPlacement: string = 'right-start';
+  public subMenuPlacement = 'end-top';
 
   /** Indicates whether the menu item is checked. */
   @property({ type: Boolean, reflect: true })
@@ -115,17 +115,27 @@ export class CoreMenuItem extends CharmElement {
 
   /** A reference to the submenu items. */
   protected submenuItems: HTMLElement[] = [];
+  protected submenuObserver?: MutationObserver;
 
   /** Reference to the parent menu element, if available. */
   protected parentMenu?: CoreMenu | null;
 
   public static override get dependencies(): (typeof CharmElement)[] {
-    return [CoreIcon, CoreMenu, CorePopup];
+    return [CoreIcon, CoreMenu];
   }
 
   /** @internal Inherits submenu placement strategy from the parent menu. */
   public get submenuFixedPlacement(): boolean {
     return this.parentMenu?.fixedPlacement ?? false;
+  }
+
+  /** @internal Associates an item with its containing menu. */
+  public setParentMenu(menu: CoreMenu | null) {
+    if (this.parentMenu === menu) return;
+    this.parentMenu?.removeEventListener('menu-hide', this.handleParentMenuHide);
+    this.parentMenu = menu;
+    this.parentMenu?.addEventListener('menu-hide', this.handleParentMenuHide);
+    this.requestUpdate();
   }
 
   /** Initializes component and sets up event listeners. */
@@ -135,13 +145,18 @@ export class CoreMenuItem extends CharmElement {
     this.addEventListener('click', this.handleClick);
     this.addEventListener('keydown', this.handleMenuItemKeyDown);
 
-    this.parentMenu = this.closest<CoreMenu>('[menu]');
-
-    if (this.parentMenu) {
-      this.parentMenu.addEventListener('menu-hide', this.handleParentMenuHide);
-    }
+    this.setParentMenu(this.closest<CoreMenu>('[menu]'));
 
     this.updateSubmenuState();
+    this.submenuObserver = new MutationObserver(records => {
+      const hasHostChildChanges = records.some(record =>
+        [...record.addedNodes, ...record.removedNodes].some(
+          node => node instanceof HTMLElement && (node.parentElement === this || !node.isConnected)
+        )
+      );
+      if (hasHostChildChanges) this.updateSubmenuState();
+    });
+    this.submenuObserver.observe(this, { childList: true });
 
     if (this.hasSubmenu) {
       this.addEventListener('mouseenter', this.handleMouseEnter);
@@ -152,14 +167,13 @@ export class CoreMenuItem extends CharmElement {
   /** Removes event listeners. */
   public override disconnectedCallback(): void {
     super.disconnectedCallback();
+    this.submenuObserver?.disconnect();
+    this.submenuObserver = undefined;
 
     this.removeEventListener('click', this.handleClick);
     this.removeEventListener('keydown', this.handleMenuItemKeyDown);
 
-    if (this.parentMenu) {
-      this.parentMenu.removeEventListener('menu-hide', this.handleParentMenuHide);
-      this.parentMenu = null;
-    }
+    this.setParentMenu(null);
 
     if (this.hasSubmenu) {
       this.removeEventListener('mouseenter', this.handleMouseEnter);
@@ -170,7 +184,8 @@ export class CoreMenuItem extends CharmElement {
   public override willUpdate(props: PropertyValues) {
     // aria-disabled belongs on the host (which carries role="menuitem"), not the inner control.
     if (props.has('disabled')) {
-      this.setAttribute('aria-disabled', String(!!this.disabled));
+      if (this.disabled) this.setAttribute('aria-disabled', 'true');
+      else this.removeAttribute('aria-disabled');
     }
   }
 
@@ -178,15 +193,16 @@ export class CoreMenuItem extends CharmElement {
     super.updated(changedProperties);
 
     if (changedProperties.has('expanded')) {
-      this.toggleSubmenuItems();
+      this.emitExpandedChange();
+      if (this.hasSubmenu) this.setAttribute('aria-expanded', String(!!this.expanded));
     }
 
-    if (this.parentMenu && changedProperties.has('parentMenu')) {
-      this.requestUpdate();
-    }
-
-    if ((changedProperties.has('checked') || changedProperties.has('role')) && this.role?.startsWith('menuitem')) {
-      this.setAttribute('aria-checked', String(!!this.checked));
+    if (changedProperties.has('checked') || changedProperties.has('role')) {
+      if (this.role === 'menuitemcheckbox' || this.role === 'menuitemradio') {
+        this.setAttribute('aria-checked', String(!!this.checked));
+      } else {
+        this.removeAttribute('aria-checked');
+      }
     }
   }
 
@@ -207,38 +223,33 @@ export class CoreMenuItem extends CharmElement {
     }
   };
 
+  protected handleSubmenuMenuHide = () => {
+    if (this.expanded) this.expanded = false;
+  };
+
   /** Handles click events on the menu item. */
   protected handleClick(event: MouseEvent) {
+    const path = event.composedPath();
+    if (this.submenuItems.some(item => path.includes(item))) return;
+
     if (this.disabled) {
       event.preventDefault();
       event.stopPropagation();
       return;
     }
 
-    this.emit('menu-item-change');
-
     if (this.hasSubmenu) {
-      this.toggleSubmenuItems();
+      this.expanded = !this.expanded;
+      event.preventDefault();
+      event.stopPropagation();
+      return;
     }
+
+    this.emit('menu-item-change');
   }
 
-  /** Toggles the visibility of the submenu items.*/
-  protected toggleSubmenuItems() {
-    if (!this.shadowRoot) return;
-
-    const submenuContainer = this.shadowRoot?.querySelector('.submenu');
-
-    this.submenuItems.forEach(item => {
-      if (this.expanded) {
-        submenuContainer?.appendChild(item);
-        item.hidden = false;
-        item.setAttribute('role', 'menuitem');
-      } else {
-        this.appendChild(item);
-        item.hidden = true;
-      }
-    });
-
+  /** Emits the expanded-change event after the expanded state changes. */
+  protected emitExpandedChange() {
     this.emit('expanded-change');
   }
 
@@ -250,13 +261,23 @@ export class CoreMenuItem extends CharmElement {
     this.hasSubmenu = hasSubmenu;
 
     this.toggleAttribute('has-submenu', hasSubmenu);
-    this.toggleAttribute('aria-haspopup', hasSubmenu);
+    if (hasSubmenu) {
+      this.setAttribute('aria-haspopup', 'menu');
+      this.setAttribute('aria-expanded', String(!!this.expanded));
+    } else {
+      this.removeAttribute('aria-haspopup');
+      this.removeAttribute('aria-expanded');
+    }
 
-    if (this.hasSubmenu) {
-      submenuItems.forEach(item => item.setAttribute('hidden', ''));
+    if (hasSubmenu) {
+      submenuItems.forEach(item => {
+        item.slot = 'submenu';
+        if (!item.hasAttribute('role')) item.setAttribute('role', 'menuitem');
+      });
     }
 
     this.submenuItems = submenuItems;
+    this.parentMenu?.refreshItems();
   }
 
   /** Handles keydown events on the menu item. */
@@ -269,22 +290,28 @@ export class CoreMenuItem extends CharmElement {
       case keys.Enter:
       case keys.Space:
         if (!this.disabled) {
-          this.click();
+          if (this.hasSubmenu) {
+            this.expanded = !this.expanded;
+            if (this.expanded) {
+              await this.updateComplete;
+              this.setFocus(0);
+            }
+          } else {
+            this.click();
+          }
           keyHandled = true;
         }
         break;
 
       case keys.ArrowRight:
-        if (this.hasSubmenu && !this.expanded) {
+      case keys.ArrowLeft: {
+        const opensSubmenu = this.resolvedDir === 'rtl' ? keys.ArrowLeft : keys.ArrowRight;
+        if (e.key === opensSubmenu && this.hasSubmenu && !this.disabled && !this.expanded) {
           this.expanded = true;
           await this.updateComplete;
           this.setFocus(0);
           keyHandled = true;
-        }
-        break;
-
-      case keys.ArrowLeft:
-        if (this.hasSubmenu && this.expanded) {
+        } else if (e.key !== opensSubmenu && this.hasSubmenu && this.expanded) {
           this.expanded = false;
           requestAnimationFrame(() => {
             this.tabIndex = 0;
@@ -293,6 +320,7 @@ export class CoreMenuItem extends CharmElement {
           keyHandled = true;
         }
         break;
+      }
     }
 
     if (keyHandled) {
@@ -304,15 +332,18 @@ export class CoreMenuItem extends CharmElement {
   protected setFocus(targetIndex: number) {
     if (!this.submenuItems?.length) return;
 
-    this.submenuItems[this.focusIndex].setAttribute('tabindex', '-1');
-
-    if (targetIndex < 0) {
-      this.focusIndex = this.submenuItems.length - 1;
-    } else if (targetIndex >= this.submenuItems.length) {
-      this.focusIndex = 0;
-    } else {
-      this.focusIndex = targetIndex;
-    }
+    const direction = targetIndex < this.focusIndex ? -1 : 1;
+    const normalizedTarget =
+      ((targetIndex % this.submenuItems.length) + this.submenuItems.length) % this.submenuItems.length;
+    const nextIndex = findNextEnabledIndex(
+      this.submenuItems,
+      normalizedTarget - direction,
+      direction,
+      item => !item.hasAttribute('disabled') && item.getAttribute('aria-disabled') !== 'true'
+    );
+    if (nextIndex < 0) return;
+    this.submenuItems[this.focusIndex]?.setAttribute('tabindex', '-1');
+    this.focusIndex = nextIndex;
 
     this.submenuItems[this.focusIndex].setAttribute('tabindex', '0');
     this.submenuItems[this.focusIndex].focus();
@@ -406,7 +437,7 @@ export class CoreMenuItem extends CharmElement {
         slot=${ifDefined(this.hasSubmenu ? 'anchor' : undefined)}
         class="base"
         part="menu-item-base"
-        aria-current=${ifDefined(isLink && this.current ? 'page' : undefined)}
+        aria-current=${ifDefined(isLink && this.current && this.current !== 'false' ? this.current : undefined)}
         href=${ifDefined(isLink && !this.disabled ? this.href : undefined)}
         target=${ifDefined(isLink && !this.disabled ? this.target : undefined)}
         tabindex=${ifDefined(isLink ? '-1' : undefined)}
@@ -425,9 +456,11 @@ export class CoreMenuItem extends CharmElement {
           <scoped-menu
             class="submenu"
             placement=${this.subMenuPlacement}
-            strategy=${this.submenuFixedPlacement ? 'fixed' : 'absolute'}
+            ?fixed-placement=${this.submenuFixedPlacement}
             ?open=${this.expanded}
+            @menu-hide=${this.handleSubmenuMenuHide}
           >
+          <slot name="submenu"></slot>
           <div slot="trigger">
             ${this.menuItemTemplate()}
           </div>

@@ -91,6 +91,10 @@ export class CoreButton extends CharmFocusableElement {
   @property({ type: Boolean, reflect: true })
   public expanded?: boolean;
 
+  /** Sets `aria-haspopup` on the internal button or link. */
+  @property({ attribute: 'haspopup' })
+  public haspopup?: string;
+
   /**
    * Sets "aria-pressed" on the internal button or link.
    */
@@ -387,6 +391,7 @@ export class CoreButton extends CharmFocusableElement {
       aria-current=${ifDefined(this.current)}
       aria-disabled=${ifDefined(!isLink && this.disabled !== undefined ? this.disabled : undefined)}
       aria-expanded=${ifDefined(!isLink && this.expanded !== undefined ? this.expanded : undefined)}
+      aria-haspopup=${ifDefined(this.haspopup)}
       aria-pressed=${ifDefined(!isLink && this.pressed !== undefined ? this.pressed : undefined)}
       class=${classMap({
         control: true,

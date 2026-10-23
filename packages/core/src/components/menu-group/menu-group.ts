@@ -1,8 +1,10 @@
 import { html } from 'lit/static-html.js';
-import { property, queryAssignedElements, state } from 'lit/decorators.js';
+import { property, queryAssignedElements } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import CoreMenuItem from '../menu-item/menu-item.js';
 import styles from './menu-group.styles.js';
+import type { PropertyValues } from 'lit';
 
 export interface SelectedMenuItem {
   selectedItem: CoreMenuItem;
@@ -48,14 +50,6 @@ export class CoreMenuGroup extends CharmElement {
   @queryAssignedElements({ flatten: true })
   protected menuItems!: HTMLElement[];
 
-  /** Internal state that tracks the currently selected menu item in single selection mode. */
-  @state()
-  protected selectedItem: CoreMenuItem | null = null;
-
-  /** Internal state that tracks the currently focused menu item. */
-  @state()
-  protected focusIndex = 0;
-
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreMenuItem];
   }
@@ -63,12 +57,19 @@ export class CoreMenuGroup extends CharmElement {
   public override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListener('click', this.handleSelection);
-    this.updateComplete.then(() => this.updateItemRoles());
+    this.updateComplete.then(() => {
+      if (this.isConnected) this.updateItemRoles();
+    });
   }
 
   public override disconnectedCallback(): void {
     super.disconnectedCallback();
     this.removeEventListener('click', this.handleSelection);
+  }
+
+  public override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    if (changedProperties.has('select')) this.updateItemRoles();
   }
 
   /** Handles selection behavior based on group type. */
@@ -79,11 +80,10 @@ export class CoreMenuGroup extends CharmElement {
     if (!this.menuItems.includes(target)) return;
 
     if (this.select === 'single' && target.role === 'menuitemradio') {
-      if (this.selectedItem && this.selectedItem !== target) {
-        this.selectedItem.removeAttribute('checked');
-      }
-      this.selectedItem = target;
-      this.selectedItem.setAttribute('checked', '');
+      this.menuItems.forEach(item => {
+        if (item !== target && item.hasAttribute('checked')) item.removeAttribute('checked');
+      });
+      target.setAttribute('checked', '');
     } else if (this.select === 'multiple' && target.role === 'menuitemcheckbox') {
       if (target.hasAttribute('checked')) {
         target.removeAttribute('checked');
@@ -113,7 +113,7 @@ export class CoreMenuGroup extends CharmElement {
   /* * Runs when the slot content changes, ensuring roles and aria attributes are applied. */
   protected handleSlotChange() {
     this.updateComplete.then(() => {
-      this.updateItemRoles();
+      if (this.isConnected) this.updateItemRoles();
     });
   }
 
@@ -124,7 +124,11 @@ export class CoreMenuGroup extends CharmElement {
         <div id="heading" part="menu-group-heading" class="heading">
           <slot name="heading">${this.heading}</slot>
         </div>
-        <div role="group" aria-labelledby="heading" class="group-content">
+        <div
+          role="group"
+          aria-labelledby=${ifDefined(this.heading || this.hasNamedSlot('heading') ? 'heading' : undefined)}
+          class="group-content"
+        >
           <slot @slotchange=${this.handleSlotChange}></slot>
         </div>
       </div>

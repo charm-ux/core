@@ -9,7 +9,7 @@ import styles from './select.styles.js';
 type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
 
 /**
- * A select lets people choose a single option from a list of at least four options. Selects use browser native styling for the listed options. They are ideal for data submission in forms and ease of use on mobile platforms. Classified as a form control.
+ * A select lets people choose one or more options from a list. Selects use browser native styling for the listed options and support form submission. Classified as a form control.
  *
  * @tag ch-select
  * @since 1.0.0
@@ -62,8 +62,36 @@ export class CoreSelect extends CharmFormControlElement {
   @state()
   protected optionNodes?: Array<SelectChildElement> = [];
 
+  @state()
+  protected selectedValues: string[] = [];
+
+  protected hasUserSelection = false;
+  protected pendingNativeValue?: string;
+
+  protected optionsObserver?: MutationObserver;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
+  }
+
+  public override connectedCallback() {
+    super.connectedCallback();
+    this.optionsObserver = new MutationObserver(() => {
+      if (this.isConnected) this.handleSlotChange();
+    });
+    this.optionsObserver.observe(this, {
+      subtree: true,
+      childList: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: ['disabled', 'hidden', 'label', 'selected', 'value'],
+    });
+  }
+
+  public override disconnectedCallback() {
+    this.optionsObserver?.disconnect();
+    this.optionsObserver = undefined;
+    super.disconnectedCallback();
   }
 
   /** Gets all the options for the select. */
@@ -80,31 +108,116 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Handles the change of the select. */
   protected handleChange(e: Event) {
-    this.value = (e.target as HTMLSelectElement).value;
+    e.stopPropagation();
+    this.syncSelectedValues(e.target as HTMLSelectElement);
     this.emitChange();
   }
 
   protected handleInput(e: Event) {
-    e.stopImmediatePropagation();
+    e.stopPropagation();
+    this.syncSelectedValues(e.target as HTMLSelectElement);
     this.emitInput();
+  }
+
+  protected syncSelectedValues(select: HTMLSelectElement) {
+    this.hasUserSelection = true;
+    this.selectedValues = Array.from(select.selectedOptions, option => option.value);
+    this.setValueFromSelection(this.selectedValues[0] ?? '');
+    this.updateValidity();
+  }
+
+  protected setValueFromSelection(value: string) {
+    this.pendingNativeValue = value;
+    this.value = value;
+  }
+
+  protected override getFormAssociatedValue(): string | File | FormData | null {
+    if (!this.multiple) return super.getFormAssociatedValue();
+    const formData = new FormData();
+    if (!this.disabled && this.name) {
+      this.selectedValues.forEach(value => {
+        const option = this.options?.find(candidate => candidate.value === value);
+        if (option && !option.disabled && !option.closest('optgroup')?.disabled) formData.append(this.name!, value);
+      });
+    }
+    return formData;
   }
 
   /** Handles the change of the options in the default slot */
   protected handleSlotChange() {
+    const previouslySelectedOptions =
+      this.hasUserSelection && this.input instanceof HTMLSelectElement
+        ? Array.from(this.input.selectedOptions, option => this.options?.[option.index]).filter(
+            (option): option is HTMLOptionElement => !!option
+          )
+        : [];
     this.optionNodes = this.getOptionNodes();
     this.options = this.getOptions();
-    if (this.value) {
+    if (this.multiple) {
+      this.selectedValues = this.hasUserSelection
+        ? previouslySelectedOptions.filter(option => this.options?.includes(option)).map(option => option.value)
+        : this.options.filter(option => option.selected).map(option => option.value);
+      if (!this.selectedValues.length && this.value) {
+        const selected = this.options.find(option => option.value === this.value || option.textContent === this.value);
+        if (selected) this.selectedValues = [selected.value];
+      }
+      this.setValueFromSelection(this.selectedValues[0] ?? '');
+    } else if (this.value) {
       this.options.forEach(o => {
         if (o.value === this.value || o.textContent === this.value) {
-          o.setAttribute('selected', '');
+          if (!o.hasAttribute('selected')) o.setAttribute('selected', '');
         } else {
           o.removeAttribute('selected');
         }
       });
+      const selected = this.options.find(option => option.value === this.value || option.textContent === this.value);
+      this.selectedValues = selected ? [selected.value] : [];
     } else {
       const lastSelectedValue = this.options.find(o => o.selected)?.value;
-      this.value = lastSelectedValue ?? this.options?.[0]?.value ?? this.options?.[0]?.textContent ?? '';
+      this.setValueFromSelection(lastSelectedValue ?? this.options?.[0]?.value ?? this.options?.[0]?.textContent ?? '');
+      this.selectedValues = this.value ? [this.value] : [];
     }
+    this.updateValidity();
+  }
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    if (changedProperties.has('value')) {
+      const isNativeSelection = this.pendingNativeValue === this.value;
+      this.pendingNativeValue = undefined;
+      if (!isNativeSelection) {
+        const selected = this.value
+          ? this.options?.find(option => option.value === this.value || option.textContent === this.value)
+          : undefined;
+        const nextSelection = selected ? [selected.value] : [];
+        if (nextSelection.length !== this.selectedValues.length || nextSelection[0] !== this.selectedValues[0]) {
+          this.selectedValues = nextSelection;
+        }
+      }
+    }
+    if (changedProperties.has('multiple') || changedProperties.has('value')) this.updateValidity();
+  }
+
+  protected override formResetCallback() {
+    this.hasUserSelection = false;
+    if (this.multiple) {
+      this.selectedValues = this.options?.filter(option => option.defaultSelected).map(option => option.value) ?? [];
+      this.setValueFromSelection(this.selectedValues[0] ?? '');
+    } else {
+      super.formResetCallback();
+    }
+    this.updateValidity();
+  }
+
+  protected override formStateRestoreCallback(state: string | File | FormData | null) {
+    if (!this.multiple || !(state instanceof FormData)) {
+      super.formStateRestoreCallback(state);
+      return;
+    }
+    this.hasUserSelection = true;
+    this.selectedValues = state.getAll(this.name ?? '').filter((value): value is string => typeof value === 'string');
+    this.setValueFromSelection(this.selectedValues[0] ?? '');
+    this.updateValidity();
   }
 
   /** Generates the template for the select component */
@@ -159,7 +272,6 @@ export class CoreSelect extends CharmFormControlElement {
           ?disabled=${this.disabled}
           ?multiple=${this.multiple}
           ?required=${this.required}
-          .value=${this.value as string}
           @change=${this.handleChange}
           @input=${this.handleInput}
         >
@@ -184,7 +296,7 @@ export class CoreSelect extends CharmFormControlElement {
   protected renderOptionNode(node: SelectChildElement) {
     if (node instanceof HTMLOptGroupElement) {
       return this.html`
-        <optgroup label=${node.label} ?disabled=${node.disabled}>
+        <optgroup label=${node.label} ?disabled=${node.disabled} ?hidden=${node.hidden}>
           ${Array.from(node.children)
             .filter((child): child is HTMLOptionElement => child instanceof HTMLOptionElement)
             .map(option => this.renderOption(option))}
@@ -196,8 +308,12 @@ export class CoreSelect extends CharmFormControlElement {
   }
 
   protected renderOption(option: HTMLOptionElement) {
-    return this.html`<option .value=${option.value} ?selected=${option.selected} ?disabled=${option.disabled}>
-      ${option.textContent}
+    const selected = this.multiple
+      ? this.selectedValues.includes(option.value)
+      : option.value === this.value || option.textContent === this.value;
+    return this
+      .html`<option .value=${option.value} ?selected=${selected} ?disabled=${option.disabled} ?hidden=${option.hidden} label=${ifDefined(option.label || undefined)}>
+      ${option.textContent ?? ''}
     </option>`;
   }
 

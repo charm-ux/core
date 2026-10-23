@@ -306,7 +306,34 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
           // interaction tests
           interactions: {
             description: 'interactions',
-            tests: {},
+            tests: {
+              multipleFormValues: {
+                description: 'submits every selected value from a multiple select',
+                test: async () => {
+                  const el = this.component;
+                  el.name = 'choice';
+                  el.multiple = true;
+                  el.innerHTML = `
+                    <option value="one">One</option>
+                    <option value="two">Two</option>
+                    <option value="three">Three</option>
+                  `;
+                  await elementUpdated(el);
+
+                  const select = el.shadowRoot?.querySelector('select');
+                  if (!(select instanceof HTMLSelectElement)) throw new Error('Select input not found');
+                  select.options[0].selected = true;
+                  select.options[2].selected = true;
+                  select.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+                  const form = document.createElement('form');
+                  form.append(el);
+                  const formData = new FormData(form);
+                  expect(formData.getAll('choice')).to.deep.equal(['one', 'three']);
+                  form.remove();
+                },
+              },
+            },
           },
         },
       },

@@ -1,9 +1,10 @@
 import { property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { keys } from '../../utilities/key-map.js';
 import { CorePopup, PopupPlacement } from '../popup/popup.js';
 import { CoreMenuItem } from '../menu-item/menu-item.js';
-import { CoreMenuGroup } from '../menu-group/menu-group.js';
+import { findNextEnabledIndex } from '../../utilities/helpers.js';
 import styles from './menu.styles.js';
 
 export type MenuCloseSource = 'change' | 'trigger' | 'document' | 'keyboard';
@@ -96,12 +97,6 @@ export class CoreMenu extends CharmDismissibleElement {
     return this._popup;
   }
 
-  /** Checks if the trigger is disabled */
-  protected get triggerIsDisabled(): boolean {
-    if (!this.trigger) return true;
-    return this.trigger.hasAttribute('disabled') || this.trigger.ariaDisabled === 'true';
-  }
-
   public set popup(value: CorePopup | undefined) {
     this._popup = value;
     this.requestUpdate();
@@ -112,17 +107,26 @@ export class CoreMenu extends CharmDismissibleElement {
     return this.items;
   }
 
-  public override async connectedCallback() {
+  /** @internal Refreshes menu items after nested menu composition changes. */
+  public refreshItems() {
+    this.initializeItems();
+  }
+
+  public override connectedCallback() {
     super.connectedCallback();
-    document.addEventListener('click', this.handlePageClick);
+    if (this.open) document.addEventListener('click', this.handlePageClick);
     this.addEventListener('keydown', this.handleKeyDown);
     this.addEventListener('focusout', this.handleFocusOut);
-    this.addEventListener('click', this.handleRadioMenuItemSelection);
     this.addEventListener('menu-item-change', this.handleMenuItemSelection);
-    this.addEventListener('menu-group-select', this.handleMenuItemSelection);
     // Keep the menu's open state in sync when the popup closes itself (e.g. Escape inside the popup,
     // which stops propagation before reaching the menu's own keydown handler).
     this.addEventListener('popup-request-close', this.handlePopupRequestClose);
+    this.updateComplete.then(() => {
+      if (!this.isConnected) return;
+      const triggerSlot = this.shadowRoot?.querySelector('slot[name="trigger"]');
+      if (triggerSlot) this.handleTriggerSlotChange({ target: triggerSlot } as unknown as Event);
+      void this.handleDefaultSlotChange();
+    });
   }
 
   public override disconnectedCallback() {
@@ -131,10 +135,9 @@ export class CoreMenu extends CharmDismissibleElement {
     document.removeEventListener('click', this.handlePageClick);
     this.removeEventListener('keydown', this.handleKeyDown);
     this.removeEventListener('focusout', this.handleFocusOut);
-    this.removeEventListener('click', this.handleRadioMenuItemSelection);
     this.removeEventListener('menu-item-change', this.handleMenuItemSelection);
-    this.removeEventListener('menu-group-select', this.handleMenuItemSelection);
     this.removeEventListener('popup-request-close', this.handlePopupRequestClose);
+    this.trigger?.removeEventListener('click', this.handleTriggerClick);
 
     // Clean up item event listeners
     this.items?.forEach(item => {
@@ -144,17 +147,18 @@ export class CoreMenu extends CharmDismissibleElement {
 
   /** Syncs the menu's open state when the popup requests to close itself (e.g. Escape or Tab-trap close). */
   protected handlePopupRequestClose = (e: Event) => {
-    const event = e as CustomEvent;
-    if (event.defaultPrevented) return;
+    e.preventDefault();
+    e.stopPropagation();
     if (this.open) {
-      event.stopPropagation();
       this.requestClose('keyboard');
     }
   };
 
   protected override onOpenChange(open: boolean) {
     super.onOpenChange(open);
-    this.setTriggerAttribute(this.trigger!, 'expanded', open.toString());
+    if (open) document.addEventListener('click', this.handlePageClick);
+    else document.removeEventListener('click', this.handlePageClick);
+    if (this.trigger) this.setTriggerAttribute(this.trigger, 'expanded', open.toString());
   }
 
   /** Sets associated attribute or aria attribute on specified trigger element */
@@ -175,21 +179,21 @@ export class CoreMenu extends CharmDismissibleElement {
     element.setAttribute(attr, value);
   }
 
-  /** Emits a custom keyboard event to request the menu to close */
+  /** Handles keyboard navigation and close requests. */
   protected handleKeyDown = async (e: KeyboardEvent) => {
-    if (e.defaultPrevented || !this.items?.length) return;
+    if (e.defaultPrevented) return;
+    const openingFromTrigger =
+      this.trigger?.matches(':focus') && !this.open && (e.key === keys.ArrowDown || e.key === keys.ArrowUp);
+    if (!this.items?.length && !openingFromTrigger) return;
 
     let keyHandled = false;
     const currentItem = this.items[this.focusIndex] as CoreMenuItem;
-    const parentGroup = currentItem.closest('[menu-group]') as CoreMenuGroup | null;
-
     switch (e.key) {
       case keys.ArrowDown:
         if (!this.open) {
           await this.show();
-          this.setFocus(this.items.length + 1);
-        } else if (parentGroup) {
-          this.setFocus(this.focusIndex + 1, parentGroup);
+          await this.waitForItems();
+          this.setFocus(0, 1);
         } else {
           this.setFocus(this.focusIndex + 1);
         }
@@ -199,9 +203,8 @@ export class CoreMenu extends CharmDismissibleElement {
       case keys.ArrowUp:
         if (!this.open) {
           await this.show();
-          this.setFocus(this.items.length - 1);
-        } else if (parentGroup) {
-          this.setFocus(this.focusIndex - 1, parentGroup);
+          await this.waitForItems();
+          this.setFocus(this.items.length - 1, -1);
         } else {
           this.setFocus(this.focusIndex - 1);
         }
@@ -209,12 +212,12 @@ export class CoreMenu extends CharmDismissibleElement {
         break;
 
       case keys.Home:
-        this.setFocus(0);
+        this.setFocus(0, 1);
         keyHandled = true;
         break;
 
       case keys.End:
-        this.setFocus(this.items.length - 1);
+        this.setFocus(this.items.length - 1, -1);
         keyHandled = true;
         break;
 
@@ -223,32 +226,27 @@ export class CoreMenu extends CharmDismissibleElement {
         if (this.trigger?.matches(':focus') && !this.open) {
           e.preventDefault();
           await this.show();
-          await this.updateComplete;
+          await this.waitForItems();
           this.setFocus(0);
           keyHandled = true;
           break;
         }
 
         if (currentItem) {
-          if (parentGroup) {
-            currentItem.click();
-          } else if (this.open) {
+          if (this.open) {
             if (currentItem.hasSubmenu && !currentItem.expanded) {
               currentItem.expanded = true;
               await this.updateComplete;
             } else {
               currentItem.click();
-              this.requestClose('change');
             }
           }
           keyHandled = true;
         }
         break;
-      case 'Tab':
-        this.open = false;
-        this.items[this.focusIndex].setAttribute('tabindex', '-1');
-        this.items[0].setAttribute('tabindex', '0');
-        this.focusIndex = 0;
+      case keys.Tab:
+        this.requestClose('keyboard', false);
+        this.resetRovingTabindex();
         break;
 
       case keys.Escape:
@@ -266,7 +264,7 @@ export class CoreMenu extends CharmDismissibleElement {
       this.open &&
       e.key.length === 1 &&
       !(e.metaKey || e.ctrlKey || e.altKey) &&
-      !(e.key === ' ' && this.userTypedQuery === '')
+      !(e.key === keys.Space && this.userTypedQuery === '')
     ) {
       clearTimeout(this.userTypedTimeout);
       this.userTypedTimeout = setTimeout(() => {
@@ -296,7 +294,7 @@ export class CoreMenu extends CharmDismissibleElement {
   /** Handle page click to close the menu */
   protected handlePageClick = (e: Event) => {
     if (!this.open || e.composedPath().includes(this)) return;
-    this.requestClose('document');
+    this.requestClose('document', false);
   };
 
   /** Handle slot change for trigger slot */
@@ -305,10 +303,9 @@ export class CoreMenu extends CharmDismissibleElement {
     if (target.name !== 'trigger') return;
 
     const elements = target.assignedElements({ flatten: true }) as HTMLElement[];
-    if (!elements.length) return;
-
     this.trigger?.removeEventListener('click', this.handleTriggerClick);
     this.trigger = elements[0];
+    if (!this.trigger) return;
     this.trigger?.addEventListener('click', this.handleTriggerClick);
     this.setAriaLabels();
   }
@@ -330,33 +327,13 @@ export class CoreMenu extends CharmDismissibleElement {
     }
   };
 
-  /** Handle radio menu item selection */
-  protected handleRadioMenuItemSelection(e: Event) {
-    const targetItem = e.composedPath().find(el => (el as HTMLElement).getAttribute?.('role') === 'menuitemradio') as
-      | HTMLElement
-      | undefined;
-
-    if (targetItem) {
-      this.items.forEach(item => {
-        if (item.getAttribute('role') === 'menuitemradio') {
-          item.removeAttribute('checked');
-        }
-      });
-      targetItem.setAttribute('checked', '');
-      e.stopPropagation();
-    }
-  }
-
   /** Handle focus out event */
   protected handleFocusOut = (e: FocusEvent) => {
-    // if focus-out is to the trigger button, update closed state
-    if (e.relatedTarget && (e.relatedTarget as Element).hasAttribute('button')) {
-      this.open = false;
-    }
-    if (!this.contains(e.relatedTarget as Element) && this.items?.length) {
-      this.items[this.focusIndex].setAttribute('tabindex', '-1');
-      this.items[0].setAttribute('tabindex', '0');
-      this.focusIndex = 0;
+    const relatedTarget = e.relatedTarget;
+    if (relatedTarget instanceof Node && this.contains(relatedTarget)) return;
+    if (this.open) this.requestClose('keyboard', false);
+    if (this.items?.length) {
+      this.resetRovingTabindex();
     }
   };
 
@@ -377,78 +354,107 @@ export class CoreMenu extends CharmDismissibleElement {
 
   /** Initialize menu items */
   protected initializeItems = () => {
+    const previousItems = this.items;
+    const previouslyFocusedItem = previousItems[this.focusIndex];
     // First, remove any existing event listeners
-    this.items?.forEach(item => {
+    previousItems.forEach(item => {
       item.removeEventListener('focus', this.handleItemFocus);
     });
 
-    const menuItems = Array.from(
-      this.querySelectorAll(
-        '[role="menuitem"]:not([hidden]):not(.hidden), [role="menuitemcheckbox"]:not([hidden]):not(.hidden), [role="menuitemradio"]:not([hidden]):not(.hidden), [menu-item]:not([hidden]):not(.hidden)'
-      )
-    ) as HTMLElement[];
+    const menuItems: HTMLElement[] = [];
+    const collect = (element: HTMLElement) => {
+      if (element.hidden || element.classList.contains('hidden')) return;
+      if (element.matches('[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], [menu-item]')) {
+        menuItems.push(element);
+        if (element.hasAttribute('has-submenu')) return;
+      }
+      Array.from(element.children).forEach(child => {
+        if (child instanceof HTMLElement) collect(child);
+      });
+    };
+    const slot = this.shadowRoot?.querySelector('slot:not([name])') as HTMLSlotElement | null;
+    slot?.assignedElements({ flatten: true }).forEach(element => {
+      if (element instanceof HTMLElement) collect(element);
+    });
 
     this.items = menuItems;
+    previousItems.forEach(item => {
+      if (!menuItems.includes(item) && item instanceof CoreMenuItem) item.setParentMenu(null);
+    });
+    this.items.forEach(item => {
+      if (item instanceof CoreMenuItem) item.setParentMenu(this);
+    });
 
-    if (!this.items?.length) return;
+    if (!this.items.length) {
+      this.focusIndex = -1;
+      return;
+    }
 
-    this.focusIndex = 0;
+    const previousFocusIndex = previouslyFocusedItem ? this.items.indexOf(previouslyFocusedItem) : -1;
+    this.focusIndex =
+      previousFocusIndex >= 0 && this.isEnabledItem(this.items[previousFocusIndex])
+        ? previousFocusIndex
+        : this.items.findIndex(item => this.isEnabledItem(item));
     this.items.forEach((item, index) => {
-      item.setAttribute('tabindex', index === 0 ? '0' : '-1');
+      item.setAttribute('tabindex', index === this.focusIndex ? '0' : '-1');
       item.addEventListener('focus', this.handleItemFocus);
     });
   };
 
   /** Set focus on menu item */
-  protected setFocus(targetIndex: number, parentGroup?: CoreMenuGroup) {
-    let items = this.items;
+  protected setFocus(targetIndex: number, direction = targetIndex < this.focusIndex ? -1 : 1) {
+    if (!this.items?.length) return;
 
-    if (parentGroup) {
-      // If navigating inside a group, get the group's items instead
-      items = Array.from(parentGroup.querySelectorAll(this.scope.tagName('menu-item')));
-    }
+    const normalizedTarget = ((targetIndex % this.items.length) + this.items.length) % this.items.length;
+    const newIndex = findNextEnabledIndex(this.items, normalizedTarget - direction, direction as 1 | -1, item =>
+      this.isEnabledItem(item)
+    );
+    if (newIndex < 0) return;
 
-    if (!items?.length) return;
-
-    this.items[this.focusIndex].setAttribute('tabindex', '-1');
-
-    if (targetIndex < 0) {
-      this.focusIndex = items.length - 1;
-    } else if (targetIndex >= items.length) {
-      this.focusIndex = 0;
-    } else {
-      this.focusIndex = targetIndex;
-    }
-
-    const newFocusedItem = items[this.focusIndex];
+    this.items[this.focusIndex]?.setAttribute('tabindex', '-1');
+    this.focusIndex = newIndex;
+    const newFocusedItem = this.items[newIndex];
     newFocusedItem.setAttribute('tabindex', '0');
     newFocusedItem.focus();
+  }
+
+  protected isEnabledItem(item: HTMLElement) {
+    return (
+      !item.hasAttribute('disabled') && item.getAttribute('aria-disabled') !== 'true' && !item.hasAttribute('hidden')
+    );
+  }
+
+  protected resetRovingTabindex() {
+    this.focusIndex = this.items.findIndex(item => this.isEnabledItem(item));
+    this.items.forEach((item, index) => item.setAttribute('tabindex', index === this.focusIndex ? '0' : '-1'));
   }
 
   /** Handle focus on menu item */
   protected handleItemFocus = (e: FocusEvent) => {
     const targetItem = e.target as HTMLElement;
-    if (!this.items?.length || targetItem === this.items[this.focusIndex]) return;
+    const targetIndex = this.items.indexOf(targetItem);
+    if (targetIndex < 0 || targetItem === this.items[this.focusIndex]) return;
 
-    this.items[this.focusIndex].setAttribute('tabindex', '-1');
-    this.focusIndex = this.items.indexOf(targetItem);
+    this.items[this.focusIndex]?.setAttribute('tabindex', '-1');
+    this.focusIndex = targetIndex;
     targetItem.setAttribute('tabindex', '0');
   };
 
   /** Processes close request with associated source target and completes request */
-  protected requestClose(source: MenuCloseSource) {
+  protected requestClose(source: MenuCloseSource, restoreFocus = source !== 'document') {
     const requestClose = this.emitRequestClose(source);
 
     if (requestClose.defaultPrevented) {
       return;
     }
 
-    this.trigger?.focus();
+    if (restoreFocus) this.trigger?.focus();
   }
 
   /** Processes changes of a slot */
   protected handleDefaultSlotChange = async () => {
     await this.updateComplete;
+    if (!this.isConnected) return;
 
     const slot = this.shadowRoot?.querySelector('slot:not([name])') as HTMLSlotElement;
     const slottedElements = slot?.assignedElements({ flatten: true }) as HTMLElement[];
@@ -462,6 +468,13 @@ export class CoreMenu extends CharmDismissibleElement {
 
     this.initializeItems();
   };
+
+  protected async waitForItems() {
+    await this.updateComplete;
+    if (this.items.length) return;
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()));
+    await this.handleDefaultSlotChange();
+  }
 
   /** Sets aria labels for trigger element */
   protected setAriaLabels() {
@@ -503,16 +516,16 @@ export class CoreMenu extends CharmDismissibleElement {
     anchor="anchor"
     auto-size="both"
     class="popup"
+    content-role="none"
     exportparts="popup-base:menu-popup-dialog"
     flip
     part="menu-popup"
     placement=${this.placement}
     shift
     shift-padding="4"
-    fixed-placement=${this.fixedPlacement}
+    strategy=${ifDefined(this.fixedPlacement ? 'fixed' : undefined)}
     ?open=${this.open}
     @transitionend=${this.handleTransitionEnd}
-    @focusout=${this.handleFocusOut}
   >
   <div role="menu" class="popup-base" part="menu-popup-base">
     <slot @slotchange=${this.handleDefaultSlotChange}></slot>
