@@ -1,5 +1,11 @@
 # CHARM-UX Core Changelog
 
+## 0.5.3
+
+### Patch Changes
+
+- dbb40be: Make Select inherit `line-height` instead of a hardcoded `1` so user text-spacing overrides (WCAG 1.4.12) apply. The open native option list is not affected.
+
 ## 0.5.2
 
 ### Patch Changes
