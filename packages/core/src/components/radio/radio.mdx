@@ -6,6 +6,15 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 Radio buttons allow users to select a single option from a group of choices. They are designed to be used within a radio group.
 
+Standalone radios with the same `name` also form a mutually exclusive, form-submittable group:
+
+```html
+<form>
+  <ch-radio name="pet" value="cat">Cat</ch-radio>
+  <ch-radio name="pet" value="dog">Dog</ch-radio>
+</form>
+```
+
 ## Adding a label
 
 The label can be set by the `label` attribute which supports label as a string or the default slot which supports label of all formats.

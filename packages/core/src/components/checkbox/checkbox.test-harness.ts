@@ -68,6 +68,17 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                   expect(input.indeterminate).to.be.false;
                 },
               },
+              checkedPropertySync: {
+                description: 'updates the native checked state when the property changes to false',
+                test: async () => {
+                  const el = this.component;
+                  el.checked = true;
+                  await elementUpdated(el);
+                  el.checked = false;
+                  await elementUpdated(el);
+                  expect(el.shadowRoot!.querySelector<HTMLInputElement>('input')!.checked).to.be.false;
+                },
+              },
               describedBy: {
                 description: 'references the help text via aria-describedby when help text is present',
                 test: async () => {
@@ -104,6 +115,31 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
           events: {
             description: 'events',
             tests: {
+              resetCustomValue: {
+                description: 'restores a checked checkbox with a custom value on form reset',
+                test: async () => {
+                  const checkbox = document.createElement(project.scope.tagName('checkbox')) as CoreCheckbox;
+                  checkbox.checked = true;
+                  checkbox.value = 'custom';
+                  checkbox.indeterminate = true;
+                  const form = await fixture<HTMLFormElement>(html`<form>${checkbox}</form>`);
+                  form.reset();
+                  await elementUpdated(checkbox);
+                  expect(checkbox.checked).to.be.true;
+                  expect(checkbox.indeterminate).to.be.false;
+                },
+              },
+              readonlyClick: {
+                description: 'does not toggle a readonly checkbox when its native input is clicked',
+                test: async () => {
+                  const el = this.component;
+                  el.readonly = true;
+                  await elementUpdated(el);
+                  el.shadowRoot!.querySelector<HTMLInputElement>('input')!.click();
+                  await elementUpdated(el);
+                  expect(el.checked).not.to.be.true;
+                },
+              },
               emitChange: {
                 description: 'emits an event "change" when clicked',
                 test: async () => {
@@ -264,7 +300,7 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                     </form>
                   `);
 
-                  const button = form.querySelector('button');
+                  const button = form.querySelector(project.scope.tagName('button')) as HTMLElement | null;
                   const checkbox = form.querySelector('#formCheckbox') as CoreCheckbox;
                   const submitHandler = sinon.spy((event: SubmitEvent) => event.preventDefault());
 

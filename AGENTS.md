@@ -68,6 +68,8 @@ These activate when you edit matching files:
   imports are ordered/sorted, no enums/namespaces, type-only imports marked `type`. (CODE-\*)
 - **Process**: add a changeset for consumer-affecting changes (CI fails without one), and
   run `pnpm lint && pnpm test && pnpm build` before opening a PR. (PROC-\*)
+- **Form-disabled state**: reflect only a form control's own `disabled` state; keep fieldset
+  disabled state separate so re-enabling the fieldset does not leave the host disabled. (CHARM-006)
 - **Cleanup**: observers/listeners/timers must be torn down symmetrically — `start()` disposes
   before re-arming, timers are cleared before re-set and on disconnect, observer callbacks
   guard on `isConnected`. Leaks here manifest as a hanging test session, not a failing

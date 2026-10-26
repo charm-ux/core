@@ -1,5 +1,6 @@
 import { property, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import Button from '../button/button.js';
@@ -14,6 +15,7 @@ export interface OverflowMenuItem {
   text: string;
   icons: { name: string; slot: string | null }[];
   disabled: boolean;
+  checked?: boolean;
   subMenuItems: OverflowMenuItem[];
   id: string;
 }
@@ -338,6 +340,7 @@ export class CoreOverflow extends CharmElement {
       icons: this.parseSlottedIcons(element, ignoreEndSlot),
       subMenuItems: [] as OverflowMenuItem[],
       disabled: element.hasAttribute('disabled'),
+      checked: element instanceof Button && element.toggle ? !!element.pressed : undefined,
     };
   }
 
@@ -427,6 +430,8 @@ export class CoreOverflow extends CharmElement {
       <scoped-menu-item
         part="overflow-menu-item"
         class="overflow-menu-item"
+        role=${ifDefined(overFlowItem.checked === undefined ? undefined : 'menuitemcheckbox')}
+        .checked=${overFlowItem.checked}
         @click=${(event: MouseEvent) => this.handleOverflowItemClick(event, overFlowItem)}
         ?disabled=${overFlowItem.disabled ? 'disabled' : ''}
       >
@@ -447,6 +452,12 @@ export class CoreOverflow extends CharmElement {
     );
     if (nearestProxy !== event.currentTarget) return;
     item.hostElement?.click();
+    if (item.hostElement instanceof Button && item.hostElement.toggle) {
+      item.checked = !!item.hostElement.pressed;
+      this.overflowMenuItems = this.overflowMenuItems.map(menuItem =>
+        menuItem === item ? { ...menuItem, checked: item.checked } : menuItem
+      );
+    }
   }
 
   /**

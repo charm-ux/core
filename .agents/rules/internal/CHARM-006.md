@@ -19,12 +19,21 @@ string value overwrite those values.
 Capture a control's initial/reset value once, not on every connection: a reflected `value`
 attribute may contain an edited value after a move in the DOM. `formDisabledCallback()` must
 track fieldset-disabled state separately from the reflected `disabled` property, then use the
-effective state (`disabled || formDisabled`) for rendering, validity, and submission.
+effective state (`disabled || formDisabled`) for rendering, validity, and submission. If the
+public `disabled` getter includes `formDisabled`, do not let Lit reflect that effective getter:
+it can leave the component's own `disabled` attribute set after the fieldset is re-enabled.
+Reflect only the component-owned `_disabled` state, and represent the fieldset state with a
+separate `form-disabled` attribute.
 
 Synchronize native validity into `ElementInternals` after the inner control exists and whenever
 value or constraints change (`required`, `min`, `max`, `pattern`, `disabled`, `readonly`, custom
 validity). Apply custom validity to both the native input and `ElementInternals`. Refresh the
 cached validation message before deriving `invalid` so an update cannot expose stale state.
+
+Some controls, such as a host-based radio, deliberately have no inner native input because a
+second interactive control would create nested-interactive semantics. They still extend this
+base and use `ElementInternals`; override only the validity behavior that requires an inner
+control, while keeping form association, reset, and fieldset-disabled wiring in the base.
 
 Add browser regression tests for cleared `FormData`, custom errors before and after render,
 constraint changes, fieldset disable/enable, reset after moving, and checked/multi-value
@@ -45,6 +54,21 @@ protected updateValidity() {
   this.updateComplete.then(() => {
     this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
   });
+}
+```
+
+```ts
+// Reflect explicit disabled state, not the effective state returned by the getter.
+@property({ type: Boolean })
+public get disabled(): boolean {
+  return this._disabled || this.formDisabled;
+}
+
+public set disabled(value: boolean) {
+  if (this._disabled === value) return;
+  this._disabled = value;
+  this.toggleAttribute('disabled', value);
+  this.requestUpdate('disabled');
 }
 ```
 

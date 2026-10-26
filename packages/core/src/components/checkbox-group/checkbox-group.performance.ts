@@ -24,5 +24,21 @@ describe('checkbox-group performance', () => {
         (element as InstanceType<typeof coreCheckboxGroup>).valueAsArray = [String(iteration % 5)];
       },
     });
+
+    await benchmarkComponentPerformance({
+      name: 'checkbox-group/listbox-100-options',
+      create: () => {
+        const element = document.createElement('ch-checkbox-group') as InstanceType<typeof coreCheckboxGroup>;
+        element.listbox = true;
+        element.innerHTML = Array.from(
+          { length: 100 },
+          (_, index) => `<ch-checkbox value="${index}">Option ${index}</ch-checkbox>`
+        ).join('');
+        return element;
+      },
+      update: element => {
+        element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowDown' }));
+      },
+    });
   });
 });

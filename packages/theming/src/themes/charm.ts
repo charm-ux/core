@@ -683,7 +683,7 @@ const charmTokensBase = defineTokens(
         groupCheckboxGap: primitive('spacing', 'md'),
         bgColor: semantic('surface', 'primary'),
         fgColor: semantic('text', 'primary'),
-        borderColor: semantic('border', 'secondary'),
+        borderColor: semantic('formControl', 'borderColor'),
         hover: {
           fgColor: semantic('text', 'primary'),
           borderColor: semantic('border', 'strong'),
@@ -960,7 +960,7 @@ const charmTokensBase = defineTokens(
       // Radio
       radio: {
         bgColor: semantic('surface', 'primary'),
-        borderColor: semantic('border', 'secondary'),
+        borderColor: semantic('formControl', 'borderColor'),
         controlSize: '20px',
         indicatorSize: '8px',
         groupRadioGap: primitive('spacing', 'md'),

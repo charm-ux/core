@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, fixture } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, waitUntil } from '@open-wc/testing';
 import { html, unsafeStatic } from 'lit/static-html.js';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
@@ -28,8 +28,7 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   await sendKeys({ press: 's' });
                   await sendKeys({ press: 't' });
                   await elementUpdated(this.component);
-                  // @ts-ignore
-                  expect(this.component._value).to.equal('test');
+                  expect(this.component.value).to.equal('test');
                   expect(inputHandler).to.have.been.callCount(4);
                 },
               },
@@ -62,6 +61,56 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(this.component.shadowRoot?.querySelector('input')).attribute('type', 'password');
                 },
               },
+              numberMinAndEmptyValue: {
+                description: 'preserves entered values and an empty value instead of clamping to min',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'number';
+                  el.min = 10;
+                  el.max = 20;
+                  el.value = '';
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('');
+                  el.value = '5';
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('5');
+                  el.min = 0;
+                  el.value = '0';
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('0');
+                },
+              },
+              controlledNumberValue: {
+                description: 'keeps a newly assigned number value instead of restoring the previous DOM value',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'number';
+                  el.value = '1';
+                  await elementUpdated(el);
+                  el.value = '2';
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('2');
+                  expect(el.shadowRoot?.querySelector<HTMLInputElement>('input')?.value).to.equal('2');
+                },
+              },
+              datalistOptionEdits: {
+                description: 'keeps datalist option labels and disabled state in sync with slotted options',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<option value="one">One</option>';
+                  await aTimeout(0);
+                  await elementUpdated(el);
+                  const option = el.querySelector<HTMLOptionElement>('option')!;
+                  option.disabled = true;
+                  option.label = 'First option';
+                  await waitUntil(() => {
+                    const rendered = el.shadowRoot?.querySelector<HTMLOptionElement>('datalist option');
+                    return rendered?.disabled === true && rendered.label === 'First option';
+                  });
+                  option.remove();
+                  await waitUntil(() => !el.shadowRoot?.querySelector('datalist'));
+                },
+              },
               autocomplete: {
                 description: 'forwards autocomplete to password inputs',
                 test: async () => {
@@ -87,6 +136,21 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   await elementUpdated(this.component);
 
                   expect(this.component.value).to.equal('');
+                },
+              },
+              clearButtonKeyboard: {
+                description: 'allows the clear button to be activated from the keyboard',
+                test: async () => {
+                  const el = this.component;
+                  el.withClear = true;
+                  el.value = 'clear me';
+                  await elementUpdated(el);
+                  const button = el.shadowRoot?.querySelector<HTMLButtonElement>('.form-control-clear');
+                  expect(button?.tabIndex).not.to.equal(-1);
+                  button?.focus();
+                  await sendKeys({ press: 'Enter' });
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('');
                 },
               },
               clearedValueNotSubmitted: {
@@ -152,6 +216,22 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
 
                   expect(this.component.passwordVisible).to.be.true;
                   expect(this.component.shadowRoot?.querySelector('input')?.getAttribute('type')).to.equal('text');
+                },
+              },
+              passwordToggleKeyboard: {
+                description: 'allows the password visibility button to be activated from the keyboard',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'password';
+                  el.passwordToggle = true;
+                  await elementUpdated(el);
+                  const toggle = el.shadowRoot?.querySelector<HTMLButtonElement>('.form-control-password-toggle');
+                  expect(toggle?.getAttribute('aria-pressed')).to.equal('false');
+                  toggle?.focus();
+                  await sendKeys({ press: 'Enter' });
+                  await elementUpdated(el);
+                  expect(el.passwordVisible).to.be.true;
+                  expect(toggle?.getAttribute('aria-pressed')).to.equal('true');
                 },
               },
             },
@@ -261,6 +341,38 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   await sendKeys({ press: 'Enter' });
                   await aTimeout(50);
                   expect(submitSpy).to.have.been.callCount(0);
+                },
+              },
+              enterKeySubmits: {
+                description: 'submits a valid form on Enter using its enabled default submitter',
+                test: async () => {
+                  const tag = project.scope.tagName('input');
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <${unsafeStatic(tag)} value="ready"></${unsafeStatic(tag)}>
+                      <button type="submit">Submit</button>
+                    </form>
+                  `);
+                  const submitSpy = sinon.spy((event: Event) => event.preventDefault());
+                  form.addEventListener('submit', submitSpy);
+                  const innerInput = form.querySelector(tag)?.shadowRoot?.querySelector('input') as HTMLInputElement;
+                  innerInput.focus();
+                  await sendKeys({ press: 'Enter' });
+                  await aTimeout(20);
+                  expect(submitSpy).to.have.been.calledOnce;
+                },
+              },
+              readonlyRangeTab: {
+                description: 'allows Tab to leave a readonly range input',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'range';
+                  el.readonly = true;
+                  const container = await fixture(html`<div>${el}<button id="next">Next</button></div>`);
+                  await elementUpdated(el);
+                  el.focus();
+                  await sendKeys({ press: 'Tab' });
+                  expect(document.activeElement).to.equal(container.querySelector('#next'));
                 },
               },
             },

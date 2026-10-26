@@ -97,6 +97,8 @@ export class CharmElement extends LitElement {
       toAttribute: (value: unknown) => value || null,
     },
   })
+
+  /** @internal */
   public override get dir(): 'ltr' | 'rtl' | 'auto' | '' {
     return this._dir ?? '';
   }

@@ -21,6 +21,7 @@ const BUTTON_CHILDREN = ['button'];
  * @event change - Listens for change events from child buttons when their state changes.
  *
  * @slot - One or more Button or Menu elements to display in the button group.
+ * @slot label - Accessible label text for the group or toolbar.
  *
  * @csspart button-group-base - The component's base wrapper.
  *
@@ -44,7 +45,7 @@ export class CoreButtonGroup extends CharmElement {
 
   public static override baseName = 'button-group';
 
-  /** A label to use for the button group's aria-label attribute. */
+  /** Plain-text accessible name rendered in the group's visually hidden label slot. */
   @property() public label?: string;
 
   /**
@@ -75,7 +76,7 @@ export class CoreButtonGroup extends CharmElement {
   protected slottedElements!: Array<HTMLElement>;
 
   protected focusedIndex: number = 0;
-  protected prevSelectedIndex: number = 0;
+  protected managedAttributes = new Map<HTMLElement, Map<string, string | null>>();
 
   /** all child button elements, including nested button group children */
   protected get buttons(): CoreButton[] {
@@ -95,12 +96,36 @@ export class CoreButtonGroup extends CharmElement {
     }, [] as CoreButton[]);
   }
 
+  /** Focusable actions owned by this toolbar, flattened through wrappers and nested groups. */
+  protected get toolbarItems(): HTMLElement[] {
+    const items: HTMLElement[] = [];
+    const buttonTag = this.scope.tagName('button').toLowerCase();
+    const menuTag = this.scope.tagName('menu').toLowerCase();
+    const groupTag = this.scope.tagName('button-group').toLowerCase();
+    const excludedTags = [this.scope.tagName('tooltip').toLowerCase(), this.scope.tagName('divider').toLowerCase()];
+    const visit = (element: HTMLElement) => {
+      if (element.hidden || element.hasAttribute('inert') || element.getAttribute('aria-hidden') === 'true') return;
+      if (excludedTags.includes(element.localName)) return;
+      if (element.localName === groupTag && element instanceof CoreButtonGroup) {
+        element.slottedElements.forEach(visit);
+        return;
+      }
+      if (element.localName === buttonTag || element.localName === menuTag) {
+        items.push(element);
+        return;
+      }
+      Array.from(element.children).forEach(child => visit(child as HTMLElement));
+    };
+    this.slottedElements.forEach(visit);
+    return items;
+  }
+
   public override connectedCallback() {
     super.connectedCallback();
-
-    if (this.select) {
-      this.addEventListener('change', this.handleToggleChange);
-    }
+    this.syncListeners();
+    void this.updateComplete.then(() => {
+      if (this.isConnected) this.initializeSlottedElements();
+    });
   }
 
   public override disconnectedCallback() {
@@ -108,38 +133,30 @@ export class CoreButtonGroup extends CharmElement {
     this.removeEventListener('change', this.handleToggleChange);
     this.removeEventListener('keydown', this.handleKeyDown);
     this.removeEventListener('focusin', this.handleFocusIn);
-    // Toolbar mode mutates child tabindexes and attributes; restore defaults so a
-    // re-attached group doesn't trap children out of the tab order.
     this.resetAttributes();
   }
 
   public override attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
     super.attributeChangedCallback(name, oldValue, newValue);
-    // Need to add keydown listener when toolbar is set because it might be propagated from a parent button group.
-    // Remove it again when toolbar is turned off so the listener isn't left behind.
-    if (name === 'toolbar') {
-      if (newValue !== null) {
-        this.addEventListener('keydown', this.handleKeyDown);
-        this.addEventListener('focusin', this.handleFocusIn);
-      } else {
-        this.removeEventListener('keydown', this.handleKeyDown);
-        this.removeEventListener('focusin', this.handleFocusIn);
-      }
-    }
-    // The change listener for selection must be wired whenever `select` changes, not just at connect time.
-    if (name === 'select') {
-      if (newValue !== null) {
-        this.addEventListener('change', this.handleToggleChange);
-      } else {
-        this.removeEventListener('change', this.handleToggleChange);
-      }
-    }
+    if (name === 'toolbar' || name === 'select') this.syncListeners();
     // Roving state (tabindex) and the child attributes propagated by setAttributes must follow
     // runtime changes to these attributes, not just slot changes.
     if (name === 'toolbar' || name === 'vertical' || name === 'split' || name === 'select') {
       if (this.isConnected && this.hasUpdated) {
         this.initializeSlottedElements();
       }
+    }
+  }
+
+  protected syncListeners() {
+    this.removeEventListener('change', this.handleToggleChange);
+    this.removeEventListener('keydown', this.handleKeyDown);
+    this.removeEventListener('focusin', this.handleFocusIn);
+    if (!this.isConnected) return;
+    if (this.select) this.addEventListener('change', this.handleToggleChange);
+    if (this.toolbar) {
+      this.addEventListener('keydown', this.handleKeyDown);
+      this.addEventListener('focusin', this.handleFocusIn);
     }
   }
 
@@ -153,16 +170,14 @@ export class CoreButtonGroup extends CharmElement {
       // button has already toggled its own pressed state via its click handler.
       const target = e.target as HTMLElement;
       this.buttons.forEach(button => {
-        if (button !== target && button.hasAttribute('pressed')) {
-          button.removeAttribute('pressed');
-        }
+        if (button !== target && button.pressed) button.pressed = false;
       });
     }
   };
 
   /** Finds the index of the next non-disabled slotted element, wrapping around the group. */
   protected findNextFocusableIndex(startIndex: number, direction: 1 | -1): number {
-    return findNextEnabledIndex(this.slottedElements, startIndex, direction, el => {
+    return findNextEnabledIndex(this.toolbarItems, startIndex, direction, el => {
       const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true';
       return !isDisabled;
     });
@@ -173,47 +188,48 @@ export class CoreButtonGroup extends CharmElement {
    * @param {KeyboardEvent} e - The 'keyboard' event object.
    */
   protected handleKeyDown = (e: KeyboardEvent) => {
-    {
-      if (![keys.ArrowRight, keys.ArrowLeft, keys.ArrowUp, keys.ArrowDown, keys.Home, keys.End].includes(e.key)) {
-        return;
+    if (![keys.ArrowRight, keys.ArrowLeft, keys.ArrowUp, keys.ArrowDown, keys.Home, keys.End].includes(e.key)) return;
+    const items = this.toolbarItems;
+    const focusedItem = e
+      .composedPath()
+      .find((node): node is HTMLElement => node instanceof HTMLElement && items.includes(node));
+    if (!focusedItem) return;
+    this.focusedIndex = items.indexOf(focusedItem);
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    let nextIndex = -1;
+
+    switch (e.key) {
+      case keys.ArrowRight:
+      case keys.ArrowDown: {
+        const direction = e.key === keys.ArrowRight && this.resolvedDir === 'rtl' ? -1 : 1;
+        nextIndex = this.findNextFocusableIndex(this.focusedIndex, direction);
+        break;
       }
 
-      e.preventDefault();
-      // Stop the event from bubbling up to parent button groups
-      e.stopPropagation();
-
-      let nextIndex = -1;
-
-      switch (e.key) {
-        case keys.ArrowRight:
-        case keys.ArrowDown: {
-          nextIndex = this.findNextFocusableIndex(this.focusedIndex, 1);
-          break;
-        }
-
-        case keys.ArrowLeft:
-        case keys.ArrowUp: {
-          nextIndex = this.findNextFocusableIndex(this.focusedIndex, -1);
-          break;
-        }
-
-        case keys.Home: {
-          nextIndex = this.findNextFocusableIndex(-1, 1);
-          break;
-        }
-
-        case keys.End: {
-          nextIndex = this.findNextFocusableIndex(this.slottedElements.length, -1);
-          break;
-        }
+      case keys.ArrowLeft:
+      case keys.ArrowUp: {
+        const direction = e.key === keys.ArrowLeft && this.resolvedDir === 'rtl' ? 1 : -1;
+        nextIndex = this.findNextFocusableIndex(this.focusedIndex, direction);
+        break;
       }
 
-      if (nextIndex === -1) {
-        return;
+      case keys.Home: {
+        nextIndex = this.findNextFocusableIndex(-1, 1);
+        break;
       }
 
-      this.setFocus(this.focusedIndex, nextIndex);
+      case keys.End: {
+        nextIndex = this.findNextFocusableIndex(this.toolbarItems.length, -1);
+        break;
+      }
     }
+
+    if (nextIndex === -1) return;
+
+    this.setFocus(this.focusedIndex, nextIndex);
   };
 
   /**
@@ -222,18 +238,40 @@ export class CoreButtonGroup extends CharmElement {
    * this, arrow navigation after a mouse click would jump from a stale index.
    */
   protected handleFocusIn = (e: FocusEvent) => {
-    const target = e.target as HTMLElement;
-    const index = this.slottedElements.indexOf(target);
-    if (index === -1 || index === this.focusedIndex) return;
+    const items = this.toolbarItems;
+    const target = e
+      .composedPath()
+      .find((node): node is HTMLElement => node instanceof HTMLElement && items.includes(node));
+    if (!target) return;
+    const index = items.indexOf(target);
+    if (
+      index === -1 ||
+      target.hasAttribute('disabled') ||
+      target.getAttribute('aria-disabled') === 'true' ||
+      index === this.focusedIndex
+    )
+      return;
+    this.setManagedAttribute(items[this.focusedIndex], 'tabindex', '-1', true);
     this.focusedIndex = index;
-    this.slottedElements.forEach((el, i) => {
-      el.setAttribute('tabindex', i === this.focusedIndex ? '0' : '-1');
-    });
+    this.setManagedAttribute(target, 'tabindex', '0', true);
   };
 
   protected initializeSlottedElements() {
+    this.restoreRemovedAttributes();
     this.setAttributes();
     this.setTooltipPosition();
+  }
+
+  protected restoreRemovedAttributes() {
+    const activeElements = new Set<HTMLElement>([...this.buttons, ...this.toolbarItems]);
+    this.managedAttributes.forEach((attributes, element) => {
+      if (activeElements.has(element)) return;
+      attributes.forEach((value, name) => {
+        if (value === null) element.removeAttribute(name);
+        else element.setAttribute(name, value);
+      });
+      this.managedAttributes.delete(element);
+    });
   }
 
   protected setAttributes() {
@@ -242,73 +280,74 @@ export class CoreButtonGroup extends CharmElement {
     const buttons = this.buttons;
     buttons.forEach((button, idx) => {
       if (idx === 0) {
-        button.setAttribute('button-group-button-position', 'first');
+        this.setManagedAttribute(button, 'button-group-button-position', 'first', true);
       } else if (idx < buttons.length - 1) {
-        button.setAttribute('button-group-button-position', 'inner');
+        this.setManagedAttribute(button, 'button-group-button-position', 'inner', true);
       } else {
-        button.setAttribute('button-group-button-position', 'last');
+        this.setManagedAttribute(button, 'button-group-button-position', 'last', true);
       }
-      if (this.vertical) {
-        button.setAttribute('vertical', '');
-      } else {
-        button.removeAttribute('vertical');
-      }
-      if (this.split) {
-        button.setAttribute('split', '');
-      } else {
-        button.removeAttribute('split');
-      }
-      if (this.select) {
-        button.setAttribute('toggle', '');
-      } else {
-        button.removeAttribute('toggle');
-      }
+      this.setManagedAttribute(button, 'vertical', this.vertical ? '' : null);
+      this.setManagedAttribute(button, 'split', this.split ? '' : null);
+      this.setManagedAttribute(button, 'toggle', this.select ? '' : null);
     });
 
     if (this.toolbar) {
       // The roving tabindex lives on the slotted elements — the same index space navigation uses —
       // so the initial tab stop and arrow-key movement can't drift apart. The first enabled item
       // becomes the tab stop; the rest are reachable only via the arrow keys.
+      const items = this.toolbarItems;
       const firstEnabled = this.findNextFocusableIndex(-1, 1);
-      this.slottedElements.forEach((el, index) => {
-        el.setAttribute('tabindex', index === firstEnabled ? '0' : '-1');
+      items.forEach((el, index) => {
+        const enabled = !el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true';
+        this.setManagedAttribute(el, 'tabindex', enabled && index === firstEnabled ? '0' : '-1', true);
       });
       this.focusedIndex = firstEnabled;
-
-      // Propagate toolbar attribute to child button groups, including nested ones
-      this.slottedElements.forEach(el => {
-        if (el instanceof CoreButtonGroup) {
-          el.setAttribute('toolbar', '');
-        }
-        const allDescendants = el.querySelectorAll('*');
-        allDescendants.forEach(descendant => {
-          if (descendant instanceof CoreButtonGroup) {
-            descendant.setAttribute('toolbar', '');
-          }
-        });
-      });
     } else {
-      // Toolbar was removed at runtime: undo the roving tabindex and stop propagating the
-      // toolbar attribute so children aren't left trapped or reporting toolbar semantics.
-      this.slottedElements.forEach(el => {
-        el.removeAttribute('tabindex');
-        el.removeAttribute('toolbar');
-      });
+      this.restoreManagedAttribute('tabindex');
     }
   }
 
   /** Clears the attributes this element propagated to its children, restoring default tab behavior. */
   protected resetAttributes() {
-    this.buttons.forEach(button => {
-      button.removeAttribute('button-group-button-position');
-      button.removeAttribute('vertical');
-      button.removeAttribute('split');
-      button.removeAttribute('toggle');
-      button.removeAttribute('tabindex');
+    this.managedAttributes.forEach((attributes, element) => {
+      attributes.forEach((value, name) => {
+        if (value === null) element.removeAttribute(name);
+        else element.setAttribute(name, value);
+      });
     });
-    this.slottedElements.forEach(el => {
-      el.removeAttribute('tabindex');
-      el.removeAttribute('toolbar');
+    this.managedAttributes.clear();
+  }
+
+  protected setManagedAttribute(element: HTMLElement, name: string, value: string | null, force = false) {
+    let attributes = this.managedAttributes.get(element);
+    if (value === null) {
+      if (!attributes?.has(name)) return;
+      const original = attributes.get(name) ?? null;
+      if (original === null) element.removeAttribute(name);
+      else element.setAttribute(name, original);
+      attributes.delete(name);
+      if (!attributes.size) this.managedAttributes.delete(element);
+      return;
+    }
+    if (!attributes) {
+      attributes = new Map();
+      this.managedAttributes.set(element, attributes);
+    }
+    if (!attributes.has(name)) {
+      if (!force && element.hasAttribute(name)) return;
+      attributes.set(name, element.getAttribute(name));
+    }
+    element.setAttribute(name, value);
+  }
+
+  protected restoreManagedAttribute(name: string) {
+    this.managedAttributes.forEach((attributes, element) => {
+      if (!attributes.has(name)) return;
+      const value = attributes.get(name) ?? null;
+      if (value === null) element.removeAttribute(name);
+      else element.setAttribute(name, value);
+      attributes.delete(name);
+      if (!attributes.size) this.managedAttributes.delete(element);
     });
   }
 
@@ -316,7 +355,7 @@ export class CoreButtonGroup extends CharmElement {
     for (const el of this.slottedElements) {
       if (el.tagName.toLowerCase() === this.scope.tagName(CoreTooltip.baseName)) {
         const tooltip = el as CoreTooltip;
-        if (!tooltip.distance) {
+        if (tooltip.distance === undefined) {
           tooltip.distance = 12;
         }
       }
@@ -325,11 +364,11 @@ export class CoreButtonGroup extends CharmElement {
 
   /** Sets the focus on the specified tab indices. */
   protected setFocus(prevIndex: number, newIndex: number) {
+    const items = this.toolbarItems;
     this.focusedIndex = newIndex;
-    this.prevSelectedIndex = prevIndex;
-    this.slottedElements[this.prevSelectedIndex].setAttribute('tabindex', '-1');
-    this.slottedElements[this.focusedIndex].setAttribute('tabindex', '0');
-    this.slottedElements[this.focusedIndex].focus();
+    if (items[prevIndex]) this.setManagedAttribute(items[prevIndex], 'tabindex', '-1', true);
+    if (items[this.focusedIndex]) this.setManagedAttribute(items[this.focusedIndex], 'tabindex', '0', true);
+    items[this.focusedIndex]?.focus();
   }
 
   protected override render() {
@@ -343,10 +382,15 @@ export class CoreButtonGroup extends CharmElement {
         part="button-group-base"
         class="button-group"
         role=${this.toolbar ? 'toolbar' : 'group'}
-        aria-label=${ifDefined(this.label)}
+        aria-labelledby=${ifDefined(
+          this.label || this.querySelector('[slot="label"]')?.textContent?.trim() ? 'label' : undefined
+        )}
         aria-orientation=${ifDefined(this.toolbar ? (this.vertical ? 'vertical' : 'horizontal') : undefined)}
       >
         <slot @slotchange=${this.initializeSlottedElements}></slot>
+        <slot id="label" class="visually-hidden" name="label" @slotchange=${() => this.requestUpdate()}
+          >${this.label}</slot
+        >
       </div>
     `;
   }

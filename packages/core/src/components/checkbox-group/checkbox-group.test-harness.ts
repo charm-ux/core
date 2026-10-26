@@ -1,9 +1,12 @@
-import { elementUpdated, expect, fixture, html, oneEvent, waitUntil } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html, oneEvent, waitUntil } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreCheckbox } from '../checkbox/index.js';
 import type { CoreCheckboxGroup } from './index.js';
+
+const getInternals = (group: CoreCheckboxGroup): ElementInternals =>
+  (group as unknown as { internals: ElementInternals }).internals;
 
 export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmElementTests<T> {
   public constructor() {
@@ -52,6 +55,31 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   expect(checkboxes[0].checked).to.be.false;
                   expect(checkboxes[1].checked).to.be.true;
                   expect(checkboxes[2].checked).to.be.true;
+                },
+              },
+              requiredValueMustMatchOption: {
+                description: 'keeps a required group invalid when its value does not match an enabled option',
+                test: async () => {
+                  const group = this.component;
+                  group.required = true;
+                  group.valueAsArray = ['not-an-option'];
+                  await elementUpdated(group);
+                  expect(group.checkValidity()).to.be.false;
+                  expect(group.validity.valueMissing).to.be.true;
+                },
+              },
+              optionValueMutationUpdatesSubmission: {
+                description: 'removes a changed option value from the group form value',
+                test: async () => {
+                  const group = this.component;
+                  group.name = 'choice';
+                  group.valueAsArray = ['birds'];
+                  const form = await fixture<HTMLFormElement>(html`<form>${group}</form>`);
+                  await elementUpdated(group);
+                  expect(new FormData(form).get('choice')).to.equal('birds');
+                  const checkbox = group.querySelector<CoreCheckbox>('ch-checkbox')!;
+                  checkbox.value = 'changed';
+                  await waitUntil(() => !new FormData(form).has('choice'));
                 },
               },
               commaSeparatedValue: {
@@ -120,10 +148,11 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   await elementUpdated(group);
                   await waitUntil(() => options.every(option => option.getAttribute('role') === 'option'));
 
+                  expect(getInternals(group).role).to.equal('listbox');
                   expect(group.getAttribute('role')).to.equal('listbox');
-                  expect(group.getAttribute('aria-multiselectable')).to.equal('true');
+                  expect(getInternals(group).ariaMultiSelectable).to.equal('true');
                   expect(group.tabIndex).to.equal(0);
-                  expect(group.getAttribute('aria-activedescendant')).to.equal(options[0].id);
+                  expect(getInternals(group).ariaActiveDescendantElement).to.equal(options[0]);
                   expect(options.map(option => option.tabIndex)).to.deep.equal([-1, -1, -1]);
                   expect(options.map(option => option.getAttribute('aria-label'))).to.deep.equal([
                     'Birds',
@@ -141,6 +170,32 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   expect((options[0].shadowRoot?.querySelector('input') as HTMLInputElement).disabled).to.be.false;
                 },
               },
+              listboxUsesSlottedLabelReferences: {
+                description: 'references slotted label and help text nodes while in listbox mode',
+                test: async () => {
+                  const group = this.component;
+                  group.removeAttribute('label');
+                  const label = document.createElement('span');
+                  label.slot = 'label';
+                  label.textContent = 'Available options';
+                  const helpText = document.createElement('span');
+                  helpText.slot = 'help-text';
+                  helpText.textContent = 'Choose one or more options';
+                  group.append(label, helpText);
+                  await aTimeout(0);
+                  group.listbox = true;
+                  await elementUpdated(group);
+
+                  expect(group.getAttribute('aria-label')).to.equal('Available options');
+                  expect(group.getAttribute('aria-description')).to.equal('Choose one or more options');
+                  expect(label.hasAttribute('id')).to.be.false;
+                  expect(helpText.hasAttribute('id')).to.be.false;
+
+                  group.listbox = false;
+                  await elementUpdated(group);
+                  expect(getInternals(group).role).to.be.null;
+                },
+              },
               listboxKeyboardNavigation: {
                 description: 'moves among enabled options and toggles selection immediately with Space',
                 test: async () => {
@@ -154,7 +209,7 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   group.focus();
                   await sendKeys({ press: 'ArrowDown' });
                   await elementUpdated(group);
-                  expect(group.getAttribute('aria-activedescendant')).to.equal(options[2].id);
+                  expect(getInternals(group).ariaActiveDescendantElement).to.equal(options[2]);
 
                   const changeEvent = oneEvent(group, 'change');
                   await sendKeys({ press: 'Space' });
@@ -165,7 +220,7 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
 
                   await sendKeys({ type: 'b' });
                   await elementUpdated(group);
-                  expect(group.getAttribute('aria-activedescendant')).to.equal(options[0].id);
+                  expect(getInternals(group).ariaActiveDescendantElement).to.equal(options[0]);
                 },
               },
               disabledGroup: {
@@ -293,12 +348,12 @@ export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmEl
                   fieldset.disabled = true;
                   await elementUpdated(group);
                   await waitUntil(() => options.every(option => option.forceDisabled));
-                  expect(group.getAttribute('aria-disabled')).to.equal('true');
+                  expect(getInternals(group).ariaDisabled).to.equal('true');
 
                   fieldset.disabled = false;
                   await elementUpdated(group);
                   await waitUntil(() => options.every(option => !option.forceDisabled));
-                  expect(group.hasAttribute('aria-disabled')).to.be.false;
+                  expect(getInternals(group).ariaDisabled).to.be.null;
                 },
               },
               submitsListboxOptionsThroughTheGroup: {

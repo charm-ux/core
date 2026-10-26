@@ -2,7 +2,7 @@
 
 Accessibility rules. Full details in [`.agents/rules/accessibility/`](../../.agents/rules/accessibility/).
 
-- **A11Y-001** — Use native semantic elements/roles first; add ARIA only to express state the DOM can't. No `<div>` widgets. ([details](../../.agents/rules/accessibility/A11Y-001.md))
+- **A11Y-001** — Use native semantics first; use `ElementInternals` for host-based custom controls and avoid nested interactive controls. ([details](../../.agents/rules/accessibility/A11Y-001.md))
 - **A11Y-002** — Prefer visually-hidden DOM text (the base `visually-hidden` class) over `aria-label` for user-facing labels; keep labels translatable. ([details](../../.agents/rules/accessibility/A11Y-002.md))
 - **A11Y-003** — Manage focus and keyboard interaction; extend `CharmFocusableElement` for focus delegation and test keys with `sendKeys`. ([details](../../.agents/rules/accessibility/A11Y-003.md))
 - **A11Y-004** — Ship an accessibility test for every component; keep the shared `.to.be.accessible()` harness test running. ([details](../../.agents/rules/accessibility/A11Y-004.md))

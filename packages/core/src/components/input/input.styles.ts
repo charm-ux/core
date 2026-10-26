@@ -21,43 +21,50 @@ export default css`
   }
 
   /* Styles for slider */
-  :host([type='range'][disabled]) {
-    --input-range-progress-color: ${component('inputRange', 'disabled', 'fgColor')};
-    --input-range-track-color: ${component('inputRange', 'disabled', 'bgColor')};
-    --input-range-thumb-color: ${component('inputRange', 'disabled', 'fgColor')};
+  :host([type='range']) {
+    --charm-input-range-progress-color: ${component('inputRange', 'progressColor')};
+    --charm-input-range-track-color: ${component('inputRange', 'trackColor')};
+    --charm-input-range-thumb-color: ${component('inputRange', 'thumbColor')};
+  }
+
+  :host([type='range'][disabled]),
+  :host([type='range'][form-disabled]) {
+    --charm-input-range-progress-color: ${component('inputRange', 'disabled', 'fgColor')};
+    --charm-input-range-track-color: ${component('inputRange', 'disabled', 'bgColor')};
+    --charm-input-range-thumb-color: ${component('inputRange', 'disabled', 'fgColor')};
     --charm-form-control-disabled-bg-color: transparent;
     --charm-form-control-disabled-opacity: 1;
   }
 
   :host([type='range']) .form-control-base-input::-webkit-slider-thumb {
     appearance: none;
-    background-color: ${component('inputRange', 'thumbColor')};
+    background-color: var(--charm-input-range-thumb-color);
   }
 
   :host([type='range']) .form-control-base-input::-moz-range-thumb {
     appearance: none;
-    background-color: ${component('inputRange', 'thumbColor')};
+    background-color: var(--charm-input-range-thumb-color);
   }
 
   :host([type='range']) .form-control-base-input::-webkit-slider-runnable-track {
     appearance: none;
-    color: light-dark(${component('inputRange', 'progressColor')}, ${component('inputRange', 'trackColor')});
+    color: light-dark(var(--charm-input-range-progress-color), var(--charm-input-range-track-color));
   }
 
   :host([type='range']) .form-control-base-input::-moz-range-track {
     appearance: none;
-    color: light-dark(${component('inputRange', 'progressColor')}, ${component('inputRange', 'trackColor')});
+    color: light-dark(var(--charm-input-range-progress-color), var(--charm-input-range-track-color));
   }
 
-  :host([type='range']:not([readonly]):not([disabled])) .form-control:hover {
-    --input-range-progress-color: ${component('inputRange', 'hover', 'fgColor')};
-    --input-range-thumb-color: ${component('inputRange', 'hover', 'fgColor')};
-    --input-range-track-color: ${component('inputRange', 'hover', 'bgColor')};
+  :host([type='range']:not([readonly]):not([disabled]):not([form-disabled])) .form-control:hover {
+    --charm-input-range-progress-color: ${component('inputRange', 'hover', 'fgColor')};
+    --charm-input-range-thumb-color: ${component('inputRange', 'hover', 'fgColor')};
+    --charm-input-range-track-color: ${component('inputRange', 'hover', 'bgColor')};
   }
 
-  :host([type='range']:not([readonly]):not([disabled])) .form-control:active {
-    --input-range-progress-color: ${component('inputRange', 'active', 'fgColor')};
-    --input-range-thumb-color: ${component('inputRange', 'active', 'fgColor')};
-    --input-range-track-color: ${component('inputRange', 'active', 'bgColor')};
+  :host([type='range']:not([readonly]):not([disabled]):not([form-disabled])) .form-control:active {
+    --charm-input-range-progress-color: ${component('inputRange', 'active', 'fgColor')};
+    --charm-input-range-thumb-color: ${component('inputRange', 'active', 'fgColor')};
+    --charm-input-range-track-color: ${component('inputRange', 'active', 'bgColor')};
   }
 `;

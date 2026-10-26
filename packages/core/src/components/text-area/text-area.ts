@@ -119,22 +119,16 @@ export class CoreTextArea extends CharmFormControlElement {
 
   protected handleInput = () => {
     this.value = this.input!.value;
-    this.emitInput();
-  };
-
-  protected handleKeyDown = (event: KeyboardEvent) => {
-    event.stopPropagation();
   };
 
   protected override updated(changedProperties: PropertyValues<this>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('value') || changedProperties.has('rows')) {
+    if (changedProperties.has('value') || changedProperties.has('rows') || changedProperties.has('resize')) {
       this.setTextareaDimensions();
     }
 
     if (changedProperties.has('resize')) {
-      this.setTextareaDimensions();
       this.updateResizeObserver();
     }
   }
@@ -187,7 +181,7 @@ export class CoreTextArea extends CharmFormControlElement {
           aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
           aria-invalid=${this.invalid}
           autocapitalize=${ifDefined(this.autocapitalize)}
-          autocomplete=${ifDefined(this.autocomplete)}
+          autocomplete=${ifDefined(this.autocomplete) as any}
           class="form-control-base-input"
           enterkeyhint=${ifDefined(this.enterkeyhint)}
           id="input"
@@ -206,7 +200,6 @@ export class CoreTextArea extends CharmFormControlElement {
           .value=${live((this.value || '').toString())}
           @change=${this.handleChange}
           @input=${this.handleInput}
-          @keydown=${this.handleKeyDown}
         ></textarea>
       </div>
     `;

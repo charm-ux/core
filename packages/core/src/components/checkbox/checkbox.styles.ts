@@ -18,7 +18,7 @@ export default css`
       ${component('checkbox', 'borderColor')};
     border-radius: ${component('checkbox', 'borderRadius')};
     background-color: ${component('checkbox', 'bgColor')};
-    color: white;
+    color: ${component('checkbox', 'checked', 'fgColor')};
   }
 
   .control-label-wrapper {
@@ -86,6 +86,7 @@ export default css`
     color: ${component('checkbox', 'disabled', 'fgColor')};
   }
 
+  :host([label-position='start']) .control-label-wrapper,
   :host([label-position='before']) .control-label-wrapper {
     flex-direction: row-reverse;
   }
@@ -94,12 +95,12 @@ export default css`
     background-color: ${component('checkbox', 'checked', 'bgColor')};
   }
 
-  :host([indeterminate]) .control {
+  :host([indeterminate]:not([checked])) .control {
     color: ${component('checkbox', 'checked', 'bgColor')};
     border-color: ${component('checkbox', 'checked', 'borderColor')};
   }
 
-  :host([indeterminate]) .control-label-wrapper:hover .control {
+  :host([indeterminate]:not([checked])) .control-label-wrapper:hover .control {
     color: ${component('checkbox', 'checked', 'hover', 'bgColor')};
     border-color: ${component('checkbox', 'checked', 'hover', 'borderColor')};
   }
@@ -119,6 +120,10 @@ export default css`
   :host([checked]) .control,
   :host([indeterminate]) .control {
     border-color: ${component('checkbox', 'checked', 'borderColor')};
+  }
+
+  :host([invalid]) .form-control-has-interaction .control {
+    border-color: ${semantic('formControl', 'invalid', 'borderColor')};
   }
 
   :host([checked][disabled]) .control-label-wrapper:hover .control {

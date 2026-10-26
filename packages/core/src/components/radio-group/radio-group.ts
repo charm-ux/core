@@ -42,17 +42,14 @@ export class CoreRadioGroup extends CharmFormControlElement {
   public static override baseName = 'radio-group';
   public static override watchedSlots = ['help-text', 'label'];
 
-  /**
-   * The group manages a roving tabindex across its slotted radios, so the host itself must be able to receive focus
-   * and hand it off (see `handleHostFocus`). Focus delegation would look for a focusable node inside the shadow root,
-   * find none, and silently drop the `focus()` call.
-   */
+  /** Radios are slotted, so focus must be explicitly forwarded to an item. */
   public static override shadowRootOptions = { ...super.shadowRootOptions, delegatesFocus: false };
 
   /** How the radio items are laid out in the group.*/
   @property({ reflect: true }) public layout?: 'horizontal' | 'vertical' | 'horizontal-stacked';
 
   protected radios: CoreRadio[] = [];
+  protected validationInput?: HTMLInputElement;
   public constructor() {
     super();
     this.useBlurHandler = false;
@@ -109,15 +106,34 @@ export class CoreRadioGroup extends CharmFormControlElement {
     return !this.invalid;
   }
 
-  public override async connectedCallback() {
+  public override setCustomValidity(message = '') {
+    this.hadFocus = true;
+    this.customErrorMessage = message;
+    const validity = this.validity;
+    this._errorMessage = message || (validity.valid ? '' : this.getNativeErrorMessage());
+    this.invalid = !validity.valid;
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      this._errorMessage,
+      this.validationTarget
+    );
+  }
+
+  public override connectedCallback() {
     super.connectedCallback();
     // The base class syncs the form value on every connect, which registers an empty string for a group with no
     // selection. Native radios submit nothing when none is checked, so re-apply the value-dependent form value here
     // (`firstUpdated` doesn't run again when the group is moved between forms).
     this.internals.setFormValue(this.value || null);
-    this.setAttribute('tabindex', '0');
-    this.addEventListener('focus', this.handleHostFocus);
-    this.addEventListener('blur', this.handleHostBlur);
+  }
+
+  /** Focus the selected radio or the first enabled radio. */
+  public override focus(options?: FocusOptions): void {
+    const radios = this.radios.length ? this.radios : this.getAllRadios();
+    const target =
+      radios.find(radio => radio.checked && !radio.disabled && !radio.forceDisabled) ??
+      radios.find(radio => !radio.disabled && !radio.forceDisabled);
+    target?.focus(options);
   }
 
   /** Checks for validity but doesn't report a validation message when invalid. */
@@ -128,7 +144,13 @@ export class CoreRadioGroup extends CharmFormControlElement {
   protected override firstUpdated() {
     super.firstUpdated();
     this.internals.setFormValue(this.value || null);
-    this.invalid = !this.checkValidity();
+    const validity = this.validity;
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      this.validationMessage,
+      this.validationTarget
+    );
+    this.invalid = false;
   }
 
   protected override updateErrorMessage() {
@@ -140,10 +162,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
     if (changedProperties.has('value')) {
       this.handleValueChange();
     }
-    if (changedProperties.has('readonly')) {
-      this.radios.forEach(radio => (radio.readonly = this.readonly));
-    }
-    if (changedProperties.has('disabled')) {
+    if (changedProperties.has('disabled') || changedProperties.has('readonly')) {
       this.syncRadioElements();
     }
     if (changedProperties.has('autofocus')) {
@@ -157,25 +176,40 @@ export class CoreRadioGroup extends CharmFormControlElement {
     if (!this.hasUpdated) return;
     this.syncRadioElements();
     this.internals.setFormValue(this.value || null);
-    this.reportValidity();
+    const validity = this.validity;
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage()),
+      this.validationTarget
+    );
+    if (this.hadFocus) this.reportValidity();
   }
 
   protected getNativeErrorMessage() {
-    const input = document.createElement('input');
-    input.required = this.required;
-    input.value = this.value ? this.value.toString() : '';
-    return input.validationMessage;
+    this.validationInput ??= document.createElement('input');
+    this.validationInput.type = 'radio';
+    this.validationInput.name = 'radio-group-validation';
+    this.validationInput.required = this.required;
+    this.validationInput.checked = !!this.value;
+    return this.validationInput.validationMessage;
   }
 
   protected getAllRadios() {
-    return [...this.children].filter(x => x.tagName.toLowerCase().includes('radio')) as CoreRadio[];
+    return [...this.children].filter((element): element is CoreRadio => element instanceof CoreRadio);
   }
 
   protected handleRadioSelected(event: Event) {
     const target = event.target as CoreRadio;
 
     // Make sure the radio isn't disabled and that the element is actually a radio
-    if (target.getAttribute('role') !== 'radio' || this.disabled || target.disabled || target.forceDisabled) {
+    if (
+      !(target instanceof CoreRadio) ||
+      !this.getAllRadios().includes(target) ||
+      this.disabled ||
+      this.readonly ||
+      target.disabled ||
+      target.forceDisabled
+    ) {
       return;
     }
 
@@ -191,6 +225,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
   }
 
   protected handleKeyDown(event: KeyboardEvent) {
+    if (this.readonly || this.disabled) return;
     // Ignore keys we're not interested in
     if (![keys.ArrowUp, keys.ArrowDown, keys.ArrowLeft, keys.ArrowRight, keys.Space].includes(event.key)) {
       return;
@@ -209,7 +244,18 @@ export class CoreRadioGroup extends CharmFormControlElement {
     if (event.key === keys.Space) {
       targetIndex = checkedIndex === -1 ? 0 : checkedIndex;
     } else {
-      const direction: 1 | -1 = [keys.ArrowUp, keys.ArrowLeft].includes(event.key) ? -1 : 1;
+      const direction: 1 | -1 =
+        event.key === keys.ArrowUp
+          ? -1
+          : event.key === keys.ArrowDown
+            ? 1
+            : this.resolvedDir === 'rtl'
+              ? event.key === keys.ArrowRight
+                ? -1
+                : 1
+              : event.key === keys.ArrowRight
+                ? 1
+                : -1;
       const startIndex = checkedIndex === -1 ? (direction === 1 ? -1 : 0) : checkedIndex;
       targetIndex = findNextEnabledIndex(enabledRadios, startIndex, direction, () => true);
     }
@@ -236,7 +282,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
     this.syncRadioElements();
   }
 
-  protected handleBlurElement() {
+  protected handleBlurElement(event: FocusEvent) {
+    if (event.relatedTarget instanceof Node && this.contains(event.relatedTarget)) return;
     this.hasFocus = false;
     this.hadFocus = true;
     this.reportValidity();
@@ -245,15 +292,6 @@ export class CoreRadioGroup extends CharmFormControlElement {
   protected handleFocusElement() {
     this.hasFocus = true;
   }
-
-  protected handleHostFocus = () => {
-    this.setAttribute('tabindex', '-1');
-    this.radios.find(radio => radio.checked)?.focus();
-  };
-
-  protected handleHostBlur = () => {
-    this.setAttribute('tabindex', '0');
-  };
 
   /**
    * Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without
@@ -270,7 +308,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
     await Promise.all(radios.map(radio => radio.updateComplete));
 
     radios.forEach(radio => {
-      radio.checked = radio.value === this.value && !radio.disabled;
+      radio.checked = radio.value === this.value;
+      radio.readonly = this.readonly;
     });
 
     await Promise.all(radios.map(radio => radio.updateComplete));
@@ -297,7 +336,9 @@ export class CoreRadioGroup extends CharmFormControlElement {
   /** Focuses on the first focusable element. */
   protected focusOnFirstFocusableElement() {
     const radios = this.radios.length ? this.radios : this.getAllRadios();
-    const firstFocusable = radios.find(radio => radio.tabIndex === 0) ?? radios[0];
+    const firstFocusable =
+      radios.find(radio => radio.checked && !radio.disabled && !radio.forceDisabled) ??
+      radios.find(radio => !radio.disabled && !radio.forceDisabled);
     firstFocusable?.focus();
   }
 
@@ -358,7 +399,10 @@ export class CoreRadioGroup extends CharmFormControlElement {
         aria-describedby=${ifDefined(this.describedBy)}
         aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
         aria-invalid="${this.invalid}"
-        aria-orientation=${this.layout === 'vertical' ? 'vertical' : 'horizontal'}
+        aria-orientation=${this.layout === 'horizontal' || this.layout === 'horizontal-stacked'
+          ? 'horizontal'
+          : 'vertical'}
+        aria-readonly=${ifDefined(this.readonly ? 'true' : undefined)}
         aria-required="${this.required}"
         class=${classMap({
           'radio-group': true,

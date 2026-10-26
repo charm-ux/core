@@ -17,22 +17,107 @@ The ButtonGroupOverflow component extends Overflow to work with nested button gr
 <code-bubble>
 
 ```html
-<ch-button-group>
-  <ch-button--group-overflow>
-    <ch-button-group>
-      <ch-button>Home</ch-button>
-      <ch-button>About</ch-button>
-      <ch-button>Contact</ch-button>
-      <ch-button-group>
-    </ch-button-group>
-    <ch-button-group>
-      <ch-button>Account</ch-button>
-      <ch-button>Settings</ch-button>
-      <ch-button>Help</ch-button>
-      <ch-button-group>
-    </ch-button-group>
-  </ch-button--group-overflow>
-<ch-button-group>
+<ch-button-group-overflow style="max-width: 24rem;">
+  <ch-button>Home</ch-button>
+  <ch-button>About</ch-button>
+  <ch-button>Contact</ch-button>
+  <ch-divider></ch-divider>
+  <ch-button>Account</ch-button>
+  <ch-button>Settings</ch-button>
+  <ch-button>Help</ch-button>
+</ch-button-group-overflow>
+```
+
+</code-bubble>
+
+## Common scenarios
+
+### Responsive application navigation
+
+Keep the highest-priority navigation action visible and move trailing items into the overflow menu as the available width changes.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group-overflow
+  label="More navigation"
+  min="1"
+  overflow-direction="end"
+  style="max-width: 22rem;"
+>
+  <ch-button current="page">Overview</ch-button>
+  <ch-button>Projects</ch-button>
+  <ch-button>Teams</ch-button>
+  <ch-button>Reports</ch-button>
+  <ch-button>Settings</ch-button>
+</ch-button-group-overflow>
+```
+
+</code-bubble>
+
+### Nested editor actions
+
+Nested button groups and dividers keep related actions together in the visible row and in the overflow menu.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group-overflow label="More editor actions" style="max-width: 26rem;">
+  <ch-button-group>
+    <ch-button toggle>Bold</ch-button>
+    <ch-button toggle>Italic</ch-button>
+    <ch-button toggle>Underline</ch-button>
+  </ch-button-group>
+  <ch-divider></ch-divider>
+  <ch-button-group>
+    <ch-button>Align left</ch-button>
+    <ch-button>Align center</ch-button>
+    <ch-button>Align right</ch-button>
+  </ch-button-group>
+</ch-button-group-overflow>
+```
+
+</code-bubble>
+
+### Preserve more than one visible action
+
+`min` sets how many actions remain visible. By default, overflow hides from the end, preserving the first actions; `overflow-direction="start"` hides from the beginning instead.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group-overflow
+  label="File actions"
+  min="2"
+  overflow-direction="start"
+  menu-position="start"
+  style="max-width: 22rem;"
+>
+  <ch-button>Open</ch-button>
+  <ch-button>Share</ch-button>
+  <ch-button>Download</ch-button>
+  <ch-divider></ch-divider>
+  <ch-button>Duplicate</ch-button>
+  <ch-button>Move</ch-button>
+</ch-button-group-overflow>
+```
+
+</code-bubble>
+
+### Static context around the actions
+
+Use the `start` and `end` slots for content that should stay outside the collapsible actions.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group-overflow label="Page actions" style="max-width: 24rem;">
+  <span slot="start">3 selected</span>
+  <ch-button>Archive</ch-button>
+  <ch-button>Move</ch-button>
+  <ch-button>Share</ch-button>
+  <span slot="end">Selection</span>
+</ch-button-group-overflow>
 ```
 
 </code-bubble>

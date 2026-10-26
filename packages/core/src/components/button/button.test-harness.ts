@@ -156,8 +156,9 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.innerHTML = 'Button';
                   const clickSpy = sinon.spy();
                   el.addEventListener('change', clickSpy);
-                  setTimeout(() => el.shadowRoot?.querySelector('button')!.click());
-                  const event = (await oneEvent(el, 'change')) as CustomEvent;
+                  const changeEvent = oneEvent(el, 'change');
+                  el.shadowRoot?.querySelector('button')?.click();
+                  const event = (await changeEvent) as CustomEvent;
                   expect(event.target).to.equal(el);
                   expect(clickSpy.callCount).to.equal(1);
                 },
@@ -171,8 +172,27 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.innerHTML = 'Button';
                   const clickSpy = sinon.spy();
                   el.addEventListener('change', clickSpy);
-                  setTimeout(() => el.shadowRoot?.querySelector('button')!.click());
+                  el.shadowRoot?.querySelector('button')?.click();
                   expect(clickSpy.callCount).to.equal(0);
+                },
+              },
+              disabledFieldsetReenabled: {
+                description: 'disables submit behavior through a fieldset without persisting disabled state',
+                test: async () => {
+                  const el = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form><fieldset disabled>${el}</fieldset></form>`);
+                  await elementUpdated(el);
+                  const control = el.shadowRoot?.querySelector('.control');
+                  expect(control?.getAttribute('aria-disabled')).to.equal('true');
+                  const clickSpy = sinon.spy();
+                  el.addEventListener('click', clickSpy);
+                  el.click();
+                  expect(clickSpy).not.to.have.been.called;
+
+                  form.querySelector('fieldset')!.disabled = false;
+                  await elementUpdated(el);
+                  expect(el.hasAttribute('disabled')).to.be.false;
+                  expect(control?.getAttribute('aria-disabled')).to.be.null;
                 },
               },
               anchorNoEmit: {
@@ -184,7 +204,7 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.innerHTML = 'Link';
                   const clickSpy = sinon.spy();
                   el.addEventListener('change', clickSpy);
-                  setTimeout(() => el.shadowRoot?.querySelector('a')!.click());
+                  el.shadowRoot?.querySelector('a')?.click();
                   expect(clickSpy.callCount).to.equal(0);
                 },
               },
@@ -256,6 +276,41 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   (form.querySelector(tag)?.shadowRoot?.querySelector('button') as HTMLButtonElement).click();
                   await aTimeout(0);
                   expect(submitSpy).to.have.been.callCount(1);
+                },
+              },
+              submitterNameAndValue: {
+                description: 'submits the button name and value and exposes a native submitter',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'submit';
+                  el.name = 'action';
+                  el.value = 'save';
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  let submittedData: FormData | undefined;
+                  let submitter: HTMLButtonElement | null = null;
+                  form.addEventListener('submit', event => {
+                    event.preventDefault();
+                    submitter = (event as SubmitEvent).submitter as HTMLButtonElement;
+                    submittedData = new FormData(form, submitter);
+                  });
+                  el.click();
+                  await aTimeout(0);
+                  expect(submitter).to.exist;
+                  expect(submittedData?.get('action')).to.equal('save');
+                },
+              },
+              canceledClickDoesNotSubmit: {
+                description: 'does not submit when a click listener cancels the button action',
+                test: async () => {
+                  const el = this.component;
+                  el.type = 'submit';
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  const submitSpy = sinon.spy(event => event.preventDefault());
+                  form.addEventListener('submit', submitSpy);
+                  form.addEventListener('click', event => event.preventDefault());
+                  el.click();
+                  await aTimeout(10);
+                  expect(submitSpy).not.to.have.been.called;
                 },
               },
               submitInvalid: {

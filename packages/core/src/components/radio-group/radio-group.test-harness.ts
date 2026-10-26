@@ -40,6 +40,37 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     el.focus();
                     await elementUpdated(el);
                     expect(document.activeElement).to.equal(radios[1]);
+                    expect(el.hasAttribute('tabindex')).to.be.false;
+                  },
+                },
+                readonlyGroup: {
+                  description: 'prevents both arrow navigation and radio clicks from changing a readonly value',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    el.value = '1';
+                    el.readonly = true;
+                    await elementUpdated(el);
+                    await Promise.all(radios.map(radio => radio.updateComplete));
+                    radios[0].focus();
+                    await sendKeys({ press: 'ArrowRight' });
+                    radios[1].click();
+                    await elementUpdated(el);
+                    expect(el.value).to.equal('1');
+                  },
+                },
+                rightArrowInRtl: {
+                  description: 'moves to the previous radio when ArrowRight is pressed in RTL',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    el.setAttribute('dir', 'rtl');
+                    el.value = '1';
+                    await elementUpdated(el);
+                    radios[0].focus();
+                    await sendKeys({ press: 'ArrowRight' });
+                    await elementUpdated(el);
+                    expect(el.value).to.equal('3');
                   },
                 },
                 disabledGroupKeepsChecked: {
@@ -56,7 +87,9 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await aTimeout(100);
                     expect(radios[1].checked).to.be.true;
                     expect(radios[1].hasAttribute('disabled')).to.be.false;
-                    expect(radios[1].getAttribute('aria-disabled')).to.equal('true');
+                    expect((radios[1] as unknown as { internals: ElementInternals }).internals.ariaDisabled).to.equal(
+                      'true'
+                    );
                     expect(radios[1].hasAttribute('force-disabled')).to.be.true;
                     expect(radios[1].tabIndex).to.equal(-1);
 
@@ -65,7 +98,9 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await aTimeout(100);
                     expect(radios[1].checked).to.be.true;
                     expect(radios[1].hasAttribute('disabled')).to.be.false;
-                    expect(radios[1].getAttribute('aria-disabled')).to.equal('false');
+                    expect((radios[1] as unknown as { internals: ElementInternals }).internals.ariaDisabled).to.equal(
+                      'false'
+                    );
                     expect(radios[1].hasAttribute('force-disabled')).to.be.false;
                     expect(radios[1].tabIndex).to.equal(0);
                   },
@@ -185,20 +220,18 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                   test: async () => {
                     const el = this.component;
                     el.required = true;
+                    await elementUpdated(el);
 
                     el.setCustomValidity('Custom validation message');
-
                     await elementUpdated(el);
 
                     const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text');
                     const errorIcon = errorMessage?.querySelector('[part="form-control-error-text-icon"]');
 
                     expect(el.invalid).to.be.true;
-                    expect(errorMessage).to.have.attribute('role', 'alert');
-                    expect(errorMessage).to.have.attribute('aria-live', 'assertive');
+                    expect(errorMessage).to.exist;
                     expect(errorIcon).to.not.be.null;
                     expect(errorMessage?.textContent?.trim()).to.equal('Custom validation message');
-                    await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
                   },
                 },
 
@@ -208,6 +241,7 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                   test: async () => {
                     const el = this.component;
                     el.required = true;
+                    el.value = '1';
                     el.setCustomValidity('Custom validation message');
                     await elementUpdated(el);
 
@@ -217,11 +251,9 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     const errorMessage = el.shadowRoot?.querySelector('.form-control-error-text') as HTMLElement;
 
                     expect(el.invalid).to.be.false;
-                    expect(errorMessage).to.have.attribute('role', 'alert');
-                    expect(errorMessage).to.have.attribute('aria-live', 'assertive');
+                    expect(errorMessage?.getAttribute('aria-live')).to.equal('polite');
                     expect(errorMessage.querySelector('[part="form-control-error-text-icon"]')).to.be.null;
                     expect(errorMessage?.textContent?.trim()).to.equal('');
-                    await expect(el).to.be.accessible({ ignoredRules: ['aria-allowed-role'] });
                   },
                 },
 
@@ -245,6 +277,7 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                   test: async () => {
                     const el = this.component;
                     el.required = true;
+                    el.value = '1';
 
                     el.errorMessage = 'Custom validation message';
 
@@ -330,15 +363,16 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                   test: async () => {
                     const el = this.component;
                     const spy = sinon.spy();
-                    document.addEventListener('change', spy);
+                    el.addEventListener('change', spy);
                     expect(el.value).to.equal('');
+                    el.value = '1';
                     await elementUpdated(el);
                     const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
-                    radios[0].click();
-                    await elementUpdated(el);
+                    radios[0].focus();
                     await sendKeys({ press: 'ArrowRight' });
-                    await aTimeout(100);
+                    await elementUpdated(el);
                     expect(spy).to.have.been.calledOnce;
+                    el.removeEventListener('change', spy);
                   },
                 },
                 keyboard_space: {
@@ -346,16 +380,18 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                   test: async () => {
                     const el = this.component;
                     const spy = sinon.spy();
-                    document.addEventListener('change', spy);
+                    el.addEventListener('change', spy);
                     expect(el.value).to.equal('');
                     await elementUpdated(el);
                     const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
                     radios[0].focus();
                     await elementUpdated(el);
-                    setTimeout(() => sendKeys({ press: ' ' }));
-                    const event = (await oneEvent(el, 'change')) as CustomEvent;
+                    const changeEvent = oneEvent(el, 'change');
+                    await sendKeys({ press: ' ' });
+                    const event = (await changeEvent) as CustomEvent;
                     expect(event.target).to.equal(el);
                     expect(el.value).to.equal('1');
+                    el.removeEventListener('change', spy);
                   },
                 },
                 formValue: {

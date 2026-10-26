@@ -1,4 +1,4 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
@@ -8,7 +8,6 @@ import { CoreTooltip } from '../tooltip/tooltip.js';
 import type { CoreButtonGroup } from './index.js';
 import '../button/index.js';
 
-//TODO: update tests to use loops if possible
 export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElementTests<T> {
   public constructor() {
     super();
@@ -21,15 +20,36 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
             description: 'properties and attributes',
             tests: {
               labelAttribute: {
-                description: 'should set the aria-label attribute when the label property is set',
+                description: 'references the visually hidden label slot when the label property is set',
                 test: async () => {
                   const el = this.component;
                   const buttonGroupBase = el.shadowRoot?.querySelector('[part="button-group-base"]') as HTMLElement;
-                  expect(buttonGroupBase.getAttribute('aria-label')).to.equal('Test Label');
+                  expect(buttonGroupBase.getAttribute('aria-labelledby')).to.equal('label');
+                  expect(el.shadowRoot?.querySelector('#label')?.textContent?.trim()).to.equal('Test Label');
                 },
                 config: {
                   label: 'Test Label',
                 },
+              },
+              slottedToolbarLabel: {
+                description: 'uses slotted label text as the accessible name when no label property is set',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<span slot="label">Text formatting</span>';
+                  await aTimeout(0);
+                  await elementUpdated(el);
+                  const buttonGroupBase = el.shadowRoot?.querySelector('[part="button-group-base"]') as HTMLElement;
+                  const labelSlot = el.shadowRoot?.querySelector<HTMLSlotElement>('#label');
+                  expect(buttonGroupBase.getAttribute('aria-labelledby')).to.equal('label');
+                  expect(
+                    labelSlot
+                      ?.assignedNodes()
+                      .map(node => node.textContent?.trim())
+                      .join(' ')
+                  ).to.equal('Text formatting');
+                  await expect(el).to.be.accessible();
+                },
+                config: {},
               },
               roleAttributeGroup: {
                 description: 'should set role="group" when toolbar attribute is not present',
@@ -370,7 +390,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                     bubbles: true,
                     composed: true,
                   });
-                  el.dispatchEvent(arrowKeyEvent);
+                  itemThree.dispatchEvent(arrowKeyEvent);
                   await el.updateComplete;
                   expect(itemThree.getAttribute('tabindex')).to.equal('-1');
                   expect((el.children[3] as CoreButton).getAttribute('tabindex')).to.equal('0');
@@ -627,7 +647,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   });
 
                   // Dispatch the event to the element
-                  el.dispatchEvent(arrowKeyEvent);
+                  itemOne.dispatchEvent(arrowKeyEvent);
                   await el.updateComplete;
 
                   // Verify that the navigation worked
@@ -657,7 +677,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                     composed: true,
                   });
 
-                  el.dispatchEvent(leftEvent);
+                  buttons[0].dispatchEvent(leftEvent);
                   await el.updateComplete;
 
                   // Last item should now be focused
@@ -671,7 +691,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                     composed: true,
                   });
 
-                  el.dispatchEvent(rightEvent);
+                  buttons[lastIndex].dispatchEvent(rightEvent);
                   await el.updateComplete;
 
                   // First item should now be focused again
@@ -701,7 +721,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                     bubbles: true,
                     composed: true,
                   });
-                  el.dispatchEvent(arrowKeyEvent);
+                  itemOne.dispatchEvent(arrowKeyEvent);
                   await el.updateComplete;
 
                   expect(itemThree.getAttribute('tabindex')).to.equal('0');
@@ -1060,36 +1080,45 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
             config: {},
           },
           NestedToolbar: {
-            description: 'should have the attribute `toolbar` set automatically on nested button groups',
+            description: 'keeps nested groups from creating additional toolbar tab stops',
             test: async () => {
               const el = this.component;
               const itemOne = el.children[0] as CoreButtonGroup;
-              expect(itemOne.getAttribute('toolbar')).not.to.be.null;
+              expect(itemOne.getAttribute('toolbar')).to.be.null;
               const itemTwo = el.children[1] as CoreButtonGroup;
-              expect(itemTwo.getAttribute('toolbar')).not.to.be.null;
+              expect(itemTwo.getAttribute('toolbar')).to.be.null;
+              const buttons = [...el.querySelectorAll(project.scope.tagName('button'))] as CoreButton[];
+              expect(buttons.map(button => button.getAttribute('tabindex'))).to.deep.equal(['0', '-1', '-1', '-1']);
+              buttons[0].focus();
+              await sendKeys({ press: 'ArrowRight' });
+              expect(document.activeElement).to.equal(buttons[1]);
+              expect(buttons[1].getAttribute('tabindex')).to.equal('0');
             },
             config: {
               toolbar: true,
             },
           },
           DirectNestedButtonGroups: {
-            description: 'should propagate toolbar attribute to direct nested button groups when toolbar is set',
+            description: 'keeps direct nested groups inside the parent toolbar navigation model',
             test: async () => {
               const el = this.component;
               const nestedGroups = el.querySelectorAll(project.scope.tagName('button-group'));
-              // Should have toolbar attribute on all nested groups
+              // The parent toolbar owns every nested action; child groups don't create more toolbars.
               nestedGroups.forEach(group => {
                 if (group !== el) {
-                  expect(group.getAttribute('toolbar')).not.to.be.null;
+                  expect(group.getAttribute('toolbar')).to.be.null;
                 }
               });
+              const buttons = [...el.querySelectorAll(project.scope.tagName('button'))] as CoreButton[];
+              expect(buttons[0].getAttribute('tabindex')).to.equal('0');
+              expect(buttons[1].getAttribute('tabindex')).to.equal('-1');
             },
             config: {
               toolbar: true,
             },
           },
           DeeplyNestedButtonGroups: {
-            description: 'should propagate toolbar attribute to deeply nested button groups (multiple levels)',
+            description: 'keeps nested groups within one roving-tabindex toolbar',
             test: async () => {
               const container = document.createElement('div');
               const buttonGroupTag = project.scope.tagName('button-group');
@@ -1109,19 +1138,24 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
               `;
               const rootGroup = container.querySelector(project.scope.tagName('button-group')) as CoreButtonGroup;
               await elementUpdated(rootGroup);
-              // All nested groups should have toolbar attribute
+              // Nested groups are not independent toolbars.
               const allNestedGroups = rootGroup.querySelectorAll(project.scope.tagName('button-group'));
               allNestedGroups.forEach(group => {
                 if (group !== rootGroup) {
-                  expect(group.getAttribute('toolbar')).not.to.be.null;
+                  expect(group.getAttribute('toolbar')).to.be.null;
                 }
               });
+              const buttons = [...rootGroup.querySelectorAll(buttonTag)] as CoreButton[];
+              expect(buttons.map(button => button.getAttribute('tabindex'))).to.deep.equal(['0', '-1', '-1']);
+              buttons[0].focus();
+              await sendKeys({ press: 'ArrowRight' });
+              expect(document.activeElement).to.equal(buttons[1]);
               document.body.removeChild(container);
             },
             config: {},
           },
           MixedButtonsAndNestedGroups: {
-            description: 'should apply toolbar to nested groups while also managing buttons when toolbar is set',
+            description: 'moves focus through direct and nested actions in one toolbar',
             test: async () => {
               const container = document.createElement('div');
               const buttonGroupTag = project.scope.tagName('button-group');
@@ -1140,12 +1174,15 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
               `;
               const rootGroup = container.querySelector(project.scope.tagName('button-group')) as CoreButtonGroup;
               await elementUpdated(rootGroup);
-              // Check that nested group has toolbar attribute
+              // The parent toolbar owns nested actions without promoting the child group.
               const nestedGroup = rootGroup.querySelector(project.scope.tagName('button-group'));
-              expect(nestedGroup?.getAttribute('toolbar')).not.to.be.null;
-              // Check that buttons in root group have correct tabindex
+              expect(nestedGroup?.getAttribute('toolbar')).to.be.null;
               const buttons = rootGroup.querySelectorAll(project.scope.tagName('button'));
-              expect(buttons[0].getAttribute('tabindex')).to.equal('0'); // First button should be 0
+              expect(buttons[0].getAttribute('tabindex')).to.equal('0');
+              expect(buttons[1].getAttribute('tabindex')).to.equal('-1');
+              (buttons[0] as CoreButton).focus();
+              await sendKeys({ press: 'ArrowRight' });
+              expect(document.activeElement).to.equal(buttons[1]);
               document.body.removeChild(container);
             },
             config: {},
@@ -1176,7 +1213,7 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
             config: {},
           },
           NestedGroupToolbarToggle: {
-            description: 'should add toolbar to nested groups when toolbar attribute is added to parent',
+            description: 'updates the parent navigation model when toolbar is enabled at runtime',
             test: async () => {
               const container = document.createElement('div');
               const buttonGroupTag = project.scope.tagName('button-group');
@@ -1199,14 +1236,48 @@ export class CoreButtonGroupNestedToolbarTests<T extends CoreButtonGroup> extend
               // Add toolbar to parent
               rootGroup.setAttribute('toolbar', '');
               await elementUpdated(rootGroup);
-              // Trigger slotchange to initialize slotted elements and propagate toolbar
+              // Trigger slotchange to reinitialize the current slotted action list.
               const slot = rootGroup.shadowRoot?.querySelector('slot') as HTMLSlotElement;
               const slotChangeEvent = new Event('slotchange');
               slot?.dispatchEvent(slotChangeEvent);
               await elementUpdated(rootGroup);
-              // Nested group should now have toolbar
-              expect(nestedGroup.getAttribute('toolbar')).not.to.be.null;
+              expect(nestedGroup.getAttribute('toolbar')).to.be.null;
+              const buttons = [...rootGroup.querySelectorAll(buttonTag)] as CoreButton[];
+              expect(buttons[0].getAttribute('tabindex')).to.equal('0');
+              expect(buttons[1].getAttribute('tabindex')).to.equal('-1');
               document.body.removeChild(container);
+            },
+            config: {},
+          },
+          ToolbarReconnect: {
+            description: 'restores roving focus and keyboard navigation after reconnecting',
+            test: async () => {
+              const el = this.component;
+              el.toolbar = true;
+              await elementUpdated(el);
+              const buttons = [...el.querySelectorAll(project.scope.tagName('button'))] as CoreButton[];
+              el.remove();
+              document.body.append(el);
+              await elementUpdated(el);
+              expect(buttons[0].getAttribute('tabindex')).to.equal('0');
+              buttons[0].focus();
+              await sendKeys({ press: 'ArrowRight' });
+              expect(document.activeElement).to.equal(buttons[1]);
+              el.remove();
+            },
+            config: {},
+          },
+          ToolbarArrowRightRtl: {
+            description: 'moves toward the previous toolbar action with ArrowRight in RTL',
+            test: async () => {
+              const el = this.component;
+              el.setAttribute('dir', 'rtl');
+              el.toolbar = true;
+              await elementUpdated(el);
+              const buttons = [...el.querySelectorAll(project.scope.tagName('button'))] as CoreButton[];
+              buttons[0].focus();
+              await sendKeys({ press: 'ArrowRight' });
+              expect(document.activeElement).to.equal(buttons[buttons.length - 1]);
             },
             config: {},
           },

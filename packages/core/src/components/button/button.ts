@@ -4,7 +4,7 @@ import { html, literal } from 'lit/static-html.js';
 import { property, state } from 'lit/decorators.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
 import { startContentEndTemplate } from '../../templates/index.js';
-import { type CharmDismissibleElement } from '../../base/index.js';
+import { type CharmDismissibleElement, type CharmElement } from '../../base/index.js';
 import styles from './button.styles.js';
 
 /**
@@ -114,6 +114,10 @@ export class CoreButton extends CharmFocusableElement {
   @property()
   public download?: string;
 
+  /** Relationship tokens for linked buttons. */
+  @property()
+  public rel?: string;
+
   /**
    * When set, the underlying button will be rendered as an `<a>` with this `href`
    * instead of a `<button>`.
@@ -189,13 +193,17 @@ export class CoreButton extends CharmFocusableElement {
   @state()
   protected isIconButton = false;
 
-  protected showHandler?: () => void;
-  protected hideHandler?: () => void;
-  protected toggleHandler?: () => void;
+  @state()
+  protected formDisabled = false;
+
   protected readonly _internals: ElementInternals;
   protected _shows?: string;
   protected _hides?: string;
   protected _toggles?: string;
+
+  protected submitTimer?: number;
+  protected dismissibleTarget?: CharmDismissibleElement;
+  protected dismissibleHideEvent?: string;
 
   public constructor() {
     super();
@@ -227,62 +235,27 @@ export class CoreButton extends CharmFocusableElement {
   }
 
   public set shows(value: string | undefined) {
+    if (value === this._shows) return;
     this._shows = value;
-    if (this.showHandler) {
-      this.removeEventListener('click', this.showHandler);
-    }
-    if (value) {
-      this.showHandler = () => {
-        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
-        el?.show();
-        this.expanded = true;
-      };
-      this.addEventListener('click', this.showHandler);
-    }
+    this.syncDismissibleAction();
   }
 
   public set hides(value: string | undefined) {
+    if (value === this._hides) return;
     this._hides = value;
-    if (this.hideHandler) {
-      this.removeEventListener('click', this.hideHandler);
-    }
-    if (value) {
-      this.hideHandler = () => {
-        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
-        el?.hide();
-        this.expanded = false;
-      };
-      this.addEventListener('click', this.hideHandler);
-    }
+    this.syncDismissibleAction();
   }
 
   public set toggles(value: string | undefined) {
+    if (value === this._toggles) return;
     this._toggles = value;
-    if (this.toggleHandler) {
-      this.removeEventListener('click', this.toggleHandler);
-    }
-    if (value) {
-      this.toggleHandler = () => {
-        const el = this.getScopedElementById(value) as CharmDismissibleElement | null;
-        el?.toggle();
-        if (el?.open) {
-          this.expanded = el?.open;
-        }
-      };
-      this.addEventListener('click', this.toggleHandler);
-    }
+    this.syncDismissibleAction();
   }
 
   /** @internal Overrides the click method to delegate to the internal element. */
   public override click(): void {
-    super.click();
-    if (this.disabled) {
-      return;
-    }
-
-    if (!!this.href) {
-      this.shadowRoot?.querySelector<HTMLButtonElement | HTMLAnchorElement>('.control')?.click();
-    }
+    if (this.disabled || this.formDisabled) return;
+    this.shadowRoot?.querySelector<HTMLButtonElement | HTMLAnchorElement>('.control')?.click();
   }
 
   public override connectedCallback() {
@@ -290,12 +263,60 @@ export class CoreButton extends CharmFocusableElement {
     // slotchange doesn't compose out of the shadow root, but it does bubble to it, so a
     // single delegated listener catches every slot's changes (see HasSlotController).
     this.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
+    this.syncDismissibleAction();
   }
 
   public override disconnectedCallback() {
+    if (this.submitTimer !== undefined) {
+      window.clearTimeout(this.submitTimer);
+      this.submitTimer = undefined;
+    }
+    this.syncDismissibleAction(false);
     super.disconnectedCallback();
     this.shadowRoot?.removeEventListener('slotchange', this.handleSlotChange);
   }
+
+  protected formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+    this.toggleAttribute('form-disabled', disabled);
+  }
+
+  protected syncDismissibleAction(connected = this.isConnected) {
+    this.removeEventListener('click', this.handleDismissibleAction);
+    if (this.dismissibleTarget && this.dismissibleHideEvent) {
+      this.dismissibleTarget.removeEventListener(this.dismissibleHideEvent, this.handleDismissibleHide);
+    }
+    this.dismissibleTarget = undefined;
+    this.dismissibleHideEvent = undefined;
+    if (connected && (this._shows || this._hides || this._toggles)) {
+      this.addEventListener('click', this.handleDismissibleAction);
+    }
+  }
+
+  protected handleDismissibleAction = (event: Event) => {
+    if (event.defaultPrevented || this.disabled || this.formDisabled || this.href) return;
+    const targetId = this._shows || this._hides || this._toggles;
+    if (!targetId) return;
+    const target = this.getScopedElementById(targetId) as CharmDismissibleElement | null;
+    if (!target) return;
+    if (this.dismissibleTarget !== target) {
+      if (this.dismissibleTarget && this.dismissibleHideEvent) {
+        this.dismissibleTarget.removeEventListener(this.dismissibleHideEvent, this.handleDismissibleHide);
+      }
+      this.dismissibleTarget = target;
+      const baseName = (target.constructor as typeof CharmElement).baseName;
+      this.dismissibleHideEvent = `${baseName}-hide`;
+      target.addEventListener(this.dismissibleHideEvent, this.handleDismissibleHide);
+    }
+    if (this._shows) target.show();
+    else if (this._hides) target.hide();
+    else target.toggle();
+    this.expanded = !!target.open;
+  };
+
+  protected handleDismissibleHide = () => {
+    this.expanded = false;
+  };
 
   protected readonly handleSlotChange = (event: Event) => {
     const slot = event.target as HTMLSlotElement;
@@ -306,7 +327,7 @@ export class CoreButton extends CharmFocusableElement {
   };
 
   protected handleClick(event: MouseEvent) {
-    if (this.disabled) {
+    if (this.disabled || this.formDisabled) {
       event.preventDefault();
       event.stopImmediatePropagation();
       return;
@@ -318,12 +339,30 @@ export class CoreButton extends CharmFocusableElement {
       return;
     }
 
-    if (this.type === 'submit') {
-      this._internals?.form?.requestSubmit();
-    }
-
-    if (this.type === 'reset') {
-      this._internals?.form?.reset();
+    if (this.href) return;
+    if (this.type === 'submit' || this.type === 'reset') {
+      if (this.submitTimer !== undefined) window.clearTimeout(this.submitTimer);
+      this.submitTimer = window.setTimeout(() => {
+        this.submitTimer = undefined;
+        if (event.defaultPrevented || this.disabled || this.formDisabled) return;
+        const form = this._internals.form;
+        if (!form) return;
+        if (this.type === 'reset') {
+          form.reset();
+          return;
+        }
+        const submitter = document.createElement('button');
+        submitter.type = 'submit';
+        submitter.hidden = true;
+        if (this.name !== undefined) submitter.name = this.name;
+        if (this.value !== undefined) submitter.value = this.value;
+        form.append(submitter);
+        try {
+          form.requestSubmit(submitter);
+        } finally {
+          submitter.remove();
+        }
+      });
     }
   }
 
@@ -389,21 +428,21 @@ export class CoreButton extends CharmFocusableElement {
 
     return html`<${tag}
       aria-current=${ifDefined(this.current)}
-      aria-disabled=${ifDefined(!isLink && this.disabled !== undefined ? this.disabled : undefined)}
+      aria-disabled=${ifDefined(this.disabled || this.formDisabled ? 'true' : undefined)}
       aria-expanded=${ifDefined(!isLink && this.expanded !== undefined ? this.expanded : undefined)}
       aria-haspopup=${ifDefined(this.haspopup)}
-      aria-pressed=${ifDefined(!isLink && this.pressed !== undefined ? this.pressed : undefined)}
+      aria-pressed=${ifDefined(!isLink && (this.toggle || this.pressed !== undefined) ? String(this.pressed ?? false) : undefined)}
       class=${classMap({
         control: true,
         'is-icon-button': this.iconOnly || this.isIconButton,
       })}
-      href=${ifDefined(!this.disabled && this.href ? this.href : undefined)}
+      href=${ifDefined(this.href)}
+      role=${ifDefined(isLink && (this.disabled || this.formDisabled) ? 'link' : undefined)}
       name=${ifDefined(isLink ? undefined : this.name)}
-      icon-only=${ifDefined(this.iconOnly)}
-      allow-wrap=${ifDefined(this.allowWrap)}
+      download=${ifDefined(isLink ? this.download : undefined)}
       part="button-control"
       referrerpolicy=${ifDefined(isLink ? this.referrerPolicy : undefined)}
-      rel=${ifDefined(isLink && this.target ? 'noreferrer noopener' : undefined)}
+      rel=${ifDefined(isLink ? (this.rel ?? (this.target === '_blank' ? 'noopener' : undefined)) : undefined)}
       target=${ifDefined(isLink ? this.target : undefined)}
       type=${ifDefined(isLink ? undefined : this.type)}
       value=${ifDefined(isLink ? undefined : this.value)}

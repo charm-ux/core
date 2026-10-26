@@ -79,6 +79,8 @@ export class CoreCheckbox extends CharmFormControlElement {
   @query('.input')
   protected override input?: HTMLInputElement;
 
+  protected initialChecked = false;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -95,7 +97,7 @@ export class CoreCheckbox extends CharmFormControlElement {
 
   public override connectedCallback() {
     super.connectedCallback();
-    this.internals.setFormValue(this.getFormAssociatedValue());
+    this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
   }
 
   /** @internal Click the checkbox. */
@@ -123,11 +125,25 @@ export class CoreCheckbox extends CharmFormControlElement {
   }
 
   protected override formResetCallback(): void {
-    this.checked = this.initialValue === 'on';
+    this.restoreInitialFormValue();
   }
 
   protected override restoreInitialFormValue(): void {
-    this.checked = this.initialValue === 'on';
+    this.checked = this.initialChecked;
+    this.indeterminate = false;
+  }
+
+  protected override syncInitialFormValue(): void {
+    if (this.hasCapturedInitialValue) return;
+    this.initialChecked = !!this.checked;
+    super.syncInitialFormValue();
+  }
+
+  protected override formStateRestoreCallback(state: string | File | FormData | null): void {
+    if (state === 'checked') this.checked = true;
+    else if (state === 'unchecked' || state === null) this.checked = false;
+    else if (typeof state === 'string') this.checked = state === (this.value || 'on');
+    this.indeterminate = false;
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -144,7 +160,7 @@ export class CoreCheckbox extends CharmFormControlElement {
       changedProperties.has('forceDisabled') ||
       changedProperties.has('listboxOption')
     ) {
-      this.internals.setFormValue(this.getFormAssociatedValue());
+      this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
       this.validate();
     }
     if (changedProperties.has('forceDisabled')) {
@@ -163,19 +179,23 @@ export class CoreCheckbox extends CharmFormControlElement {
   }
 
   protected validate() {
-    if (this.hadFocus && this.required) {
-      this.invalid = !this.checked;
-      this.invalid
-        ? this.setCustomValidity(this.errorMessage || this.internals.validationMessage)
-        : this.setCustomValidity('');
-    }
+    if (!this.hadFocus && !this.customErrorMessage) return;
+    const valueMissing = this.required && !this.checked;
+    const customError = this.customErrorMessage !== '';
+    const message = this.customErrorMessage || (valueMissing ? (this.input?.validationMessage ?? '') : '');
+    this._errorMessage = message;
+    this.internals.setValidity(valueMissing || customError ? { valueMissing, customError } : {}, message, this.input);
+    this.invalid = !this.disabled && !this.readonly && (valueMissing || customError);
   }
 
   /** Handles the 'click' event on the checkbox. Toggles the checked state and emits the 'change' event. */
-  protected handleClick() {
-    if (this.effectivelyDisabled) return;
+  protected handleClick(event?: MouseEvent) {
+    if (this.effectivelyDisabled) {
+      event?.preventDefault();
+      return;
+    }
     if (this.effectivelyReadonly) {
-      if (this.input) this.input.checked = !!this.checked;
+      event?.preventDefault();
       return;
     }
     this.checked = !this.checked;
@@ -215,14 +235,14 @@ export class CoreCheckbox extends CharmFormControlElement {
             aria-hidden=${ifDefined(this.listboxOption ? 'true' : undefined)}
             aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
             aria-invalid=${this.invalid}
+            aria-readonly=${ifDefined(this.effectivelyReadonly ? 'true' : undefined)}
             class="input"
             name=${ifDefined(this.name)}
             type="checkbox"
             value=${ifDefined(this.value)}
             ?autofocus=${this.autofocus}
-            ?checked=${this.checked}
+            .checked=${live(!!this.checked)}
             ?disabled=${this.effectivelyDisabled || this.listboxOption}
-            ?readonly=${this.effectivelyReadonly}
             ?required=${this.required}
             .indeterminate=${live(this.indeterminate ?? false)}
             @click=${this.handleClick}

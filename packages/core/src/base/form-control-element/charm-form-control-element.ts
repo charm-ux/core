@@ -146,10 +146,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
   }
 
   /** Disables the input. */
-  @property({ type: Boolean, reflect: true })
+  @property({ type: Boolean })
   public set disabled(val: boolean) {
     if (this._disabled === val) return;
     this._disabled = val;
+    this.toggleAttribute('disabled', val);
     this.requestUpdate('disabled');
     this.updateValidity();
   }

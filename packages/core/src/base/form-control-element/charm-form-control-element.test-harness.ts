@@ -37,11 +37,11 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
 
                   this.component.disabled = true;
                   await elementUpdated(this.component);
-                  expect(getInput()).to.have.attribute('disabled');
+                  expect(getInput()?.hasAttribute('disabled')).to.be.true;
 
                   this.component.disabled = false;
                   await elementUpdated(this.component);
-                  expect(getInput()).to.not.have.attribute('disabled');
+                  expect(getInput()?.hasAttribute('disabled')).to.be.false;
                 },
               },
               errorMessage: {

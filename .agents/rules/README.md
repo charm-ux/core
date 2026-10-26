@@ -48,7 +48,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CHARM-003](internal/CHARM-003.md) — Declare nested components in `static dependencies`
 - [CHARM-004](internal/CHARM-004.md) — Theme through the theming package, never hardcode
 - [CHARM-005](internal/CHARM-005.md) — Keep the custom-elements manifest accurate with JSDoc
-- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`; re-apply checked-dependent form values
+- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`; preserve checked values and separate explicit from fieldset-disabled state
 - [CHARM-007](internal/CHARM-007.md) — Use the dual named + default export, class in its own `.ts`
 - [CHARM-008](internal/CHARM-008.md) — Register icons as inline SVG strings in the icon set, not asset files
 - [CHARM-009](internal/CHARM-009.md) — Use correct JSDoc annotation tags (`@cssprop`, not `@cssproperty`)
@@ -99,7 +99,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 
 ### A11Y — accessibility (always loaded)
 
-- [A11Y-001](accessibility/A11Y-001.md) — Use semantic elements and roles; add ARIA only to fill gaps
+- [A11Y-001](accessibility/A11Y-001.md) — Use native semantics first; use `ElementInternals` for host-based custom controls
 - [A11Y-002](accessibility/A11Y-002.md) — Prefer visually-hidden text over `aria-label` for user-facing labels
 - [A11Y-003](accessibility/A11Y-003.md) — Manage focus and keyboard interaction
 - [A11Y-004](accessibility/A11Y-004.md) — Ship an accessibility test for every component
