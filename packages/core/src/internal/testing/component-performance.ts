@@ -3,7 +3,7 @@ import type { LitElement } from 'lit';
 export interface ComponentPerformanceCase {
   name: string;
   create: () => HTMLElement;
-  update: (element: HTMLElement, iteration: number) => void;
+  update: (element: HTMLElement, iteration: number) => void | Promise<void>;
 }
 
 export interface ComponentPerformanceOptions {
@@ -131,7 +131,7 @@ async function measureRerender(component: ComponentPerformanceCase, iteration: n
   await waitForTreeUpdate(host);
 
   const start = performance.now();
-  component.update(element, iteration);
+  await component.update(element, iteration);
   await waitForTreeUpdate(host);
   const duration = performance.now() - start;
 

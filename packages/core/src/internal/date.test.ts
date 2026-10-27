@@ -5,9 +5,11 @@ import {
   dateFromParts,
   formatMonthYear,
   getDateInputLayout,
+  getDateSegmentPlaceholder,
   getLocaleFirstDay,
   normalizeInputDigits,
   parseIsoDate,
+  parsePastedDate,
   toIsoDate,
 } from './date.js';
 
@@ -32,6 +34,43 @@ describe('date utilities', () => {
 
   it('normalizes Arabic-Indic, Eastern Arabic-Indic and full-width digits', () => {
     expect(normalizeInputDigits('١٢ ۱۲ １２')).to.equal('121212');
+  });
+
+  it('parses ISO and locale-ordered pasted dates, including localized digits', () => {
+    expect(toIsoDate(parsePastedDate('2026-08-05', ['month', 'day', 'year'])!)).to.equal('2026-08-05');
+    expect(toIsoDate(parsePastedDate('08/05/2026', ['month', 'day', 'year'])!)).to.equal('2026-08-05');
+    expect(toIsoDate(parsePastedDate('05.08.2026', ['day', 'month', 'year'])!)).to.equal('2026-08-05');
+    expect(toIsoDate(parsePastedDate('٠٥/٠٨/٢٠٢٦', ['day', 'month', 'year'])!)).to.equal('2026-08-05');
+    expect(parsePastedDate('31/02/2026', ['day', 'month', 'year'])).to.be.undefined;
+  });
+
+  it('repeats localized field initials to form date-pattern placeholders', () => {
+    expect(getDateSegmentPlaceholder('en-US', 'month')).to.equal('MM');
+    expect(getDateSegmentPlaceholder('en-US', 'day')).to.equal('DD');
+    expect(getDateSegmentPlaceholder('en-US', 'year')).to.equal('YYYY');
+
+    let expectedMonth = 'MM';
+    let expectedDay = 'DD';
+    let expectedYear = 'YYYY';
+    try {
+      const names = new Intl.DisplayNames('fr-FR', { type: 'dateTimeField', style: 'long' });
+      const initial = (kind: 'day' | 'month' | 'year', fallback: string) => {
+        const label = names.of(kind)?.trim();
+        const firstLetter = label ? Array.from(label)[0] : fallback;
+        return Array.from(firstLetter!.toLocaleUpperCase('fr-FR'))[0] ?? fallback[0]!;
+      };
+      expectedMonth = initial('month', 'M').repeat(2);
+      expectedDay = initial('day', 'D').repeat(2);
+      expectedYear = initial('year', 'Y').repeat(4);
+    } catch {
+      // Older browsers use the neutral format-token fallback.
+    }
+    expect(getDateSegmentPlaceholder('fr-FR', 'month')).to.equal(expectedMonth);
+    expect(getDateSegmentPlaceholder('fr-FR', 'day')).to.equal(expectedDay);
+    expect(getDateSegmentPlaceholder('fr-FR', 'year')).to.equal(expectedYear);
+    expect(getDateSegmentPlaceholder('ja-JP', 'month')).to.have.length(2);
+    expect(getDateSegmentPlaceholder('ja-JP', 'day')).to.have.length(2);
+    expect(getDateSegmentPlaceholder('ja-JP', 'year')).to.have.length(4);
   });
 
   it('uses the locale week start', () => {

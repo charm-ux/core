@@ -1,5 +1,5 @@
 import { html, type PropertyValues } from 'lit';
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
@@ -186,21 +186,23 @@ export class CoreCalendar extends CharmFocusableElement {
   @property({ type: Boolean, reflect: true, attribute: 'readonly' })
   public readOnly = false;
 
-  @state()
   protected currentMonth = startOfMonth(todayDate());
 
   protected focusedDate = '';
+  protected initializingFocus = false;
+  protected cachedLocale = '';
 
   protected constraints: DateConstraints = createDateConstraints();
 
   protected skipValueFocusSync = false;
+  protected localeObserver?: MutationObserver;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
   protected get currentLocale(): string {
-    return normalizeLocale(this.lang || navigator.language || 'en');
+    return this.cachedLocale || this.refreshLocale(false);
   }
 
   protected get firstWeekday(): number {
@@ -265,7 +267,7 @@ export class CoreCalendar extends CharmFocusableElement {
     };
   }
 
-  /** Moves the visible calendar and keyboard focus to a date without selecting it. */
+  /** Moves the visible calendar and keyboard focus to a date without selecting it. Date arguments use their local calendar day. */
   public goToDate(value: string | Date): void {
     const date =
       typeof value === 'string'
@@ -284,11 +286,36 @@ export class CoreCalendar extends CharmFocusableElement {
     }
   }
 
+  public override connectedCallback(): void {
+    super.connectedCallback();
+    this.refreshLocale(false);
+    this.observeLocale();
+  }
+
+  public override disconnectedCallback(): void {
+    this.localeObserver?.disconnect();
+    this.localeObserver = undefined;
+    super.disconnectedCallback();
+  }
+
+  protected observeLocale(): void {
+    this.localeObserver?.disconnect();
+    this.localeObserver = new MutationObserver(() => this.refreshLocale());
+    this.localeObserver.observe(this, { attributes: true, attributeFilter: ['lang'] });
+    const inheritedLanguage = this.parentElement?.closest('[lang]') ?? document.documentElement;
+    if (inheritedLanguage !== this) {
+      this.localeObserver.observe(inheritedLanguage, { attributes: true, attributeFilter: ['lang'] });
+    }
+  }
+
+  protected refreshLocale(requestUpdate = true): string {
+    this.cachedLocale = normalizeLocale(this.closest('[lang]')?.getAttribute('lang') || navigator.language || 'en');
+    if (requestUpdate && this.isConnected && !this.isUpdatePending) this.requestUpdate('lang');
+    return this.cachedLocale;
+  }
+
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
     super.willUpdate(changedProperties);
-    if (!this.hasUpdated || changedProperties.has('disabled')) {
-      this.setAttribute('aria-disabled', String(this.disabled));
-    }
 
     const constraintsChanged =
       !this.hasUpdated ||
@@ -309,7 +336,11 @@ export class CoreCalendar extends CharmFocusableElement {
       constraintsChanged ||
       changedProperties.has('disabled');
 
-    if (shouldSyncFromValue || shouldInitialize) this.initializeFocusedDate(shouldSyncFromValue);
+    if (shouldSyncFromValue || shouldInitialize) {
+      this.initializingFocus = true;
+      this.initializeFocusedDate(shouldSyncFromValue);
+      this.initializingFocus = false;
+    }
     this.skipValueFocusSync = false;
   }
 
@@ -335,11 +366,16 @@ export class CoreCalendar extends CharmFocusableElement {
           <select
             id="month-select"
             part="month-select"
-            .value=${this.currentMonth.getUTCMonth().toString()}
             ?disabled=${this.disabled}
             @change=${this.handleMonthChange}
+            @input=${this.stopNativeInput}
           >
-            ${this.monthOptions.map(option => html`<option value=${option.value}>${option.label}</option>`)}
+            ${this.monthOptions.map(
+              option =>
+                html`<option value=${option.value} ?selected=${option.value === this.currentMonth.getUTCMonth()}>
+                  ${option.label}
+                </option>`
+            )}
           </select>
           <label class="visually-hidden" for="year-input"><slot name="year-label">Year</slot></label>
           <input
@@ -351,6 +387,7 @@ export class CoreCalendar extends CharmFocusableElement {
             .value=${this.currentMonth.getUTCFullYear().toString()}
             ?disabled=${this.disabled}
             @change=${this.handleYearChange}
+            @input=${this.stopNativeInput}
           />
         </div>
         <button
@@ -374,13 +411,16 @@ export class CoreCalendar extends CharmFocusableElement {
     const context = this.createDayContext();
 
     return html`
-      <h2 id="calendar-heading" class="visually-hidden">${monthLabel}</h2>
+      <h2 id="calendar-heading" class="visually-hidden" aria-live=${this.hasUpdated ? 'polite' : 'off'}>
+        ${monthLabel}
+      </h2>
       <table
         class="grid"
         part="grid"
         role="grid"
         aria-labelledby="calendar-heading"
         aria-readonly=${this.readOnly}
+        aria-multiselectable=${ifDefined(this.selectionMode === 'single' ? undefined : 'true')}
         @click=${this.handleGridClick}
         @keydown=${this.handleGridKeyDown}
       >
@@ -468,7 +508,6 @@ export class CoreCalendar extends CharmFocusableElement {
           })}
           data-date=${isoDate}
           aria-label=${context.dateFormatter.format(date)}
-          aria-pressed=${ifDefined(this.selectionMode === 'multiple' ? String(selected) : undefined)}
           tabindex=${this.focusedDate === isoDate && !isDisabled ? 0 : -1}
           ?disabled=${isDisabled}
         >
@@ -548,11 +587,20 @@ export class CoreCalendar extends CharmFocusableElement {
       let attempts = 0;
       while (this.isDateDisabled(nextDate, selected) && attempts < 366) {
         nextDate = addDays(nextDate, 1);
-        if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) return;
+        if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) break;
         attempts++;
       }
 
-      if (this.isDateDisabled(nextDate, selected)) return;
+      if (this.isDateDisabled(nextDate, selected)) {
+        nextDate = clampDate(date, this.constraints);
+        attempts = 0;
+        while (this.isDateDisabled(nextDate, selected) && attempts < 366) {
+          nextDate = addDays(nextDate, -1);
+          if (this.constraints.minDate && compareDates(nextDate, this.constraints.minDate) < 0) return;
+          attempts++;
+        }
+        if (this.isDateDisabled(nextDate, selected)) return;
+      }
     }
 
     this.focusedDate = toIsoDate(nextDate);
@@ -560,6 +608,7 @@ export class CoreCalendar extends CharmFocusableElement {
 
     if (this.currentMonth.getTime() !== nextMonth.getTime()) {
       this.currentMonth = nextMonth;
+      if (!this.initializingFocus) this.requestUpdate();
     } else if (!this.isUpdatePending) {
       this.updateRovingTabIndex();
     }
@@ -667,14 +716,46 @@ export class CoreCalendar extends CharmFocusableElement {
 
     event.preventDefault();
     const selected = this.selectedDates;
-    const step = compareDates(target, date) >= 0 ? 1 : -1;
-    let attempts = 0;
-    while (this.isDateDisabled(target, selected) && attempts < 366) {
-      target = addDays(target, step);
-      attempts++;
-    }
+    const direction = compareDates(target, date) >= 0 ? 1 : -1;
+    const isWeekJump = event.key === keys.Home || event.key === keys.End;
+    const weekStart = addDays(date, -((date.getUTCDay() - this.firstWeekday + DAYS_IN_WEEK) % DAYS_IN_WEEK));
+    const weekEnd = addDays(weekStart, DAYS_IN_WEEK - 1);
+    const minBound = isWeekJump
+      ? this.constraints.minDate && compareDates(this.constraints.minDate, weekStart) > 0
+        ? this.constraints.minDate
+        : weekStart
+      : (this.constraints.minDate ?? createUtcDate(1, 0, 1));
+    const maxBound = isWeekJump
+      ? this.constraints.maxDate && compareDates(this.constraints.maxDate, weekEnd) < 0
+        ? this.constraints.maxDate
+        : weekEnd
+      : (this.constraints.maxDate ?? createUtcDate(9999, 11, 31));
+    if (isWeekJump && compareDates(minBound, maxBound) > 0) return;
 
-    if (this.isDateDisabled(target, selected)) return;
+    const search = (start: Date, step: number, limit: number): Date | undefined => {
+      let candidate = start;
+      for (let attempt = 0; attempt < limit; attempt++) {
+        if (
+          compareDates(candidate, minBound) >= 0 &&
+          compareDates(candidate, maxBound) <= 0 &&
+          !this.isDateDisabled(candidate, selected)
+        )
+          return candidate;
+        candidate = addDays(candidate, step);
+        if (compareDates(candidate, minBound) < 0 || compareDates(candidate, maxBound) > 0) return undefined;
+      }
+      return undefined;
+    };
+
+    target = clampDate(target, this.constraints);
+    const primaryStep = isWeekJump ? (event.key === keys.Home ? 1 : -1) : direction;
+    const candidate =
+      search(target, primaryStep, isWeekJump ? DAYS_IN_WEEK : 366) ??
+      (isWeekJump || event.key === keys.PageUp || event.key === keys.PageDown
+        ? search(target, -primaryStep, isWeekJump ? DAYS_IN_WEEK : 366)
+        : undefined);
+    if (!candidate) return;
+    target = candidate;
     this.setFocusedDate(target);
     void this.updateComplete.then(() => this.focusedDateButton?.focus());
   }
@@ -697,7 +778,12 @@ export class CoreCalendar extends CharmFocusableElement {
       nextValue = [...nextDates].sort();
     } else if (this.selectionMode === 'range') {
       if (selected.length === 1) {
-        nextValue = [selected[0]!, isoDate].sort();
+        if (selected[0] === isoDate && normalizeRangeBounds(this.minRange, this.maxRange).min > 1) {
+          nextValue = [isoDate];
+          isSelectionComplete = false;
+        } else {
+          nextValue = [selected[0]!, isoDate].sort();
+        }
       } else {
         nextValue = [isoDate];
         isSelectionComplete = false;
@@ -737,6 +823,10 @@ export class CoreCalendar extends CharmFocusableElement {
 
   protected emitChange(): void {
     this.emit('change', { detail: this.changeEventDetail });
+  }
+
+  protected stopNativeInput(event: Event): void {
+    event.stopPropagation();
   }
 }
 

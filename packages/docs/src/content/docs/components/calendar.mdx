@@ -76,7 +76,7 @@ Only the active date is in the tab order. Left and right arrow behavior follows 
 
 ## Bounds and unavailable dates
 
-Use `min` and `max` to limit the selectable date range. `disabled-dates` accepts comma- or whitespace-separated ISO dates; `disabled-week-days` accepts weekday numbers from `0` (Sunday) to `6` (Saturday).
+Use `min` and `max` to limit the selectable date range. The supported civil-date interval defaults to `0001-01-01` through `9999-12-31`. `disabled-dates` accepts comma- or whitespace-separated ISO dates; `disabled-week-days` accepts weekday numbers from `0` (Sunday) to `6` (Saturday).
 
 ```html
 <ch-calendar
@@ -89,10 +89,10 @@ Use `min` and `max` to limit the selectable date range. `disabled-dates` accepts
 
 ## Localization
 
-Set `locale` or the inherited `lang` attribute to localize month, weekday, and full-date labels. The first weekday follows the locale; set `first-day-of-week` (0–6) to override it. Use the label slots to translate the month, year, and navigation controls.
+Set the inherited `lang` attribute to localize month, weekday, and full-date labels. The first weekday follows the locale; set `first-day-of-week` (0–6) to override it. Use the label slots to translate the month, year, and navigation controls.
 
 ```html
-<ch-calendar locale="fr-FR" first-day-of-week="1">
+<ch-calendar lang="fr-FR" first-day-of-week="1">
   <span slot="previous-month-label">Mois précédent</span>
   <span slot="next-month-label">Mois suivant</span>
   <span slot="month-label">Mois</span>
@@ -112,11 +112,11 @@ Add a `day-YYYY-MM-DD` slot for date-specific content. The date button keeps its
 
 ## Styling
 
-Selected dates, range interiors, today, unavailable dates, and outside-month dates expose separate CSS parts. Theme tokens can be overridden with CSS custom properties:
+Selected dates, range interiors, today, and unavailable dates expose separate CSS parts. Theme tokens can be overridden with CSS custom properties:
 
 ```css
 ch-calendar {
-  --charm-calendar-selected-bg-color: rebeccapurple;
+  --charm-calendar-day-selected-bg-color: rebeccapurple;
   --charm-calendar-day-size: 2.75rem;
 }
 ```
@@ -124,6 +124,15 @@ ch-calendar {
 ## API
 
 The calendar is not form-associated; use its `value` property and events to connect it to a form. A date-picker input can compose it inside a popover and manage form submission and validation.
+
+`goToDate()` accepts an ISO date string or a `Date`; `Date` arguments use their local calendar day.
+
+## Best practices
+
+- Keep the calendar's value controlled from the `input` or `change` event when it is shared with application state.
+- Set `lang` on the calendar or an ancestor, and provide translated labels for the month/year controls and navigation buttons.
+- Choose date bounds and unavailable dates that match the application; unavailable dates between range endpoints are allowed.
+- Use `<ch-date-picker>` or `<ch-date-range-picker>` when values must participate in form submission and validation.
 
 ## Component metadata
 

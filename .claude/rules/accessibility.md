@@ -14,3 +14,4 @@ Accessibility rules. Full details in [`.agents/rules/accessibility/`](../../.age
 - **A11Y-010** — Keep host ARIA, focusability, and nested option state synchronized with effective disabled state, including fieldset callbacks. ([details](../../.agents/rules/accessibility/A11Y-010.md))
 - **A11Y-011** — Make closed or off-screen content `inert` so it leaves the tab order and a11y tree; bind to the `open` state. ([details](../../.agents/rules/accessibility/A11Y-011.md))
 - **A11Y-012** — Meet 4.5:1 text contrast and 3:1 essential-boundary contrast; verify placeholder and theme token colors. ([details](../../.agents/rules/accessibility/A11Y-012.md))
+- **A11Y-013** — Label every native field in a composite control, use a visible validation anchor, and preserve draft values on cancel. ([details](../../.agents/rules/accessibility/A11Y-013.md))

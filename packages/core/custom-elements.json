@@ -1507,6 +1507,15 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "validationMessage",
               "privacy": "public",
               "description": "Gets the current validation message, if one exists.",
@@ -7848,6 +7857,15 @@
             },
             {
               "kind": "field",
+              "name": "cachedLocale",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
               "name": "calendarDays",
               "type": {
                 "text": "(Date | undefined)[]"
@@ -8149,7 +8167,7 @@
                   }
                 }
               ],
-              "description": "Moves the visible calendar and keyboard focus to a date without selecting it."
+              "description": "Moves the visible calendar and keyboard focus to a date without selecting it. Date arguments use their local calendar day."
             },
             {
               "kind": "method",
@@ -8389,6 +8407,15 @@
               ]
             },
             {
+              "kind": "field",
+              "name": "initializingFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
               "kind": "method",
               "name": "isDateDisabled",
               "privacy": "protected",
@@ -8430,6 +8457,14 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "localeObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "field",
@@ -8492,6 +8527,16 @@
               "readonly": true
             },
             {
+              "kind": "method",
+              "name": "observeLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "readOnly",
               "type": {
@@ -8502,6 +8547,22 @@
               "description": "Prevents date selection while allowing navigation.",
               "attribute": "readonly",
               "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "refreshLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "requestUpdate",
+                  "default": "true"
+                }
+              ]
             },
             {
               "kind": "field",
@@ -8580,6 +8641,24 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "stopNativeInput",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -10996,6 +11075,19 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationMessage",
               "privacy": "public",
               "description": "Gets the current validation message, if one exists.",
@@ -12629,6 +12721,19 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationMessage",
               "privacy": "public",
               "description": "Gets the current validation message, if one exists.",
@@ -13039,6 +13144,14 @@
               "name": "clear-label"
             },
             {
+              "description": "Translated day segment placeholder.",
+              "name": "day-placeholder"
+            },
+            {
+              "description": "Accessible name for the day segment.",
+              "name": "day-segment-label"
+            },
+            {
               "description": "Content rendered at the end of the segmented input.",
               "name": "end"
             },
@@ -13051,6 +13164,14 @@
               "name": "help-text"
             },
             {
+              "description": "Validation text for a partially entered date; translated consumers may provide it here.",
+              "name": "incomplete-date-message"
+            },
+            {
+              "description": "Validation text for an impossible date.",
+              "name": "invalid-date-message"
+            },
+            {
               "description": "The date picker's label.",
               "name": "label"
             },
@@ -13059,8 +13180,20 @@
               "name": "month-label"
             },
             {
+              "description": "Translated month segment placeholder.",
+              "name": "month-placeholder"
+            },
+            {
+              "description": "Accessible name for the month segment.",
+              "name": "month-segment-label"
+            },
+            {
               "description": "Forwarded to the nested calendar next month control.",
               "name": "next-month-label"
+            },
+            {
+              "description": "Accessible name for the calendar dialog when no field label is set.",
+              "name": "popup-label"
             },
             {
               "description": "Forwarded to the nested calendar previous month control.",
@@ -13079,8 +13212,20 @@
               "name": "toggle-label"
             },
             {
+              "description": "Validation text for a date outside the available dates.",
+              "name": "unavailable-date-message"
+            },
+            {
               "description": "Forwarded to the nested calendar year field.",
               "name": "year-label"
+            },
+            {
+              "description": "Translated year segment placeholder.",
+              "name": "year-placeholder"
+            },
+            {
+              "description": "Accessible name for the year segment.",
+              "name": "year-segment-label"
             }
           ],
           "members": [
@@ -13220,6 +13365,23 @@
             },
             {
               "kind": "field",
+              "name": "blurFrame",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "cachedLocale",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
               "name": "calendar",
               "type": {
                 "text": "CoreCalendar | undefined"
@@ -13291,6 +13453,15 @@
               "kind": "method",
               "name": "controlTemplate",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "controlUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -13438,6 +13609,24 @@
             },
             {
               "kind": "method",
+              "name": "emitDatePickerToday",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "emitInput",
               "privacy": "protected",
               "parameters": [
@@ -13535,6 +13724,16 @@
               "description": "Focuses the first segment."
             },
             {
+              "kind": "method",
+              "name": "focusCalendar",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "focusDate",
               "type": {
@@ -13629,6 +13828,11 @@
               "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -13730,6 +13934,11 @@
             {
               "kind": "field",
               "name": "handleCalendarChange",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "handleCalendarClick",
               "privacy": "protected"
             },
             {
@@ -13839,6 +14048,24 @@
                   "name": "event",
                   "type": {
                     "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleSegmentPaste",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "ClipboardEvent"
                   }
                 }
               ]
@@ -14167,6 +14394,14 @@
             },
             {
               "kind": "field",
+              "name": "localeObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "max",
               "type": {
                 "text": "string | undefined"
@@ -14174,6 +14409,30 @@
               "privacy": "public",
               "description": "The latest selectable date, in `YYYY-MM-DD` format.",
               "attribute": "max"
+            },
+            {
+              "kind": "method",
+              "name": "messageText",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "slotName",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "fallback",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -14207,6 +14466,16 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "observeLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
               }
             },
             {
@@ -14247,6 +14516,25 @@
               }
             },
             {
+              "kind": "method",
+              "name": "popupLabel",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "preserveProgrammaticValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
               "kind": "field",
               "name": "readonly",
               "type": {
@@ -14260,6 +14548,22 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "refreshLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "requestUpdate",
+                  "default": "true"
+                }
+              ]
             },
             {
               "kind": "method",
@@ -14340,24 +14644,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "segmentAriaValueText",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "string | undefined"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "kind",
-                  "type": {
-                    "text": "'day' | 'month' | 'year'"
-                  }
-                }
-              ]
             },
             {
               "kind": "method",
@@ -14518,15 +14804,6 @@
             },
             {
               "kind": "field",
-              "name": "suppressInputEvent",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false"
-            },
-            {
-              "kind": "field",
               "name": "suppressSegmentSync",
               "type": {
                 "text": "boolean"
@@ -14639,6 +14916,19 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationMessage",
               "privacy": "public",
               "description": "Gets the current validation message, if one exists.",
@@ -14697,7 +14987,16 @@
                 "text": "Date | null"
               },
               "privacy": "public",
-              "description": "Gets or sets the current value as a `Date` object."
+              "description": "Gets or sets the value as a `Date` at local midnight; the Date's local calendar day is used."
+            },
+            {
+              "kind": "field",
+              "name": "wasOutsideDismiss",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -14707,7 +15006,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "['label', 'help-text']",
+              "default": "['label', 'help-text', 'start', 'end']",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -15401,8 +15700,28 @@
               "name": "clear-label"
             },
             {
+              "description": "Translated day segment placeholder.",
+              "name": "day-placeholder"
+            },
+            {
               "description": "Content rendered at the end of the segmented input.",
               "name": "end"
+            },
+            {
+              "description": "Accessible name for the end day segment.",
+              "name": "end-day-label"
+            },
+            {
+              "description": "Accessible name for the end date segments.",
+              "name": "end-label"
+            },
+            {
+              "description": "Accessible name for the end month segment.",
+              "name": "end-month-label"
+            },
+            {
+              "description": "Accessible name for the end year segment.",
+              "name": "end-year-label"
             },
             {
               "description": "Content rendered below the calendar in the popup.",
@@ -15413,16 +15732,48 @@
               "name": "help-text"
             },
             {
+              "description": "Validation text for a partially entered range.",
+              "name": "incomplete-range-message"
+            },
+            {
+              "description": "Validation text for an impossible range.",
+              "name": "invalid-range-message"
+            },
+            {
               "description": "The date range picker's label.",
               "name": "label"
+            },
+            {
+              "description": "Singular maximum range length message; supports `{count}`.",
+              "name": "max-range-message"
+            },
+            {
+              "description": "Plural maximum range length message; supports `{count}`.",
+              "name": "max-range-message-other"
+            },
+            {
+              "description": "Singular minimum range length message; supports `{count}`.",
+              "name": "min-range-message"
+            },
+            {
+              "description": "Plural minimum range length message; supports `{count}`.",
+              "name": "min-range-message-other"
             },
             {
               "description": "Forwarded to the nested calendar month selector.",
               "name": "month-label"
             },
             {
+              "description": "Translated month segment placeholder.",
+              "name": "month-placeholder"
+            },
+            {
               "description": "Forwarded to the nested calendar next month control.",
               "name": "next-month-label"
+            },
+            {
+              "description": "Accessible name for the calendar dialog when no field label is set.",
+              "name": "popup-label"
             },
             {
               "description": "Forwarded to the nested calendar previous month control.",
@@ -15437,6 +15788,22 @@
               "name": "start"
             },
             {
+              "description": "Accessible name for the start day segment.",
+              "name": "start-day-label"
+            },
+            {
+              "description": "Accessible name for the start date segments.",
+              "name": "start-label"
+            },
+            {
+              "description": "Accessible name for the start month segment.",
+              "name": "start-month-label"
+            },
+            {
+              "description": "Accessible name for the start year segment.",
+              "name": "start-year-label"
+            },
+            {
               "description": "Label for the today button in the popup footer.",
               "name": "today-label"
             },
@@ -15445,8 +15812,16 @@
               "name": "toggle-label"
             },
             {
+              "description": "Validation text when either endpoint is unavailable.",
+              "name": "unavailable-range-message"
+            },
+            {
               "description": "Forwarded to the nested calendar year field.",
               "name": "year-label"
+            },
+            {
+              "description": "Translated year segment placeholder.",
+              "name": "year-placeholder"
             }
           ],
           "members": [
@@ -15576,6 +15951,40 @@
             },
             {
               "kind": "field",
+              "name": "blurFrame",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "cachedCalendarSource",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "cachedCalendarValue",
+              "type": {
+                "text": "string[] | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "cachedLocale",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
               "name": "calendar",
               "type": {
                 "text": "CoreCalendar | undefined"
@@ -15628,7 +16037,8 @@
                 "type": {
                   "text": "void"
                 }
-              }
+              },
+              "description": "Clears both endpoints and emits `input` and `change`."
             },
             {
               "kind": "method",
@@ -15674,6 +16084,15 @@
               "kind": "method",
               "name": "controlTemplate",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "controlUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -15778,6 +16197,7 @@
               },
               "privacy": "public",
               "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable ISO dates.",
               "attribute": "disabled-dates"
             },
             {
@@ -15788,6 +16208,7 @@
               },
               "privacy": "public",
               "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable weekdays (0 Sunday through 6 Saturday).",
               "attribute": "disabled-week-days"
             },
             {
@@ -15807,6 +16228,24 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "emitDateRangePickerToday",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -15919,6 +16358,7 @@
                 "text": "number | undefined"
               },
               "privacy": "public",
+              "description": "The locale-first weekday override (0 Sunday through 6 Saturday).",
               "attribute": "first-day-of-week"
             },
             {
@@ -15941,6 +16381,7 @@
               },
               "privacy": "public",
               "default": "false",
+              "description": "Enables fixed positioning for the popup calendar.",
               "attribute": "fixed-placement",
               "reflects": true
             },
@@ -15961,7 +16402,18 @@
                     "text": "FocusOptions"
                   }
                 }
-              ]
+              ],
+              "description": "Focuses the first segment of the start date."
+            },
+            {
+              "kind": "method",
+              "name": "focusCalendar",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Promise<void>"
+                }
+              }
             },
             {
               "kind": "field",
@@ -15970,6 +16422,7 @@
                 "text": "string | undefined"
               },
               "privacy": "public",
+              "description": "The date initially focused when no range value is set.",
               "attribute": "focus-date"
             },
             {
@@ -16081,6 +16534,11 @@
               "kind": "method",
               "name": "formResetCallback",
               "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -16297,6 +16755,24 @@
             },
             {
               "kind": "method",
+              "name": "handleSegmentPaste",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "ClipboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "handleSegmentsKeyDown",
               "privacy": "protected",
               "return": {
@@ -16438,7 +16914,8 @@
                 "type": {
                   "text": "void"
                 }
-              }
+              },
+              "description": "Closes the calendar and discards any in-progress calendar selection."
             },
             {
               "kind": "field",
@@ -16633,11 +17110,20 @@
             },
             {
               "kind": "field",
+              "name": "localeObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "max",
               "type": {
                 "text": "string | undefined"
               },
               "privacy": "public",
+              "description": "The latest selectable date, in `YYYY-MM-DD` format.",
               "attribute": "max"
             },
             {
@@ -16652,12 +17138,37 @@
               "attribute": "max-range"
             },
             {
+              "kind": "method",
+              "name": "messageText",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "slotName",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "fallback",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "min",
               "type": {
                 "text": "string | undefined"
               },
               "privacy": "public",
+              "description": "The earliest selectable date, in `YYYY-MM-DD` format.",
               "attribute": "min"
             },
             {
@@ -16687,6 +17198,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "observeLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
               "kind": "field",
               "name": "open",
               "type": {
@@ -16694,6 +17215,7 @@
               },
               "privacy": "public",
               "default": "false",
+              "description": "Whether the popup calendar is open.",
               "attribute": "open",
               "reflects": true
             },
@@ -16705,11 +17227,31 @@
               },
               "privacy": "public",
               "default": "'bottom-start'",
+              "description": "Preferred popup placement relative to the segmented input.",
               "attribute": "placement",
               "reflects": true,
               "parsedType": {
                 "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'"
               }
+            },
+            {
+              "kind": "method",
+              "name": "popupLabel",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "field",
+              "name": "preserveProgrammaticValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
             },
             {
               "kind": "method",
@@ -16759,6 +17301,22 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "refreshLocale",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "requestUpdate",
+                  "default": "true"
+                }
+              ]
             },
             {
               "kind": "method",
@@ -16848,36 +17406,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "segmentAriaValueText",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "string | undefined"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "endpoint",
-                  "type": {
-                    "text": "Endpoint"
-                  },
-                  "parsedType": {
-                    "text": "'start' | 'end'"
-                  }
-                },
-                {
-                  "name": "kind",
-                  "type": {
-                    "text": "SegmentKind"
-                  },
-                  "parsedType": {
-                    "text": "'day' | 'month' | 'year'"
-                  }
-                }
-              ]
             },
             {
               "kind": "method",
@@ -17022,7 +17550,8 @@
                 "type": {
                   "text": "void"
                 }
-              }
+              },
+              "description": "Opens the calendar and starts a fresh in-progress selection from the committed value."
             },
             {
               "kind": "field",
@@ -17100,15 +17629,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "suppressInputEvent",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "default": "false"
             },
             {
               "kind": "field",
@@ -17224,6 +17744,19 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationMessage",
               "privacy": "public",
               "description": "Gets the current validation message, if one exists.",
@@ -17277,13 +17810,22 @@
             },
             {
               "kind": "field",
+              "name": "wasOutsideDismiss",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
               "name": "watchedSlots",
               "type": {
                 "text": "array"
               },
               "privacy": "public",
               "static": true,
-              "default": "['label', 'help-text']",
+              "default": "['label', 'help-text', 'start', 'end']",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -17297,6 +17839,7 @@
               },
               "privacy": "public",
               "default": "'short'",
+              "description": "The visible format for calendar weekday headings.",
               "attribute": "weekday-format"
             }
           ],
@@ -17376,6 +17919,7 @@
                 "text": "string"
               },
               "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable ISO dates.",
               "fieldName": "disabledDates"
             },
             {
@@ -17384,6 +17928,7 @@
                 "text": "string"
               },
               "default": "''",
+              "description": "A comma- or whitespace-separated list of unavailable weekdays (0 Sunday through 6 Saturday).",
               "fieldName": "disabledWeekDays"
             },
             {
@@ -17403,6 +17948,7 @@
               "type": {
                 "text": "number | undefined"
               },
+              "description": "The locale-first weekday override (0 Sunday through 6 Saturday).",
               "fieldName": "firstDayOfWeek"
             },
             {
@@ -17411,6 +17957,7 @@
                 "text": "boolean"
               },
               "default": "false",
+              "description": "Enables fixed positioning for the popup calendar.",
               "fieldName": "fixedPlacement"
             },
             {
@@ -17418,6 +17965,7 @@
               "type": {
                 "text": "string | undefined"
               },
+              "description": "The date initially focused when no range value is set.",
               "fieldName": "focusDate"
             },
             {
@@ -17487,6 +18035,7 @@
               "type": {
                 "text": "string | undefined"
               },
+              "description": "The latest selectable date, in `YYYY-MM-DD` format.",
               "fieldName": "max"
             },
             {
@@ -17503,6 +18052,7 @@
               "type": {
                 "text": "string | undefined"
               },
+              "description": "The earliest selectable date, in `YYYY-MM-DD` format.",
               "fieldName": "min"
             },
             {
@@ -17532,6 +18082,7 @@
                 "text": "boolean"
               },
               "default": "false",
+              "description": "Whether the popup calendar is open.",
               "fieldName": "open"
             },
             {
@@ -17540,6 +18091,7 @@
                 "text": "PopupPlacement"
               },
               "default": "'bottom-start'",
+              "description": "Preferred popup placement relative to the segmented input.",
               "fieldName": "placement",
               "parsedType": {
                 "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'"
@@ -17588,6 +18140,7 @@
                 "text": "'narrow' | 'short' | 'long'"
               },
               "default": "'short'",
+              "description": "The visible format for calendar weekday headings.",
               "fieldName": "weekdayFormat"
             }
           ],
@@ -21880,6 +22433,19 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -28895,6 +29461,19 @@
             },
             {
               "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationInput",
               "type": {
                 "text": "HTMLInputElement | undefined"
@@ -30508,6 +31087,19 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -32541,6 +33133,19 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -34799,6 +35404,19 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -37520,6 +38138,19 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {

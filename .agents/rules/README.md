@@ -111,6 +111,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-010](accessibility/A11Y-010.md) — Reflect disabled state with `aria-disabled` on the widget host, and keep it in sync
 - [A11Y-011](accessibility/A11Y-011.md) — Make closed or off-screen content `inert`
 - [A11Y-012](accessibility/A11Y-012.md) — Meet contrast for text and essential control boundaries
+- [A11Y-013](accessibility/A11Y-013.md) — Label every field in composite form controls and anchor validation to visible controls
 
 ### I18N — internationalization (path-gated)
 

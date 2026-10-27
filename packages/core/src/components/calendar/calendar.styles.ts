@@ -50,6 +50,10 @@ export default css`
     justify-self: end;
   }
 
+  :host(:dir(rtl)) .navigation-button {
+    transform: rotate(180deg);
+  }
+
   .date-controls {
     align-items: center;
     color: ${component('calendar', 'heading', 'fgColor')};
@@ -223,6 +227,7 @@ export default css`
 
   .day.selected {
     background-color: ${component('calendar', 'day', 'selected', 'bgColor')};
+    border-color: ${component('calendar', 'day', 'selected', 'borderColor')};
     color: ${component('calendar', 'day', 'selected', 'fgColor')};
   }
 
