@@ -112,6 +112,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-011](accessibility/A11Y-011.md) — Make closed or off-screen content `inert`
 - [A11Y-012](accessibility/A11Y-012.md) — Meet contrast for text and essential control boundaries
 - [A11Y-013](accessibility/A11Y-013.md) — Label every field in composite form controls and anchor validation to visible controls
+- [A11Y-014](accessibility/A11Y-014.md) — Name the element that carries a composite widget's role
 
 ### I18N — internationalization (path-gated)
 

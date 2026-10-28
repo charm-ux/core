@@ -6,6 +6,9 @@ must have an exact counterpart `removeEventListener` / `disconnect()` in `discon
 drift. Because observer callbacks can fire after the element leaves the DOM, guard work inside
 them with `if (this.isConnected)`.
 
+When a listener is attached to an optional slotted element, remove it from the previous element
+before checking whether the slot is now empty. Clear it on disconnect and rebind after reconnect.
+
 **Do:**
 
 ```ts

@@ -19,17 +19,25 @@ export default css`
     height: 100%;
   }
 
+  .content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
   :host([media-position='start']) .base,
   :host([media-position='end']) .base {
     flex-direction: row;
   }
 
-  :host([media-position='bottom']) .base {
-    flex-flow: column-reverse;
+  :host([media-position='bottom']) [part='card-media'],
+  :host([media-position='end']) [part='card-media'] {
+    order: 1;
   }
 
-  :host([media-position='end']) .base {
-    flex-flow: row-reverse;
+  :host([media-position='start']) [part='card-media'] {
+    order: -1;
   }
 
   .header {

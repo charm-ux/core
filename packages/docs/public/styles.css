@@ -10,8 +10,41 @@
   }
 }
 :root {
+  --body-bg-color: var(--charm-body-bg-color);
+  --card-bg-color: var(--charm-card-bg-color);
+  --card-border-color: var(--charm-card-border-color);
+  --button-bg-color: var(--charm-button-bg-color);
+  --button-fg-color: var(--charm-button-fg-color);
+  --button-hover-bg-color: var(--charm-button-hover-bg-color);
+  --button-hover-fg-color: var(--charm-button-hover-fg-color);
+  --button-accent-bg-color: var(--charm-action-primary-color);
+  --button-accent-fg-color: var(--charm-color-white);
+  --button-accent-hover-bg-color: var(--charm-action-primary-hover-color);
+  --nav-bg-color: var(--charm-surface-primary);
+  --header-divider-color: var(--charm-border-primary);
+  --site-title-fg-color: var(--charm-text-primary);
+  --search-bg-color: var(--charm-surface-secondary);
+  --search-fg-color: var(--charm-text-secondary);
+  --search-border-color: var(--charm-border-secondary);
+  --theme-select-bg-color: var(--charm-surface-secondary);
+  --theme-select-border-color: var(--charm-border-secondary);
+  --theme-select-hover-border-color: var(--charm-border-primary);
+  --skip-to-content-bg-color: var(--charm-action-primary-color);
+  --skip-to-content-fg-color: var(--charm-color-white);
+  --sidebar-text-color: var(--charm-text-primary);
+  --sidebar-hover-bg-color: var(--charm-surface-secondary);
+  --sidebar-hover-fg-color: var(--charm-color-brand-700);
+  --sidebar-selected-bg-color: var(--charm-color-brand-100);
+  --sidebar-selected-fg-color: var(--charm-color-brand-800);
+  --toc-link-color: var(--charm-text-secondary);
   --sl-color-bg-nav: var(--nav-bg-color);
   --sl-card-bg: var(--card-bg-color);
+}
+
+:root[data-theme='dark'] {
+  --sidebar-hover-fg-color: var(--charm-color-brand-200);
+  --sidebar-selected-bg-color: var(--charm-color-brand-900);
+  --sidebar-selected-fg-color: var(--charm-color-brand-100);
 }
 
 .sl-markdown-content code-bubble * {
@@ -115,6 +148,13 @@ starlight-theme-select select {
 }
 
 /* Side bar styling */
+
+/* reset.css sets summary to list-item, which overrides Starlight's layered flex layout */
+.sidebar-content summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
 /* 1. Default unselected links */
 .sidebar-content a {

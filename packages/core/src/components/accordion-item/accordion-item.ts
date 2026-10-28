@@ -1,13 +1,12 @@
 import { unsafeStatic } from 'lit/static-html.js';
-import { property, query, state } from 'lit/decorators.js';
-import { classMap } from 'lit/directives/class-map.js';
+import { property, query } from 'lit/decorators.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { startTemplate } from '../../templates/start.js';
 import { endTemplate } from '../../templates/end.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './accordion-item.styles.js';
 
-const headingLevels = [1, 2, 3, 4, 5, 6];
+const headingLevels = [1, 2, 3, 4, 5, 6] as const;
 export type HeadingLevel = (typeof headingLevels)[number];
 
 /**
@@ -33,7 +32,6 @@ export type HeadingLevel = (typeof headingLevels)[number];
  * @csspart accordion-item-summary - The summary element.
  * @csspart accordion-item-icon - The wrapper element for the expand/collapse icon.
  * @csspart accordion-item-chevron - The expand/collapse icon.
- * @csspart accordion-item-heading - The heading element.
  * @csspart accordion-item-start - The start slot container.
  * @csspart accordion-item-end - The end slot container.
  *
@@ -44,6 +42,9 @@ export type HeadingLevel = (typeof headingLevels)[number];
  * @cssprop --charm-accordion-item-bg-color - Sets background color.
  * @cssprop --charm-accordion-item-border-color - Sets border color.
  * @cssprop --charm-accordion-item-border-width - Sets border width.
+ * @cssprop --charm-accordion-item-summary-gap - Sets the spacing between summary content.
+ * @cssprop --charm-accordion-item-summary-padding-x - Sets the horizontal padding of the summary.
+ * @cssprop --charm-accordion-item-summary-padding-y - Sets the vertical padding of the summary.
  * @cssprop --charm-accordion-item-disabled-bg-color - Sets background color of accordion-item when disabled.
  * @cssprop --charm-accordion-item-disabled-border-color - Sets border color of accordion-item when disabled.
  * @cssprop --charm-accordion-item-disabled-fg-color - Sets foreground color of accordion-item when disabled.
@@ -54,6 +55,7 @@ export type HeadingLevel = (typeof headingLevels)[number];
  * @cssprop --charm-accordion-item-icon-collapsed-transform - Sets the transform for the orientation of the icon when collapsed.
  * @cssprop --charm-accordion-item-icon-expanded-transform - Sets the transform for the orientation of the icon when expanded.
  * @cssprop --charm-accordion-item-icon-transition - The transition for the icon when the state changes.
+ * @cssprop --charm-accordion-item-icon-size - The size of the expand/collapse icon.
  *
  * @dependency CoreIcon
  **/
@@ -73,16 +75,10 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   @property({ reflect: true, attribute: 'expand-icon-position' })
   public expandIconPosition?: 'start' | 'end';
 
-  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
-
   @query('details')
   private details!: HTMLDetailsElement;
 
-  protected _headingLevel?: number;
-
-  public constructor() {
-    super();
-  }
+  protected _headingLevel?: HeadingLevel;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -95,12 +91,15 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   }
 
   public set headingLevel(value: HeadingLevel | undefined) {
-    this._headingLevel = headingLevels.includes(value || 0) ? value : undefined;
+    this._headingLevel = value !== undefined && headingLevels.includes(value) ? value : undefined;
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
     super.willUpdate(changedProperties);
-    this._resolvedDir = this.resolvedDir;
+    if (changedProperties.has('disabled')) {
+      if (this.disabled) this.setAttribute('aria-disabled', 'true');
+      else this.removeAttribute('aria-disabled');
+    }
   }
 
   protected override firstUpdated() {
@@ -136,10 +135,7 @@ export class CoreAccordionItem extends CharmDismissibleElement {
       <span class="icon" part="accordion-item-icon">
         <slot name="${this.open ? 'collapse-icon' : 'expand-icon'}">
           <scoped-icon
-            class=${classMap({
-              chevron: true,
-              'chevron-rtl': this._resolvedDir === 'rtl',
-            })}
+            class="chevron"
             part="accordion-item-chevron"
             name="chevron-down"
           ></scoped-icon>
@@ -163,7 +159,7 @@ export class CoreAccordionItem extends CharmDismissibleElement {
   /** Returns the template for the summary. */
   protected summaryTemplate() {
     return this.html`
-      <summary class="summary" part="accordion-item-summary" role="button" @click=${this.handleSummaryClick}>
+      <summary class="summary" part="accordion-item-summary" @click=${this.handleSummaryClick}>
         ${this.iconTemplate()} ${startTemplate('accordion-item-start')} ${this.headerTemplate()}
         ${endTemplate('accordion-item-end')}
       </summary>

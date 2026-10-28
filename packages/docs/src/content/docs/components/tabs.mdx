@@ -9,7 +9,7 @@ _Tabs_ are a set of layered sections of content that display one panel of conten
 <code-bubble>
 
 ```html preview
-<ch-tabs>
+<ch-tabs label="Product information">
   <ch-tab>Overview</ch-tab>
   <ch-tab>Details</ch-tab>
   <ch-tab>Resources</ch-tab>
@@ -56,7 +56,7 @@ The active tab can be set by adding the `selected` attribute. If no default sele
 <code-bubble>
 
 ```html preview
-<ch-tabs>
+<ch-tabs label="Getting started">
   <ch-tab>Getting Started</ch-tab>
   <ch-tab selected>Components</ch-tab>
   <ch-tab>Theming</ch-tab>
@@ -91,7 +91,7 @@ The `active-id` attribute allows you to programmatically control which tab is se
 <code-bubble>
 
 ```html preview
-<ch-tabs active-id="tab-2">
+<ch-tabs label="Project stages" active-id="tab-2">
   <ch-tab id="tab-1">Design</ch-tab>
   <ch-tab id="tab-2">Development</ch-tab>
   <ch-tab id="tab-3">Deployment</ch-tab>
@@ -125,7 +125,7 @@ A `tabs-change` event is emitted every time there is a new selection.
 <code-bubble>
 
 ```html preview
-<ch-tabs id="event-demo">
+<ch-tabs id="event-demo" label="Product information">
   <ch-tab>Features</ch-tab>
   <ch-tab>Usage</ch-tab>
   <ch-tab>Support</ch-tab>
@@ -153,7 +153,7 @@ A `tabs-change` event is emitted every time there is a new selection.
 <script type="module">
   const tabs = document.querySelector('#event-demo');
   tabs.addEventListener('tabs-change', e => {
-    console.log('Selected tab:', e.detail.activeTab);
+    tabs.setAttribute('data-active-tab', e.detail.activeTab.id);
   });
 </script>
 ```
@@ -167,7 +167,7 @@ Tabs can be disabled by adding the `disabled` attribute. Disabled tabs cannot be
 <code-bubble>
 
 ```html preview
-<ch-tabs>
+<ch-tabs label="Access options">
   <ch-tab>Available</ch-tab>
   <ch-tab disabled>Restricted</ch-tab>
   <ch-tab>Options</ch-tab>
@@ -201,7 +201,7 @@ Tabs can be rendered in a `vertical` and `horizontal` layout.
 <code-bubble>
 
 ```html preview
-<ch-tabs layout="vertical">
+<ch-tabs label="Catalog sections" layout="vertical">
   <ch-tab>Products</ch-tab>
   <ch-tab>Services</ch-tab>
   <ch-tab>Solutions</ch-tab>
@@ -236,7 +236,7 @@ Icons can be slotted in the `start` slot of `<ch-tab>`.
 <code-bubble>
 
 ```html preview
-<ch-tabs>
+<ch-tabs label="Account settings">
   <ch-tab>
     <ch-icon slot="start" url="https://api.iconify.design/material-symbols:person.svg"></ch-icon>
     Profile
@@ -275,7 +275,7 @@ Icons can be slotted in the `start` slot of `<ch-tab>`.
 
 ## Accessibility
 
-The tabs can be focused by pressing `Tab` on your keyboard and navigating to the desired tab. Arrow keys navigate between tabs. By default, navigating to a tab with arrow keys will select that tab automatically.
+Every tab set must provide a localized `label` for its tab list. Tabs can be focused by pressing `Tab` on your keyboard and navigating to the desired tab. Arrow keys navigate between tabs. By default, navigating to a tab with arrow keys will select that tab automatically.
 
 With the `manual-activation` attribute, users need to explicitly press `Enter` or `Space` to select a tab after navigating to it with arrow keys. This behavior may be preferred for complex tab interfaces.
 
@@ -286,7 +286,7 @@ By default, tabs are automatically activated when navigated to using arrow keys.
 <code-bubble>
 
 ```html preview
-<ch-tabs manual-activation>
+<ch-tabs label="System details" manual-activation>
   <ch-tab>Security</ch-tab>
   <ch-tab>Performance</ch-tab>
   <ch-tab>Accessibility</ch-tab>
@@ -315,3 +315,5 @@ By default, tabs are automatically activated when navigated to using arrow keys.
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

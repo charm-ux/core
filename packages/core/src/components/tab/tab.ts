@@ -69,7 +69,8 @@ export class CoreTab extends CharmElement {
   }
 
   protected override willUpdate(props: PropertyValues) {
-    if (props.has('selected')) {
+    super.willUpdate(props);
+    if (props.has('selected') || !this.hasUpdated) {
       this.setAttribute('aria-selected', (this.selected ?? false).toString());
       if (this.tabPanel) this.tabPanel.visible = this.selected ?? false;
     }

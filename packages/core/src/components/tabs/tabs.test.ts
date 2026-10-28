@@ -6,7 +6,7 @@ import './index.js';
 
 new CoreTabsTests().runTests(
   config =>
-    html` <ch-tabs ${config}>
+    html` <ch-tabs label="Test sections" ${config}>
       <ch-tab id="tab-1">one</ch-tab>
       <ch-tab id="tab-2">two</ch-tab>
       <ch-tab id="tab-3">three <span>child</span></ch-tab>
@@ -25,7 +25,7 @@ new CoreTabsTests().runTests(
 // disabled specific tests that need the disabled attribute applied before the first render
 new CoreDisabledTabsTests().runTests(
   config =>
-    html` <ch-tabs ${config}>
+    html` <ch-tabs label="Test sections" ${config}>
       <ch-tab id="tab-1" disabled>one</ch-tab>
       <ch-tab id="tab-2">two</ch-tab>
       <ch-tab id="tab-3">three <span>child</span></ch-tab>

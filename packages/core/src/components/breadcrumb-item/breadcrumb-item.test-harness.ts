@@ -1,4 +1,5 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
+import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreBreadcrumbItem } from './index.js';
 
@@ -11,8 +12,17 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
         description: 'base',
         tests: {
           accessibility: {
-            description: 'temporarily disabled. breadcrumb item accessibility requires a parent with the correct role.',
-            test: async () => {},
+            description: 'is accessible when used inside a breadcrumb list',
+            test: async () => {
+              const parent = await fixture(
+                html`<nav aria-label="Breadcrumb navigation">
+                  <div role="list">
+                    <ch-breadcrumb-item href="/current">Current page</ch-breadcrumb-item>
+                  </div>
+                </nav>`
+              );
+              await expect(parent).to.be.accessible();
+            },
           },
         },
       },
@@ -31,11 +41,11 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
                   expect(el.shadowRoot?.querySelector('[aria-current="page"]')).not.to.be.null;
                 },
               },
-              buttonWithoutHref: {
-                description: 'renders a button control when no href is set',
+              nonLinkTextControl: {
+                description: 'renders non-interactive text when no href is set',
                 test: async () => {
                   const el = this.component;
-                  expect(el.shadowRoot?.querySelector('.control')?.tagName).to.equal('BUTTON');
+                  expect(el.shadowRoot?.querySelector('.control')?.tagName).to.equal('SPAN');
                 },
               },
               anchorWithHref: {
@@ -45,6 +55,33 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
                   el.href = 'https://example.com';
                   await elementUpdated(el);
                   expect(el.shadowRoot?.querySelector('.control')?.tagName).to.equal('A');
+                },
+              },
+              disabledIsNonInteractive: {
+                description: 'renders disabled links as non-interactive text',
+                test: async () => {
+                  const el = this.component;
+                  el.href = '/disabled';
+                  el.disabled = true;
+                  await elementUpdated(el);
+                  const control = el.shadowRoot?.querySelector('.control');
+                  expect(control?.tagName).to.equal('SPAN');
+                  expect(control?.getAttribute('aria-disabled')).to.equal('true');
+                },
+              },
+              clickDispatchesOnce: {
+                description: 'dispatches only one composed click when click() is called',
+                test: async () => {
+                  const el = this.component;
+                  el.href = '/destination';
+                  await elementUpdated(el);
+                  const spy = sinon.spy();
+                  el.addEventListener('click', event => {
+                    event.preventDefault();
+                    spy();
+                  });
+                  el.click();
+                  expect(spy).to.have.been.calledOnce;
                 },
               },
             },
@@ -66,30 +103,6 @@ export class CoreBreadcrumbItemTests<T extends CoreBreadcrumbItem> extends Charm
                 test: async () => {
                   const el = this.component;
                   expect(el.shadowRoot?.querySelector('[part="breadcrumb-item-separator"]')).not.to.be.null;
-                },
-              },
-              rtlSeparator: {
-                description: 'uses chevron-left separator in rtl',
-                test: async () => {
-                  const el = this.component;
-                  await el.setAttribute('dir', 'rtl');
-                  await elementUpdated(el);
-                  const icon = el.shadowRoot?.querySelector(
-                    'slot[name="separator"] scoped-icon, slot[name="separator"] ch-icon'
-                  );
-                  expect(icon?.getAttribute('name')).to.equal('chevron-left');
-                },
-              },
-              ltrSeparator: {
-                description: 'uses chevron-right separator in ltr',
-                test: async () => {
-                  const el = this.component;
-                  await el.setAttribute('dir', 'ltr');
-                  await elementUpdated(el);
-                  const icon = el.shadowRoot?.querySelector(
-                    'slot[name="separator"] scoped-icon, slot[name="separator"] ch-icon'
-                  );
-                  expect(icon?.getAttribute('name')).to.equal('chevron-right');
                 },
               },
               noSeparatorSlot: {

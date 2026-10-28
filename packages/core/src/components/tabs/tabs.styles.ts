@@ -1,5 +1,5 @@
 import { css } from 'lit';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   :host {
@@ -14,24 +14,23 @@ export default css`
   }
 
   ::slotted([role='tab']) {
-    grid-row: 1;
+    flex: 0 0 auto;
   }
 
   .tablist {
-    display: grid;
-    grid-template-rows: auto auto;
-    grid-template-columns: auto;
-    width: max-content;
+    display: flex;
+    min-width: 0;
+    width: 100%;
     position: relative;
     column-gap: ${component('tabs', 'gap')};
-    row-gap: revert;
     justify-self: ${component('tabs', 'align')};
     overflow-x: auto;
+    padding: calc(${semantic('focus', 'outlineWidth')} + ${semantic('focus', 'outlineOffset')});
   }
 
   .tabpanel {
     grid-row: 2;
-    grid-column: 1 / 3;
+    grid-column: 1;
     position: relative;
   }
 
@@ -42,13 +41,14 @@ export default css`
   }
 
   :host([layout='vertical']) .tablist {
+    flex-direction: column;
     column-gap: revert;
     grid-column: 1;
     grid-row: 1;
     position: relative;
     row-gap: ${component('tabs', 'gap')};
-    width: 100%;
     width: max-content;
+    max-width: 100%;
     min-width: ${component('tabs', 'verticalMinWidth')};
   }
 
@@ -59,7 +59,5 @@ export default css`
 
   :host([layout='vertical']) ::slotted([role='tab']) {
     justify-content: start;
-    grid-column: 2;
-    grid-row: revert;
   }
 `;

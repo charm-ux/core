@@ -1757,6 +1757,18 @@
               "name": "--charm-accordion-item-border-width"
             },
             {
+              "description": "Sets the spacing between summary content.",
+              "name": "--charm-accordion-item-summary-gap"
+            },
+            {
+              "description": "Sets the horizontal padding of the summary.",
+              "name": "--charm-accordion-item-summary-padding-x"
+            },
+            {
+              "description": "Sets the vertical padding of the summary.",
+              "name": "--charm-accordion-item-summary-padding-y"
+            },
+            {
               "description": "Sets background color of accordion-item when disabled.",
               "name": "--charm-accordion-item-disabled-bg-color"
             },
@@ -1795,6 +1807,10 @@
             {
               "description": "The transition for the icon when the state changes.",
               "name": "--charm-accordion-item-icon-transition"
+            },
+            {
+              "description": "The size of the expand/collapse icon.",
+              "name": "--charm-accordion-item-icon-size"
             }
           ],
           "cssParts": [
@@ -1809,10 +1825,6 @@
             {
               "description": "The end slot container.",
               "name": "accordion-item-end"
-            },
-            {
-              "description": "The heading element.",
-              "name": "accordion-item-heading"
             },
             {
               "description": "The wrapper element for the expand/collapse icon.",
@@ -1870,9 +1882,12 @@
               "kind": "field",
               "name": "_headingLevel",
               "type": {
-                "text": "number | undefined"
+                "text": "HeadingLevel | undefined"
               },
-              "privacy": "protected"
+              "privacy": "protected",
+              "parsedType": {
+                "text": "4 | 2 | 1 | 3 | 5 | 6 | undefined"
+              }
             },
             {
               "kind": "field",
@@ -1886,15 +1901,6 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "_resolvedDir",
-              "type": {
-                "text": "'ltr' | 'rtl'"
-              },
-              "privacy": "protected",
-              "default": "'ltr'"
             },
             {
               "kind": "field",
@@ -2144,7 +2150,7 @@
               "description": "The header level value (1-6) for summary, when summary is rendered as a header.",
               "attribute": "heading-level",
               "parsedType": {
-                "text": "number | undefined"
+                "text": "4 | 2 | 1 | 3 | 5 | 6 | undefined"
               }
             },
             {
@@ -2451,7 +2457,7 @@
               "description": "The header level value (1-6) for summary, when summary is rendered as a header.",
               "fieldName": "headingLevel",
               "parsedType": {
-                "text": "number | undefined"
+                "text": "4 | 2 | 1 | 3 | 5 | 6 | undefined"
               }
             },
             {
@@ -2525,7 +2531,7 @@
           ],
           "slots": [
             {
-              "description": "The default slot where accordion items are placed.",
+              "description": "Direct child accordion items.",
               "name": ""
             }
           ],
@@ -2561,6 +2567,20 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "closeOtherItems",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "openItem",
+                  "optional": true,
+                  "type": {
+                    "text": "CoreAccordionItem"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -2609,6 +2629,11 @@
                 }
               ],
               "description": "Ensures only one item is open at a time."
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange",
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -4331,7 +4356,7 @@
               "name": "end"
             },
             {
-              "description": "A separator between breadcrumb items.",
+              "description": "Separator inserted by the parent `ch-breadcrumb`. Set the separator on `ch-breadcrumb` instead.",
               "name": "separator"
             },
             {
@@ -4351,15 +4376,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "_resolvedDir",
-              "type": {
-                "text": "'ltr' | 'rtl'"
-              },
-              "privacy": "protected",
-              "default": "'ltr'"
             },
             {
               "kind": "field",
@@ -4395,7 +4411,7 @@
               "kind": "method",
               "name": "breadcrumbItemControlTemplate",
               "privacy": "protected",
-              "description": "Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible."
+              "description": "Generates a link when navigable, otherwise a non-interactive text item."
             },
             {
               "kind": "method",
@@ -4416,19 +4432,9 @@
                 "text": "'page' | 'step' | undefined"
               },
               "privacy": "public",
-              "description": "Sets `aria-current` on the div.",
+              "description": "Sets `aria-current` on the link or text control.",
               "attribute": "current",
               "reflects": true
-            },
-            {
-              "kind": "field",
-              "name": "dependencies",
-              "type": {
-                "text": "(typeof CharmElement)[]"
-              },
-              "privacy": "public",
-              "static": true,
-              "readonly": true
             },
             {
               "kind": "field",
@@ -4440,6 +4446,17 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean | undefined"
+              },
+              "privacy": "public",
+              "description": "Prevents navigation and presents this item as non-interactive text.",
+              "attribute": "disabled",
+              "reflects": true
             },
             {
               "kind": "method",
@@ -4488,6 +4505,19 @@
             },
             {
               "kind": "method",
+              "name": "handleControlClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
               "name": "handleFocus",
               "privacy": "protected",
               "inheritedFrom": {
@@ -4515,7 +4545,7 @@
                 "text": "string | undefined"
               },
               "privacy": "public",
-              "description": "When set, the underlying button will be rendered as an `<a>` with this `href`\ninstead of a `<button>`.",
+              "description": "When set, renders a navigable `<a>` with this `href`. Without it, the item is non-interactive text.",
               "attribute": "href",
               "reflects": true
             },
@@ -4657,7 +4687,7 @@
               "type": {
                 "text": "'page' | 'step' | undefined"
               },
-              "description": "Sets `aria-current` on the div.",
+              "description": "Sets `aria-current` on the link or text control.",
               "fieldName": "current"
             },
             {
@@ -4669,11 +4699,19 @@
               }
             },
             {
+              "name": "disabled",
+              "type": {
+                "text": "boolean | undefined"
+              },
+              "description": "Prevents navigation and presents this item as non-interactive text.",
+              "fieldName": "disabled"
+            },
+            {
               "name": "href",
               "type": {
                 "text": "string | undefined"
               },
-              "description": "When set, the underlying button will be rendered as an `<a>` with this `href`\ninstead of a `<button>`.",
+              "description": "When set, renders a navigable `<a>` with this `href`. Without it, the item is non-interactive text.",
               "fieldName": "href"
             },
             {
@@ -4720,12 +4758,6 @@
             "name": "beta",
             "description": ""
           },
-          "dependencies": [
-            {
-              "name": "CoreIcon",
-              "description": ""
-            }
-          ],
           "events": [
             {
               "description": "Emitted when the component is ready.",
@@ -4782,7 +4814,7 @@
               "name": ""
             },
             {
-              "description": "The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own.",
+              "description": "The separator placed between breadcrumb items. Defaults to a chevron that mirrors in `rtl`.",
               "name": "separator"
             }
           ],
@@ -4798,15 +4830,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "_resolvedDir",
-              "type": {
-                "text": "'ltr' | 'rtl'"
-              },
-              "privacy": "protected",
-              "default": "'ltr'"
             },
             {
               "kind": "field",
@@ -4876,13 +4899,18 @@
               "kind": "method",
               "name": "getSeparator",
               "privacy": "protected",
-              "description": "Generates a clone of the breadcrumb's separator element."
+              "return": {
+                "type": {
+                  "text": "HTMLElement | null"
+                }
+              },
+              "description": "Clones the breadcrumb's separator, or the default chevron when none is slotted."
             },
             {
               "kind": "method",
               "name": "handleSlotChange",
               "privacy": "protected",
-              "description": "Handles changes in the default slot."
+              "description": "Handles changes in the default slot or the separator slot."
             },
             {
               "kind": "method",
@@ -4917,11 +4945,10 @@
               "kind": "field",
               "name": "label",
               "type": {
-                "text": "string | undefined"
+                "text": "string"
               },
               "privacy": "public",
-              "default": "'breadcrumb'",
-              "description": "The `aria-label` for the entire breadcrumb. Will not be displayed, but is required for accessibility.",
+              "description": "Required localized accessible name for the breadcrumb navigation landmark.",
               "attribute": "label"
             },
             {
@@ -4938,64 +4965,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "separatorSlot",
-              "type": {
-                "text": "HTMLSlotElement"
-              },
-              "privacy": "protected"
-            },
-            {
-              "kind": "method",
-              "name": "setAriaCurrent",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "item",
-                  "type": {
-                    "text": "CoreBreadcrumbItem"
-                  }
-                },
-                {
-                  "name": "isLastNode",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ],
-              "description": "Sets the `current` attribute for a given CoreBreadcrumbItem."
-            },
-            {
-              "kind": "method",
-              "name": "setItemSeparator",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "item",
-                  "type": {
-                    "text": "CoreBreadcrumbItem"
-                  }
-                },
-                {
-                  "name": "isLastNode",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ],
-              "description": "Controls the display of item separators for a given CoreBreadcrumbItem."
-            },
-            {
               "kind": "method",
               "name": "setItemSeparatorContent",
               "privacy": "protected",
@@ -5010,17 +4979,15 @@
                   "type": {
                     "text": "CoreBreadcrumbItem"
                   }
+                },
+                {
+                  "name": "show",
+                  "type": {
+                    "text": "boolean"
+                  }
                 }
               ],
-              "description": "Clones the breadcrumb's separator into an item that does not provide its own."
-            },
-            {
-              "kind": "field",
-              "name": "slottedNodes",
-              "type": {
-                "text": "Array<CoreBreadcrumbItem>"
-              },
-              "privacy": "protected"
+              "description": "Replaces the separator this breadcrumb placed in an item. Items never own a separator."
             }
           ],
           "attributes": [
@@ -5035,10 +5002,9 @@
             {
               "name": "label",
               "type": {
-                "text": "string | undefined"
+                "text": "string"
               },
-              "default": "'breadcrumb'",
-              "description": "The `aria-label` for the entire breadcrumb. Will not be displayed, but is required for accessibility.",
+              "description": "Required localized accessible name for the breadcrumb navigation landmark.",
               "fieldName": "label"
             }
           ],
@@ -19546,12 +19512,12 @@
           ],
           "slots": [
             {
-              "description": "default - Content to be toggled.",
+              "description": "Content to be toggled.",
               "name": ""
             },
             {
-              "description": "trigger - Slot to provide a trigger to automatically toggle expandable region.",
-              "name": ""
+              "description": "A button that toggles the expandable content.",
+              "name": "trigger"
             }
           ],
           "members": [
@@ -19601,6 +19567,14 @@
             },
             {
               "kind": "field",
+              "name": "content",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "contentBelow",
               "type": {
                 "text": "boolean | undefined"
@@ -19612,10 +19586,11 @@
             },
             {
               "kind": "field",
-              "name": "contentId",
-              "privacy": "protected",
-              "default": "`disclosure-content-${++disclosureContentId}`",
-              "description": "Stable id for the expandable content region, referenced by the trigger's `aria-controls`."
+              "name": "contentSlot",
+              "type": {
+                "text": "HTMLSlotElement"
+              },
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -19735,6 +19710,16 @@
             },
             {
               "kind": "method",
+              "name": "getTriggerControl",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLElement | undefined"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "handleTransitionEnd",
               "privacy": "protected",
               "parameters": [
@@ -19755,7 +19740,7 @@
               "kind": "field",
               "name": "handleTriggerClick",
               "privacy": "protected",
-              "description": "Handle trigger click to show/hide the menu"
+              "description": "Handles trigger activation; closing remains cancelable by consumers."
             },
             {
               "kind": "method",
@@ -19861,6 +19846,11 @@
               }
             },
             {
+              "kind": "method",
+              "name": "refreshTrigger",
+              "privacy": "protected"
+            },
+            {
               "kind": "field",
               "name": "resumeAfterEvent",
               "type": {
@@ -19887,9 +19877,9 @@
             },
             {
               "kind": "method",
-              "name": "setAriaLabels",
+              "name": "setExpandedState",
               "privacy": "protected",
-              "description": "Sets aria labels for trigger element"
+              "description": "Sets expanded state synchronously when the slotted trigger is assigned."
             },
             {
               "kind": "method",
@@ -19907,6 +19897,19 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "setTrigger",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "slot",
+                  "type": {
+                    "text": "HTMLSlotElement"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -20034,6 +20037,10 @@
               "name": "disclosure-hide"
             },
             {
+              "description": "Cancelable event emitted when the trigger requests closing.",
+              "name": "disclosure-request-close"
+            },
+            {
               "description": "Emitted when the disclosure begins to show.",
               "name": "disclosure-show"
             },
@@ -20152,12 +20159,18 @@
           ],
           "cssParts": [
             {
-              "description": "The divider's line.",
-              "name": "divider-line"
+              "description": "The divider's content wrapper.",
+              "name": "divider-content"
             },
             {
-              "description": "The divider's text.",
-              "name": "divider-text"
+              "description": "The divider's line.",
+              "name": "divider-line"
+            }
+          ],
+          "slots": [
+            {
+              "description": "Optional content displayed between the divider lines.",
+              "name": ""
             }
           ],
           "members": [
@@ -20409,8 +20422,7 @@
             }
           ],
           "modulePath": "src/components/divider/divider.ts",
-          "cssStates": [],
-          "slots": []
+          "cssStates": []
         }
       ],
       "exports": [
@@ -35824,6 +35836,14 @@
             },
             {
               "kind": "field",
+              "name": "contentSlot",
+              "type": {
+                "text": "HTMLSlotElement"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
               "name": "dir",
               "privacy": "public",
               "attribute": "dir",
@@ -35832,6 +35852,11 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "finishTransition",
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -35855,6 +35880,16 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "getTransitionMaxTime",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleContentSlotChange",
+              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -35906,6 +35941,19 @@
               }
             },
             {
+              "kind": "method",
+              "name": "parseCssTime",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
               "kind": "field",
               "name": "scope",
               "type": {
@@ -35923,6 +35971,23 @@
               "name": "tabPanelTemplate",
               "privacy": "protected",
               "description": "Generates the template for the tab panel"
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxTime",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "transitionTimer",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | undefined"
+              },
+              "privacy": "protected"
             }
           ],
           "events": [
@@ -36351,7 +36416,7 @@
           "name": "CoreTabs",
           "cssProperties": [
             {
-              "description": "The alignment of the tabs ('start', 'center', or 'end').",
+              "description": "The alignment of the tabs ('start' or 'flex-start', 'center', or 'end').",
               "name": "--charm-tabs-align"
             },
             {
@@ -36516,6 +36581,24 @@
               "default": "-1"
             },
             {
+              "kind": "field",
+              "name": "generatedPanelId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
+              "kind": "field",
+              "name": "generatedTabId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
               "kind": "method",
               "name": "getScopedElementById",
               "privacy": "protected",
@@ -36620,6 +36703,16 @@
               }
             },
             {
+              "kind": "field",
+              "name": "instanceId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "default": "++charmTabsId"
+            },
+            {
               "kind": "method",
               "name": "isInvalidKeyForLayout",
               "privacy": "protected",
@@ -36632,6 +36725,16 @@
                 }
               ],
               "description": "Checks if the given key is invalid for the current layout. Don't handle horizontal keys if we're vertical and vice versa"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "Required localized accessible name for the tab list.",
+              "attribute": "label"
             },
             {
               "kind": "field",
@@ -36657,12 +36760,29 @@
             },
             {
               "kind": "field",
-              "name": "prevSelectedIndex",
+              "name": "observer",
               "type": {
-                "text": "number"
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "previousPanels",
+              "type": {
+                "text": "CoreTabPanel[]"
               },
               "privacy": "protected",
-              "default": "-1"
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "previousTabs",
+              "type": {
+                "text": "CoreTab[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
             },
             {
               "kind": "field",
@@ -36718,6 +36838,20 @@
                 }
               ],
               "description": "Sets the focus on the specified tab indices."
+            },
+            {
+              "kind": "method",
+              "name": "syncTabsAndPanels",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "preferredSelected",
+                  "optional": true,
+                  "type": {
+                    "text": "CoreTab"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
@@ -36812,6 +36946,14 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "type": {
+                "text": "string"
+              },
+              "description": "Required localized accessible name for the tab list.",
+              "name": "label",
+              "fieldName": "label"
             },
             {
               "name": "layout",

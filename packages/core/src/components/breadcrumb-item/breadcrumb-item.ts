@@ -1,8 +1,8 @@
-import { property, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
+import { literal } from 'lit/static-html.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { startContentEndTemplate } from '../../templates/start-content-end.js';
-import { CharmElement, CharmFocusableElement } from '../../base/index.js';
-import { CoreIcon } from '../icon/icon.js';
+import { CharmFocusableElement } from '../../base/index.js';
 import styles from './breadcrumb-item.styles.js';
 
 /**
@@ -14,7 +14,7 @@ import styles from './breadcrumb-item.styles.js';
  *
  * @slot - Breadcrumb item's content.
  * @slot start - A presentational prefix icon or similar element.
- * @slot separator - A separator between breadcrumb items.
+ * @slot separator - Separator inserted by the parent `ch-breadcrumb`. Set the separator on `ch-breadcrumb` instead.
  * @slot end - A presentational suffix icon or similar element.
  *
  * @csspart breadcrumb-item-base - The component's base wrapper.
@@ -44,24 +44,26 @@ import styles from './breadcrumb-item.styles.js';
  * @cssprop --charm-breadcrumb-item-disabled-border-color - Set the border color of the breadcrumb item when disabled.
  * @cssprop --charm-breadcrumb-item-disabled-fg-color - Set the foreground color of the breadcrumb item when disabled.
  *
- * @dependency CoreIcon
  **/
 export class CoreBreadcrumbItem extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'breadcrumb-item';
 
   /**
-   * Sets `aria-current` on the div.
+   * Sets `aria-current` on the link or text control.
    */
   @property({ reflect: true })
   public current?: 'page' | 'step';
 
   /**
-   * When set, the underlying button will be rendered as an `<a>` with this `href`
-   * instead of a `<button>`.
+   * When set, renders a navigable `<a>` with this `href`. Without it, the item is non-interactive text.
    */
   @property({ reflect: true })
   public href?: string;
+
+  /** Prevents navigation and presents this item as non-interactive text. */
+  @property({ type: Boolean, reflect: true })
+  public disabled?: boolean;
 
   /**
    * When true, will render the separator content.
@@ -91,62 +93,41 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   @property()
   public target?: '_blank' | '_parent' | '_self' | '_top' | (string & {});
 
-  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
-
-  public static override get dependencies(): (typeof CharmElement)[] {
-    return [CoreIcon];
-  }
-
   /** @internal Handles the click event on the control. */
   public override click() {
-    super.click();
-    this.shadowRoot?.querySelector<HTMLElement>('.control')?.click();
+    if (this.disabled || !this.href) return;
+    this.shadowRoot?.querySelector<HTMLAnchorElement>('a.control')?.click();
   }
 
-  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.willUpdate(changedProperties);
-    this._resolvedDir = this.resolvedDir;
+  protected handleControlClick(event: MouseEvent) {
+    if (this.disabled) event.preventDefault();
   }
 
-  /** Generates the HTML template for the control. When no `href` is set, a `<button>` is rendered so the item remains keyboard accessible. */
+  /** Generates a link when navigable, otherwise a non-interactive text item. */
   protected breadcrumbItemControlTemplate() {
-    return this.href
-      ? this.html`
-          <a
-            class="control"
-            href=${this.href}
-            target=${ifDefined(this.target)}
-            rel=${ifDefined(this.target ? 'noreferrer noopener' : undefined)}
-            referrerpolicy=${ifDefined(this.referrerPolicy)}
-            aria-current=${ifDefined(this.current)}
-            part="breadcrumb-item-control"
-            @focus=${this.handleFocus}
-            @blur=${this.handleBlur}
-          >
-            ${startContentEndTemplate()}
-          </a>
-        `
-      : this.html`
-          <button
-            class="control"
-            type="button"
-            aria-current=${ifDefined(this.current)}
-            part="breadcrumb-item-control"
-            @focus=${this.handleFocus}
-            @blur=${this.handleBlur}
-          >
-            ${startContentEndTemplate()}
-          </button>
-        `;
+    const isLink = Boolean(this.href && !this.disabled);
+    const controlTag = isLink ? literal`a` : literal`span`;
+
+    return this.html`<${controlTag}
+      class="control"
+      href=${ifDefined(isLink ? this.href : undefined)}
+      target=${ifDefined(isLink ? this.target : undefined)}
+      rel=${ifDefined(isLink && this.target ? 'noreferrer noopener' : undefined)}
+      referrerpolicy=${ifDefined(isLink ? this.referrerPolicy : undefined)}
+      aria-current=${ifDefined(this.current)}
+      aria-disabled=${ifDefined(this.disabled ? 'true' : undefined)}
+      part="breadcrumb-item-control"
+      @focus=${this.handleFocus}
+      @blur=${this.handleBlur}
+      @click=${this.handleControlClick}
+    >${startContentEndTemplate()}</${controlTag}>`;
   }
 
   /** Generates the HTML template for the separator. */
   protected breadcrumbItemSeparatorTemplate() {
     return this.separator
-      ? this.html`<span part="breadcrumb-item-separator" class="separator"><slot name="separator"> <scoped-icon
-    class="icon"
-    name=${this._resolvedDir === 'rtl' ? 'chevron-left' : 'chevron-right'}
-></scoped-icon> </slot></span>`
+      ? this
+          .html`<span aria-hidden="true" part="breadcrumb-item-separator" class="separator"><slot name="separator"></slot></span>`
       : this.html``;
   }
 

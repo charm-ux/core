@@ -1,14 +1,7 @@
 import { html } from 'lit/static-html.js';
-import { property } from 'lit/decorators.js';
-import { ifDefined } from 'lit/directives/if-defined.js';
+import { property, query } from 'lit/decorators.js';
 import CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
 import styles from './disclosure.styles.js';
-
-// id for slotted trigger (will only be added if one doesn't exist)
-let disclosureButtonId = 0;
-
-// id for the expandable content region (used by the trigger's aria-controls)
-let disclosureContentId = 0;
 
 /**
  * Disclosure is used for composing collapsible components
@@ -17,8 +10,8 @@ let disclosureContentId = 0;
  * @since 1.0.0
  * @status beta
  *
- * @slot - default - Content to be toggled.
- * @slot - trigger - Slot to provide a trigger to automatically toggle expandable region.
+ * @slot - Content to be toggled.
+ * @slot trigger - A button that toggles the expandable content.
  *
  * @csspart disclosure-base - The component's base wrapper.
  * @csspart disclosure-content - Wrapper around the main slotted content.
@@ -37,68 +30,91 @@ let disclosureContentId = 0;
  * @event disclosure-after-show - Emitted after the disclosure has shown and all animations are complete.
  * @event disclosure-hide - Emitted when the disclosure begins to hide.
  * @event disclosure-after-hide - Emitted after the disclosure has hidden and all animations are complete.
+ * @event disclosure-request-close - Cancelable event emitted when the trigger requests closing.
  **/
 export class CoreDisclosure extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'disclosure';
 
   /** Controls the expand direction of the component. */
-  @property({ reflect: true, attribute: 'content-below' })
+  @property({ reflect: true, type: Boolean, attribute: 'content-below' })
   public contentBelow?: boolean;
+
+  @query('.disclosure-content')
+  protected content?: HTMLElement;
+
+  @query('slot:not([name])')
+  protected contentSlot!: HTMLSlotElement;
 
   /** Query for the trigger element */
   protected trigger?: HTMLElement;
 
-  /** Stable id for the expandable content region, referenced by the trigger's `aria-controls`. */
-  protected contentId = `disclosure-content-${++disclosureContentId}`;
+  public override connectedCallback() {
+    super.connectedCallback();
+    void this.updateComplete.then(() => {
+      if (this.isConnected) this.refreshTrigger();
+    });
+  }
 
-  /*
-   * Initializes the component.
-   */
-  public constructor() {
-    super();
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.trigger?.removeEventListener('click', this.handleTriggerClick);
   }
 
   protected override onOpenChange(open: boolean): void {
     super.onOpenChange(open);
-    if (!this.trigger) return;
-    this.trigger.setAttribute('aria-expanded', open.toString());
+    const activeElement = this.ownerDocument.activeElement;
+    const focusIsInContent =
+      this.content?.contains(activeElement) ||
+      this.contentSlot
+        ?.assignedElements({ flatten: true })
+        .some(element => element === activeElement || element.contains(activeElement));
+    if (!open && focusIsInContent) {
+      this.getTriggerControl()?.focus();
+    }
+    this.getTriggerControl()?.setAttribute('aria-expanded', open.toString());
   }
 
   /** Handle slot change for trigger slot */
   protected handleTriggerSlotChange(e: Event) {
     const target = e.target as HTMLSlotElement;
     if (target.name !== 'trigger') return;
-
-    const elements = target.assignedElements({ flatten: true }) as HTMLElement[];
-    if (!elements.length) return;
-
-    this.trigger?.removeEventListener('click', this.handleTriggerClick);
-    this.trigger = elements[0];
-    this.trigger?.addEventListener('click', this.handleTriggerClick);
-    this.setAriaLabels();
+    this.setTrigger(target);
   }
 
-  /** Handle trigger click to show/hide the menu */
-  protected handleTriggerClick = async (e: MouseEvent) => {
+  protected setTrigger(slot: HTMLSlotElement) {
+    this.trigger?.removeEventListener('click', this.handleTriggerClick);
+    this.trigger = (slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined) ?? undefined;
+    this.trigger?.addEventListener('click', this.handleTriggerClick);
+    this.setExpandedState();
+  }
+
+  protected refreshTrigger() {
+    const slot = this.shadowRoot?.querySelector<HTMLSlotElement>('slot[name="trigger"]');
+    if (slot) this.setTrigger(slot);
+  }
+
+  protected getTriggerControl(): HTMLElement | undefined {
+    if (!this.trigger) return undefined;
+    return this.trigger.matches('button, [role="button"]')
+      ? this.trigger
+      : (this.trigger.querySelector<HTMLElement>('button, [role="button"]') ?? undefined);
+  }
+
+  /** Handles trigger activation; closing remains cancelable by consumers. */
+  protected handleTriggerClick = (e: MouseEvent) => {
     if (e.defaultPrevented) return;
 
     if (this.open) {
-      this.hide();
+      this.emitRequestClose('trigger');
     } else {
       this.show();
     }
   };
 
-  /** Sets aria labels for trigger element */
-  protected setAriaLabels() {
-    if (!this.trigger) return;
-    this.trigger.setAttribute('aria-expanded', this.open.toString());
-    this.trigger.setAttribute('aria-controls', this.contentId);
-
-    if (!this.trigger.id) {
-      this.trigger.id = `disclosure-button-${++disclosureButtonId}`;
-    }
+  /** Sets expanded state synchronously when the slotted trigger is assigned. */
+  protected setExpandedState() {
+    this.getTriggerControl()?.setAttribute('aria-expanded', this.open.toString());
   }
 
   /*
@@ -112,14 +128,9 @@ export class CoreDisclosure extends CharmDismissibleElement {
    * Returns the template for the content that is expanded and collapsed.
    */
   protected contentTemplate() {
-    // aria-labelled-by, we need the trigger id
     return html`
       <div
-        id=${this.contentId}
-        aria-hidden=${!this.open}
-        aria-labelledby=${ifDefined(this.trigger?.id)}
         class="disclosure-content"
-        role="region"
         part="disclosure-content"
         ?inert=${!this.open}
         @transitionend=${this.handleTransitionEnd}

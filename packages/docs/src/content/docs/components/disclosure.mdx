@@ -8,7 +8,7 @@ The disclosure component is used for creating expandable and collapsible section
 
 ## Default
 
-Add disclosure heading and trigger to the `trigger` slot. The content region is set to the default slot.
+Put an actual button in the `trigger` slot (it may be wrapped in a heading); the content region uses the default slot. The button receives `aria-expanded` as the disclosure opens and closes.
 
 <code-bubble>
 
@@ -53,23 +53,26 @@ By default, the content region expands upwards. To modify the expansion directio
 
 ## Preview Mode
 
-The disclosure component can show a preview of the content when closed by setting the `--disclosure-closed-max-height` CSS custom property to a value other than `0px` (the default).
+The disclosure component can show a preview of the content when closed by setting the `--charm-disclosure-closed-max-height` CSS custom property to a value other than `0px` (the default).
 
 <code-bubble>
 
 ```html
 <style>
   #disclosure-preview {
-    --disclosure-closed-max-height: 4rem;
-    --disclosure-gap: 8px;
+    --charm-disclosure-closed-max-height: 4rem;
+    --charm-disclosure-gap: 8px;
   }
-  .disclosure-button::part(button-control),
-  .disclosure-button::part(button-control):hover,
-  .disclosure-button::part(button-control):focus {
+  .disclosure-button,
+  .disclosure-button:hover {
     color: var(--body-fg-color);
     background-color: transparent;
     border: none;
     box-shadow: none;
+  }
+  .disclosure-button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
   ch-disclosure[open] .chevron {
     transform: rotate(-180deg);
@@ -77,26 +80,24 @@ The disclosure component can show a preview of the content when closed by settin
 </style>
 <div id="disclosure-preview" style="max-width: 600px;">
   <ch-disclosure>
-    <h3 slot="trigger">
-      <ch-button class="disclosure-button">
-        <ch-icon slot="start" class="chevron" name="chevron-down"></ch-icon>
-        <span class="button-text">Show More</span>
-      </ch-button>
-    </h3>
-    This is a disclosure with --disclosure-closed-max-height set to a non-zero value. When closed,
-    only a few lines of this text will be shown due to the max-height constraint. When open, all of
-    the content will become visible. You can use this to create collapsible previews for long
+    <button slot="trigger" class="disclosure-button">
+      <ch-icon slot="start" class="chevron" name="chevron-down"></ch-icon>
+      <span class="button-text">Show More</span>
+    </button>
+    This is a disclosure with --charm-disclosure-closed-max-height set to a non-zero value. When
+    closed, only a few lines of this text will be shown due to the max-height constraint. When open,
+    all of the content will become visible. You can use this to create collapsible previews for long
     sections of content without hiding them entirely. Lorem ipsum dolor sit amet, consectetur
     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
   </ch-disclosure>
   <script>
     component.addEventListener('disclosure-show', () => {
-      const buttonText = document.querySelector('.button-text');
+      const buttonText = component.querySelector('.button-text');
       if (buttonText) buttonText.textContent = 'Show Less';
     });
     component.addEventListener('disclosure-hide', () => {
-      const buttonText = document.querySelector('.button-text');
+      const buttonText = component.querySelector('.button-text');
       if (buttonText) buttonText.textContent = 'Show More';
     });
   </script>
@@ -107,25 +108,28 @@ The disclosure component can show a preview of the content when closed by settin
 
 ## Transition
 
-The disclosure component supports smooth open/close animations using CSS transitions. Enable animations by setting the `--disclosure-show-transition` and/or `--disclosure-hide-transition` custom CSS properties.
+The disclosure component supports smooth open/close animations using CSS transitions. Enable animations by setting the `--charm-disclosure-show-transition` and/or `--charm-disclosure-hide-transition` custom CSS properties.
 
 <code-bubble>
 
 ```html
 <style>
   #disclosure-animated-preview {
-    --disclosure-closed-max-height: 4rem;
-    --disclosure-gap: 8px;
-    --disclosure-show-transition: max-height 0.5s ease-in-out;
-    --disclosure-hide-transition: max-height 0.5s ease-in-out;
+    --charm-disclosure-closed-max-height: 4rem;
+    --charm-disclosure-gap: 8px;
+    --charm-disclosure-show-transition: max-height 0.5s ease-in-out;
+    --charm-disclosure-hide-transition: max-height 0.5s ease-in-out;
   }
-  .disclosure-button::part(button-control),
-  .disclosure-button::part(button-control):hover,
-  .disclosure-button::part(button-control):focus {
+  .disclosure-button,
+  .disclosure-button:hover {
     color: var(--body-fg-color);
     background-color: transparent;
     border: none;
     box-shadow: none;
+  }
+  .disclosure-button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
   }
   ch-disclosure[open] .chevron {
     transform: rotate(-180deg);
@@ -133,26 +137,24 @@ The disclosure component supports smooth open/close animations using CSS transit
 </style>
 <div id="disclosure-animated-preview" style="max-width: 600px;">
   <ch-disclosure>
-    <h3 slot="trigger">
-      <ch-button class="disclosure-button">
-        <ch-icon slot="start" class="chevron" name="chevron-down"></ch-icon>
-        <span class="button-text">Show More</span>
-      </ch-button>
-    </h3>
-    This is a disclosure with --disclosure-closed-max-height set to a non-zero value. When closed,
-    only a few lines of this text will be shown due to the max-height constraint. When open, all of
-    the content will become visible. You can use this to create collapsible previews for long
+    <button slot="trigger" class="disclosure-button">
+      <ch-icon slot="start" class="chevron" name="chevron-down"></ch-icon>
+      <span class="button-text">Show More</span>
+    </button>
+    This is a disclosure with --charm-disclosure-closed-max-height set to a non-zero value. When
+    closed, only a few lines of this text will be shown due to the max-height constraint. When open,
+    all of the content will become visible. You can use this to create collapsible previews for long
     sections of content without hiding them entirely. Lorem ipsum dolor sit amet, consectetur
     adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
     minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
   </ch-disclosure>
   <script>
     component.addEventListener('disclosure-show', () => {
-      const buttonText = document.querySelector('.button-text');
+      const buttonText = component.querySelector('.button-text');
       if (buttonText) buttonText.textContent = 'Show Less';
     });
     component.addEventListener('disclosure-hide', () => {
-      const buttonText = document.querySelector('.button-text');
+      const buttonText = component.querySelector('.button-text');
       if (buttonText) buttonText.textContent = 'Show More';
     });
   </script>
@@ -162,3 +164,5 @@ The disclosure component supports smooth open/close animations using CSS transit
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

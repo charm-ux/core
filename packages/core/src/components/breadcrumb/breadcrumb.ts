@@ -1,4 +1,4 @@
-import { property, query, queryAssignedElements, state } from 'lit/decorators.js';
+import { property } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
@@ -13,7 +13,7 @@ import type CoreBreadcrumbItem from '../breadcrumb-item/breadcrumb-item.js';
  * @status beta
  *
  * @slot - Breadcrumb's contents, which should typically be a breadcrumb-item.
- * @slot separator - The default separator used between breadcrumb items. When set, it is cloned into every item that does not provide its own.
+ * @slot separator - The separator placed between breadcrumb items. Defaults to a chevron that mirrors in `rtl`.
  *
  * @csspart breadcrumb-base - The component's base wrapper.
  * @csspart breadcrumb-list - Default slot's wrapper.
@@ -25,96 +25,49 @@ export class CoreBreadcrumb extends CharmElement {
 
   public static override baseName = 'breadcrumb';
 
-  /** The `aria-label` for the entire breadcrumb. Will not be displayed, but is required for accessibility. */
+  /** Required localized accessible name for the breadcrumb navigation landmark. */
   @property()
-  public label?: string = 'breadcrumb';
-
-  @queryAssignedElements()
-  protected slottedNodes!: Array<CoreBreadcrumbItem>;
-
-  @query('slot[name="separator"]')
-  protected separatorSlot!: HTMLSlotElement;
-
-  @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
-
-  /** @internal The direction of the breadcrumb, used to regenerate default separators when it changes. */
-  protected separatorDir?: 'ltr' | 'rtl';
+  public label!: string;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
-  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.willUpdate(changedProperties);
-    this._resolvedDir = this.resolvedDir;
-  }
-
-  /** Handles changes in the default slot. */
+  /** Handles changes in the default slot or the separator slot. */
   protected handleSlotChange() {
-    if (this.slottedNodes == undefined || this.slottedNodes.length <= 0) {
-      return;
-    }
+    const items = [...this.querySelectorAll<CoreBreadcrumbItem>('ch-breadcrumb-item')].filter(
+      item => item.closest('ch-breadcrumb') === this
+    );
 
-    const lastNode: CoreBreadcrumbItem = this.slottedNodes[this.slottedNodes.length - 1];
-
-    this.slottedNodes.forEach((item: CoreBreadcrumbItem) => {
-      this.setItemSeparator(item, false);
-      this.setAriaCurrent(item, false);
-    });
-
-    this.setItemSeparator(lastNode, true);
-    this.setAriaCurrent(lastNode, true);
-
-    // Inject/refresh separators into every item that will display one, and remove injected
-    // separators from the final item so it can never show a stale one.
-    this.slottedNodes.forEach((item: CoreBreadcrumbItem, index) => {
-      if (index < this.slottedNodes.length - 1) {
-        this.setItemSeparatorContent(item);
-      } else {
-        item.querySelector('[slot="separator"][data-default]')?.remove();
-      }
+    items.forEach((item, index) => {
+      const isLastNode = index === items.length - 1;
+      item.separator = !isLastNode;
+      item.current = isLastNode ? 'page' : undefined;
+      this.setItemSeparatorContent(item, !isLastNode);
     });
   }
 
-  /** Sets the `current` attribute for a given CoreBreadcrumbItem. */
-  protected setAriaCurrent(item: CoreBreadcrumbItem, isLastNode: boolean): void {
-    item.current = isLastNode ? 'page' : undefined;
+  /** Replaces the separator this breadcrumb placed in an item. Items never own a separator. */
+  protected setItemSeparatorContent(item: CoreBreadcrumbItem, show: boolean): void {
+    item.querySelectorAll(':scope > [slot="separator"]').forEach(separator => separator.remove());
+
+    if (!show) return;
+
+    const separator = this.getSeparator();
+    if (separator) item.append(separator);
   }
 
-  /** Controls the display of item separators for a given CoreBreadcrumbItem. */
-  protected setItemSeparator(item: CoreBreadcrumbItem, isLastNode: boolean): void {
-    item.separator = !isLastNode;
-  }
+  /** Clones the breadcrumb's separator, or the default chevron when none is slotted. */
+  protected getSeparator(): HTMLElement | null {
+    const separatorSlot = this.shadowRoot?.querySelector<HTMLSlotElement>('slot[name="separator"]');
+    const source = (separatorSlot?.assignedElements({ flatten: true })[0] ??
+      this.shadowRoot?.querySelector('.default-separator')) as HTMLElement | null | undefined;
 
-  /** Clones the breadcrumb's separator into an item that does not provide its own. */
-  protected setItemSeparatorContent(item: CoreBreadcrumbItem): void {
-    const separator = item.querySelector('[slot="separator"]');
-    const clone = this.getSeparator();
+    if (!source) return null;
 
-    if (clone === null) {
-      return;
-    }
-
-    if (separator === null) {
-      item.append(clone);
-    } else if (separator.hasAttribute('data-default')) {
-      separator.replaceWith(clone);
-    }
-    // Otherwise the item provides a custom separator — leave it alone.
-  }
-
-  /** Generates a clone of the breadcrumb's separator element. */
-  protected getSeparator() {
-    const separator = this.separatorSlot?.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
-
-    if (!separator) {
-      return null;
-    }
-
-    const clone = separator.cloneNode(true) as HTMLElement;
+    const clone = source.cloneNode(true) as HTMLElement;
 
     [clone, ...clone.querySelectorAll('[id]')].forEach(el => el.removeAttribute('id'));
-    clone.setAttribute('data-default', '');
     clone.removeAttribute('slot');
     clone.slot = 'separator';
 
@@ -134,20 +87,13 @@ export class CoreBreadcrumb extends CharmElement {
 
       <span hidden aria-hidden="true">
         <slot name="separator" @slotchange=${this.handleSlotChange}>
-          <scoped-icon class="icon" name=${this._resolvedDir === 'rtl' ? 'chevron-left' : 'chevron-right'}></scoped-icon>
+          <scoped-icon class="icon default-separator" name="chevron-right"></scoped-icon>
         </slot>
       </span>
     `;
   }
 
   protected override render() {
-    // We clone the separator into each breadcrumb item, so the default separators need to be
-    // regenerated when the directionality changes.
-    if (this.separatorDir !== this._resolvedDir) {
-      this.separatorDir = this._resolvedDir;
-      this.updateComplete.then(() => this.handleSlotChange());
-    }
-
     return this.breadcrumbTemplate();
   }
 }

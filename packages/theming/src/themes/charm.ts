@@ -345,6 +345,9 @@ const charmTokensBase = defineTokens(
         fgColor: semantic('text', 'primary'),
         borderColor: semantic('border', 'primary'),
         borderWidth: primitive('borderWidth', 'thin'),
+        summaryGap: primitive('spacing', 'xs'),
+        summaryPaddingX: primitive('spacing', 'md'),
+        summaryPaddingY: primitive('spacing', 'sm'),
         hover: {
           bgColor: semantic('surface', 'secondary'),
           fgColor: semantic('text', 'primary'),
@@ -360,6 +363,7 @@ const charmTokensBase = defineTokens(
           timingFunction: 'ease-in-out',
         },
         icon: {
+          size: '20px',
           transition: 'transform 0.3s ease-in-out',
           expandedTransform: 'rotate(180deg)',
           collapsedTransform: 'rotate(0deg)',
@@ -569,7 +573,7 @@ const charmTokensBase = defineTokens(
         item: {
           gap: primitive('spacing', 'xs'),
           padding: `${primitive('spacing', 'xs')} ${primitive('spacing', 'sm')}`,
-          controlWidth: '24px',
+          controlWidth: 'auto',
           borderWidth: primitive('borderWidth', 'thin'),
           bgColor: 'transparent',
           fgColor: semantic('text', 'secondary'),
