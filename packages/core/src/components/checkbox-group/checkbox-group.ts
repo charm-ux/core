@@ -121,6 +121,11 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     };
   }
 
+  /** In listbox mode the error text sits inside the listbox host, so it's exposed as a group rather than plain text. */
+  protected override get errorTextRole(): string | undefined {
+    return this.listbox ? 'group' : undefined;
+  }
+
   public set valueDelimiter(delimiter: string) {
     const nextDelimiter = delimiter || ',';
     if (nextDelimiter === this._valueDelimiter) return;
@@ -307,7 +312,6 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       changedProperties.has('valueAsArray') ||
       changedProperties.has('listbox') ||
       changedProperties.has('disabled') ||
-      changedProperties.has('formDisabled') ||
       changedProperties.has('readonly')
     ) {
       void this.syncCheckboxElements();
@@ -538,7 +542,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       .map(element => element.textContent?.trim())
       .filter(Boolean)
       .join(' ');
-    return [this.helpText || slottedHelpText, this.invalid ? this.errorMessage : ''].filter(Boolean).join(' ');
+    return [this.helpText || slottedHelpText, this.showInvalid ? this.errorMessage : ''].filter(Boolean).join(' ');
   }
 
   protected getActiveListboxOption(): CoreCheckbox | null {
@@ -583,7 +587,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     this.setAttribute('role', 'listbox');
     this.internals.ariaMultiSelectable = 'true';
     this.internals.ariaRequired = this.required ? 'true' : null;
-    this.internals.ariaInvalid = String(this.invalid);
+    this.internals.ariaInvalid = String(this.showInvalid);
     this.internals.ariaReadOnly = this.readonly ? 'true' : null;
     this.internals.ariaDisabled = this.disabled ? 'true' : null;
     const label = this.getListboxLabel() || this.listboxHostAttributes.get('aria-label') || '';
@@ -608,6 +612,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       'listboxActiveIndex',
       'required',
       'invalid',
+      'hadFocus',
       'readonly',
       'disabled',
       'label',
@@ -806,8 +811,8 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     return this.html`<fieldset
       part="checkbox-group-base"
       aria-describedby=${ifDefined(!this.listbox ? this.describedBy : undefined)}
-      aria-errormessage=${ifDefined(!this.listbox && this.invalid ? 'error-text' : undefined)}
-      aria-invalid=${this.invalid}
+      aria-errormessage=${ifDefined(!this.listbox && this.showInvalid ? 'error-text' : undefined)}
+      aria-invalid=${this.showInvalid}
       aria-readonly=${ifDefined(!this.listbox && this.readonly ? 'true' : undefined)}
       class=${classMap({
         'checkbox-group': true,

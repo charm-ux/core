@@ -67,7 +67,9 @@ export interface PopupRepositionEvent {
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
  * @cssprop --charm-popup-bg-color - The background color of the popup. The arrow uses the same color, so the two always match.
- * @cssprop --popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
+ * @cssprop --popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used. Defaults to the theme's `--charm-popup-arrow-size` token.
+ * @cssprop --popup-auto-size-available-height - A read-only custom property set on the host with the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `vertical` or `both`.
+ * @cssprop --popup-auto-size-available-width - A read-only custom property set on the host with the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `horizontal` or `both`.
  * @cssprop --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
  * @cssprop --charm-popup-hide-transition - animation when the overlay is hidden.
  * @cssprop --charm-popup-show-transition - animation when the overlay is shown.
@@ -125,7 +127,7 @@ export class CorePopup extends CharmDismissibleElement {
    * Sets the role of the overlay content.
    */
   @property({ attribute: 'content-role' })
-  public contentRole? = 'dialog';
+  public contentRole?: string = 'dialog';
 
   /**
    * The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners.
@@ -492,13 +494,12 @@ export class CorePopup extends CharmDismissibleElement {
   }
 
   protected isFocusable(element: HTMLElement) {
+    // Cheap attribute checks first; [hidden]/[inert] ancestors are already skipped by getFocusableElements().
+    if (element.hasAttribute('disabled') || element.tabIndex < 0) return false;
+    if (typeof element.checkVisibility === 'function') return element.checkVisibility({ visibilityProperty: true });
+
     const style = getComputedStyle(element);
-    return (
-      !element.hasAttribute('disabled') &&
-      element.tabIndex >= 0 &&
-      style.display !== 'none' &&
-      style.visibility !== 'hidden'
-    );
+    return style.display !== 'none' && style.visibility !== 'hidden';
   }
 
   protected deepActiveElement(): Element | null {
@@ -597,7 +598,7 @@ export class CorePopup extends CharmDismissibleElement {
         open
         class="popup"
         part="popup-base"
-        role=${ifDefined(this.contentRole) as any}
+        role=${ifDefined(this.contentRole)}
         aria-labelledby=${ifDefined(this.label && this.contentRole !== 'none' ? 'popup-label' : undefined)}
         ?inert=${!this.open}
         @transitionend=${this.handleTransitionEnd}

@@ -306,12 +306,15 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                 description:
                   'should set a tabindex of -1 on all slotted children, and 0 on the first child when `toolbar` attribute is set',
                 test: async () => {
-                  const children = this.component.children;
-                  for (let i = 0; i < children.length; i++) {
+                  // A menu's roving item is its slotted trigger, not the menu host.
+                  const items = [...this.component.children].map(
+                    child => child.querySelector(':scope > [slot="trigger"]') ?? child
+                  );
+                  for (let i = 0; i < items.length; i++) {
                     if (i === 0) {
-                      expect(children[i].getAttribute('tabindex')).to.equal('0');
+                      expect(items[i].getAttribute('tabindex')).to.equal('0');
                     } else {
-                      expect(children[i].getAttribute('tabindex')).to.equal('-1');
+                      expect(items[i].getAttribute('tabindex')).to.equal('-1');
                     }
                   }
                 },
@@ -325,7 +328,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   const el = this.component;
                   const itemOne = el.children[0] as CoreButton;
                   const itemTwo = el.children[1] as CoreButton;
-                  const itemThree = el.children[2] as CoreButton;
+                  const itemThree = (el.children[2] as CoreMenu).querySelector('[slot="trigger"]') as CoreButton;
 
                   itemOne.setAttribute('disabled', '');
                   const slotChangeEvent = new Event('slotchange');
@@ -374,7 +377,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                 test: async () => {
                   const el = this.component;
                   const itemOne = el.children[0] as CoreButton;
-                  const itemThree = el.children[2] as CoreButton;
+                  const itemThree = (el.children[2] as CoreMenu).querySelector('[slot="trigger"]') as CoreButton;
 
                   itemOne.focus();
                   expect(itemOne.getAttribute('tabindex')).to.equal('0');
@@ -467,7 +470,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   const el = this.component;
                   const itemOne = el.children[0] as CoreButton;
                   const itemTwo = el.children[1] as CoreButton;
-                  const itemThree = el.children[2] as CoreMenu;
+                  const itemThree = (el.children[2] as CoreMenu).querySelector('[slot="trigger"]') as CoreButton;
                   const itemFour = el.children[3] as CoreButton;
 
                   itemOne.focus();
@@ -483,7 +486,8 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   expect(itemThree.getAttribute('tabindex')).to.equal('0');
                   expect(itemTwo.getAttribute('tabindex')).to.equal('-1');
 
-                  await sendKeys({ press: 'ArrowDown' });
+                  // ArrowDown on a menu trigger opens the menu, so step past it with ArrowRight.
+                  await sendKeys({ press: 'ArrowRight' });
                   await el.updateComplete;
                   expect(itemFour.getAttribute('tabindex')).to.equal('0');
                   expect(itemThree.getAttribute('tabindex')).to.equal('-1');
@@ -504,7 +508,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   const el = this.component;
                   const itemOne = el.children[0] as CoreButton;
                   const itemTwo = el.children[1] as CoreButton;
-                  const itemThree = el.children[2] as CoreMenu;
+                  const itemThree = (el.children[2] as CoreMenu).querySelector('[slot="trigger"]') as CoreButton;
                   const itemFour = el.children[3] as CoreButton;
 
                   itemOne.focus();
@@ -708,7 +712,7 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
                   const el = this.component;
                   const itemOne = el.children[0] as CoreButton;
                   const itemTwo = el.children[1] as CoreButton;
-                  const itemThree = el.children[2] as CoreButton;
+                  const itemThree = (el.children[2] as CoreMenu).querySelector('[slot="trigger"]') as CoreButton;
 
                   itemOne.setAttribute('tabindex', '0');
                   itemTwo.setAttribute('disabled', '');
@@ -726,6 +730,55 @@ export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElemen
 
                   expect(itemThree.getAttribute('tabindex')).to.equal('0');
                   expect(itemOne.getAttribute('tabindex')).to.equal('-1');
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
+              toolbarMenuTriggerIsRovingItem: {
+                description: 'should rove focus onto a menu trigger, open it with Enter, and keep one tab stop',
+                test: async () => {
+                  const el = this.component;
+                  const itemTwo = el.children[1] as CoreButton;
+                  const menu = el.children[2] as CoreMenu;
+                  const trigger = menu.querySelector('[slot="trigger"]') as CoreButton;
+
+                  expect(menu.hasAttribute('tabindex')).to.be.false;
+                  expect(trigger.getAttribute('tabindex')).to.equal('-1');
+
+                  itemTwo.focus();
+                  await sendKeys({ press: 'ArrowRight' });
+                  await el.updateComplete;
+                  expect(document.activeElement).to.equal(trigger);
+                  expect(trigger.getAttribute('tabindex')).to.equal('0');
+                  expect(itemTwo.getAttribute('tabindex')).to.equal('-1');
+
+                  await sendKeys({ press: 'Enter' });
+                  await elementUpdated(menu);
+                  expect(menu.open).to.be.true;
+                  menu.open = false;
+                  await elementUpdated(menu);
+                },
+                config: {
+                  toolbar: '',
+                },
+              },
+              toolbarArrowDownOpensMenu: {
+                description: 'should let a menu trigger own ArrowDown instead of moving toolbar focus',
+                test: async () => {
+                  const el = this.component;
+                  const menu = el.children[2] as CoreMenu;
+                  const trigger = menu.querySelector('[slot="trigger"]') as CoreButton;
+
+                  trigger.focus();
+                  await sendKeys({ press: 'ArrowDown' });
+                  await elementUpdated(menu);
+                  await aTimeout(0);
+                  expect(menu.open).to.be.true;
+                  expect(trigger.getAttribute('tabindex')).to.equal('0');
+                  expect((el.children[3] as CoreButton).getAttribute('tabindex')).to.equal('-1');
+                  menu.open = false;
+                  await elementUpdated(menu);
                 },
                 config: {
                   toolbar: '',

@@ -158,10 +158,9 @@ export class CoreMenuItem extends CharmElement {
     });
     this.submenuObserver.observe(this, { childList: true });
 
-    if (this.hasSubmenu) {
-      this.addEventListener('mouseenter', this.handleMouseEnter);
-      this.addEventListener('mouseleave', this.handleMouseLeave);
-    }
+    // Attached unconditionally: a submenu can be added after connect, and the handlers no-op without one.
+    this.addEventListener('mouseenter', this.handleMouseEnter);
+    this.addEventListener('mouseleave', this.handleMouseLeave);
   }
 
   /** Removes event listeners. */
@@ -175,10 +174,8 @@ export class CoreMenuItem extends CharmElement {
 
     this.setParentMenu(null);
 
-    if (this.hasSubmenu) {
-      this.removeEventListener('mouseenter', this.handleMouseEnter);
-      this.removeEventListener('mouseleave', this.handleMouseLeave);
-    }
+    this.removeEventListener('mouseenter', this.handleMouseEnter);
+    this.removeEventListener('mouseleave', this.handleMouseLeave);
   }
 
   public override willUpdate(props: PropertyValues) {
@@ -280,52 +277,43 @@ export class CoreMenuItem extends CharmElement {
     this.parentMenu?.refreshItems();
   }
 
-  /** Handles keydown events on the menu item. */
-  protected handleMenuItemKeyDown = async (e: KeyboardEvent) => {
-    if (e.defaultPrevented || !this.submenuItems?.length) return;
+  /**
+   * Handles keydown events on the menu item. The item owns opening/closing its own submenu, so owned
+   * keys are cancelled synchronously, before any await, to keep the parent menu from also acting on them.
+   */
+  protected handleMenuItemKeyDown = (e: KeyboardEvent) => {
+    if (e.defaultPrevented || !this.hasSubmenu) return;
 
-    let keyHandled = false;
+    const opensSubmenu = this.resolvedDir === 'rtl' ? keys.ArrowLeft : keys.ArrowRight;
+    const closesSubmenu = this.resolvedDir === 'rtl' ? keys.ArrowRight : keys.ArrowLeft;
+    // Keys pressed on nested submenu items bubble through this host; only the close key applies to them.
+    const isOwnKey = e.target === this && !this.disabled;
+    let expand: boolean;
 
-    switch (e.key) {
-      case keys.Enter:
-      case keys.Space:
-        if (!this.disabled) {
-          if (this.hasSubmenu) {
-            this.expanded = !this.expanded;
-            if (this.expanded) {
-              await this.updateComplete;
-              this.setFocus(0);
-            }
-          } else {
-            this.click();
-          }
-          keyHandled = true;
-        }
-        break;
-
-      case keys.ArrowRight:
-      case keys.ArrowLeft: {
-        const opensSubmenu = this.resolvedDir === 'rtl' ? keys.ArrowLeft : keys.ArrowRight;
-        if (e.key === opensSubmenu && this.hasSubmenu && !this.disabled && !this.expanded) {
-          this.expanded = true;
-          await this.updateComplete;
-          this.setFocus(0);
-          keyHandled = true;
-        } else if (e.key !== opensSubmenu && this.hasSubmenu && this.expanded) {
-          this.expanded = false;
-          requestAnimationFrame(() => {
-            this.tabIndex = 0;
-            this.focus();
-          });
-          keyHandled = true;
-        }
-        break;
-      }
+    if (isOwnKey && (e.key === keys.Enter || e.key === keys.Space)) {
+      expand = !this.expanded;
+    } else if (isOwnKey && e.key === opensSubmenu && !this.expanded) {
+      expand = true;
+    } else if (e.key === closesSubmenu && this.expanded) {
+      expand = false;
+    } else {
+      return;
     }
 
-    if (keyHandled) {
-      e.preventDefault();
-      e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
+    this.expanded = expand;
+
+    if (expand) {
+      void this.updateComplete.then(() => {
+        if (this.isConnected && this.expanded) this.setFocus(0);
+      });
+    } else if (e.target !== this) {
+      requestAnimationFrame(() => {
+        if (!this.isConnected) return;
+        this.tabIndex = 0;
+        this.focus();
+      });
     }
   };
 

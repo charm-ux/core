@@ -56,24 +56,68 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
                 },
               },
               lazyContent: {
-                description: 'should render content and accessibility description on first show',
+                description: 'should render content on first show and describe the anchor while closed',
                 config: { trigger: 'manual' },
                 test: async () => {
                   const el = this.component;
                   const anchor = el.querySelector('button')!;
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.be.null;
-                  expect(anchor.hasAttribute('aria-describedby')).to.be.false;
+                  const descriptionId = anchor.getAttribute('aria-describedby')!;
+                  expect(descriptionId).to.match(/ch-tooltip-description-/);
+                  const description = document.getElementById(descriptionId)!;
+                  expect(description.textContent).to.equal('This is a tooltip');
+                  // The description must resolve in the anchor's tree scope.
+                  expect(description.getRootNode()).to.equal(anchor.getRootNode());
 
                   el.open = true;
                   await elementUpdated(el);
-
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
-                  const descriptionId = anchor.getAttribute('aria-describedby')!;
-                  expect(descriptionId).to.match(/ch-tooltip-description-/);
-                  expect(document.getElementById(descriptionId)?.textContent).to.contain('This is a tooltip');
+
                   el.open = false;
                   await elementUpdated(el);
                   expect(el.shadowRoot!.querySelector('[part="body"]')).to.exist;
+                  expect(anchor.getAttribute('aria-describedby')).to.equal(descriptionId);
+                },
+              },
+              descriptionTracksContent: {
+                description: 'should update the anchor description when content changes while open',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  el.content = 'Updated tooltip';
+                  await elementUpdated(el);
+                  const description = document.getElementById(anchor.getAttribute('aria-describedby')!)!;
+                  expect(description.textContent).to.equal('Updated tooltip');
+
+                  const slotted = document.createElement('span');
+                  slotted.slot = 'content';
+                  slotted.textContent = 'Slotted tooltip';
+                  el.append(slotted);
+                  await waitUntil(() => description.textContent === 'Slotted tooltip');
+                },
+              },
+              descriptionRemovedOnDisconnectAndDisable: {
+                description: 'should remove the anchor description when disabled or disconnected',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  anchor.setAttribute('aria-describedby', `external ${anchor.getAttribute('aria-describedby')}`);
+
+                  el.disabled = true;
+                  expect(anchor.getAttribute('aria-describedby')).to.equal('external');
+                  el.disabled = false;
+                  expect(anchor.getAttribute('aria-describedby')).to.match(/^external ch-tooltip-description-/);
+
+                  const parent = el.parentElement!;
+                  el.remove();
+                  expect(anchor.getAttribute('aria-describedby')).to.equal('external');
+                  expect(el.querySelector('[id^="ch-tooltip-description-"]')).to.be.null;
+                  parent.append(el);
                 },
               },
               preservesContentDuringHide: {
@@ -363,6 +407,58 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
 
                   anchor.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, composed: true }));
                   await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                },
+              },
+              focusReopensAfterMove: {
+                description: 'shows on anchor focus after the tooltip is moved to a new parent',
+                config: { trigger: 'focus' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  const newParent = document.createElement('div');
+                  el.parentElement!.append(newParent);
+                  newParent.append(el);
+                  await elementUpdated(el);
+
+                  anchor.focus();
+                  await waitUntil(() => el.open, undefined, { timeout: SETTLE_WAIT_TIMEOUT });
+                  expect(anchor.getAttribute('aria-describedby')).to.match(/ch-tooltip-description-/);
+                  anchor.blur();
+                },
+              },
+              focusAfterPressStaysDismissed: {
+                description: 'does not reopen on the focus that follows a press',
+                config: { trigger: 'hover focus' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  anchor.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, composed: true }));
+                  anchor.dispatchEvent(new FocusEvent('focus'));
+                  expect(el.open).to.be.false;
+                  anchor.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }));
+                  await aTimeout(50);
+                  expect(el.open).to.be.false;
+                },
+              },
+              escapeOnAnchorStopsPropagation: {
+                description: 'closes only the tooltip when Escape is pressed on the anchor',
+                config: { trigger: 'manual' },
+                test: async () => {
+                  const el = this.component;
+                  const anchor = el.querySelector('button')!;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const hideHandler = sinon.spy();
+                  const outerListener = sinon.spy();
+                  el.addEventListener('tooltip-hide', hideHandler);
+                  el.parentElement!.addEventListener('keydown', outerListener);
+                  anchor.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, composed: true }));
+                  el.parentElement!.removeEventListener('keydown', outerListener);
+
+                  expect(el.open).to.be.false;
+                  expect(hideHandler).to.have.been.calledOnce;
+                  expect(outerListener).not.to.have.been.called;
                 },
               },
               escapeDismissesHoverTooltip: {

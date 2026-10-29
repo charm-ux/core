@@ -1,5 +1,6 @@
 import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
-import { CharmScope, createScope, setProjectConfig } from '../../utilities/scope.js';
+import sinon from 'sinon';
+import { CharmScope, createScope, getScope, setProjectConfig } from '../../utilities/scope.js';
 import accordionItem from '../../components/accordion-item/accordion-item.js';
 
 describe('Scope', () => {
@@ -83,6 +84,35 @@ describe('Scope', () => {
     });
 
     expect(customElements.get('ch-accordion-item_scope2')).to.not.be.undefined;
+  });
+
+  it('re-registers a component on suffix change when another scope already owns its tag', () => {
+    class TrackedItem extends accordionItem {
+      public static override baseName = 'scope-tracked';
+    }
+    new CharmScope().registerComponent(TrackedItem);
+
+    const scope = new CharmScope();
+    scope.registerComponent(TrackedItem);
+    scope.updateOptions({ suffix: 'tracked' });
+
+    expect(customElements.get('ch-scope-tracked_tracked')).to.not.be.undefined;
+  });
+
+  it('warns and skips a tag already defined outside a Charm scope', () => {
+    customElements.define('ch-scope-external', class extends HTMLElement {});
+    class ExternalItem extends accordionItem {
+      public static override baseName = 'scope-external';
+    }
+    const warn = sinon.stub(console, 'warn');
+
+    try {
+      expect(() => new CharmScope().registerComponent(ExternalItem)).to.not.throw();
+      expect(warn.calledOnce).to.be.true;
+      expect(getScope('ch-scope-external')).to.be.undefined;
+    } finally {
+      warn.restore();
+    }
   });
 
   describe('getBaseName', () => {

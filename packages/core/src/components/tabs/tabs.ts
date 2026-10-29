@@ -327,6 +327,8 @@ export class CoreTabs extends CharmElement {
     const tabs = this.tabs;
     const panels = this.tabPanels;
     const previousSelected = this.selectedTab;
+    // focusedIndex points into the tab list from the previous sync.
+    const previousFocused = this.previousTabs[this.focusedIndex];
 
     for (const tab of this.previousTabs) {
       if (!tabs.includes(tab)) {
@@ -393,9 +395,18 @@ export class CoreTabs extends CharmElement {
       retainedSelection ??
       firstSelectableTab;
     if (next) this.updateSelection(next, tabs.indexOf(next));
-    if (this.selectedTab && tabs.includes(this.selectedTab)) {
-      this.selectedTab.setAttribute('tabindex', '0');
-      this.focusedIndex = tabs.indexOf(this.selectedTab);
+    // Keep an independently focused tab (manual activation) as the tab stop when selection is unchanged.
+    const focused =
+      previousFocused &&
+      this.selectedTab === previousSelected &&
+      tabs.includes(previousFocused) &&
+      !previousFocused.disabled
+        ? previousFocused
+        : this.selectedTab;
+    if (focused && tabs.includes(focused)) {
+      if (focused !== this.selectedTab) this.selectedTab?.setAttribute('tabindex', '-1');
+      focused.setAttribute('tabindex', '0');
+      this.focusedIndex = tabs.indexOf(focused);
     } else {
       this.focusedIndex = -1;
     }

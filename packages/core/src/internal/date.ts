@@ -23,8 +23,8 @@ export interface DateInputLayout {
 }
 
 export interface DateConstraints {
-  readonly minDate?: Date;
-  readonly maxDate?: Date;
+  readonly minDate: Date;
+  readonly maxDate: Date;
   readonly disabledDates: ReadonlySet<string>;
   readonly disabledWeekDays: ReadonlySet<number>;
 }
@@ -211,8 +211,8 @@ export function rangeLengthDays(first: Date, second: Date): number {
 
 /** Clamps a date to the constraint bounds. */
 export function clampDate(date: Date, constraints: DateConstraints): Date {
-  if (constraints.minDate && compareDates(date, constraints.minDate) < 0) return constraints.minDate;
-  if (constraints.maxDate && compareDates(date, constraints.maxDate) > 0) return constraints.maxDate;
+  if (compareDates(date, constraints.minDate) < 0) return constraints.minDate;
+  if (compareDates(date, constraints.maxDate) > 0) return constraints.maxDate;
   return date;
 }
 
@@ -314,8 +314,8 @@ export function createDateConstraints(
 /** Whether a date is outside the min/max bounds or explicitly disabled. */
 export function isDateUnavailable(date: Date, constraints: DateConstraints): boolean {
   return (
-    (constraints.minDate !== undefined && compareDates(date, constraints.minDate) < 0) ||
-    (constraints.maxDate !== undefined && compareDates(date, constraints.maxDate) > 0) ||
+    compareDates(date, constraints.minDate) < 0 ||
+    compareDates(date, constraints.maxDate) > 0 ||
     constraints.disabledDates.has(toIsoDate(date)) ||
     constraints.disabledWeekDays.has(date.getUTCDay())
   );

@@ -53,6 +53,20 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
                   await expect(el).to.be.accessible();
                 },
               },
+              lateHeadingSlotLabelsPane: {
+                description: 'labels the pane when slotted heading content is added later',
+                test: async () => {
+                  const el = this.component;
+                  const pane = el.shadowRoot?.querySelector('[part="push-pane-base"]');
+                  expect(pane?.hasAttribute('aria-labelledby')).to.be.false;
+
+                  const heading = document.createElement('span');
+                  heading.slot = 'heading';
+                  heading.textContent = 'Late title';
+                  el.append(heading);
+                  await waitUntil(() => pane?.getAttribute('aria-labelledby') === 'push-pane-heading');
+                },
+              },
             },
           },
 

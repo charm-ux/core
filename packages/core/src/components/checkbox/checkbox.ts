@@ -95,11 +95,6 @@ export class CoreCheckbox extends CharmFormControlElement {
     return !!(this.readonly || this.forceReadonly);
   }
 
-  public override connectedCallback() {
-    super.connectedCallback();
-    this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
-  }
-
   /** @internal Click the checkbox. */
   public override click() {
     if (this.effectivelyDisabled || this.effectivelyReadonly) {
@@ -160,7 +155,7 @@ export class CoreCheckbox extends CharmFormControlElement {
       changedProperties.has('forceDisabled') ||
       changedProperties.has('listboxOption')
     ) {
-      this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
+      this.syncFormValue();
       this.validate();
     }
     if (changedProperties.has('forceDisabled')) {
@@ -170,12 +165,16 @@ export class CoreCheckbox extends CharmFormControlElement {
       this.validate();
     }
     if (changedProperties.has('value')) {
-      this.internals.setFormValue(this.getFormAssociatedValue());
+      this.syncFormValue();
     }
   }
 
   protected override getFormAssociatedValue() {
     return this.effectivelyDisabled || this.listboxOption ? null : this.checked ? this.value || 'on' : null;
+  }
+
+  protected override getFormAssociatedState() {
+    return this.checked ? 'checked' : 'unchecked';
   }
 
   protected validate() {
@@ -233,8 +232,8 @@ export class CoreCheckbox extends CharmFormControlElement {
           <input
             aria-describedby=${ifDefined(this.describedBy)}
             aria-hidden=${ifDefined(this.listboxOption ? 'true' : undefined)}
-            aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-            aria-invalid=${this.invalid}
+            aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+            aria-invalid=${this.showInvalid}
             aria-readonly=${ifDefined(this.effectivelyReadonly ? 'true' : undefined)}
             class="input"
             name=${ifDefined(this.name)}

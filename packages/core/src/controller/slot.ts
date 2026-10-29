@@ -32,8 +32,11 @@ export class HasSlotController implements ReactiveController {
     this.updateWatchedSlots();
     this.host.shadowRoot?.addEventListener('slotchange', this.handleSlotChange);
     if (this.watchedSlots.includes('[default]')) {
-      this.mutationObserver ??= new MutationObserver(() => {
-        if (this.host.isConnected && this.updateWatchedSlots()) this.host.requestUpdate();
+      this.mutationObserver ??= new MutationObserver(records => {
+        // `subtree` is only needed to see in-place edits of the host's own text nodes; skip deeper mutations,
+        // which can't change default-slot presence, before rescanning the host's children.
+        if (!this.host.isConnected || !records.some(record => this.isDirectMutation(record))) return;
+        if (this.updateWatchedSlots()) this.host.requestUpdate();
       });
       this.mutationObserver.observe(this.host, { childList: true, characterData: true, subtree: true });
     }
@@ -75,6 +78,10 @@ export class HasSlotController implements ReactiveController {
         this.host.requestUpdate();
       }
     }
+  }
+
+  private isDirectMutation(record: MutationRecord): boolean {
+    return record.type === 'childList' ? record.target === this.host : record.target.parentNode === this.host;
   }
 
   private updateWatchedSlots(): boolean {

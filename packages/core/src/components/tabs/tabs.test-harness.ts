@@ -436,6 +436,26 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   expect(tabs[2].getAttribute('tabindex')).to.equal('0');
                 },
               },
+              manualFocusSurvivesMutation: {
+                description: 'keeps the manually focused tab when panel content changes',
+                test: async () => {
+                  const el = this.component;
+                  const tabs = [...el.querySelectorAll<CoreTab>('[role="tab"]')];
+                  el.manualActivation = true;
+                  await elementUpdated(el);
+                  tabs[0].focus();
+                  await sendKeys({ press: 'ArrowRight' });
+
+                  el.querySelector('#panel-1')!.append(document.createElement('span'));
+                  await Promise.resolve();
+                  expect(tabs[1].getAttribute('tabindex')).to.equal('0');
+                  expect(tabs[0].getAttribute('tabindex')).to.equal('-1');
+
+                  await sendKeys({ press: 'ArrowRight' });
+                  expect(document.activeElement).to.equal(tabs[2]);
+                  expect(el.activeId).to.equal('tab-1');
+                },
+              },
               selectedAfterMount: {
                 description: 'updates selection when a tab is selected after mounting',
                 test: async () => {

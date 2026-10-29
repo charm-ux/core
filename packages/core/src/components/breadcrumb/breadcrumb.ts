@@ -35,8 +35,9 @@ export class CoreBreadcrumb extends CharmElement {
 
   /** Handles changes in the default slot or the separator slot. */
   protected handleSlotChange() {
-    const items = [...this.querySelectorAll<CoreBreadcrumbItem>('ch-breadcrumb-item')].filter(
-      item => item.closest('ch-breadcrumb') === this
+    const breadcrumbTag = this.scope.tagName(CoreBreadcrumb.baseName);
+    const items = [...this.querySelectorAll<CoreBreadcrumbItem>(this.scope.tagName('breadcrumb-item'))].filter(
+      item => item.closest(breadcrumbTag) === this
     );
 
     items.forEach((item, index) => {

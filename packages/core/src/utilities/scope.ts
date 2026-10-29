@@ -135,12 +135,16 @@ export class CharmScope implements ScopeOptions {
       }
       const tagName = `${this.prefix}-${baseName}${this.suffix ? `_${this.suffix}` : ''}`;
       if (tagMap.has(tagName)) {
+        // Track it anyway so a later suffix change re-registers it under this scope's new tag.
+        this.registeredComponents.add(component);
         return;
       }
       if (typeof customElements === 'undefined')
         throw new Error('Charm components can only be registered in a browser.');
-      if (customElements.get(tagName))
-        throw new Error(`The custom element "${tagName}" is already defined outside this scope.`);
+      if (customElements.get(tagName)) {
+        console.warn(`The custom element "${tagName}" is already defined outside a Charm scope; skipping.`);
+        return;
+      }
       const previousBaseComponent = baseNameMap.get(baseName);
       tagMap.set(tagName, this);
       baseNameMap.set(baseName, component);

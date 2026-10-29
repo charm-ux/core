@@ -14,12 +14,12 @@ import styles from './breadcrumb-item.styles.js';
  *
  * @slot - Breadcrumb item's content.
  * @slot start - A presentational prefix icon or similar element.
- * @slot separator - Separator inserted by the parent `ch-breadcrumb`. Set the separator on `ch-breadcrumb` instead.
+ * @slot separator - Internal: filled by the parent `ch-breadcrumb` with a clone of its separator. Don't slot content here; set the separator on `ch-breadcrumb` instead.
  * @slot end - A presentational suffix icon or similar element.
  *
  * @csspart breadcrumb-item-base - The component's base wrapper.
  * @csspart breadcrumb-item-control - The container for start, default, and end slot.
- * @csspart breadcrumb-item-separator - The separator between breadcrumb items.
+ * @csspart breadcrumb-item-separator - The wrapper around the separator the parent breadcrumb places after this item.
  * @csspart start - The container for the 'start' slot.
  * @csspart content - The container for the default slot.
  * @csspart end - The container for the 'end' slot.
@@ -65,9 +65,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
   @property({ type: Boolean, reflect: true })
   public disabled?: boolean;
 
-  /**
-   * When true, will render the separator content.
-   */
+  /** @internal Set by the parent `ch-breadcrumb`; false on the last item so no separator follows it. */
   @property({ reflect: true, type: Boolean })
   public separator: boolean = true;
 
@@ -123,7 +121,7 @@ export class CoreBreadcrumbItem extends CharmFocusableElement {
     >${startContentEndTemplate()}</${controlTag}>`;
   }
 
-  /** Generates the HTML template for the separator. */
+  /** Generates the wrapper for the separator the parent breadcrumb places in the `separator` slot. */
   protected breadcrumbItemSeparatorTemplate() {
     return this.separator
       ? this

@@ -1,4 +1,5 @@
 import { elementUpdated, expect, fixture, html, oneEvent } from '@open-wc/testing';
+import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreTabPanel } from './index.js';
 import '../tabs/index.js';
@@ -94,6 +95,26 @@ export class CoreTabPanelTests<T extends CoreTabPanel> extends CharmElementTests
 
                   // after hide, hidden should be true
                   expect(el.hidden).to.be.true;
+                },
+              },
+              settlesOncePerChange: {
+                description: 'settles on the longest duration despite a delay, and only once per change',
+                test: async () => {
+                  const el = this.component;
+                  el.style.transition = 'opacity 200ms 300ms';
+                  const afterShow = sinon.spy();
+                  el.addEventListener('tab-after-show', afterShow);
+                  const end = () =>
+                    el.dispatchEvent(
+                      new TransitionEvent('transitionend', { elapsedTime: 0.2, propertyName: 'opacity' })
+                    );
+
+                  el.visible = true;
+                  await elementUpdated(el);
+                  end();
+                  expect(afterShow).to.have.been.calledOnce;
+                  end();
+                  expect(afterShow).to.have.been.calledOnce;
                 },
               },
             },

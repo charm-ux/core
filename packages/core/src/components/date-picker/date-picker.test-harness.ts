@@ -354,6 +354,26 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CoreFormContr
                   expect(changeSpy).to.have.been.called;
                 },
               },
+              calendarSelectionRestoresFocusOnce: {
+                description: 'focuses the first segment once after a calendar selection',
+                test: async () => {
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  const first = this.segmentInput('month');
+                  const focusSpy = sinon.spy(first, 'focus');
+                  const day = this.component.shadowRoot
+                    ?.querySelector('.calendar')
+                    ?.shadowRoot?.querySelector<HTMLButtonElement>('[data-date="2025-06-20"]');
+                  if (!day) throw new Error('Expected calendar day button to render.');
+
+                  day.click();
+                  await elementUpdated(this.component);
+                  await this.component.updateComplete;
+
+                  expect(this.component.shadowRoot?.activeElement).to.equal(first);
+                  expect(focusSpy.callCount).to.equal(1);
+                },
+              },
               escapeRestoresFocusToSegment: {
                 description: 'restores focus to the first date segment when Escape closes the popup',
                 test: async () => {
@@ -465,6 +485,43 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CoreFormContr
                   await new Promise(resolve => requestAnimationFrame(resolve));
                   await elementUpdated(this.component);
                   expect(change.callCount).to.equal(0);
+                },
+              },
+              outsideDismissAfterReconnect: {
+                description: 'still closes on an outside pointerdown after being moved while open',
+                test: async () => {
+                  const host = document.createElement('div');
+                  const outside = document.createElement('button');
+                  document.body.append(host, outside);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  host.append(this.component);
+                  await elementUpdated(this.component);
+                  outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(false);
+                  host.remove();
+                  outside.remove();
+                },
+              },
+              shadowHostLangIsInherited: {
+                description: 'inherits and tracks lang from a shadow host ancestor',
+                test: async () => {
+                  const host = document.createElement('div');
+                  host.lang = 'en-US';
+                  host.attachShadow({ mode: 'open' }).append(this.component);
+                  document.body.append(host);
+                  await elementUpdated(this.component);
+                  const kinds = () =>
+                    Array.from(
+                      this.component.shadowRoot?.querySelectorAll<HTMLInputElement>('.segments .segment') ?? []
+                    ).map(segment => segment.dataset.segment);
+                  expect(kinds()).to.deep.equal(['month', 'day', 'year']);
+                  host.lang = 'en-GB';
+                  await aTimeout(0);
+                  await elementUpdated(this.component);
+                  expect(kinds()).to.deep.equal(['day', 'month', 'year']);
+                  host.remove();
                 },
               },
               outsideDismissKeepsClickedFocus: {
@@ -742,19 +799,20 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CoreFormContr
               today: {
                 description: 'sets today from the footer action',
                 test: async () => {
-                  this.component.open = true;
-                  await elementUpdated(this.component);
+                  const clock = sinon.useFakeTimers({ now: new Date(2024, 5, 15, 12), toFake: ['Date'] });
+                  try {
+                    this.component.open = true;
+                    await elementUpdated(this.component);
 
-                  const today = new Date();
-                  const expected = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
-                    today.getDate()
-                  ).padStart(2, '0')}`;
-                  const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
-                  if (!todayButton) throw new Error('Expected today button to render.');
+                    const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
+                    if (!todayButton) throw new Error('Expected today button to render.');
 
-                  todayButton.click();
-                  await elementUpdated(this.component);
-                  expect(this.component.value).to.equal(expected);
+                    todayButton.click();
+                    await elementUpdated(this.component);
+                    expect(this.component.value).to.equal('2024-06-15');
+                  } finally {
+                    clock.restore();
+                  }
                 },
               },
             },

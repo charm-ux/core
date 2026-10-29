@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
+import { composedContains } from '../../internal/composed-contains.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './push-pane.styles.js';
@@ -81,7 +82,7 @@ export class CorePushPane extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'push-pane';
-  public static override watchedSlots = ['actions', 'footer'];
+  public static override watchedSlots = ['actions', 'footer', 'heading'];
 
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
@@ -137,13 +138,7 @@ export class CorePushPane extends CharmDismissibleElement {
   }
 
   protected isWithinPane(element: Element | null): boolean {
-    let node: Node | null = element;
-    while (node) {
-      if (node === this) return true;
-      const root = node.getRootNode();
-      node = root instanceof ShadowRoot ? root.host : node.parentNode;
-    }
-    return false;
+    return composedContains(this, element);
   }
 
   /** Emits the push-pane-request-close event. */
@@ -163,13 +158,6 @@ export class CorePushPane extends CharmDismissibleElement {
         this.requestClose('keyboard');
         break;
     }
-  }
-
-  /**
-   * Handles close click, closes push pane
-   */
-  protected handleCloseClick() {
-    this.open = false;
   }
 
   /** Generates the template for the footer. */

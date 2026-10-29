@@ -576,6 +576,23 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cor
                   expect(change.callCount).to.equal(0);
                 },
               },
+              outsideDismissAfterReconnect: {
+                description: 'still closes on an outside pointerdown after being moved while open',
+                test: async () => {
+                  const host = document.createElement('div');
+                  const outside = document.createElement('button');
+                  document.body.append(host, outside);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  host.append(this.component);
+                  await elementUpdated(this.component);
+                  outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(false);
+                  host.remove();
+                  outside.remove();
+                },
+              },
               outsideDismissKeepsClickedFocus: {
                 description: 'does not restore focus after an outside-pointer dismissal',
                 test: async () => {
@@ -778,19 +795,20 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cor
               today: {
                 description: 'sets a single-day range for today from the footer action',
                 test: async () => {
-                  this.component.open = true;
-                  await elementUpdated(this.component);
+                  const clock = sinon.useFakeTimers({ now: new Date(2024, 5, 15, 12), toFake: ['Date'] });
+                  try {
+                    this.component.open = true;
+                    await elementUpdated(this.component);
 
-                  const today = new Date();
-                  const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
-                    today.getDate()
-                  ).padStart(2, '0')}`;
-                  const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
-                  if (!todayButton) throw new Error('Expected today button to render.');
+                    const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
+                    if (!todayButton) throw new Error('Expected today button to render.');
 
-                  todayButton.click();
-                  await elementUpdated(this.component);
-                  expect(this.component.value).to.equal(`${iso}/${iso}`);
+                    todayButton.click();
+                    await elementUpdated(this.component);
+                    expect(this.component.value).to.equal('2024-06-15/2024-06-15');
+                  } finally {
+                    clock.restore();
+                  }
                 },
               },
             },

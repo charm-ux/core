@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmFocusableElement from '../../base/focusable-element/charm-focusable-element.js';
+import { LocaleController } from '../../controller/locale.js';
 import {
   addDays,
   addMonths,
@@ -27,7 +28,6 @@ import {
   toIsoDate,
 } from '../../internal/date.js';
 import { keys } from '../../utilities/key-map.js';
-import { normalizeLocale } from '../../utilities/locale.js';
 import CoreIcon from '../icon/icon.js';
 import styles from './calendar.styles.js';
 import type { CharmElement } from '../../base/charm-element/charm-element.js';
@@ -187,22 +187,18 @@ export class CoreCalendar extends CharmFocusableElement {
   public readOnly = false;
 
   protected currentMonth = startOfMonth(todayDate());
-
   protected focusedDate = '';
   protected initializingFocus = false;
-  protected cachedLocale = '';
-
+  protected readonly localeController = new LocaleController(this);
   protected constraints: DateConstraints = createDateConstraints();
-
   protected skipValueFocusSync = false;
-  protected localeObserver?: MutationObserver;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
   protected get currentLocale(): string {
-    return this.cachedLocale || this.refreshLocale(false);
+    return this.localeController.locale;
   }
 
   protected get firstWeekday(): number {
@@ -284,34 +280,6 @@ export class CoreCalendar extends CharmFocusableElement {
     } else {
       super.focus(options);
     }
-  }
-
-  public override connectedCallback(): void {
-    super.connectedCallback();
-    this.refreshLocale(false);
-    this.observeLocale();
-  }
-
-  public override disconnectedCallback(): void {
-    this.localeObserver?.disconnect();
-    this.localeObserver = undefined;
-    super.disconnectedCallback();
-  }
-
-  protected observeLocale(): void {
-    this.localeObserver?.disconnect();
-    this.localeObserver = new MutationObserver(() => this.refreshLocale());
-    this.localeObserver.observe(this, { attributes: true, attributeFilter: ['lang'] });
-    const inheritedLanguage = this.parentElement?.closest('[lang]') ?? document.documentElement;
-    if (inheritedLanguage !== this) {
-      this.localeObserver.observe(inheritedLanguage, { attributes: true, attributeFilter: ['lang'] });
-    }
-  }
-
-  protected refreshLocale(requestUpdate = true): string {
-    this.cachedLocale = normalizeLocale(this.closest('[lang]')?.getAttribute('lang') || navigator.language || 'en');
-    if (requestUpdate && this.isConnected && !this.isUpdatePending) this.requestUpdate('lang');
-    return this.cachedLocale;
   }
 
   protected override willUpdate(changedProperties: PropertyValues<this>): void {
@@ -587,7 +555,7 @@ export class CoreCalendar extends CharmFocusableElement {
       let attempts = 0;
       while (this.isDateDisabled(nextDate, selected) && attempts < 366) {
         nextDate = addDays(nextDate, 1);
-        if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) break;
+        if (compareDates(nextDate, this.constraints.maxDate) > 0) break;
         attempts++;
       }
 
@@ -596,7 +564,7 @@ export class CoreCalendar extends CharmFocusableElement {
         attempts = 0;
         while (this.isDateDisabled(nextDate, selected) && attempts < 366) {
           nextDate = addDays(nextDate, -1);
-          if (this.constraints.minDate && compareDates(nextDate, this.constraints.minDate) < 0) return;
+          if (compareDates(nextDate, this.constraints.minDate) < 0) return;
           attempts++;
         }
         if (this.isDateDisabled(nextDate, selected)) return;
@@ -625,10 +593,7 @@ export class CoreCalendar extends CharmFocusableElement {
   protected isMonthOutsideRange(month: Date): boolean {
     const first = startOfMonth(month);
     const last = createUtcDate(first.getUTCFullYear(), first.getUTCMonth() + 1, 0);
-    return Boolean(
-      (this.constraints.minDate && compareDates(last, this.constraints.minDate) < 0) ||
-        (this.constraints.maxDate && compareDates(first, this.constraints.maxDate) > 0)
-    );
+    return compareDates(last, this.constraints.minDate) < 0 || compareDates(first, this.constraints.maxDate) > 0;
   }
 
   protected handleMonthChange(event: Event): void {
@@ -720,16 +685,9 @@ export class CoreCalendar extends CharmFocusableElement {
     const isWeekJump = event.key === keys.Home || event.key === keys.End;
     const weekStart = addDays(date, -((date.getUTCDay() - this.firstWeekday + DAYS_IN_WEEK) % DAYS_IN_WEEK));
     const weekEnd = addDays(weekStart, DAYS_IN_WEEK - 1);
-    const minBound = isWeekJump
-      ? this.constraints.minDate && compareDates(this.constraints.minDate, weekStart) > 0
-        ? this.constraints.minDate
-        : weekStart
-      : (this.constraints.minDate ?? createUtcDate(1, 0, 1));
-    const maxBound = isWeekJump
-      ? this.constraints.maxDate && compareDates(this.constraints.maxDate, weekEnd) < 0
-        ? this.constraints.maxDate
-        : weekEnd
-      : (this.constraints.maxDate ?? createUtcDate(9999, 11, 31));
+    const { minDate, maxDate } = this.constraints;
+    const minBound = isWeekJump && compareDates(minDate, weekStart) <= 0 ? weekStart : minDate;
+    const maxBound = isWeekJump && compareDates(maxDate, weekEnd) >= 0 ? weekEnd : maxDate;
     if (isWeekJump && compareDates(minBound, maxBound) > 0) return;
 
     const search = (start: Date, step: number, limit: number): Date | undefined => {

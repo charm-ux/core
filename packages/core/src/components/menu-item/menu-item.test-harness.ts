@@ -1,6 +1,8 @@
 import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { project } from '../../utilities/index.js';
 import type { CoreMenuItem } from './index.js';
 
 export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests<T> {
@@ -96,6 +98,58 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
                   el.expanded = false;
                   await elementUpdated(el);
                   expect(child.parentElement).to.equal(el);
+                },
+              },
+              lateSubmenuOpensOnHover: {
+                description: 'opens on hover when the submenu is added after connect',
+                test: async () => {
+                  const el = this.component;
+                  const child = document.createElement(project.scope.tagName('menu-item'));
+                  child.textContent = 'Child action';
+                  el.appendChild(child);
+                  await aTimeout(0);
+                  await elementUpdated(el);
+                  expect(el.hasSubmenu).to.be.true;
+
+                  el.dispatchEvent(new MouseEvent('mouseenter'));
+                  await elementUpdated(el);
+                  expect(el.expanded).to.be.true;
+
+                  el.dispatchEvent(new MouseEvent('mouseleave'));
+                  await elementUpdated(el);
+                  expect(el.expanded).to.be.false;
+                },
+              },
+              enterOpensSubmenuInMenu: {
+                description: 'keeps the submenu open when Enter is pressed on its owner inside a menu',
+                test: async () => {
+                  const menuTag = project.scope.tagName('menu');
+                  const itemTag = project.scope.tagName('menu-item');
+                  const container = document.createElement('div');
+                  document.body.appendChild(container);
+                  try {
+                    container.innerHTML = `
+                      <${menuTag} open>
+                        <button slot="trigger">Open</button>
+                        <${itemTag} id="owner">Owner<${itemTag}>Child</${itemTag}></${itemTag}>
+                      </${menuTag}>
+                    `;
+                    const menu = container.querySelector(menuTag) as HTMLElement & { updateComplete: Promise<void> };
+                    const owner = container.querySelector('#owner') as CoreMenuItem;
+                    await menu.updateComplete;
+                    await aTimeout(0);
+                    await elementUpdated(owner);
+
+                    owner.focus();
+                    await sendKeys({ press: 'Enter' });
+                    await elementUpdated(owner);
+                    await aTimeout(0);
+
+                    expect(owner.expanded).to.be.true;
+                    expect(owner.getAttribute('aria-expanded')).to.equal('true');
+                  } finally {
+                    container.remove();
+                  }
                 },
               },
             },

@@ -59,11 +59,20 @@ export class CoreRadio extends CharmFormControlElement {
   @state()
   public forceDisabled = false;
 
+  /** @internal Makes the radio readonly while preserving its own `readonly` state. Set by the containing radio group when the group is readonly. */
+  @state()
+  public forceReadonly = false;
+
   protected initialChecked = false;
 
   /** Whether the radio is disabled directly, by its form, or by a containing group. */
   protected get effectivelyDisabled() {
     return !!(this.disabled || this.forceDisabled);
+  }
+
+  /** Whether the radio is readonly by itself or by a containing group. */
+  protected get effectivelyReadonly() {
+    return !!(this.readonly || this.forceReadonly);
   }
 
   public override connectedCallback(): void {
@@ -94,11 +103,6 @@ export class CoreRadio extends CharmFormControlElement {
     this.updateValidity();
   }
 
-  protected override formDisabledCallback(disabled: boolean) {
-    super.formDisabledCallback(disabled);
-    this.handleDisabledChange();
-  }
-
   protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
   }
@@ -127,7 +131,7 @@ export class CoreRadio extends CharmFormControlElement {
     this.internals.setValidity(customError ? { customError: true } : {}, this.customErrorMessage);
     if (this.hadFocus || this.hasFocus) this.updateErrorMessage();
     this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
-    this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
+    this.syncFormValue();
   }
 
   /** Handles the change in the `disabled` and `forceDisabled` state. */
@@ -163,7 +167,7 @@ export class CoreRadio extends CharmFormControlElement {
 
   /** Handles the click event. */
   protected handleClick = () => {
-    if (!this.effectivelyDisabled && !this.readonly) {
+    if (!this.effectivelyDisabled && !this.effectivelyReadonly) {
       this.checked = true;
       if (!this.isInRadioGroup()) this.uncheckNamedPeers();
     }
@@ -173,7 +177,7 @@ export class CoreRadio extends CharmFormControlElement {
   protected handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === keys.Space) {
       e.preventDefault();
-      if (this.effectivelyDisabled || this.readonly) return;
+      if (this.effectivelyDisabled || this.effectivelyReadonly) return;
       this.checked = true;
       if (!this.isInRadioGroup()) this.uncheckNamedPeers();
     }
@@ -198,8 +202,8 @@ export class CoreRadio extends CharmFormControlElement {
     return this.isInRadioGroup() || this.effectivelyDisabled || !this.checked ? null : this.value || 'on';
   }
 
-  protected syncFormValue() {
-    this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
+  protected override getFormAssociatedState() {
+    return this.checked ? 'checked' : 'unchecked';
   }
 
   protected uncheckNamedPeers() {

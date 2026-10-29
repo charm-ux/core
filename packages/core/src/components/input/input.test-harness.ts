@@ -256,6 +256,23 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   expect(getInput()?.getAttribute('aria-errormessage')).to.be.null;
                 },
               },
+              pristineRequired: {
+                description: 'does not announce a pristine required input as invalid until it is reported',
+                test: async () => {
+                  const el = this.component;
+                  const getInput = () => el.shadowRoot?.querySelector('input');
+                  el.required = true;
+                  await elementUpdated(el);
+                  expect(el.checkValidity()).to.be.false;
+                  expect(getInput()?.getAttribute('aria-invalid')).to.equal('false');
+                  expect(getInput()?.getAttribute('aria-describedby') ?? '').to.not.contain('error-text');
+
+                  el.reportValidity();
+                  await elementUpdated(el);
+                  expect(getInput()?.getAttribute('aria-invalid')).to.equal('true');
+                  expect(getInput()?.getAttribute('aria-describedby')).to.contain('error-text');
+                },
+              },
               helpText: {
                 description: 'describes the field with the help text when present',
                 test: async () => {
@@ -360,6 +377,26 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                   await sendKeys({ press: 'Enter' });
                   await aTimeout(20);
                   expect(submitSpy).to.have.been.calledOnce;
+                },
+              },
+              enterKeyImplicitSubmission: {
+                description: 'implicitly submits on Enter when the only blocking field is an untyped input',
+                test: async () => {
+                  const tag = project.scope.tagName('input');
+                  // A lone untyped input defaults to `text`; textareas never block implicit submission.
+                  for (const template of [
+                    html`<form><${unsafeStatic(tag)} value="ready"></${unsafeStatic(tag)}></form>`,
+                    html`<form><${unsafeStatic(tag)} type="text" value="ready"></${unsafeStatic(tag)}><textarea></textarea></form>`,
+                  ]) {
+                    const form = await fixture<HTMLFormElement>(template);
+                    const submitSpy = sinon.spy((event: Event) => event.preventDefault());
+                    form.addEventListener('submit', submitSpy);
+                    const innerInput = form.querySelector(tag)?.shadowRoot?.querySelector('input') as HTMLInputElement;
+                    innerInput.focus();
+                    await sendKeys({ press: 'Enter' });
+                    await aTimeout(20);
+                    expect(submitSpy).to.have.been.calledOnce;
+                  }
                 },
               },
               readonlyRangeTab: {

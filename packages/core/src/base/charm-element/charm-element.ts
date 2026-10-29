@@ -23,6 +23,9 @@ function rewriteThemePrefix(cssText: string, prefix: string): string {
   return cssText.split(`--${DEFAULT_THEME_PREFIX}-`).join(`--${prefix}-`);
 }
 
+/** Element classes whose `dependencies` have already been registered, per scope. */
+const registeredDependencies = new WeakMap<CharmScope, WeakSet<typeof CharmElement>>();
+
 /**
  * A base class for all Charm components.
  *
@@ -68,7 +71,11 @@ export class CharmElement extends LitElement {
       );
     }
     this.scope = scope;
-    let elementClass: typeof CharmElement | null = this.constructor as typeof CharmElement;
+    const ctor = this.constructor as typeof CharmElement;
+    let registeredClasses = registeredDependencies.get(scope);
+    if (!registeredClasses) registeredDependencies.set(scope, (registeredClasses = new WeakSet()));
+    if (registeredClasses.has(ctor)) return;
+    let elementClass: typeof CharmElement | null = ctor;
     while (elementClass) {
       if (Object.prototype.hasOwnProperty.call(elementClass, 'dependencies')) {
         elementClass.dependencies.forEach(component => this.scope.registerComponent(component));
@@ -76,6 +83,7 @@ export class CharmElement extends LitElement {
       if (elementClass === CharmElement) break;
       elementClass = Object.getPrototypeOf(elementClass) as typeof CharmElement | null;
     }
+    registeredClasses.add(ctor);
   }
 
   /** @internal An array of components used within this component that will need to match the host scoping */

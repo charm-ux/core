@@ -10,6 +10,14 @@ affect consumers.
 **When you can skip it:** internal refactoring, test-only changes, tooling changes,
 documentation typos (use the `no-changeset` label).
 
+**Semver.** `protected` members are extension API ([COMP-016](../component-design/COMP-016.md)), so
+removing, renaming, or changing the signature of a `protected` or `public` member is breaking.
+Changing default behavior that consumers can observe (events, ARIA, attributes, dismissal) is
+breaking too. While packages are pre-1.0, breaking changes are `minor` and fixes are `patch`.
+
+**One changeset per topic.** Write a separate changeset for each consumer-visible change rather
+than one changeset listing many. Each becomes one changelog line, and a reviewer can check its bump.
+
 **Changelog message style:**
 
 - One line, brief and to the point, present tense.

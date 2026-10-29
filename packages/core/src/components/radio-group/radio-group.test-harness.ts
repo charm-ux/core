@@ -59,6 +59,57 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     expect(el.value).to.equal('1');
                   },
                 },
+                readonlyRadioInGroup: {
+                  description: "preserves a radio's own readonly state and keeps it from being selected",
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    radios[1].readonly = true;
+                    el.value = '1';
+                    await elementUpdated(el);
+
+                    el.readonly = true;
+                    await elementUpdated(el);
+                    el.readonly = false;
+                    await elementUpdated(el);
+                    await aTimeout(0);
+                    expect(radios[1].readonly).to.be.true;
+                    expect(radios[0].readonly).to.be.false;
+
+                    radios[1].click();
+                    await elementUpdated(el);
+                    expect(el.value).to.equal('1');
+
+                    radios[0].focus();
+                    await sendKeys({ press: 'ArrowDown' });
+                    await elementUpdated(el);
+                    expect(document.activeElement).to.equal(radios[1]);
+                    expect(el.value).to.equal('1');
+                    expect(radios[1].checked).to.not.be.true;
+                  },
+                },
+                disabledFieldset: {
+                  description: 'force-disables radios when the group is disabled by a parent fieldset',
+                  test: async () => {
+                    const el = this.component;
+                    const radios = [...el.querySelectorAll(project.scope.tagName('radio'))] as CoreRadio[];
+                    const fieldset = await fixture<HTMLFieldSetElement>(html`<fieldset>${el}</fieldset>`);
+                    await elementUpdated(el);
+
+                    fieldset.disabled = true;
+                    await waitUntil(() => radios.every(radio => radio.tabIndex === -1));
+                    expect(el.disabled).to.be.true;
+                    radios.forEach(radio => {
+                      expect(radio.hasAttribute('force-disabled')).to.be.true;
+                      expect(radio.tabIndex).to.equal(-1);
+                    });
+
+                    fieldset.disabled = false;
+                    await waitUntil(() => radios[0].tabIndex === 0);
+                    expect(radios[0].hasAttribute('force-disabled')).to.be.false;
+                    expect(radios[0].tabIndex).to.equal(0);
+                  },
+                },
                 rightArrowInRtl: {
                   description: 'moves to the previous radio when ArrowRight is pressed in RTL',
                   test: async () => {
@@ -172,6 +223,18 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     el.value = '1';
                     await elementUpdated(el);
                     expect(el.reportValidity()).to.be.true;
+                  },
+                },
+                requiredUntouchedInForm: {
+                  description: 'keeps an untouched required group invalid in its form without announcing it',
+                  test: async () => {
+                    const group = this.component;
+                    group.required = true;
+                    const form = await fixture<HTMLFormElement>(html`<form>${group}</form>`);
+                    await elementUpdated(group);
+                    await aTimeout(0);
+                    expect(form.checkValidity()).to.be.false;
+                    expect(group.shadowRoot?.querySelector('fieldset')?.getAttribute('aria-invalid')).to.equal('false');
                   },
                 },
                 requiredNoChecked: {

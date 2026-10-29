@@ -16,3 +16,4 @@ Accessibility rules. Full details in [`.agents/rules/accessibility/`](../../.age
 - **A11Y-012** — Meet 4.5:1 text contrast and 3:1 essential-boundary contrast; verify placeholder and theme token colors. ([details](../../.agents/rules/accessibility/A11Y-012.md))
 - **A11Y-013** — Label every native field in a composite control, use a visible validation anchor, and preserve draft values on cancel. ([details](../../.agents/rules/accessibility/A11Y-013.md))
 - **A11Y-014** — Name the element that carries a composite widget's role; host labels do not cross shadow roots. ([details](../../.agents/rules/accessibility/A11Y-014.md))
+- **A11Y-015** — Call `preventDefault`/`stopPropagation` for owned keys synchronously, before any `await`; guard nested owners with `e.target === this`; the roving item must be the element that takes focus (menu trigger, not `ch-menu` host); stop Escape once an open overlay handles it. ([details](../../.agents/rules/accessibility/A11Y-015.md))

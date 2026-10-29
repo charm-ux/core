@@ -37,6 +37,7 @@ export interface SelectedMenuItem {
 export class CoreMenuGroup extends CharmElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'menu-group';
+  public static override watchedSlots = ['heading'];
 
   /** The heading text for the menu group. */
   @property({ type: String })

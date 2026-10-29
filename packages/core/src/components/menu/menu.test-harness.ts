@@ -170,6 +170,22 @@ export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
                   expect(el.open).to.be.true;
                 },
               },
+              triggerClickedSkipsDisabled: {
+                description: 'focuses the first enabled item when the trigger is clicked',
+                test: async () => {
+                  const el = this.component;
+                  const triggerElement = el.querySelector('#triggerId') as HTMLButtonElement;
+                  const menuItems = el.querySelectorAll<HTMLElement & { disabled?: boolean }>('[role="menuitem"]');
+                  menuItems[0].disabled = true;
+                  await elementUpdated(menuItems[0]);
+
+                  triggerElement.click();
+                  await elementUpdated(el);
+                  await new Promise(requestAnimationFrame);
+
+                  expect(document.activeElement).to.equal(menuItems[1]);
+                },
+              },
               triggerPressedSpace: {
                 description: 'opens the dropdown when the trigger is pressed with "space"',
                 test: async () => {

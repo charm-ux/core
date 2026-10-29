@@ -3,6 +3,7 @@ import { repeat } from 'lit/directives/repeat.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
+import { composedContains } from '../../internal/composed-contains.js';
 import Button from '../button/button.js';
 import Icon from '../icon/icon.js';
 import Menu from '../menu/menu.js';
@@ -195,9 +196,7 @@ export class CoreOverflow extends CharmElement {
     const overFlowing = this.isOverflowing();
     const previousOverflowSize = this.overflowSet.size;
     const activeElement = this.deepActiveElement();
-    const focusedItem = activeElement
-      ? slottedElements.find(item => this.containsComposed(item, activeElement))
-      : undefined;
+    const focusedItem = activeElement ? slottedElements.find(item => composedContains(item, activeElement)) : undefined;
 
     if (overFlowing && slottedElements.length - this.overflowSet.size > this.min) {
       // Hide items from right to left until we are no longer overflowing.
@@ -232,16 +231,6 @@ export class CoreOverflow extends CharmElement {
     let active: Element | null = document.activeElement;
     while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
     return active;
-  }
-
-  protected containsComposed(container: Node, target: Node): boolean {
-    let node: Node | null = target;
-    while (node) {
-      if (node === container) return true;
-      const root = node.getRootNode();
-      node = root instanceof ShadowRoot ? root.host : node.parentNode;
-    }
-    return false;
   }
 
   /**

@@ -9,6 +9,22 @@ import { keys } from '../../utilities/key-map.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './input.styles.js';
 
+/** Input types that block implicit submission when more than one is present in a form (HTML spec). */
+const implicitSubmissionBlockingTypes = new Set([
+  'text',
+  'search',
+  'url',
+  'tel',
+  'email',
+  'password',
+  'date',
+  'month',
+  'week',
+  'time',
+  'datetime-local',
+  'number',
+]);
+
 export type InputTypes =
   | 'date'
   | 'datetime-local'
@@ -330,36 +346,16 @@ export class CoreInput extends CharmFormControlElement {
         return;
       }
 
+      // Per the HTML spec, implicit submission only happens when no other field blocks it.
       const blockingFields = elements.filter(element => {
         if (element instanceof HTMLInputElement) {
-          return (
-            !element.disabled &&
-            [
-              'text',
-              'search',
-              'url',
-              'tel',
-              'email',
-              'password',
-              'date',
-              'month',
-              'week',
-              'time',
-              'datetime-local',
-              'number',
-            ].includes(element.type)
-          );
+          return !element.disabled && implicitSubmissionBlockingTypes.has(element.type);
         }
         if (element.localName === this.scope.tagName('input')) {
           const input = element as HTMLElement & { disabled?: boolean; type?: string };
-          return (
-            !input.disabled &&
-            ['text', 'search', 'url', 'tel', 'email', 'password', 'date', 'datetime-local', 'time', 'number'].includes(
-              input.type ?? ''
-            )
-          );
+          return !input.disabled && implicitSubmissionBlockingTypes.has(input.type ?? 'text');
         }
-        return element instanceof HTMLTextAreaElement && !element.disabled;
+        return false;
       });
       if (blockingFields.length === 1) form.requestSubmit();
     });
@@ -425,8 +421,8 @@ export class CoreInput extends CharmFormControlElement {
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
         autocomplete=${ifDefined(this.autocomplete) as any}
         aria-describedby=${ifDefined(this.describedBy)}
-        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-        aria-invalid=${this.invalid}
+        aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+        aria-invalid=${this.showInvalid}
         class="form-control-base-input"
         enterkeyhint=${ifDefined(this.enterkeyhint)}
         id="input"

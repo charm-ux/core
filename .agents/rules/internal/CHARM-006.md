@@ -30,6 +30,34 @@ value or constraints change (`required`, `min`, `max`, `pattern`, `disabled`, `r
 validity). Apply custom validity to both the native input and `ElementInternals`. Refresh the
 cached validation message before deriving `invalid` so an update cannot expose stale state.
 
+**Expose invalid state only after interaction.** Validity always lives in `ElementInternals`, so
+submission is blocked from the start. But bind `aria-invalid`, `aria-errormessage`, the
+`error-text` id in `aria-describedby`, and error-text visibility to the base's `showInvalid` getter
+(`invalid && hadFocus`, where `reportValidity()` and `setCustomValidity()` set `hadFocus`), never to
+raw `invalid`. Otherwise pristine required fields are announced "invalid" on page load. Use the
+`errorTextRole` hook rather than reading the host's `role` attribute in the base.
+
+**Write form values through one path.** Call `syncFormValue()`, which runs
+`setFormValue(getFormAssociatedValue(), getFormAssociatedState())`. Override
+`getFormAssociatedState()` when the restore state differs from the submitted value (checkbox and
+switch restore `checked`/`unchecked`). A one-argument `setFormValue()` call elsewhere discards that
+state.
+
+**Composite controls without an inner input** (radio group, checkbox group) must override
+`updateValidity()` and compute their own validity (`valueMissing`, custom error). The base version
+reads `this.input?.validity`, which is `undefined` for them, so it clears whatever the composite set.
+Route `reportValidity`, `setCustomValidity`, `firstUpdated`, and value changes through that one
+override rather than repeating `setValidity` sequences.
+
+**Group-forced state combines with each child's own state.** When a group forces `disabled` or
+`readonly` onto its children, use separate `forceDisabled`/`forceReadonly` fields and an effective
+getter (`readonly || forceReadonly`). Never overwrite the child's own property. Keyboard and click
+selection in the group must respect each child's effective state.
+
+`formDisabledCallback()` must call `requestUpdate('disabled', oldEffectiveDisabled)` so subclasses
+that check `changedProperties.has('disabled')` see fieldset changes too. Don't add a separate
+`has('formDisabled')` branch in each subclass.
+
 Some controls, such as a host-based radio, deliberately have no inner native input because a
 second interactive control would create nested-interactive semantics. They still extend this
 base and use `ElementInternals`; override only the validity behavior that requires an inner
@@ -37,7 +65,9 @@ control, while keeping form association, reset, and fieldset-disabled wiring in 
 
 Add browser regression tests for cleared `FormData`, custom errors before and after render,
 constraint changes, fieldset disable/enable, reset after moving, and checked/multi-value
-submissions. Component happy-path tests alone do not cover these lifecycle interactions.
+submissions, an untouched required control (not announced invalid, but `form.checkValidity()` is
+false), and restoration state. Component happy-path tests alone do not cover these lifecycle
+interactions.
 
 **Do:**
 
@@ -49,12 +79,13 @@ export class CoreCheckbox extends CharmFormControlElement {
 ```
 
 ```ts
-// The base owns validity — reuse it, don't reinvent it.
-protected updateValidity() {
-  this.updateComplete.then(() => {
-    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.input);
-  });
-}
+// Bind invalid ARIA to showInvalid, not invalid.
+html`
+  <input
+    aria-invalid=${this.showInvalid}
+    aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+  />
+`;
 ```
 
 ```ts

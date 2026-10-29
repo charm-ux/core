@@ -12,6 +12,11 @@ added after the first render, render the slot unconditionally and toggle only it
 conditionally creating the `<slot>` makes late content invisible to the controller. For the
 default slot, treat `slot=""` as default content and account for text that changes in place.
 
+Watch every slot whose presence changes ARIA or structure, not just the visual ones. A `heading`
+slot that drives `aria-labelledby` must be in `watchedSlots`, or a heading added after the first
+render never names the group. Branch on `hasNamedSlot(name)`; never run
+`this.querySelector('[slot="…"]')` inside `render()`, which re-queries the light DOM on every update.
+
 **Do:**
 
 ```ts

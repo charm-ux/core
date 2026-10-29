@@ -92,39 +92,14 @@ export class CoreRadioGroup extends CharmFormControlElement {
   /** Checks for validity and shows the browser's validation message if the control is invalid. */
   public override reportValidity(): boolean {
     this.hadFocus = true;
-    const validity = this.validity;
-
-    this._errorMessage = this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage());
-    this.invalid = !validity.valid;
-
-    this.internals.setValidity(
-      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
-      this._errorMessage,
-      this.validationTarget
-    );
-
+    this.updateValidity();
     return !this.invalid;
   }
 
   public override setCustomValidity(message = '') {
     this.hadFocus = true;
     this.customErrorMessage = message;
-    const validity = this.validity;
-    this._errorMessage = message || (validity.valid ? '' : this.getNativeErrorMessage());
-    this.invalid = !validity.valid;
-    this.internals.setValidity(
-      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
-      this._errorMessage,
-      this.validationTarget
-    );
-  }
-
-  public override connectedCallback() {
-    super.connectedCallback();
-    // The base class syncs the form value on every connect, which registers an empty string for a group with no
-    // selection. Native radios submit nothing when none is checked, so re-apply the value-dependent form value here
-    // (`firstUpdated` doesn't run again when the group is moved between forms).
-    this.internals.setFormValue(this.value || null);
+    this.updateValidity();
   }
 
   /** Focus the selected radio or the first enabled radio. */
@@ -143,18 +118,24 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected override firstUpdated() {
     super.firstUpdated();
-    this.internals.setFormValue(this.value || null);
-    const validity = this.validity;
-    this.internals.setValidity(
-      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
-      this.validationMessage,
-      this.validationTarget
-    );
-    this.invalid = false;
+    this.updateValidity();
   }
 
-  protected override updateErrorMessage() {
-    this.reportValidity();
+  /**
+   * Computes the group's composite validity (there's no single native control to read it from), syncs it to
+   * `ElementInternals`, and submits the selected value. The error message is only shown after interaction.
+   */
+  protected override updateValidity() {
+    const validity = this.validity;
+    const message = this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage());
+    this.internals.setValidity(
+      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
+      message,
+      this.validationTarget
+    );
+    if (this.hadFocus || this.customErrorMessage) this._errorMessage = message;
+    this.invalid = !validity.valid;
+    this.syncFormValue();
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
@@ -174,15 +155,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
   protected handleValueChange() {
     if (!this.hasUpdated) return;
+    // Validity and the form value are updated by the base class' `updated()`.
     this.syncRadioElements();
-    this.internals.setFormValue(this.value || null);
-    const validity = this.validity;
-    this.internals.setValidity(
-      validity.valid ? {} : { valueMissing: validity.valueMissing, customError: validity.customError },
-      this.customErrorMessage || (validity.valid ? '' : this.getNativeErrorMessage()),
-      this.validationTarget
-    );
-    if (this.hadFocus) this.reportValidity();
   }
 
   protected getNativeErrorMessage() {
@@ -208,7 +182,9 @@ export class CoreRadioGroup extends CharmFormControlElement {
       this.disabled ||
       this.readonly ||
       target.disabled ||
-      target.forceDisabled
+      target.forceDisabled ||
+      target.readonly ||
+      target.forceReadonly
     ) {
       return;
     }
@@ -238,11 +214,13 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
     event.preventDefault();
 
-    const checkedIndex = enabledRadios.findIndex(radio => radio.checked);
+    // Navigate from the focused radio; it can differ from the checked one when it's readonly.
+    const focusedIndex = enabledRadios.indexOf(event.target as CoreRadio);
+    const currentIndex = focusedIndex !== -1 ? focusedIndex : enabledRadios.findIndex(radio => radio.checked);
 
     let targetIndex: number;
     if (event.key === keys.Space) {
-      targetIndex = checkedIndex === -1 ? 0 : checkedIndex;
+      targetIndex = currentIndex === -1 ? 0 : currentIndex;
     } else {
       const direction: 1 | -1 =
         event.key === keys.ArrowUp
@@ -256,7 +234,7 @@ export class CoreRadioGroup extends CharmFormControlElement {
               : event.key === keys.ArrowRight
                 ? 1
                 : -1;
-      const startIndex = checkedIndex === -1 ? (direction === 1 ? -1 : 0) : checkedIndex;
+      const startIndex = currentIndex === -1 ? (direction === 1 ? -1 : 0) : currentIndex;
       targetIndex = findNextEnabledIndex(enabledRadios, startIndex, direction, () => true);
     }
 
@@ -265,8 +243,9 @@ export class CoreRadioGroup extends CharmFormControlElement {
     }
 
     const targetRadio = enabledRadios[targetIndex];
-    this.radios.forEach(radio => (radio.checked = false));
-    targetRadio.checked = true;
+    // A readonly radio receives focus but can't be selected.
+    if (!targetRadio.readonly && !targetRadio.forceReadonly)
+      this.radios.forEach(radio => (radio.checked = radio === targetRadio));
     targetRadio.tabIndex = 0;
     targetRadio.focus();
 
@@ -294,8 +273,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
   }
 
   /**
-   * Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without
-   * clobbering their own `disabled` state), syncs their `checked` state to the group's value, and applies the roving
+   * Synchronizes the slotted radios with the group's state: forces them disabled/readonly when the group is (without
+   * clobbering their own state), syncs their `checked` state to the group's value, and applies the roving
    * tabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's.
    */
   protected async syncRadioElements() {
@@ -303,13 +282,13 @@ export class CoreRadioGroup extends CharmFormControlElement {
 
     radios.forEach(radio => {
       radio.forceDisabled = this.disabled;
+      radio.forceReadonly = this.readonly;
     });
 
     await Promise.all(radios.map(radio => radio.updateComplete));
 
     radios.forEach(radio => {
       radio.checked = radio.value === this.value;
-      radio.readonly = this.readonly;
     });
 
     await Promise.all(radios.map(radio => radio.updateComplete));
@@ -397,8 +376,8 @@ export class CoreRadioGroup extends CharmFormControlElement {
         part="radio-group-base"
         role="radiogroup"
         aria-describedby=${ifDefined(this.describedBy)}
-        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-        aria-invalid="${this.invalid}"
+        aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+        aria-invalid="${this.showInvalid}"
         aria-orientation=${this.layout === 'horizontal' || this.layout === 'horizontal-stacked'
           ? 'horizontal'
           : 'vertical'}

@@ -2,9 +2,9 @@
 
 Components include a `<name>.performance.ts` benchmark using `benchmarkComponentPerformance`
 from `internal/testing/component-performance.ts`. The helper records mount, rerender, and bulk
-mount timing summaries for the `performanceReporter`; these are currently diagnostic benchmarks,
-not enforced per-component time budgets. Do not describe them as failing budgets until an
-explicit threshold assertion is implemented.
+mount timing summaries for the `performanceReporter`. Those summaries are diagnostic, not
+budgets. A budget is an explicit `expect(...).to.be.lessThan(budgetMs)` assertion in the same file
+([PERF-002](../performance/PERF-002.md)). Only call a check a budget when such an assertion exists.
 
 Run these separately from unit tests: `pnpm test:core-performance`.
 Run bulk counts sequentially to avoid benchmark contention, and exclude production benchmark

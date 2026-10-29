@@ -64,15 +64,6 @@ export const WithStartIcon: Story = {
   },
 };
 
-// Breadcrumb item without separator
-export const WithoutSeparator: Story = {
-  render: args => template(args),
-  args: {
-    'default-slot': 'No Separator',
-    separator: false,
-  },
-};
-
 // Disabled breadcrumb item
 export const Disabled: Story = {
   render: args => template(args),

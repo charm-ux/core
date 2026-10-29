@@ -94,13 +94,6 @@ export class CoreSwitch extends CharmFormControlElement {
     this.input?.click();
   }
 
-  public override connectedCallback(): void {
-    super.connectedCallback();
-    // The base class syncs the form value from `value` on (re)connection, which
-    // would clobber the checked-dependent form value. Re-apply it.
-    this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
-  }
-
   /** Gets the control's initial form value for reset behavior. */
   protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
@@ -108,6 +101,10 @@ export class CoreSwitch extends CharmFormControlElement {
 
   protected override getFormAssociatedValue() {
     return !this.disabled && this.checked ? this.value || 'on' : null;
+  }
+
+  protected override getFormAssociatedState() {
+    return this.checked ? 'checked' : 'unchecked';
   }
 
   protected override firstUpdated(): void {
@@ -140,9 +137,6 @@ export class CoreSwitch extends CharmFormControlElement {
     this._resolvedDir = this.resolvedDir;
     if (changedProperties.has('checked')) {
       this.updateValidity();
-      // Set the form value after updateValidity() so the base class' form-value sync
-      // (which uses `value`) doesn't clobber the checked-dependent value.
-      this.internals.setFormValue(this.getFormAssociatedValue(), this.checked ? 'checked' : 'unchecked');
     }
   }
 
@@ -199,8 +193,8 @@ export class CoreSwitch extends CharmFormControlElement {
         role="switch"
         aria-readonly=${ifDefined(this.readonly ? 'true' : undefined)}
         aria-describedby=${ifDefined(this.describedBy)}
-        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-        aria-invalid=${this.invalid}
+        aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+        aria-invalid=${this.showInvalid}
         ?autofocus=${this.autofocus}
         ?disabled=${this.disabled}
         ?required=${this.required}

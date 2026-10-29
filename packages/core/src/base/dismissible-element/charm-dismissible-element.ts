@@ -36,6 +36,8 @@ export class CharmDismissibleElement extends CharmElement {
   protected _open = false;
   protected transition = false;
   protected transitionMaxTime = 0;
+  /** Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay. */
+  protected transitionMaxDuration = 0;
   protected pendingAfterEvent?: 'after-show' | 'after-hide';
   protected resumeAfterEvent?: 'after-show' | 'after-hide';
   protected transitionSettleTimer?: ReturnType<typeof setTimeout>;
@@ -123,22 +125,28 @@ export class CharmDismissibleElement extends CharmElement {
   protected updateTransitionState() {
     const transitionStyles = this.getTransitionStyles();
     this.transition = transitionStyles.length > 0;
-    this.transitionMaxTime = this.getMaxTransitionTime(transitionStyles);
+    // Base styles collapse every transition to 0.01ms under reduced motion, so the tokens no longer apply.
+    const reducedMotion = this.transition && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.transitionMaxTime = reducedMotion ? 0 : this.getMaxTransitionTime(transitionStyles);
+    this.transitionMaxDuration = reducedMotion ? 0 : this.getMaxTransitionTime(transitionStyles, false);
   }
 
-  protected getMaxTransitionTime(transitionStyles: string[]) {
-    if (!transitionStyles.length) return 0;
-
-    return transitionStyles.reduce((max, transition) => {
+  /**
+   * Returns the longest transition in milliseconds.
+   * @param includeDelay - Whether to add each transition's delay to its duration.
+   */
+  protected getMaxTransitionTime(transitionStyles: string[], includeDelay = true) {
+    let max = 0;
+    for (const transition of transitionStyles) {
       for (const entry of splitTransitionList(transition)) {
         const times = entry.match(TRANSITION_TIME) ?? [];
         if (!times.length) continue;
         const duration = parseDuration(times[0] ?? '0ms');
-        const delay = parseDuration(times[1] ?? '0ms');
+        const delay = includeDelay ? parseDuration(times[1] ?? '0ms') : 0;
         max = Math.max(max, duration + delay);
       }
-      return max;
-    }, 0);
+    }
+    return max;
   }
 
   /**
@@ -180,7 +188,9 @@ export class CharmDismissibleElement extends CharmElement {
    * Handles transitionend event to emit `{baseName}-after-show` and `{baseName}-after-hide` events after transitions are complete. Should be added to the element with the CSS transition.
    */
   protected handleTransitionEnd(e: TransitionEvent) {
-    if (e.target !== e.currentTarget || e.pseudoElement || e.elapsedTime * 1000 < this.transitionMaxTime) return;
+    // 1ms tolerance absorbs float rounding between the parsed duration and elapsedTime.
+    if (e.target !== e.currentTarget || e.pseudoElement || e.elapsedTime * 1000 < this.transitionMaxDuration - 1)
+      return;
     this.settleTransition(this.transitionWaitId);
   }
 

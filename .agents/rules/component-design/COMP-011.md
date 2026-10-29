@@ -6,6 +6,16 @@ must have an exact counterpart `removeEventListener` / `disconnect()` in `discon
 drift. Because observer callbacks can fire after the element leaves the DOM, guard work inside
 them with `if (this.isConnected)`.
 
+Don't decide whether to attach a listener from state that can change after connect (for
+example, "attach hover listeners only if a submenu exists"). The state flips, the listener never
+arrives, and the matching removal is skipped too. Attach unconditionally while connected and return
+early in the handler, or attach and detach whenever that state changes.
+
+Listeners tied to `open` state (a document `pointerdown` for outside-click, a document `keydown`)
+must be re-added in `connectedCallback` when the element is still open. Moving an element in the
+DOM disconnects and reconnects it without changing `open`. Re-resolve slotted anchors or triggers on
+reconnect too, using the same lookup as first render.
+
 When a listener is attached to an optional slotted element, remove it from the previous element
 before checking whether the slot is now empty. Clear it on disconnect and rebind after reconnect.
 

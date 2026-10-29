@@ -172,6 +172,8 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Disables/enables the tooltip */
   public set disabled(val: boolean) {
     this._disabled = val;
+    // A disabled tooltip no longer describes its anchor.
+    this.updateAnchorDescription();
 
     if (val && this.open) {
       clearTimeout(this.hoverTimeout);
@@ -187,6 +189,7 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   public set content(val: string | undefined) {
     this._content = val;
+    this.updateAnchorDescription();
     this.handleOptionsChange();
   }
 
@@ -219,6 +222,9 @@ export class CoreTooltip extends CharmDismissibleElement {
       if (!this.isConnected) return;
       this.updateAnchorElement();
       this.attachListeners();
+      this.updateAnchorDescription();
+      // Restore the Escape listener when an open tooltip is moved.
+      if (this.open) document.addEventListener('keydown', this.handleKeyDown);
     });
   }
 
@@ -234,22 +240,40 @@ export class CoreTooltip extends CharmDismissibleElement {
     document.removeEventListener('keydown', this.handleKeyDown);
     this.removeListeners();
     this.removeAnchorDescription();
-    this.descriptionElement?.remove();
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout);
       this.hoverTimeout = undefined;
     }
   }
 
-  /** Updates the trigger of the tooltip from the property or anchor slot. */
+  /** Updates the trigger of the tooltip from the property or default slot, releasing the previous anchor. */
   protected updateAnchorElement() {
+    let target: HTMLElement | undefined;
     if (this.anchor instanceof HTMLElement) {
-      this.anchorEl = this.anchor;
+      target = this.anchor;
     } else if (typeof this.anchor === 'string' && this.anchor.length > 0) {
-      this.anchorEl = (this.getScopedElementById(this.anchor) as HTMLElement) || undefined;
-    } else if (!this.anchor) {
-      this.anchorEl = this.querySelector<HTMLElement>('[slot="anchor"]') ?? undefined;
+      target = (this.getScopedElementById(this.anchor) as HTMLElement | null) ?? undefined;
+    } else {
+      target = this.getDefaultAnchor();
     }
+
+    if (target === this.anchorEl) return;
+    this.removeListeners();
+    this.removeAnchorDescription();
+    this.anchorEl = target;
+    // The popup's anchor binding only exists once the tooltip has rendered open.
+    if (this.hasOpened) this.requestUpdate();
+  }
+
+  /** Returns the first element assigned to the default slot. */
+  protected getDefaultAnchor(): HTMLElement | undefined {
+    for (const child of Array.from(this.children)) {
+      if (child.slot) continue;
+      // Slots use display:contents and can't be positioned, so use their first assigned element.
+      const el = child instanceof HTMLSlotElement ? child.assignedElements({ flatten: true })[0] : child;
+      if (el instanceof HTMLElement) return el;
+    }
+    return undefined;
   }
 
   /** Adds event listeners for the anchor. */
@@ -309,7 +333,6 @@ export class CoreTooltip extends CharmDismissibleElement {
       this.announceTooltip();
     } else {
       document.removeEventListener('keydown', this.handleKeyDown);
-      this.removeAnchorDescription();
       // trigger transition; hide side effects are applied when transition settles
       this.visible = false;
       this.announceContent = '';
@@ -327,47 +350,63 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     this.body.hidden = false;
     this.popup.open = true;
-    this.updateAnchorDescription();
     this.announceTooltip();
     this.popup.reposition();
   }
 
-  /** References the live tooltip content after its first render. */
+  /**
+   * Describes the anchor with a hidden copy of the tooltip text while the tooltip is enabled, whether or not it is
+   * open. The copy lives in the anchor's tree scope (in the tooltip's light DOM when they share one) so the
+   * `aria-describedby` reference resolves.
+   */
   protected updateAnchorDescription() {
-    if (!this.hasOpened || !this.anchorEl) return;
-    const root = this.anchorEl.getRootNode();
+    if (!this.isConnected || !this.anchorEl) return;
+    const text = this.getTooltipText();
+    if (this.disabled || !text) {
+      this.removeAnchorDescription();
+      return;
+    }
+
     if (!this.descriptionElement) {
       this.descriptionElement = document.createElement('span');
       this.descriptionElement.id = `ch-tooltip-description-${++tooltipDescriptionId}`;
       this.descriptionElement.hidden = true;
+      // An unrendered slot name keeps the copy out of the anchor slot and avoids slotchange churn.
+      this.descriptionElement.slot = 'description';
     }
-    if (this.descriptionElement.getRootNode() !== root) {
-      this.descriptionElement.remove();
-      (root instanceof Document ? root.body : (root as ShadowRoot)).appendChild(this.descriptionElement);
-    }
-    this.descriptionElement.textContent = this.getTooltipText();
+    const root = this.anchorEl.getRootNode();
+    const parent = root === this.getRootNode() ? this : root instanceof Document ? root.body : (root as ShadowRoot);
+    if (this.descriptionElement.parentNode !== parent) parent.append(this.descriptionElement);
+    if (this.descriptionElement.textContent !== text) this.descriptionElement.textContent = text;
+
     const tokens = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
     if (!tokens.includes(this.descriptionElement.id)) {
       this.anchorEl.setAttribute('aria-describedby', [...tokens, this.descriptionElement.id].join(' '));
     }
   }
 
+  /** Removes the generated description and its `aria-describedby` token from the anchor. */
   protected removeAnchorDescription() {
-    if (!this.anchorEl || !this.descriptionElement) return;
+    const description = this.descriptionElement;
+    if (!description) return;
+    description.remove();
+    if (!this.anchorEl) return;
     const tokens = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
-    const remaining = tokens.filter(token => token !== this.descriptionElement?.id);
+    const remaining = tokens.filter(token => token !== description.id);
+    if (remaining.length === tokens.length) return;
     if (remaining.length) this.anchorEl.setAttribute('aria-describedby', remaining.join(' '));
     else this.anchorEl.removeAttribute('aria-describedby');
-    this.descriptionElement.remove();
   }
 
+  /** Returns the tooltip's text from the `content` slot, falling back to the `content` property. */
   protected getTooltipText() {
-    const contentSlot = this.body?.querySelector<HTMLSlotElement>('slot[name="content"]');
-    const assignedText = contentSlot
-      ?.assignedNodes({ flatten: true })
-      .map(node => node.textContent ?? '')
-      .join('');
-    return (assignedText || contentSlot?.textContent || this.body?.textContent || '').trim();
+    let slotted = '';
+    for (const child of Array.from(this.children)) {
+      if (child.slot !== 'content') continue;
+      const nodes = child instanceof HTMLSlotElement ? child.assignedNodes({ flatten: true }) : [child];
+      for (const node of nodes) slotted += node.textContent ?? '';
+    }
+    return (slotted || this.content || '').trim();
   }
 
   /** Announces the tooltip content to screen readers */
@@ -471,14 +510,19 @@ export class CoreTooltip extends CharmDismissibleElement {
     clearTimeout(this.hoverTimeout);
     this.hoverTimeout = undefined;
     this.isFocused = true;
-    if (this.hasTrigger('focus')) {
+    // A press light-dismissed the tooltip, so the focus that follows mousedown must not reopen it.
+    if (this.hasTrigger('focus') && !this.dismissedByPress) {
       this.show();
     }
   };
 
-  /** Handles keydown event on the popup */
+  /**
+   * Handles Escape on the anchor and, while open, the document. The anchor path stops propagation so Escape closes
+   * only the tooltip (not a parent dialog or menu), which also keeps the document listener from handling it twice.
+   */
   protected handleKeyDown = (event: KeyboardEvent) => {
     if (this.open && event.key === keys.Escape) {
+      if (event.currentTarget !== document) event.stopPropagation();
       clearTimeout(this.hoverTimeout);
       this.hoverTimeout = undefined;
       this.hide();
@@ -537,28 +581,25 @@ export class CoreTooltip extends CharmDismissibleElement {
   }
 
   /** Handles the change of the default slot which contains the anchor of the tooltip. */
-  protected handleSlotChange(e: Event) {
+  protected handleSlotChange() {
     // Don't reset the anchor element if it was already set by the `anchor` property.
-    if (this.anchor) return;
+    if (this.anchor || !this.isConnected) return;
 
-    const slot = e.target as HTMLSlotElement | null;
-    if (!slot) return;
+    this.updateAnchorElement();
+    this.attachListeners();
+    this.updateAnchorDescription();
+  }
 
-    // Use the first assigned element as the anchor (slots use display:contents so the slot itself can't be positioned)
-    const assigned = slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
-    if (assigned !== this.anchorEl) {
-      this.removeAnchorDescription();
-      this.removeListeners();
-    }
-    this.anchorEl = assigned;
-    if (this.isConnected) this.attachListeners();
+  /** Keeps the anchor's description in sync with the slotted tooltip content. */
+  protected handleContentSlotChange() {
     this.updateAnchorDescription();
   }
 
   /** Generates the template for the tooltip */
   protected tooltipTemplate() {
     if (!this.hasOpened && !this.open) {
-      return this.html`<slot @slotchange=${this.handleSlotChange}></slot>`;
+      return this.html`<slot @slotchange=${this.handleSlotChange}></slot>
+        <slot name="content" hidden @slotchange=${this.handleContentSlotChange}></slot>`;
     }
 
     return this.html`
@@ -595,7 +636,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Generates the template for the tooltip body and contents */
   protected tooltipBodyTemplate() {
     return this.html` <div class="body" id="tooltip" part="body" @transitionend=${this.handleTransitionEnd}>
-      <slot name="content">${this.content}</slot>
+      <slot name="content" @slotchange=${this.handleContentSlotChange}>${this.content}</slot>
     </div>`;
   }
 

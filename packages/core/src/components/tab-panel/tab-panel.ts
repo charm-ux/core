@@ -51,7 +51,12 @@ export class CoreTabPanel extends CharmElement {
   protected contentSlot!: HTMLSlotElement;
 
   protected transitionTimer?: ReturnType<typeof setTimeout>;
+  /** Longest transition duration plus delay, used for the fallback timer. */
   protected transitionMaxTime = 0;
+  /** Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay. */
+  protected transitionMaxDuration = 0;
+  protected transitionWaitId = 0;
+  protected pendingTransition = false;
 
   public override connectedCallback() {
     super.connectedCallback();
@@ -70,8 +75,10 @@ export class CoreTabPanel extends CharmElement {
 
   /** Handles the `transitionend` event. */
   protected handleTransitionEnd(event: TransitionEvent) {
-    if (event.target !== this || event.pseudoElement || event.elapsedTime * 1000 < this.transitionMaxTime) return;
-    this.finishTransition();
+    // 1ms tolerance absorbs float rounding between the computed duration and elapsedTime.
+    if (event.target !== this || event.pseudoElement || event.elapsedTime * 1000 < this.transitionMaxDuration - 1)
+      return;
+    this.finishTransition(this.transitionWaitId);
   }
 
   /** Emits event after the `transitionend` event. */
@@ -85,16 +92,21 @@ export class CoreTabPanel extends CharmElement {
     }
   }
 
-  protected getTransitionMaxTime() {
+  /** Measures the longest transition, with and without its delay. */
+  protected updateTransitionTimes() {
     const style = getComputedStyle(this);
     const durations = style.transitionDuration.split(',').map(value => this.parseCssTime(value));
     const delays = style.transitionDelay.split(',').map(value => this.parseCssTime(value));
     const count = Math.max(durations.length, delays.length);
-    let max = 0;
+    let maxTime = 0;
+    let maxDuration = 0;
     for (let index = 0; index < count; index++) {
-      max = Math.max(max, (durations[index % durations.length] ?? 0) + (delays[index % delays.length] ?? 0));
+      const duration = durations[index % durations.length] ?? 0;
+      maxDuration = Math.max(maxDuration, duration);
+      maxTime = Math.max(maxTime, duration + (delays[index % delays.length] ?? 0));
     }
-    return max;
+    this.transitionMaxTime = maxTime;
+    this.transitionMaxDuration = maxDuration;
   }
 
   protected parseCssTime(value: string) {
@@ -103,7 +115,10 @@ export class CoreTabPanel extends CharmElement {
     return value.trim().endsWith('ms') ? amount : amount * 1000;
   }
 
-  protected finishTransition() {
+  /** Settles the visibility change identified by `waitId` once; stale or repeated calls are ignored. */
+  protected finishTransition(waitId: number) {
+    if (waitId !== this.transitionWaitId || !this.pendingTransition) return;
+    this.pendingTransition = false;
     if (this.transitionTimer) clearTimeout(this.transitionTimer);
     this.transitionTimer = undefined;
     this.hidePanel();
@@ -144,14 +159,16 @@ export class CoreTabPanel extends CharmElement {
         this.emit('tab-hide');
       }
 
-      this.transitionMaxTime = this.getTransitionMaxTime();
+      this.updateTransitionTimes();
+      const waitId = ++this.transitionWaitId;
+      this.pendingTransition = true;
       void this.updateComplete.then(() => {
-        if (!this.isConnected) return;
+        if (!this.isConnected || waitId !== this.transitionWaitId) return;
         if (this.transitionMaxTime === 0) {
-          this.finishTransition();
+          this.finishTransition(waitId);
         } else {
           if (this.transitionTimer) clearTimeout(this.transitionTimer);
-          this.transitionTimer = setTimeout(() => this.finishTransition(), this.transitionMaxTime + 50);
+          this.transitionTimer = setTimeout(() => this.finishTransition(waitId), this.transitionMaxTime + 50);
         }
       });
     }

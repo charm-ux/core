@@ -1,7 +1,8 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
-import type { CoreBreadcrumb } from './index.js';
-import type { CoreBreadcrumbItem } from '../breadcrumb-item/index.js';
+import { createScope } from '../../utilities/scope.js';
+import CoreBreadcrumbItem from '../breadcrumb-item/breadcrumb-item.js';
+import CoreBreadcrumb from './breadcrumb.js';
 import '../breadcrumb-item/index.js';
 import '../tooltip/index.js';
 
@@ -90,6 +91,26 @@ export class CoreBreadcrumbTests<T extends CoreBreadcrumb> extends CharmElementT
 
                   expect(items[0].separator).to.be.true;
                   expect(items[0].current).to.be.undefined;
+                  expect(items[1].separator).to.be.false;
+                  expect(items[1].current).to.equal('page');
+                },
+              },
+              scopedItems: {
+                description: 'manages items registered in a suffixed scope',
+                test: async () => {
+                  createScope({ suffix: 'crumbs', components: [CoreBreadcrumb, CoreBreadcrumbItem] });
+                  const el = await fixture<CoreBreadcrumb>(
+                    html`<ch-breadcrumb_crumbs label="Scoped">
+                      <ch-breadcrumb-item_crumbs>one</ch-breadcrumb-item_crumbs>
+                      <ch-breadcrumb-item_crumbs>two</ch-breadcrumb-item_crumbs>
+                    </ch-breadcrumb_crumbs>`
+                  );
+                  // Let the slotchange that places separators land.
+                  await aTimeout(0);
+                  const items = [...el.querySelectorAll<CoreBreadcrumbItem>('ch-breadcrumb-item_crumbs')];
+
+                  expect(items[0].separator).to.be.true;
+                  expect(items[0].querySelector(':scope > [slot="separator"]')).not.to.be.null;
                   expect(items[1].separator).to.be.false;
                   expect(items[1].current).to.equal('page');
                 },

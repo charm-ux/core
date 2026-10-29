@@ -1,5 +1,6 @@
 import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
+import { emulateMedia } from '@web/test-runner-commands';
 import { DEFAULT_THEME_PREFIX, setThemePrefix } from '../../../utilities/theme.js';
 import '../../../components/accordion-item/index.js';
 import '../../../components/alert/index.js';
@@ -85,22 +86,53 @@ describe('CharmDismissibleElement', () => {
     expect(element.shadowRoot?.querySelector('.alert-wrapper')).to.not.be.null;
   });
 
-  it('does not settle on a shorter or pseudo-element transition end', async () => {
-    const element = await mount('ch-alert', '--alert-transition: opacity 100ms, transform 500ms;');
-    const internals = element as unknown as {
-      open: boolean;
-      handleTransitionEnd: (event: TransitionEvent) => void;
-      pendingAfterEvent?: string;
-    };
-    internals.open = true;
-    const event = (elapsedTime: number, pseudoElement = '') =>
-      ({ target: element, currentTarget: element, elapsedTime, pseudoElement }) as unknown as TransitionEvent;
+  async function openAlert(style: string) {
+    const element = await mount('ch-alert', style);
+    const afterShow = sinon.spy();
+    element.addEventListener('alert-after-show', afterShow);
+    (element as HTMLElement & { open: boolean }).open = true;
+    const wrapper = element.shadowRoot!.querySelector('.alert-wrapper')!;
+    const end = (elapsedTime: number, pseudoElement = '') =>
+      wrapper.dispatchEvent(
+        new TransitionEvent('transitionend', { elapsedTime, propertyName: 'opacity', pseudoElement })
+      );
+    return { afterShow, end };
+  }
 
-    internals.handleTransitionEnd(event(0.1));
-    expect(internals.pendingAfterEvent).to.equal('after-show');
-    internals.handleTransitionEnd(event(0.5, '::before'));
-    expect(internals.pendingAfterEvent).to.equal('after-show');
-    element.remove();
+  it('does not settle on a shorter or pseudo-element transition end', async () => {
+    const { afterShow, end } = await openAlert('--alert-transition: opacity 100ms, transform 500ms;');
+
+    end(0.1);
+    end(0.5, '::before');
+    expect(afterShow).not.to.have.been.called;
+    end(0.5);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('settles on the longest duration when the transition has a delay', async () => {
+    const { afterShow, end } = await openAlert('--alert-transition: opacity 200ms 300ms;');
+
+    end(0.2);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('tolerates float rounding in elapsedTime', async () => {
+    const { afterShow, end } = await openAlert('--alert-transition: opacity 1.001s;');
+
+    end(1.001);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('settles on the collapsed transition end under reduced motion', async () => {
+    await emulateMedia({ reducedMotion: 'reduce' });
+    try {
+      const { afterShow, end } = await openAlert('--alert-transition: opacity 500ms;');
+
+      end(0.00001);
+      expect(afterShow).to.have.been.calledOnce;
+    } finally {
+      await emulateMedia({ reducedMotion: 'no-preference' });
+    }
   });
 
   it('restarts a pending after event after reconnecting during a transition', async () => {

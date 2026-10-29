@@ -88,6 +88,53 @@ describe('HasSlotController', () => {
     document.body.removeChild(host);
   });
 
+  it('tracks in-place edits of direct child text', async () => {
+    const host = createHost();
+    host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    const text = document.createTextNode(' ');
+    host.append(text);
+    const controller = new HasSlotController(host, '[default]');
+    document.body.append(host);
+    controller.hostConnected();
+    expect(controller.hasDefaultSlot()).to.be.false;
+
+    text.textContent = 'Label';
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(controller.hasDefaultSlot()).to.be.true;
+    expect(host.updateCount).to.equal(1);
+    controller.hostDisconnected();
+    host.remove();
+  });
+
+  it("ignores mutations below the host's direct children", async () => {
+    const host = createHost();
+    host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';
+    const child = document.createElement('span');
+    child.setAttribute('slot', 'other');
+    host.append(child);
+    const controller = new HasSlotController(host, '[default]');
+    document.body.append(host);
+    controller.hostConnected();
+    const childNodes = Object.getOwnPropertyDescriptor(Node.prototype, 'childNodes')!;
+    let scans = 0;
+    Object.defineProperty(host, 'childNodes', {
+      configurable: true,
+      get() {
+        scans += 1;
+        return childNodes.get!.call(this);
+      },
+    });
+
+    child.append('nested text');
+    await new Promise(resolve => setTimeout(resolve, 0));
+
+    expect(scans).to.equal(0);
+    expect(host.updateCount).to.equal(0);
+    controller.hostDisconnected();
+    host.remove();
+  });
+
   it('does not request an update after the host is disconnected', () => {
     const host = createHost();
     host.attachShadow({ mode: 'open' }).innerHTML = '<slot></slot>';

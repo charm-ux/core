@@ -229,6 +229,26 @@ export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests
                   expect(formData!.get('a')).to.equal('1');
                 },
               },
+              restorationState: {
+                description: 'keeps the checked restoration state when revalidated',
+                test: async () => {
+                  const el = this.component;
+                  el.value = 'unchecked';
+                  el.checked = true;
+                  await elementUpdated(el);
+                  const setFormValue = sinon.spy(
+                    (el as unknown as { internals: ElementInternals }).internals,
+                    'setFormValue'
+                  );
+
+                  el.required = true;
+                  await elementUpdated(el);
+                  await Promise.resolve();
+                  expect(setFormValue).to.have.been.called;
+                  expect(setFormValue.alwaysCalledWith('unchecked', 'checked')).to.be.true;
+                  setFormValue.restore();
+                },
+              },
               uncheckedValueOutput: {
                 description: 'when submitting a form, it should not submit any value when unchecked',
                 test: async () => {

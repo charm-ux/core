@@ -179,68 +179,53 @@ export class CoreMenu extends CharmDismissibleElement {
     element.setAttribute(attr, value);
   }
 
-  /** Handles keyboard navigation and close requests. */
-  protected handleKeyDown = async (e: KeyboardEvent) => {
+  /**
+   * Handles keyboard navigation and close requests. Owned keys are cancelled synchronously, before
+   * any await, so enclosing handlers (e.g. a toolbar button group) don't also act on them.
+   */
+  protected handleKeyDown = (e: KeyboardEvent) => {
     if (e.defaultPrevented) return;
-    const openingFromTrigger =
-      this.trigger?.matches(':focus') && !this.open && (e.key === keys.ArrowDown || e.key === keys.ArrowUp);
+    const triggerFocused = !!this.trigger?.matches(':focus');
+    const openingFromTrigger = triggerFocused && !this.open && (e.key === keys.ArrowDown || e.key === keys.ArrowUp);
     if (!this.items?.length && !openingFromTrigger) return;
 
     let keyHandled = false;
     const currentItem = this.items[this.focusIndex] as CoreMenuItem;
     switch (e.key) {
       case keys.ArrowDown:
-        if (!this.open) {
-          await this.show();
-          await this.waitForItems();
-          this.setFocus(0, 1);
-        } else {
-          this.setFocus(this.focusIndex + 1);
-        }
+        if (!this.open) void this.showAndFocus(0, 1);
+        else this.setFocus(this.focusIndex + 1);
         keyHandled = true;
         break;
 
       case keys.ArrowUp:
-        if (!this.open) {
-          await this.show();
-          await this.waitForItems();
-          this.setFocus(this.items.length - 1, -1);
-        } else {
-          this.setFocus(this.focusIndex - 1);
-        }
+        if (!this.open) void this.showAndFocus(-1, -1);
+        else this.setFocus(this.focusIndex - 1);
         keyHandled = true;
         break;
 
       case keys.Home:
+        if (!this.open) break;
         this.setFocus(0, 1);
         keyHandled = true;
         break;
 
       case keys.End:
+        if (!this.open) break;
         this.setFocus(this.items.length - 1, -1);
         keyHandled = true;
         break;
 
       case keys.Enter:
       case keys.Space:
-        if (this.trigger?.matches(':focus') && !this.open) {
-          e.preventDefault();
-          await this.show();
-          await this.waitForItems();
-          this.setFocus(0);
+        if (triggerFocused && !this.open) {
+          void this.showAndFocus(0, 1);
           keyHandled = true;
           break;
         }
 
         if (currentItem) {
-          if (this.open) {
-            if (currentItem.hasSubmenu && !currentItem.expanded) {
-              currentItem.expanded = true;
-              await this.updateComplete;
-            } else {
-              currentItem.click();
-            }
-          }
+          if (this.open) currentItem.click();
           keyHandled = true;
         }
         break;
@@ -317,13 +302,7 @@ export class CoreMenu extends CharmDismissibleElement {
     if (this.open) {
       this.requestClose('trigger');
     } else {
-      await this.show();
-      requestAnimationFrame(() => {
-        const allMenuItems = Array.from(this.querySelectorAll('[menu-item]')) as HTMLElement[];
-        if (allMenuItems.length > 0) {
-          allMenuItems[0].focus();
-        }
-      });
+      await this.showAndFocus(0, 1);
     }
   };
 
@@ -468,6 +447,14 @@ export class CoreMenu extends CharmDismissibleElement {
 
     this.initializeItems();
   };
+
+  /** Opens the menu and focuses the first enabled item from `index` in `direction` (a negative index counts from the end). */
+  protected async showAndFocus(index: number, direction: 1 | -1) {
+    this.show();
+    await this.waitForItems();
+    if (!this.isConnected || !this.open) return;
+    this.setFocus(index < 0 ? this.items.length + index : index, direction);
+  }
 
   protected async waitForItems() {
     await this.updateComplete;

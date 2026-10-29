@@ -52,6 +52,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CHARM-007](internal/CHARM-007.md) — Use the dual named + default export, class in its own `.ts`
 - [CHARM-008](internal/CHARM-008.md) — Register icons as inline SVG strings in the icon set, not asset files
 - [CHARM-009](internal/CHARM-009.md) — Use correct JSDoc annotation tags (`@cssprop`, not `@cssproperty`)
+- [CHARM-010](internal/CHARM-010.md) — Resolve Charm tag names through the scope in DOM queries
 
 ### COMP — component design (path-gated)
 
@@ -71,6 +72,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [COMP-014](component-design/COMP-014.md) — Position overlays through `ch-popup`, never import a positioning library directly
 - [COMP-015](component-design/COMP-015.md) — Drive show/hide from a `visible` state settled on `transitionend` with a fallback timer
 - [COMP-016](component-design/COMP-016.md) — Prefer `protected` members for component extension points
+- [COMP-017](component-design/COMP-017.md) — Cross shadow roots with the shared composed-tree helpers
 
 ### PROP — properties, attributes, events (path-gated)
 
@@ -113,6 +115,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-012](accessibility/A11Y-012.md) — Meet contrast for text and essential control boundaries
 - [A11Y-013](accessibility/A11Y-013.md) — Label every field in composite form controls and anchor validation to visible controls
 - [A11Y-014](accessibility/A11Y-014.md) — Name the element that carries a composite widget's role
+- [A11Y-015](accessibility/A11Y-015.md) — Own keyboard events synchronously and target the element that takes focus
 
 ### I18N — internationalization (path-gated)
 

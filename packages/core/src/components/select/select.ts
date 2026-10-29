@@ -62,8 +62,9 @@ export class CoreSelect extends CharmFormControlElement {
   @state()
   protected optionNodes?: Array<SelectChildElement> = [];
 
+  /** The selected light-DOM options, tracked by identity so duplicate values stay distinct. */
   @state()
-  protected selectedValues: string[] = [];
+  protected selectedOptions: HTMLOptionElement[] = [];
 
   protected hasUserSelection = false;
   protected pendingNativeValue?: string;
@@ -74,8 +75,15 @@ export class CoreSelect extends CharmFormControlElement {
     return [CoreIcon];
   }
 
+  /** The values of the selected options. */
+  protected get selectedValues(): string[] {
+    return this.selectedOptions.map(option => option.value);
+  }
+
   public override connectedCallback() {
     super.connectedCallback();
+    // The observer catches option additions/removals and attribute/text edits; read the current options once here.
+    this.handleSlotChange();
     this.optionsObserver = new MutationObserver(() => {
       if (this.isConnected) this.handleSlotChange();
     });
@@ -121,9 +129,20 @@ export class CoreSelect extends CharmFormControlElement {
 
   protected syncSelectedValues(select: HTMLSelectElement) {
     this.hasUserSelection = true;
-    this.selectedValues = Array.from(select.selectedOptions, option => option.value);
+    this.selectedOptions = this.toLightOptions(select.selectedOptions);
     this.setValueFromSelection(this.selectedValues[0] ?? '');
     this.updateValidity();
+  }
+
+  /** Maps rendered native options back to the light-DOM options they mirror. */
+  protected toLightOptions(nativeOptions: Iterable<HTMLOptionElement>): HTMLOptionElement[] {
+    return Array.from(nativeOptions, option => this.options?.[option.index]).filter(
+      (option): option is HTMLOptionElement => !!option
+    );
+  }
+
+  protected findOptionByValue(value: string) {
+    return value ? this.options?.find(option => option.value === value || option.textContent === value) : undefined;
   }
 
   protected setValueFromSelection(value: string) {
@@ -135,9 +154,8 @@ export class CoreSelect extends CharmFormControlElement {
     if (!this.multiple) return super.getFormAssociatedValue();
     const formData = new FormData();
     if (!this.disabled && this.name) {
-      this.selectedValues.forEach(value => {
-        const option = this.options?.find(candidate => candidate.value === value);
-        if (option && !option.disabled && !option.closest('optgroup')?.disabled) formData.append(this.name!, value);
+      this.selectedOptions.forEach(option => {
+        if (!option.disabled && !option.closest('optgroup')?.disabled) formData.append(this.name!, option.value);
       });
     }
     return formData;
@@ -145,21 +163,16 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Handles the change of the options in the default slot */
   protected handleSlotChange() {
-    const previouslySelectedOptions =
-      this.hasUserSelection && this.input instanceof HTMLSelectElement
-        ? Array.from(this.input.selectedOptions, option => this.options?.[option.index]).filter(
-            (option): option is HTMLOptionElement => !!option
-          )
-        : [];
     this.optionNodes = this.getOptionNodes();
     this.options = this.getOptions();
     if (this.multiple) {
-      this.selectedValues = this.hasUserSelection
-        ? previouslySelectedOptions.filter(option => this.options?.includes(option)).map(option => option.value)
-        : this.options.filter(option => option.selected).map(option => option.value);
-      if (!this.selectedValues.length && this.value) {
-        const selected = this.options.find(option => option.value === this.value || option.textContent === this.value);
-        if (selected) this.selectedValues = [selected.value];
+      const options = this.options;
+      this.selectedOptions = this.hasUserSelection
+        ? this.selectedOptions.filter(option => options.includes(option))
+        : options.filter(option => option.selected);
+      if (!this.selectedOptions.length) {
+        const selected = this.findOptionByValue(this.value);
+        if (selected) this.selectedOptions = [selected];
       }
       this.setValueFromSelection(this.selectedValues[0] ?? '');
     } else if (this.value) {
@@ -170,12 +183,13 @@ export class CoreSelect extends CharmFormControlElement {
           o.removeAttribute('selected');
         }
       });
-      const selected = this.options.find(option => option.value === this.value || option.textContent === this.value);
-      this.selectedValues = selected ? [selected.value] : [];
+      const selected = this.findOptionByValue(this.value);
+      this.selectedOptions = selected ? [selected] : [];
     } else {
       const lastSelectedValue = this.options.find(o => o.selected)?.value;
       this.setValueFromSelection(lastSelectedValue ?? this.options?.[0]?.value ?? this.options?.[0]?.textContent ?? '');
-      this.selectedValues = this.value ? [this.value] : [];
+      const selected = this.findOptionByValue(this.value);
+      this.selectedOptions = selected ? [selected] : [];
     }
     this.updateValidity();
   }
@@ -186,22 +200,45 @@ export class CoreSelect extends CharmFormControlElement {
       const isNativeSelection = this.pendingNativeValue === this.value;
       this.pendingNativeValue = undefined;
       if (!isNativeSelection) {
-        const selected = this.value
-          ? this.options?.find(option => option.value === this.value || option.textContent === this.value)
-          : undefined;
-        const nextSelection = selected ? [selected.value] : [];
-        if (nextSelection.length !== this.selectedValues.length || nextSelection[0] !== this.selectedValues[0]) {
-          this.selectedValues = nextSelection;
+        const selected = this.findOptionByValue(this.value);
+        const nextSelection = selected ? [selected] : [];
+        if (nextSelection.length !== this.selectedOptions.length || nextSelection[0] !== this.selectedOptions[0]) {
+          this.selectedOptions = nextSelection;
         }
       }
     }
-    if (changedProperties.has('multiple') || changedProperties.has('value')) this.updateValidity();
+    if (['multiple', 'value', 'selectedOptions', 'optionNodes'].some(property => changedProperties.has(property))) {
+      this.syncNativeSelection();
+    }
+    // `name` keys the multiple-select FormData payload, so rebuild it when the name changes.
+    if (['multiple', 'value', 'name'].some(property => changedProperties.has(property))) this.updateValidity();
+  }
+
+  /**
+   * Syncs native option selectedness from state. Once the user picks an option its selectedness is
+   * dirty, so the rendered `selected` attributes (kept for reset semantics) no longer drive it.
+   */
+  protected syncNativeSelection() {
+    if (!(this.input instanceof HTMLSelectElement) || !this.options) return;
+    const options = this.options;
+    if (this.multiple) {
+      for (const option of this.input.options) option.selected = this.selectedOptions.includes(options[option.index]);
+      return;
+    }
+    const index = options.findIndex(option => this.isOptionSelected(option));
+    if (index !== -1 && this.input.selectedIndex !== index) this.input.selectedIndex = index;
+  }
+
+  protected isOptionSelected(option: HTMLOptionElement) {
+    return this.multiple
+      ? this.selectedOptions.includes(option)
+      : option.value === this.value || option.textContent === this.value;
   }
 
   protected override formResetCallback() {
     this.hasUserSelection = false;
     if (this.multiple) {
-      this.selectedValues = this.options?.filter(option => option.defaultSelected).map(option => option.value) ?? [];
+      this.selectedOptions = this.options?.filter(option => option.defaultSelected) ?? [];
       this.setValueFromSelection(this.selectedValues[0] ?? '');
     } else {
       super.formResetCallback();
@@ -215,7 +252,14 @@ export class CoreSelect extends CharmFormControlElement {
       return;
     }
     this.hasUserSelection = true;
-    this.selectedValues = state.getAll(this.name ?? '').filter((value): value is string => typeof value === 'string');
+    const values = state.getAll(this.name ?? '');
+    this.selectedOptions =
+      this.options?.filter(option => {
+        const index = values.indexOf(option.value);
+        if (index === -1 || option.disabled) return false;
+        values.splice(index, 1);
+        return true;
+      }) ?? [];
     this.setValueFromSelection(this.selectedValues[0] ?? '');
     this.updateValidity();
   }
@@ -260,8 +304,8 @@ export class CoreSelect extends CharmFormControlElement {
         ${this.startTemplate()}
         <select
           aria-describedby=${ifDefined(this.describedBy)}
-          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-          aria-invalid=${this.invalid}
+          aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+          aria-invalid=${this.showInvalid}
           autocomplete=${ifDefined(this.autocomplete)}
           class="input-control form-control-base-input"
           id="input"
@@ -278,7 +322,7 @@ export class CoreSelect extends CharmFormControlElement {
           ${this.optionsTemplate()}
         </select>
         ${this.endTemplate()}
-        <slot hidden @slotchange=${this.handleSlotChange}></slot>
+        <slot hidden></slot>
       </div>
     `;
   }
@@ -308,11 +352,8 @@ export class CoreSelect extends CharmFormControlElement {
   }
 
   protected renderOption(option: HTMLOptionElement) {
-    const selected = this.multiple
-      ? this.selectedValues.includes(option.value)
-      : option.value === this.value || option.textContent === this.value;
     return this
-      .html`<option .value=${option.value} ?selected=${selected} ?disabled=${option.disabled} ?hidden=${option.hidden} label=${ifDefined(option.label || undefined)}>
+      .html`<option .value=${option.value} ?selected=${this.isOptionSelected(option)} ?disabled=${option.disabled} ?hidden=${option.hidden} label=${ifDefined(option.label || undefined)}>
       ${option.textContent ?? ''}
     </option>`;
   }

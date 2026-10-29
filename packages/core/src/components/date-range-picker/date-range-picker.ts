@@ -3,6 +3,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
+import { LocaleController } from '../../controller/locale.js';
 import {
   addDays,
   clampDate,
@@ -24,7 +25,6 @@ import {
   toIsoDate,
 } from '../../internal/date.js';
 import { keys } from '../../utilities/key-map.js';
-import { normalizeLocale } from '../../utilities/locale.js';
 import { endTemplate } from '../../templates/end.js';
 import { startTemplate } from '../../templates/start.js';
 import { CoreCalendar } from '../calendar/calendar.js';
@@ -191,8 +191,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   protected cachedCalendarSource = '';
   protected blurFrame?: number;
   protected wasOutsideDismiss = false;
-  protected localeObserver?: MutationObserver;
-  protected cachedLocale = '';
+  protected readonly localeController = new LocaleController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreCalendar, CoreIcon, CorePopup];
@@ -207,7 +206,7 @@ export class CoreDateRangePicker extends CharmFormControlElement {
   }
 
   protected get currentLocale(): string {
-    return this.cachedLocale || this.refreshLocale(false);
+    return this.localeController.locale;
   }
 
   protected get dateSegments(): readonly DateInputSegment[] {
@@ -258,14 +257,11 @@ export class CoreDateRangePicker extends CharmFormControlElement {
 
   public override connectedCallback(): void {
     super.connectedCallback();
-    this.refreshLocale(false);
-    this.observeLocale();
+    if (this.open) document.addEventListener('pointerdown', this.handleDocumentPointerDown);
   }
 
   public override disconnectedCallback(): void {
     document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
-    this.localeObserver?.disconnect();
-    this.localeObserver = undefined;
     if (this.blurFrame !== undefined) cancelAnimationFrame(this.blurFrame);
     super.disconnectedCallback();
   }
@@ -310,27 +306,11 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     this.segmentInput('start', this.firstSegmentKind)?.focus(options);
   }
 
-  protected observeLocale(): void {
-    this.localeObserver?.disconnect();
-    this.localeObserver = new MutationObserver(() => this.refreshLocale());
-    this.localeObserver.observe(this, { attributes: true, attributeFilter: ['lang'] });
-    const inheritedLanguage = this.parentElement?.closest('[lang]') ?? document.documentElement;
-    if (inheritedLanguage !== this) {
-      this.localeObserver.observe(inheritedLanguage, { attributes: true, attributeFilter: ['lang'] });
-    }
-  }
-
   protected async focusCalendar(): Promise<void> {
     const calendar = this.calendar;
     if (!calendar) return;
     await calendar.updateComplete;
     calendar.focus();
-  }
-
-  protected refreshLocale(requestUpdate = true): string {
-    this.cachedLocale = normalizeLocale(this.closest('[lang]')?.getAttribute('lang') || navigator.language || 'en');
-    if (requestUpdate && this.isConnected && !this.isUpdatePending) this.requestUpdate('lang');
-    return this.cachedLocale;
   }
 
   protected override firstUpdated(): void {
@@ -617,8 +597,8 @@ export class CoreDateRangePicker extends CharmFormControlElement {
           maxlength=${maxLength}
           size=${placeholderSize}
           aria-describedby=${ifDefined(this.describedBy)}
-          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-          aria-invalid=${this.invalid}
+          aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+          aria-invalid=${this.showInvalid}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readonly}
@@ -882,8 +862,8 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     let attempts = 0;
     while (this.isUnavailableDate(nextDate) && attempts < 366) {
       nextDate = addDays(nextDate, direction);
-      if (this.constraints.minDate && compareDates(nextDate, this.constraints.minDate) < 0) return;
-      if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) return;
+      if (compareDates(nextDate, this.constraints.minDate) < 0) return;
+      if (compareDates(nextDate, this.constraints.maxDate) > 0) return;
       attempts += 1;
     }
 
@@ -1171,7 +1151,6 @@ export class CoreDateRangePicker extends CharmFormControlElement {
     this.open = false;
     this.calendarDraftValue = undefined;
     this.commitChange();
-    this.segmentInput('start', this.firstSegmentKind)?.focus();
   };
 
   protected handlePopupHide = (): void => {

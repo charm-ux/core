@@ -44,6 +44,7 @@ export class CoreButtonGroup extends CharmElement {
   public static override styles = [...super.styles, styles];
 
   public static override baseName = 'button-group';
+  public static override watchedSlots = ['label'];
 
   /** Plain-text accessible name rendered in the group's visually hidden label slot. */
   @property() public label?: string;
@@ -96,7 +97,10 @@ export class CoreButtonGroup extends CharmElement {
     }, [] as CoreButton[]);
   }
 
-  /** Focusable actions owned by this toolbar, flattened through wrappers and nested groups. */
+  /**
+   * Focusable actions owned by this toolbar, flattened through wrappers and nested groups. A menu
+   * contributes its slotted trigger, since that is the element that takes focus and opens the menu.
+   */
   protected get toolbarItems(): HTMLElement[] {
     const items: HTMLElement[] = [];
     const buttonTag = this.scope.tagName('button').toLowerCase();
@@ -110,7 +114,11 @@ export class CoreButtonGroup extends CharmElement {
         element.slottedElements.forEach(visit);
         return;
       }
-      if (element.localName === buttonTag || element.localName === menuTag) {
+      if (element.localName === menuTag) {
+        items.push(element.querySelector<HTMLElement>(':scope > [slot="trigger"]') ?? element);
+        return;
+      }
+      if (element.localName === buttonTag) {
         items.push(element);
         return;
       }
@@ -176,8 +184,8 @@ export class CoreButtonGroup extends CharmElement {
   };
 
   /** Finds the index of the next non-disabled slotted element, wrapping around the group. */
-  protected findNextFocusableIndex(startIndex: number, direction: 1 | -1): number {
-    return findNextEnabledIndex(this.toolbarItems, startIndex, direction, el => {
+  protected findNextFocusableIndex(items: HTMLElement[], startIndex: number, direction: 1 | -1): number {
+    return findNextEnabledIndex(items, startIndex, direction, el => {
       const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true';
       return !isDisabled;
     });
@@ -205,31 +213,31 @@ export class CoreButtonGroup extends CharmElement {
       case keys.ArrowRight:
       case keys.ArrowDown: {
         const direction = e.key === keys.ArrowRight && this.resolvedDir === 'rtl' ? -1 : 1;
-        nextIndex = this.findNextFocusableIndex(this.focusedIndex, direction);
+        nextIndex = this.findNextFocusableIndex(items, this.focusedIndex, direction);
         break;
       }
 
       case keys.ArrowLeft:
       case keys.ArrowUp: {
         const direction = e.key === keys.ArrowLeft && this.resolvedDir === 'rtl' ? 1 : -1;
-        nextIndex = this.findNextFocusableIndex(this.focusedIndex, direction);
+        nextIndex = this.findNextFocusableIndex(items, this.focusedIndex, direction);
         break;
       }
 
       case keys.Home: {
-        nextIndex = this.findNextFocusableIndex(-1, 1);
+        nextIndex = this.findNextFocusableIndex(items, -1, 1);
         break;
       }
 
       case keys.End: {
-        nextIndex = this.findNextFocusableIndex(this.toolbarItems.length, -1);
+        nextIndex = this.findNextFocusableIndex(items, items.length, -1);
         break;
       }
     }
 
     if (nextIndex === -1) return;
 
-    this.setFocus(this.focusedIndex, nextIndex);
+    this.setFocus(items, this.focusedIndex, nextIndex);
   };
 
   /**
@@ -257,13 +265,14 @@ export class CoreButtonGroup extends CharmElement {
   };
 
   protected initializeSlottedElements() {
-    this.restoreRemovedAttributes();
-    this.setAttributes();
+    const items = this.toolbarItems;
+    this.restoreRemovedAttributes(items);
+    this.setAttributes(items);
     this.setTooltipPosition();
   }
 
-  protected restoreRemovedAttributes() {
-    const activeElements = new Set<HTMLElement>([...this.buttons, ...this.toolbarItems]);
+  protected restoreRemovedAttributes(items: HTMLElement[] = this.toolbarItems) {
+    const activeElements = new Set<HTMLElement>([...this.buttons, ...items]);
     this.managedAttributes.forEach((attributes, element) => {
       if (activeElements.has(element)) return;
       attributes.forEach((value, name) => {
@@ -274,7 +283,7 @@ export class CoreButtonGroup extends CharmElement {
     });
   }
 
-  protected setAttributes() {
+  protected setAttributes(items: HTMLElement[] = this.toolbarItems) {
     // Propagate styling/selection state to child buttons, keeping them in sync when
     // the corresponding attributes change at runtime (and clearing stale ones).
     const buttons = this.buttons;
@@ -295,8 +304,7 @@ export class CoreButtonGroup extends CharmElement {
       // The roving tabindex lives on the slotted elements — the same index space navigation uses —
       // so the initial tab stop and arrow-key movement can't drift apart. The first enabled item
       // becomes the tab stop; the rest are reachable only via the arrow keys.
-      const items = this.toolbarItems;
-      const firstEnabled = this.findNextFocusableIndex(-1, 1);
+      const firstEnabled = this.findNextFocusableIndex(items, -1, 1);
       items.forEach((el, index) => {
         const enabled = !el.hasAttribute('disabled') && el.getAttribute('aria-disabled') !== 'true';
         this.setManagedAttribute(el, 'tabindex', enabled && index === firstEnabled ? '0' : '-1', true);
@@ -363,8 +371,7 @@ export class CoreButtonGroup extends CharmElement {
   }
 
   /** Sets the focus on the specified tab indices. */
-  protected setFocus(prevIndex: number, newIndex: number) {
-    const items = this.toolbarItems;
+  protected setFocus(items: HTMLElement[], prevIndex: number, newIndex: number) {
     this.focusedIndex = newIndex;
     if (items[prevIndex]) this.setManagedAttribute(items[prevIndex], 'tabindex', '-1', true);
     if (items[this.focusedIndex]) this.setManagedAttribute(items[this.focusedIndex], 'tabindex', '0', true);
@@ -382,15 +389,11 @@ export class CoreButtonGroup extends CharmElement {
         part="button-group-base"
         class="button-group"
         role=${this.toolbar ? 'toolbar' : 'group'}
-        aria-labelledby=${ifDefined(
-          this.label || this.querySelector('[slot="label"]')?.textContent?.trim() ? 'label' : undefined
-        )}
+        aria-labelledby=${ifDefined(this.label || this.hasNamedSlot('label') ? 'label' : undefined)}
         aria-orientation=${ifDefined(this.toolbar ? (this.vertical ? 'vertical' : 'horizontal') : undefined)}
       >
         <slot @slotchange=${this.initializeSlottedElements}></slot>
-        <slot id="label" class="visually-hidden" name="label" @slotchange=${() => this.requestUpdate()}
-          >${this.label}</slot
-        >
+        <slot id="label" class="visually-hidden" name="label">${this.label}</slot>
       </div>
     `;
   }

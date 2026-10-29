@@ -135,6 +135,16 @@ export class CharmFormControlElement extends CharmFocusableElement {
     return this.input;
   }
 
+  /** @internal Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid. */
+  protected get showInvalid(): boolean {
+    return this.invalid && this.hadFocus;
+  }
+
+  /** @internal The role of the error text container; subclasses exposing a listbox host override this to return `group`. */
+  protected get errorTextRole(): string | undefined {
+    return undefined;
+  }
+
   /** The input's error message. */
   @property({ attribute: 'error-message' })
   public set errorMessage(message: string) {
@@ -200,13 +210,32 @@ export class CharmFormControlElement extends CharmFocusableElement {
   public override connectedCallback() {
     super.connectedCallback();
     this.syncInitialFormValue();
-    this.internals.setFormValue(this.getFormAssociatedValue());
+    this.syncFormValue();
+    this.input?.addEventListener('input', this.handleNativeInput);
+  }
+
+  public override disconnectedCallback() {
+    this.input?.removeEventListener('input', this.handleNativeInput);
+    super.disconnectedCallback();
   }
 
   /** Form-associated value; checkbox-like subclasses override for checked-dependent submission. */
   protected getFormAssociatedValue(): string | File | FormData | null {
     return this.value || null;
   }
+
+  /** Form state used for restoration; checkbox-like subclasses override to return their checked state. */
+  protected getFormAssociatedState(): string | File | FormData | null | undefined {
+    return undefined;
+  }
+
+  /** Submits the form-associated value and restoration state. */
+  protected syncFormValue() {
+    this.internals.setFormValue(this.getFormAssociatedValue(), this.getFormAssociatedState());
+  }
+
+  /** Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`). */
+  protected handleNativeInput = () => this.updateValidity();
 
   /** Updates the displayed validation message without showing the browser's validation UI. */
   protected updateErrorMessage() {
@@ -244,8 +273,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
 
   /** Reflects the disabled state when the control is disabled via a parent `<fieldset>`. */
   protected formDisabledCallback(disabled: boolean) {
+    const oldDisabled = this.disabled;
     this.formDisabled = disabled;
     this.toggleAttribute('form-disabled', disabled);
+    // Report the effective `disabled` change so subclasses checking `changedProperties.has('disabled')` see it.
+    this.requestUpdate('disabled', oldDisabled);
     this.updateValidity();
   }
 
@@ -254,24 +286,34 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.updateValidity();
   }
 
-  /** Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid. */
+  /**
+   * Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;
+   * otherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.
+   */
   protected updateValidity() {
-    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
-    if (!this.validityUpdatePending) {
-      this.validityUpdatePending = true;
-      this.updateComplete.then(() => {
-        this.validityUpdatePending = false;
-        if (!this.isConnected) return;
-
-        this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
-        if (this.hadFocus || this.hasFocus) {
-          this.updateErrorMessage();
-        }
-        this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
-      });
+    this.syncFormValue();
+    if (!this.isUpdatePending) {
+      this.applyValidity();
+      return;
     }
+    if (this.validityUpdatePending) return;
+    this.validityUpdatePending = true;
+    this.updateComplete.then(() => {
+      // Skip if validity was already applied after the render (e.g. from `updated()`); re-defers if still pending.
+      if (!this.validityUpdatePending) return;
+      this.validityUpdatePending = false;
+      if (this.isConnected) this.updateValidity();
+    });
+  }
 
-    this.internals.setFormValue(this.getFormAssociatedValue());
+  /** Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control. */
+  protected applyValidity() {
+    this.validityUpdatePending = false;
+    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
+    if (this.hadFocus || this.hasFocus) {
+      this.updateErrorMessage();
+    }
+    this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
   }
 
   protected emitInput(options?: CustomEventInit) {
@@ -319,13 +361,13 @@ export class CharmFormControlElement extends CharmFocusableElement {
         id="error-text"
         class=${classMap({
           'form-control-error-text': true,
-          'visually-hidden': !(this.invalid && this.hadFocus),
+          'visually-hidden': !this.showInvalid,
         })}
         aria-live="polite"
-        role=${ifDefined(this.getAttribute('role') === 'listbox' ? 'group' : undefined)}
+        role=${ifDefined(this.errorTextRole)}
       >
         ${
-          this.invalid && this.hadFocus
+          this.showInvalid
             ? this.html`<scoped-icon
               part="form-control-error-text-icon"
               class="form-control-error-text-icon"
@@ -342,7 +384,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
     super.willUpdate(changedProperties);
     this.hasLabel = !!(this.label || this.hasNamedSlot('label'));
     this.hasHelpText = !!(this.helpText || this.hasNamedSlot('help-text'));
-    const ids = [this.hasHelpText ? 'help-text' : '', this.invalid ? 'error-text' : ''].filter(Boolean);
+    const ids = [this.hasHelpText ? 'help-text' : '', this.showInvalid ? 'error-text' : ''].filter(Boolean);
     this.describedBy = ids.length ? ids.join(' ') : undefined;
   }
 
@@ -360,9 +402,8 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected override firstUpdated(): void {
     super.firstUpdated();
     this.input?.setCustomValidity(this.customErrorMessage);
-    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
-    this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
-    this.input?.addEventListener('input', () => this.updateValidity());
+    this.applyValidity();
+    this.input?.addEventListener('input', this.handleNativeInput);
   }
 }
 

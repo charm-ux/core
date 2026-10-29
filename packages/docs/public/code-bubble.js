@@ -19,6 +19,13 @@ function createScript(src) {
   return script.outerHTML;
 }
 
+const libFiles = await Promise.all(
+  ['kitchen-sink.js', 'reset.css', 'theme.css', 'utility-classes.css'].map(async name => [
+    `libs/${name}`,
+    await fetchLibData(`./charm/${name}`),
+  ])
+);
+
 new CodeBubble({
   sandbox: 'stackblitz',
   sandboxConfig: {
@@ -28,12 +35,7 @@ new CodeBubble({
         project: {
           title: 'Charm Kitchen Sink',
           description: 'A live demo of all the components in Charm',
-          files: {
-            'libs/kitchen-sink.js': await fetchLibData('./charm/kitchen-sink.js'),
-            'libs/reset.css': await fetchLibData('./charm/reset.css'),
-            'libs/theme.css': await fetchLibData('./charm/theme.css'),
-            'libs/utility-classes.css': await fetchLibData('./charm/utility-classes.css'),
-          },
+          files: Object.fromEntries(libFiles),
         },
         exampleTemplate: {
           fileName: 'index.html',

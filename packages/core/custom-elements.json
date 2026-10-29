@@ -235,8 +235,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
-              ]
+              ],
+              "description": "Returns the longest transition in milliseconds."
             },
             {
               "kind": "method",
@@ -416,6 +422,16 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay."
             },
             {
               "kind": "field",
@@ -929,6 +945,12 @@
               "default": "''"
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control."
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -1071,6 +1093,16 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -1120,6 +1152,17 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill)."
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state."
             },
             {
               "kind": "method",
@@ -1196,6 +1239,12 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`)."
             },
             {
               "kind": "field",
@@ -1462,6 +1511,22 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state."
+            },
+            {
               "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
@@ -1477,7 +1542,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid."
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid."
             },
             {
               "kind": "field",
@@ -2034,8 +2099,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -2337,6 +2408,20 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -3072,8 +3157,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -3376,6 +3467,20 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -4330,7 +4435,7 @@
               "name": "breadcrumb-item-control"
             },
             {
-              "description": "The separator between breadcrumb items.",
+              "description": "The wrapper around the separator the parent breadcrumb places after this item.",
               "name": "breadcrumb-item-separator"
             },
             {
@@ -4356,7 +4461,7 @@
               "name": "end"
             },
             {
-              "description": "Separator inserted by the parent `ch-breadcrumb`. Set the separator on `ch-breadcrumb` instead.",
+              "description": "Internal: filled by the parent `ch-breadcrumb` with a clone of its separator. Don't slot content here; set the separator on `ch-breadcrumb` instead.",
               "name": "separator"
             },
             {
@@ -4417,7 +4522,7 @@
               "kind": "method",
               "name": "breadcrumbItemSeparatorTemplate",
               "privacy": "protected",
-              "description": "Generates the HTML template for the separator."
+              "description": "Generates the wrapper for the separator the parent breadcrumb places in the `separator` slot."
             },
             {
               "kind": "method",
@@ -4607,18 +4712,6 @@
             },
             {
               "kind": "field",
-              "name": "separator",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "public",
-              "default": "true",
-              "description": "When true, will render the separator content.",
-              "attribute": "separator",
-              "reflects": true
-            },
-            {
-              "kind": "field",
               "name": "shadowRootOptions",
               "type": {
                 "text": "object"
@@ -4725,15 +4818,6 @@
               "parsedType": {
                 "text": "'no-referrer' | 'no-referrer-when-downgrade' | 'origin' | 'origin-when-cross-origin' | 'same-origin' | 'strict-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url' | (string & {})"
               }
-            },
-            {
-              "name": "separator",
-              "type": {
-                "text": "boolean"
-              },
-              "default": "true",
-              "description": "When true, will render the separator content.",
-              "fieldName": "separator"
             },
             {
               "name": "target",
@@ -5160,34 +5244,6 @@
               },
               "privacy": "protected",
               "description": "parent container for the collapsible content.",
-              "inheritedFrom": {
-                "name": "CoreOverflow",
-                "module": "src/components/overflow/overflow.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "containsComposed",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "boolean"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "container",
-                  "type": {
-                    "text": "Node"
-                  }
-                },
-                {
-                  "name": "target",
-                  "type": {
-                    "text": "Node"
-                  }
-                }
-              ],
               "inheritedFrom": {
                 "name": "CoreOverflow",
                 "module": "src/components/overflow/overflow.ts"
@@ -6123,6 +6179,12 @@
               },
               "parameters": [
                 {
+                  "name": "items",
+                  "type": {
+                    "text": "HTMLElement[]"
+                  }
+                },
+                {
                   "name": "startIndex",
                   "type": {
                     "text": "number"
@@ -6277,7 +6339,16 @@
             {
               "kind": "method",
               "name": "restoreRemovedAttributes",
-              "privacy": "protected"
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "items",
+                  "default": "this.toolbarItems",
+                  "type": {
+                    "text": "HTMLElement[]"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -6306,13 +6377,28 @@
             {
               "kind": "method",
               "name": "setAttributes",
-              "privacy": "protected"
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "items",
+                  "default": "this.toolbarItems",
+                  "type": {
+                    "text": "HTMLElement[]"
+                  }
+                }
+              ]
             },
             {
               "kind": "method",
               "name": "setFocus",
               "privacy": "protected",
               "parameters": [
+                {
+                  "name": "items",
+                  "type": {
+                    "text": "HTMLElement[]"
+                  }
+                },
                 {
                   "name": "prevIndex",
                   "type": {
@@ -6404,7 +6490,7 @@
                 "text": "HTMLElement[]"
               },
               "privacy": "protected",
-              "description": "Focusable actions owned by this toolbar, flattened through wrappers and nested groups.",
+              "description": "Focusable actions owned by this toolbar, flattened through wrappers and nested groups. A menu\ncontributes its slotted trigger, since that is the element that takes focus and opens the menu.",
               "readonly": true
             },
             {
@@ -6417,6 +6503,16 @@
               "description": "Vertically stacks the buttons in the group",
               "attribute": "vertical",
               "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "array"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label']"
             }
           ],
           "events": [
@@ -7823,15 +7919,6 @@
             },
             {
               "kind": "field",
-              "name": "cachedLocale",
-              "type": {
-                "text": "string"
-              },
-              "privacy": "protected",
-              "default": "''"
-            },
-            {
-              "kind": "field",
               "name": "calendarDays",
               "type": {
                 "text": "(Date | undefined)[]"
@@ -7883,7 +7970,7 @@
               },
               "privacy": "protected",
               "parsedType": {
-                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+                "text": "{ minDate: Date, maxDate: Date, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
               }
             },
             {
@@ -8426,11 +8513,10 @@
             },
             {
               "kind": "field",
-              "name": "localeObserver",
-              "type": {
-                "text": "MutationObserver | undefined"
-              },
-              "privacy": "protected"
+              "name": "localeController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new LocaleController(this)"
             },
             {
               "kind": "field",
@@ -8493,16 +8579,6 @@
               "readonly": true
             },
             {
-              "kind": "method",
-              "name": "observeLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
-              }
-            },
-            {
               "kind": "field",
               "name": "readOnly",
               "type": {
@@ -8513,22 +8589,6 @@
               "description": "Prevents date selection while allowing navigation.",
               "attribute": "readonly",
               "reflects": true
-            },
-            {
-              "kind": "method",
-              "name": "refreshLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "string"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "requestUpdate",
-                  "default": "true"
-                }
-              ]
             },
             {
               "kind": "field",
@@ -9718,6 +9778,16 @@
               ]
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -9941,6 +10011,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "In listbox mode the error text sits inside the listbox host, so it's exposed as a group rather than plain text.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "findLastEnabledListboxIndex",
               "privacy": "protected",
@@ -10121,6 +10205,21 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -10349,6 +10448,16 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -10924,6 +11033,20 @@
               ]
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncCheckboxElements",
               "privacy": "protected",
@@ -10941,6 +11064,16 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -11007,7 +11140,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -11846,6 +11979,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -12060,6 +12203,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -12135,6 +12292,21 @@
                   "text": "void"
                 }
               },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -12243,6 +12415,16 @@
               "kind": "method",
               "name": "handleListboxLabelClick",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -12620,6 +12802,30 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
@@ -12648,7 +12854,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -13290,6 +13496,16 @@
               ]
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autocomplete",
               "type": {
@@ -13336,15 +13552,6 @@
                 "text": "number | undefined"
               },
               "privacy": "protected"
-            },
-            {
-              "kind": "field",
-              "name": "cachedLocale",
-              "type": {
-                "text": "string"
-              },
-              "privacy": "protected",
-              "default": "''"
             },
             {
               "kind": "field",
@@ -13412,7 +13619,7 @@
               },
               "privacy": "protected",
               "parsedType": {
-                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+                "text": "{ minDate: Date, maxDate: Date, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
               }
             },
             {
@@ -13640,6 +13847,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "firstDayOfWeek",
               "type": {
                 "text": "number | undefined"
@@ -13824,6 +14045,21 @@
             },
             {
               "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getFormAssociatedValue",
               "privacy": "protected",
               "return": {
@@ -13978,6 +14214,16 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -14360,11 +14606,10 @@
             },
             {
               "kind": "field",
-              "name": "localeObserver",
-              "type": {
-                "text": "MutationObserver | undefined"
-              },
-              "privacy": "protected"
+              "name": "localeController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new LocaleController(this)"
             },
             {
               "kind": "field",
@@ -14432,16 +14677,6 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "observeLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
               }
             },
             {
@@ -14514,22 +14749,6 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "refreshLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "string"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "requestUpdate",
-                  "default": "true"
-                }
-              ]
             },
             {
               "kind": "method",
@@ -14740,6 +14959,20 @@
               "description": "Opens the popup calendar."
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "startTemplate",
               "privacy": "protected"
@@ -14776,6 +15009,16 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -14848,7 +15091,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -15886,6 +16129,16 @@
               ]
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -15939,15 +16192,6 @@
                 "text": "string[] | undefined"
               },
               "privacy": "protected"
-            },
-            {
-              "kind": "field",
-              "name": "cachedLocale",
-              "type": {
-                "text": "string"
-              },
-              "privacy": "protected",
-              "default": "''"
             },
             {
               "kind": "field",
@@ -16043,7 +16287,7 @@
               },
               "privacy": "protected",
               "parsedType": {
-                "text": "{ minDate?: Date | undefined, maxDate?: Date | undefined, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
+                "text": "{ minDate: Date, maxDate: Date, disabledDates: ReadonlySet<string>, disabledWeekDays: ReadonlySet<number> }"
               }
             },
             {
@@ -16319,6 +16563,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "firstDayOfWeek",
               "type": {
                 "text": "number | undefined"
@@ -16530,6 +16788,21 @@
             },
             {
               "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "getFormAssociatedValue",
               "privacy": "protected",
               "return": {
@@ -16679,6 +16952,16 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -17076,11 +17359,10 @@
             },
             {
               "kind": "field",
-              "name": "localeObserver",
-              "type": {
-                "text": "MutationObserver | undefined"
-              },
-              "privacy": "protected"
+              "name": "localeController",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "new LocaleController(this)"
             },
             {
               "kind": "field",
@@ -17161,16 +17443,6 @@
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "method",
-              "name": "observeLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "void"
-                }
               }
             },
             {
@@ -17267,22 +17539,6 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "refreshLocale",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "string"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "requestUpdate",
-                  "default": "true"
-                }
-              ]
             },
             {
               "kind": "method",
@@ -17521,6 +17777,20 @@
             },
             {
               "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "startComplete",
               "type": {
                 "text": "boolean"
@@ -17607,6 +17877,16 @@
             },
             {
               "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
               "description": "Saves the current form value as the initial reset state.",
@@ -17676,7 +17956,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -18809,8 +19089,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -19236,6 +19522,20 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -19669,8 +19969,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -19956,6 +20262,20 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -21290,6 +21610,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autocapitalize",
               "type": {
@@ -21519,6 +21849,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -21584,6 +21928,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -21732,6 +22091,16 @@
                 }
               ],
               "description": "Handles the `keydown` event."
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -22338,6 +22707,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "showPicker",
               "privacy": "public",
@@ -22380,6 +22763,16 @@
             },
             {
               "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
               "description": "Saves the current form value as the initial reset state.",
@@ -22415,7 +22808,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -23139,6 +23532,16 @@
               "name": "updateItemRoles",
               "privacy": "protected",
               "description": "Updates the role attribute of slotted menu items dynamically."
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "array"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['heading']"
             }
           ],
           "events": [
@@ -23576,7 +23979,7 @@
               "kind": "field",
               "name": "handleMenuItemKeyDown",
               "privacy": "protected",
-              "description": "Handles keydown events on the menu item."
+              "description": "Handles keydown events on the menu item. The item owns opening/closing its own submenu, so owned\nkeys are cancelled synchronously, before any await, to keep the parent menu from also acting on them."
             },
             {
               "kind": "field",
@@ -24170,8 +24573,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -24231,7 +24640,7 @@
               "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
-              "description": "Handles keyboard navigation and close requests."
+              "description": "Handles keyboard navigation and close requests. Owned keys are cancelled synchronously, before\nany await, so enclosing handlers (e.g. a toolbar button group) don't also act on them."
             },
             {
               "kind": "field",
@@ -24564,6 +24973,26 @@
             },
             {
               "kind": "method",
+              "name": "showAndFocus",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "1 | -1"
+                  }
+                }
+              ],
+              "description": "Opens the menu and focuses the first enabled item from `index` in `direction` (a negative index counts from the end)."
+            },
+            {
+              "kind": "method",
               "name": "startTransitionWait",
               "privacy": "protected",
               "parameters": [
@@ -24597,6 +25026,20 @@
               },
               "privacy": "protected",
               "default": "false",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -24924,30 +25367,6 @@
               },
               "privacy": "protected",
               "description": "parent container for the collapsible content."
-            },
-            {
-              "kind": "method",
-              "name": "containsComposed",
-              "privacy": "protected",
-              "return": {
-                "type": {
-                  "text": "boolean"
-                }
-              },
-              "parameters": [
-                {
-                  "name": "container",
-                  "type": {
-                    "text": "Node"
-                  }
-                },
-                {
-                  "name": "target",
-                  "type": {
-                    "text": "Node"
-                  }
-                }
-              ]
             },
             {
               "kind": "method",
@@ -25526,8 +25945,16 @@
               "name": "--charm-popup-bg-color"
             },
             {
-              "description": "The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.",
+              "description": "The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used. Defaults to the theme's `--charm-popup-arrow-size` token.",
               "name": "--popup-arrow-size"
+            },
+            {
+              "description": "A read-only custom property set on the host with the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `vertical` or `both`.",
+              "name": "--popup-auto-size-available-height"
+            },
+            {
+              "description": "A read-only custom property set on the host with the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `horizontal` or `both`.",
+              "name": "--popup-auto-size-available-width"
             },
             {
               "description": "The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.",
@@ -25815,7 +26242,7 @@
               "kind": "field",
               "name": "contentRole",
               "type": {
-                "text": "string"
+                "text": "string | undefined"
               },
               "privacy": "public",
               "default": "'dialog'",
@@ -26011,8 +26438,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -26487,6 +26920,20 @@
             },
             {
               "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "transitionMaxTime",
               "type": {
                 "text": "number"
@@ -26632,7 +27079,7 @@
             {
               "name": "content-role",
               "type": {
-                "text": "string"
+                "text": "string | undefined"
               },
               "default": "'dialog'",
               "description": "Sets the role of the overlay content.",
@@ -27644,8 +28091,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -27682,12 +28135,6 @@
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "handleCloseClick",
-              "privacy": "protected",
-              "description": "Handles close click, closes push pane"
             },
             {
               "kind": "method",
@@ -28020,6 +28467,20 @@
             },
             {
               "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "transitionMaxTime",
               "type": {
                 "text": "number"
@@ -28073,7 +28534,7 @@
               },
               "privacy": "public",
               "static": true,
-              "default": "['actions', 'footer']"
+              "default": "['actions', 'footer', 'heading']"
             }
           ],
           "events": [
@@ -28593,6 +29054,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -28775,6 +29246,20 @@
               }
             },
             {
+              "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "focus",
               "privacy": "public",
@@ -28876,6 +29361,21 @@
               "kind": "method",
               "name": "getAllRadios",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -28996,6 +29496,16 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -29410,6 +29920,30 @@
               "description": "Radios are slotted, so focus must be explicitly forwarded to an item."
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
@@ -29423,7 +29957,7 @@
               "kind": "method",
               "name": "syncRadioElements",
               "privacy": "protected",
-              "description": "Synchronizes the slotted radios with the group's state: force-disables them when the group is disabled (without\nclobbering their own `disabled` state), syncs their `checked` state to the group's value, and applies the roving\ntabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's."
+              "description": "Synchronizes the slotted radios with the group's state: forces them disabled/readonly when the group is (without\nclobbering their own state), syncs their `checked` state to the group's value, and applies the roving\ntabindex. Waits for the radios to settle so the radios' own reactive tabindex handling can't clobber the group's."
             },
             {
               "kind": "method",
@@ -29439,7 +29973,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Computes the group's composite validity (there's no single native control to read it from), syncs it to\n`ElementInternals`, and submits the selected value. The error message is only shown after interaction.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30264,6 +30798,16 @@
               "description": "Adds event listeners for the CoreRadio component."
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -30404,6 +30948,13 @@
               "readonly": true
             },
             {
+              "kind": "field",
+              "name": "effectivelyReadonly",
+              "privacy": "protected",
+              "description": "Whether the radio is readonly by itself or by a containing group.",
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "emitChange",
               "privacy": "protected",
@@ -30458,6 +31009,20 @@
               "name": "errorMessageTemplate",
               "privacy": "protected",
               "description": "Generates the template for form control error message",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30530,6 +31095,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -30642,6 +31222,16 @@
               "name": "handleKeyDown",
               "privacy": "protected",
               "description": "Handles the keydown event."
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -31036,9 +31626,28 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncFormValue",
-              "privacy": "protected"
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -31069,7 +31678,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -32189,6 +32798,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autocomplete",
               "type": {
@@ -32394,6 +33013,33 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "findOptionByValue",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -32459,6 +33105,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -32586,6 +33247,16 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -32775,6 +33446,19 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "isOptionSelected",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "HTMLOptionElement"
+                  }
+                }
+              ]
             },
             {
               "kind": "field",
@@ -33005,12 +33689,23 @@
             },
             {
               "kind": "field",
+              "name": "selectedOptions",
+              "type": {
+                "text": "HTMLOptionElement[]"
+              },
+              "privacy": "protected",
+              "default": "[]",
+              "description": "The selected light-DOM options, tracked by identity so duplicate values stay distinct."
+            },
+            {
+              "kind": "field",
               "name": "selectedValues",
               "type": {
                 "text": "string[]"
               },
               "privacy": "protected",
-              "default": "[]"
+              "description": "The values of the selected options.",
+              "readonly": true
             },
             {
               "kind": "method",
@@ -33063,6 +33758,20 @@
             },
             {
               "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "size",
               "type": {
                 "text": "number | undefined"
@@ -33080,6 +33789,16 @@
             },
             {
               "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
               "description": "Saves the current form value as the initial reset state.",
@@ -33087,6 +33806,12 @@
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
+            },
+            {
+              "kind": "method",
+              "name": "syncNativeSelection",
+              "privacy": "protected",
+              "description": "Syncs native option selectedness from state. Once the user picks an option its selectedness is\ndirty, so the rendered `selected` attributes (kept for reset semantics) no longer drive it."
             },
             {
               "kind": "method",
@@ -33103,6 +33828,25 @@
             },
             {
               "kind": "method",
+              "name": "toLightOptions",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLOptionElement[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "nativeOptions",
+                  "type": {
+                    "text": "Iterable<HTMLOptionElement>"
+                  }
+                }
+              ],
+              "description": "Maps rendered native options back to the light-DOM options they mirror."
+            },
+            {
+              "kind": "method",
               "name": "updateErrorMessage",
               "privacy": "protected",
               "description": "Updates the displayed validation message without showing the browser's validation UI.",
@@ -33115,7 +33859,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -34531,6 +35275,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autofocus",
               "type": {
@@ -34755,6 +35509,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -34830,6 +35598,21 @@
                   "text": "void"
                 }
               },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -34974,6 +35757,16 @@
                 }
               ],
               "description": "Handles the keydown event on the switch."
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -35346,10 +36139,34 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "switchTemplate",
               "privacy": "protected",
               "description": "Generates the template for the switch."
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -35386,7 +36203,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -35856,7 +36673,16 @@
             {
               "kind": "method",
               "name": "finishTransition",
-              "privacy": "protected"
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "waitId",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Settles the visibility change identified by `waitId` once; stale or repeated calls are ignored."
             },
             {
               "kind": "method",
@@ -35880,11 +36706,6 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
-            },
-            {
-              "kind": "method",
-              "name": "getTransitionMaxTime",
-              "privacy": "protected"
             },
             {
               "kind": "method",
@@ -35955,6 +36776,15 @@
             },
             {
               "kind": "field",
+              "name": "pendingTransition",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
               "name": "scope",
               "type": {
                 "text": "CharmScope"
@@ -35974,12 +36804,23 @@
             },
             {
               "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay."
+            },
+            {
+              "kind": "field",
               "name": "transitionMaxTime",
               "type": {
                 "text": "number"
               },
               "privacy": "protected",
-              "default": "0"
+              "default": "0",
+              "description": "Longest transition duration plus delay, used for the fallback timer."
             },
             {
               "kind": "field",
@@ -35988,6 +36829,21 @@
                 "text": "ReturnType<typeof setTimeout> | undefined"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "transitionWaitId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "updateTransitionTimes",
+              "privacy": "protected",
+              "description": "Measures the longest transition, with and without its delay."
             }
           ],
           "events": [
@@ -37379,6 +38235,16 @@
               }
             },
             {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "autocapitalize",
               "type": {
@@ -37601,6 +38467,20 @@
             },
             {
               "kind": "field",
+              "name": "errorTextRole",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -37666,6 +38546,21 @@
                 }
               ],
               "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -37764,6 +38659,16 @@
               "kind": "field",
               "name": "handleInput",
               "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "field",
@@ -38215,6 +39120,30 @@
               }
             },
             {
+              "kind": "field",
+              "name": "showInvalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "method",
               "name": "syncInitialFormValue",
               "privacy": "protected",
@@ -38250,7 +39179,7 @@
               "kind": "method",
               "name": "updateValidity",
               "privacy": "protected",
-              "description": "Updates the `invalid` property after the property changes. `disabled` and `readonly` inputs are always valid.",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -39084,6 +40013,17 @@
             },
             {
               "kind": "method",
+              "name": "getDefaultAnchor",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLElement | undefined"
+                }
+              },
+              "description": "Returns the first element assigned to the default slot."
+            },
+            {
+              "kind": "method",
               "name": "getMaxTransitionTime",
               "privacy": "protected",
               "parameters": [
@@ -39092,8 +40032,14 @@
                   "type": {
                     "text": "string[]"
                   }
+                },
+                {
+                  "name": "includeDelay",
+                  "default": "true",
+                  "description": "Whether to add each transition's delay to its duration."
                 }
               ],
+              "description": "Returns the longest transition in milliseconds.",
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "src/base/dismissible-element/charm-dismissible-element.ts"
@@ -39125,7 +40071,8 @@
             {
               "kind": "method",
               "name": "getTooltipText",
-              "privacy": "protected"
+              "privacy": "protected",
+              "description": "Returns the tooltip's text from the `content` slot, falling back to the `content` property."
             },
             {
               "kind": "method",
@@ -39149,6 +40096,12 @@
               "description": "Handles click event on the popup"
             },
             {
+              "kind": "method",
+              "name": "handleContentSlotChange",
+              "privacy": "protected",
+              "description": "Keeps the anchor's description in sync with the slotted tooltip content."
+            },
+            {
               "kind": "field",
               "name": "handleFocus",
               "privacy": "protected",
@@ -39158,7 +40111,7 @@
               "kind": "field",
               "name": "handleKeyDown",
               "privacy": "protected",
-              "description": "Handles keydown event on the popup"
+              "description": "Handles Escape on the anchor and, while open, the document. The anchor path stops propagation so Escape closes\nonly the tooltip (not a parent dialog or menu), which also keeps the document listener from handling it twice."
             },
             {
               "kind": "field",
@@ -39194,14 +40147,6 @@
               "kind": "method",
               "name": "handleSlotChange",
               "privacy": "protected",
-              "parameters": [
-                {
-                  "name": "e",
-                  "type": {
-                    "text": "Event"
-                  }
-                }
-              ],
               "description": "Handles the change of the default slot which contains the anchor of the tooltip."
             },
             {
@@ -39391,7 +40336,8 @@
             {
               "kind": "method",
               "name": "removeAnchorDescription",
-              "privacy": "protected"
+              "privacy": "protected",
+              "description": "Removes the generated description and its `aria-describedby` token from the anchor."
             },
             {
               "kind": "method",
@@ -39515,6 +40461,20 @@
             },
             {
               "kind": "field",
+              "name": "transitionMaxDuration",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "Longest transition duration, excluding delay; `transitionend` reports `elapsedTime` without the delay.",
+              "inheritedFrom": {
+                "name": "CharmDismissibleElement",
+                "module": "src/base/dismissible-element/charm-dismissible-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "transitionMaxTime",
               "type": {
                 "text": "number"
@@ -39566,13 +40526,13 @@
               "kind": "method",
               "name": "updateAnchorDescription",
               "privacy": "protected",
-              "description": "References the live tooltip content after its first render."
+              "description": "Describes the anchor with a hidden copy of the tooltip text while the tooltip is enabled, whether or not it is\nopen. The copy lives in the anchor's tree scope (in the tooltip's light DOM when they share one) so the\n`aria-describedby` reference resolves."
             },
             {
               "kind": "method",
               "name": "updateAnchorElement",
               "privacy": "protected",
-              "description": "Updates the trigger of the tooltip from the property or anchor slot."
+              "description": "Updates the trigger of the tooltip from the property or default slot, releasing the previous anchor."
             },
             {
               "kind": "method",
