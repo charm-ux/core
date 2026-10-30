@@ -100,7 +100,7 @@ describe('CharmDismissibleElement', () => {
   }
 
   it('does not settle on a shorter or pseudo-element transition end', async () => {
-    const { afterShow, end } = await openAlert('--alert-transition: opacity 100ms, transform 500ms;');
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 100ms, transform 500ms;');
 
     end(0.1);
     end(0.5, '::before');
@@ -110,14 +110,14 @@ describe('CharmDismissibleElement', () => {
   });
 
   it('settles on the longest duration when the transition has a delay', async () => {
-    const { afterShow, end } = await openAlert('--alert-transition: opacity 200ms 300ms;');
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 200ms 300ms;');
 
     end(0.2);
     expect(afterShow).to.have.been.calledOnce;
   });
 
   it('tolerates float rounding in elapsedTime', async () => {
-    const { afterShow, end } = await openAlert('--alert-transition: opacity 1.001s;');
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 1.001s;');
 
     end(1.001);
     expect(afterShow).to.have.been.calledOnce;
@@ -126,7 +126,7 @@ describe('CharmDismissibleElement', () => {
   it('settles on the collapsed transition end under reduced motion', async () => {
     await emulateMedia({ reducedMotion: 'reduce' });
     try {
-      const { afterShow, end } = await openAlert('--alert-transition: opacity 500ms;');
+      const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 500ms;');
 
       end(0.00001);
       expect(afterShow).to.have.been.calledOnce;
@@ -136,7 +136,7 @@ describe('CharmDismissibleElement', () => {
   });
 
   it('restarts a pending after event after reconnecting during a transition', async () => {
-    const element = await mount('ch-alert', '--alert-transition: opacity 1ms;');
+    const element = await mount('ch-alert', '--charm-alert-transition: opacity 1ms;');
     const afterShow = oneEvent(element, 'alert-after-show');
     (element as HTMLElement & { open: boolean }).open = true;
     element.remove();
