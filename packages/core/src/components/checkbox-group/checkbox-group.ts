@@ -7,8 +7,6 @@ import { keys } from '../../utilities/key-map.js';
 import CoreCheckbox from '../checkbox/checkbox.js';
 import styles from './checkbox-group.styles.js';
 
-let checkboxGroupId = 0;
-
 /**
  * Checkbox Group manages a collection of checkboxes, allowing multiple options to be selected while providing shared
  * form validation, value management, and accessible group labeling.
@@ -20,6 +18,7 @@ let checkboxGroupId = 0;
  * @slot - The default slot where checkboxes are placed.
  * @slot label - The checkbox group label. Required for proper accessibility. Alternatively, use the `label` property.
  * @slot help-text - Help text that describes how to use the group. Alternatively, use the `help-text` property.
+ * @slot required-text - Localized required-state text announced with the group label.
  *
  * @event change - Emitted when the group's selected values change.
  * @event input - Emitted when the group receives user input.
@@ -52,23 +51,21 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   @state()
   protected listboxActiveIndex = -1;
 
-  @query('.checkboxes')
-  protected checkboxListbox?: HTMLElement;
-
   @query('slot:not([name])')
   protected defaultSlot?: HTMLSlotElement;
 
   protected _valueAsArray: string[] = [];
   protected _valueDelimiter = ',';
-  protected pendingValue = '';
-  protected valueAssignmentPending = false;
+  protected pendingSerializedValue?: string;
   protected checkboxes: CoreCheckbox[] = [];
   protected initialValueAsArray: string[] = [];
   protected listboxHostAttributes = new Map<string, string | null>();
   protected listboxAttributes = new WeakMap<CoreCheckbox, Map<string, string | null>>();
+  protected hasCapturedListboxTabIndex = false;
+  protected listboxOriginalTabIndex: string | null = null;
   protected listboxTypeahead = '';
   protected listboxTypeaheadTimer?: number;
-  protected readonly listboxId = ++checkboxGroupId;
+  protected optionObserver?: MutationObserver;
 
   public constructor() {
     super();
@@ -100,7 +97,13 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
   /** Gets group validity, where a required group must have at least one selected checkbox. */
   public override get validity(): ValidityState {
-    const valueMissing = this.required && this.valueAsArray.length === 0 && !this.disabled;
+    const valueMissing =
+      this.required &&
+      !this.getAllCheckboxes().some(
+        checkbox =>
+          !checkbox.disabled && !checkbox.forceDisabled && this.valueAsArray.includes(this.getCheckboxValue(checkbox))
+      ) &&
+      !this.disabled;
     const customError = this.customErrorMessage !== '';
 
     return {
@@ -118,6 +121,11 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     };
   }
 
+  /** In listbox mode the error text sits inside the listbox host, so it's exposed as a group rather than plain text. */
+  protected override get errorTextRole(): string | undefined {
+    return this.listbox ? 'group' : undefined;
+  }
+
   public set valueDelimiter(delimiter: string) {
     const nextDelimiter = delimiter || ',';
     if (nextDelimiter === this._valueDelimiter) return;
@@ -125,6 +133,9 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     const oldDelimiter = this._valueDelimiter;
     const oldValue = this.value;
     this._valueDelimiter = nextDelimiter;
+    if (this.pendingSerializedValue !== undefined) {
+      this._valueAsArray = this.parseValueAsArray(this.pendingSerializedValue);
+    }
     this.requestUpdate('valueDelimiter', oldDelimiter);
     this.requestUpdate('value', oldValue);
   }
@@ -132,8 +143,14 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   public set valueAsArray(values: string[]) {
     const oldValue = this.value;
     const oldValueAsArray = [...this._valueAsArray];
-    this.valueAssignmentPending = false;
-    this._valueAsArray = this.normalizeValueAsArray(values);
+    const nextValues = this.normalizeValueAsArray(values);
+    if (
+      nextValues.length === oldValueAsArray.length &&
+      nextValues.every((value, index) => value === oldValueAsArray[index])
+    )
+      return;
+    this.pendingSerializedValue = undefined;
+    this._valueAsArray = nextValues;
     this.requestUpdate('valueAsArray', oldValueAsArray);
     this.requestUpdate('value', oldValue);
   }
@@ -141,9 +158,14 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   public override set value(value: string) {
     const oldValue = this.value;
     const oldValueAsArray = [...this._valueAsArray];
-    this.pendingValue = value;
-    this.valueAssignmentPending = true;
-    this._valueAsArray = this.parseValueAsArray(value);
+    this.pendingSerializedValue = value;
+    const nextValues = this.parseValueAsArray(value);
+    if (
+      nextValues.length === oldValueAsArray.length &&
+      nextValues.every((item, index) => item === oldValueAsArray[index])
+    )
+      return;
+    this._valueAsArray = nextValues;
     this.requestUpdate('valueAsArray', oldValueAsArray);
     this.requestUpdate('value', oldValue);
   }
@@ -152,8 +174,31 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     super.connectedCallback();
     this.internals.setFormValue(this.getFormValue());
     void this.syncCheckboxElements();
+    this.optionObserver = new MutationObserver(records => {
+      if (!this.isConnected) return;
+      const relevant = records.some(record => {
+        const target = record.target instanceof Element ? record.target : record.target.parentElement;
+        return (
+          target instanceof CoreCheckbox ||
+          !!target?.closest(this.scope.tagName('checkbox')) ||
+          !!target?.closest('[slot="label"], [slot="help-text"]')
+        );
+      });
+      if (relevant) {
+        void this.syncCheckboxElements().then(() => {
+          this.internals.setFormValue(this.getFormValue());
+          this.updateGroupValidity();
+        });
+      }
+    });
+    this.optionObserver.observe(this, {
+      attributes: true,
+      attributeFilter: ['disabled', 'label', 'value'],
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
     this.addEventListener('focus', this.handleHostFocus);
-    this.addEventListener('focus', this.handleListboxFocus);
     this.addEventListener('blur', this.handleHostBlur);
     this.addEventListener('keydown', this.handleListboxKeyDown);
     this.addEventListener('click', this.handleListboxClick);
@@ -164,9 +209,10 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       window.clearTimeout(this.listboxTypeaheadTimer);
       this.listboxTypeaheadTimer = undefined;
     }
+    this.optionObserver?.disconnect();
+    this.optionObserver = undefined;
     super.disconnectedCallback();
     this.removeEventListener('focus', this.handleHostFocus);
-    this.removeEventListener('focus', this.handleListboxFocus);
     this.removeEventListener('blur', this.handleHostBlur);
     this.removeEventListener('keydown', this.handleListboxKeyDown);
     this.removeEventListener('click', this.handleListboxClick);
@@ -190,7 +236,9 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   }
 
   protected override syncInitialFormValue() {
+    if (this.hasCapturedInitialValue) return;
     this.initialValueAsArray = [...this.valueAsArray];
+    this.hasCapturedInitialValue = true;
   }
 
   protected override restoreInitialFormValue() {
@@ -206,9 +254,8 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     if (typeof state === 'string') {
       try {
         const value: unknown = JSON.parse(state);
-        if (Array.isArray(value) && value.every(item => typeof item === 'string')) {
-          this.valueAsArray = value;
-        }
+        if (Array.isArray(value) && value.every(item => typeof item === 'string')) this.valueAsArray = value;
+        else this.valueAsArray = this.parseValueAsArray(state);
       } catch {
         this.valueAsArray = this.parseValueAsArray(state);
       }
@@ -228,6 +275,10 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     return enabledValues.length ? formValue : null;
   }
 
+  protected override getFormAssociatedValue(): FormData | null {
+    return this.getFormValue();
+  }
+
   protected parseValueAsArray(value: string): string[] {
     return this.normalizeValueAsArray(
       value
@@ -245,39 +296,53 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
     super.willUpdate(changedProperties);
+    this.syncListboxState(changedProperties);
+    this.syncCheckboxState(changedProperties);
+    this.syncGroupFormState(changedProperties);
+    this.applyAutofocus(changedProperties);
+  }
 
-    if (this.valueAssignmentPending) {
-      this._valueAsArray = this.parseValueAsArray(this.pendingValue);
-      this.valueAssignmentPending = false;
-    }
-
+  protected syncListboxState(changedProperties: Map<string | number | symbol, unknown>) {
     if (changedProperties.has('listbox')) this.syncListboxOptions();
-    if (this.shouldSyncListboxHostAttributes(changedProperties)) {
-      this.syncListboxHostAttributes();
-    }
+    if (this.shouldSyncListboxSemantics(changedProperties)) this.syncListboxSemantics();
+  }
 
-    if (changedProperties.has('valueAsArray') || changedProperties.has('listbox')) {
+  protected syncCheckboxState(changedProperties: Map<string | number | symbol, unknown>) {
+    if (
+      changedProperties.has('valueAsArray') ||
+      changedProperties.has('listbox') ||
+      changedProperties.has('disabled') ||
+      changedProperties.has('readonly')
+    ) {
       void this.syncCheckboxElements();
       this.internals.setFormValue(this.getFormValue());
       if (this.hasUpdated) this.updateGroupValidity();
     }
-    if (changedProperties.has('disabled') || changedProperties.has('readonly')) {
-      void this.syncCheckboxElements();
-      this.internals.setFormValue(this.getFormValue());
-    }
+  }
+
+  protected syncGroupFormState(changedProperties: Map<string | number | symbol, unknown>) {
     if (changedProperties.has('name')) {
       this.internals.setFormValue(this.getFormValue());
     }
     if (changedProperties.has('required') && this.hasUpdated) {
       this.updateGroupValidity();
     }
+  }
+
+  protected applyAutofocus(changedProperties: Map<string | number | symbol, unknown>) {
     if (changedProperties.has('autofocus') && this.autofocus) {
       this.focusOnFirstFocusableElement();
     }
   }
 
+  protected override updated(changedProperties: Map<string | number | symbol, unknown>) {
+    super.updated(changedProperties);
+    this.pendingSerializedValue = undefined;
+  }
+
   protected override firstUpdated() {
     super.firstUpdated();
+    if (this.listbox) this.syncListboxSemantics();
     this.internals.setFormValue(this.getFormValue());
     this.updateGroupValidity();
     void this.syncCheckboxElements();
@@ -302,7 +367,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.required = this.required;
-    input.checked = this.valueAsArray.length > 0;
+    input.checked = !this.validity.valueMissing;
     return input.validationMessage;
   }
 
@@ -407,7 +472,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     if (index === -1 || !this.isListboxOptionEnabled(checkbox)) return;
 
     this.setListboxActiveIndex(index);
-    this.checkboxListbox?.focus();
+    this.focus();
   }
 
   protected findNextListboxIndex(checkboxes: CoreCheckbox[], direction: 1 | -1): number {
@@ -464,10 +529,6 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     return checkbox.getAttribute('aria-label') || checkbox.label || checkbox.textContent?.trim() || '';
   }
 
-  protected getActiveListboxOptionId(): string | undefined {
-    return this.listbox && this.listboxActiveIndex >= 0 ? this.checkboxes[this.listboxActiveIndex]?.id : undefined;
-  }
-
   protected getListboxLabel(): string {
     const slottedLabel = [...this.querySelectorAll('[slot="label"]')]
       .map(element => element.textContent?.trim())
@@ -481,62 +542,69 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       .map(element => element.textContent?.trim())
       .filter(Boolean)
       .join(' ');
-    const parts = [this.helpText || slottedHelpText, this.invalid ? this.errorMessage : ''].filter(Boolean);
-    return parts.join(' ');
+    return [this.helpText || slottedHelpText, this.showInvalid ? this.errorMessage : ''].filter(Boolean).join(' ');
   }
 
-  protected syncListboxHostAttributes() {
-    const names = [
-      'role',
-      'aria-label',
-      'aria-description',
-      'aria-activedescendant',
-      'aria-invalid',
-      'aria-required',
-      'aria-readonly',
-      'aria-disabled',
-      'aria-multiselectable',
-      'tabindex',
-    ];
+  protected getActiveListboxOption(): CoreCheckbox | null {
+    return this.listbox && this.listboxActiveIndex >= 0 ? (this.checkboxes[this.listboxActiveIndex] ?? null) : null;
+  }
 
+  protected syncListboxSemantics() {
     if (!this.listbox) {
       this.listboxHostAttributes.forEach((value, name) => {
         if (value === null) this.removeAttribute(name);
         else this.setAttribute(name, value);
       });
       this.listboxHostAttributes.clear();
+      this.internals.role = null;
+      this.internals.ariaLabel = null;
+      this.internals.ariaActiveDescendantElement = null;
+      this.internals.ariaInvalid = null;
+      this.internals.ariaRequired = null;
+      this.internals.ariaReadOnly = null;
+      this.internals.ariaDisabled = null;
+      this.internals.ariaMultiSelectable = null;
+      if (this.hasCapturedListboxTabIndex) {
+        if (this.listboxOriginalTabIndex === null) this.removeAttribute('tabindex');
+        else this.setAttribute('tabindex', this.listboxOriginalTabIndex);
+        this.hasCapturedListboxTabIndex = false;
+      }
       return;
     }
 
     if (!this.listboxHostAttributes.size) {
-      names.forEach(name => this.listboxHostAttributes.set(name, this.getAttribute(name)));
+      ['role', 'aria-label', 'aria-description'].forEach(name =>
+        this.listboxHostAttributes.set(name, this.getAttribute(name))
+      );
     }
 
-    this.setAttribute('role', 'listbox');
-    this.setAttribute('aria-multiselectable', 'true');
-    this.setAttribute('aria-required', String(this.required));
-    this.setAttribute('aria-invalid', String(this.invalid));
-    this.setAttribute('tabindex', this.disabled ? '-1' : '0');
+    if (!this.hasCapturedListboxTabIndex) {
+      this.listboxOriginalTabIndex = this.getAttribute('tabindex');
+      this.hasCapturedListboxTabIndex = true;
+    }
 
+    this.internals.role = 'listbox';
+    this.setAttribute('role', 'listbox');
+    this.internals.ariaMultiSelectable = 'true';
+    this.internals.ariaRequired = this.required ? 'true' : null;
+    this.internals.ariaInvalid = String(this.showInvalid);
+    this.internals.ariaReadOnly = this.readonly ? 'true' : null;
+    this.internals.ariaDisabled = this.disabled ? 'true' : null;
     const label = this.getListboxLabel() || this.listboxHostAttributes.get('aria-label') || '';
     if (label) this.setAttribute('aria-label', label);
     else this.removeAttribute('aria-label');
+    this.internals.ariaLabel = label || null;
 
     const description = this.getListboxDescription() || this.listboxHostAttributes.get('aria-description') || '';
     if (description) this.setAttribute('aria-description', description);
     else this.removeAttribute('aria-description');
+    this.internals.ariaDescription = description || null;
 
-    if (this.readonly) this.setAttribute('aria-readonly', 'true');
-    else this.removeAttribute('aria-readonly');
-    if (this.disabled) this.setAttribute('aria-disabled', 'true');
-    else this.removeAttribute('aria-disabled');
-
-    const activeOptionId = this.getActiveListboxOptionId();
-    if (activeOptionId) this.setAttribute('aria-activedescendant', activeOptionId);
-    else this.removeAttribute('aria-activedescendant');
+    this.internals.ariaActiveDescendantElement = this.getActiveListboxOption();
+    this.setAttribute('tabindex', this.disabled ? '-1' : '0');
   }
 
-  protected shouldSyncListboxHostAttributes(changedProperties: Map<string | number | symbol, unknown>) {
+  protected shouldSyncListboxSemantics(changedProperties: Map<string | number | symbol, unknown>) {
     if (changedProperties.has('listbox')) return true;
     if (!this.listbox) return false;
 
@@ -544,6 +612,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       'listboxActiveIndex',
       'required',
       'invalid',
+      'hadFocus',
       'readonly',
       'disabled',
       'label',
@@ -565,8 +634,11 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
 
   protected setListboxActiveIndex(index: number) {
     if (!this.isListboxOptionEnabled(this.checkboxes[index])) return;
+    const previousIndex = this.listboxActiveIndex;
+    if (previousIndex === index) return;
     this.listboxActiveIndex = index;
-    this.syncListboxOptions();
+    this.checkboxes[previousIndex]?.toggleAttribute('data-listbox-active', false);
+    this.checkboxes[index]?.toggleAttribute('data-listbox-active', true);
   }
 
   protected syncListboxOptions() {
@@ -591,7 +663,6 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     this.checkboxes.forEach((checkbox, index) => {
       this.rememberListboxAttributes(checkbox);
       checkbox.listboxOption = true;
-      if (!checkbox.id) checkbox.id = `checkbox-group-${this.listboxId}-option-${index}`;
       checkbox.setAttribute('role', 'option');
       checkbox.setAttribute('aria-selected', String(checkbox.checked));
       if (checkbox.disabled || checkbox.forceDisabled) checkbox.setAttribute('aria-disabled', 'true');
@@ -602,12 +673,12 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       checkbox.toggleAttribute('data-listbox-active', index === this.listboxActiveIndex);
     });
 
-    this.syncListboxHostAttributes();
+    this.syncListboxSemantics();
   }
 
   protected rememberListboxAttributes(checkbox: CoreCheckbox) {
     if (this.listboxAttributes.has(checkbox)) return;
-    const names = ['role', 'aria-selected', 'aria-disabled', 'aria-label', 'tabindex', 'id', 'data-listbox-active'];
+    const names = ['role', 'aria-selected', 'aria-disabled', 'aria-label', 'tabindex', 'data-listbox-active'];
     this.listboxAttributes.set(checkbox, new Map(names.map(name => [name, checkbox.getAttribute(name)])));
   }
 
@@ -628,9 +699,14 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       .filter(checkbox => !nextCheckboxes.includes(checkbox))
       .forEach(checkbox => {
         this.restoreListboxOption(checkbox);
+        checkbox.forceDisabled = false;
+        checkbox.forceReadonly = false;
       });
     this.checkboxes = nextCheckboxes;
-    void this.syncCheckboxElements().then(() => this.internals.setFormValue(this.getFormValue()));
+    void this.syncCheckboxElements().then(() => {
+      this.internals.setFormValue(this.getFormValue());
+      this.updateGroupValidity();
+    });
   }
 
   protected handleFocusElement() {
@@ -647,7 +723,8 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
   }
 
   protected handleHostFocus = () => {
-    if (!this.listbox) this.focusOnFirstFocusableElement();
+    if (this.listbox) this.handleListboxFocus();
+    else this.focusOnFirstFocusableElement();
   };
 
   protected handleHostBlur = () => {
@@ -674,7 +751,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     if (this.listbox) {
       this.setInitialListboxActiveOption(checkboxes);
       this.syncListboxOptions();
-      this.checkboxListbox?.focus();
+      this.focus();
       return;
     }
     checkboxes.find(checkbox => !checkbox.disabled && !checkbox.forceDisabled)?.focus();
@@ -693,6 +770,7 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
         @click=${this.focusOnFirstFocusableElement}
       >
         ${this.labelContentTemplate()}
+        ${this.required ? this.html`<span class="visually-hidden">(<slot name="required-text">required</slot>)</span>` : ''}
       </legend>
     `;
   }
@@ -724,7 +802,6 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
         @change=${this.handleCheckboxChange}
         @focusin=${this.handleFocusElement}
         @focusout=${this.handleBlurElement}
-        role=${ifDefined(this.listbox ? undefined : 'presentation')}
       ></slot>
     </div>`;
   }
@@ -734,9 +811,9 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
     return this.html`<fieldset
       part="checkbox-group-base"
       aria-describedby=${ifDefined(!this.listbox ? this.describedBy : undefined)}
-      aria-errormessage=${ifDefined(!this.listbox && this.invalid ? 'error-text' : undefined)}
-      aria-invalid=${this.invalid}
-      aria-required=${this.required}
+      aria-errormessage=${ifDefined(!this.listbox && this.showInvalid ? 'error-text' : undefined)}
+      aria-invalid=${this.showInvalid}
+      aria-readonly=${ifDefined(!this.listbox && this.readonly ? 'true' : undefined)}
       class=${classMap({
         'checkbox-group': true,
         'form-control': true,

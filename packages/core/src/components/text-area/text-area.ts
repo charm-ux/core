@@ -53,9 +53,12 @@ export class CoreTextArea extends CharmFormControlElement {
   @property({ reflect: true })
   public override autocapitalize: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters' = 'none';
 
-  /** This attribute specifies whether the browser can automatically fill in the control's value. */
+  /**
+   * Permission the user agent has to provide automated assistance in filling out form field values and the type of
+   * information expected in the field.
+   */
   @property()
-  public autocomplete?: 'off' | 'on';
+  public autocomplete?: string;
 
   /** Used to customize the label or icon of the Enter key on virtual keyboards. */
   @property({ reflect: true })
@@ -116,22 +119,16 @@ export class CoreTextArea extends CharmFormControlElement {
 
   protected handleInput = () => {
     this.value = this.input!.value;
-    this.emitInput();
-  };
-
-  protected handleKeyDown = (event: KeyboardEvent) => {
-    event.stopPropagation();
   };
 
   protected override updated(changedProperties: PropertyValues<this>) {
     super.updated(changedProperties);
 
-    if (changedProperties.has('value') || changedProperties.has('rows')) {
+    if (changedProperties.has('value') || changedProperties.has('rows') || changedProperties.has('resize')) {
       this.setTextareaDimensions();
     }
 
     if (changedProperties.has('resize')) {
-      this.setTextareaDimensions();
       this.updateResizeObserver();
     }
   }
@@ -181,10 +178,10 @@ export class CoreTextArea extends CharmFormControlElement {
       <div class="form-control-input" part="textarea-control">
         <textarea
           aria-describedby=${ifDefined(this.describedBy)}
-          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-          aria-invalid=${this.invalid}
+          aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+          aria-invalid=${this.showInvalid}
           autocapitalize=${ifDefined(this.autocapitalize)}
-          autocomplete=${ifDefined(this.autocomplete)}
+          autocomplete=${ifDefined(this.autocomplete) as any}
           class="form-control-base-input"
           enterkeyhint=${ifDefined(this.enterkeyhint)}
           id="input"
@@ -203,7 +200,6 @@ export class CoreTextArea extends CharmFormControlElement {
           .value=${live((this.value || '').toString())}
           @change=${this.handleChange}
           @input=${this.handleInput}
-          @keydown=${this.handleKeyDown}
         ></textarea>
       </div>
     `;

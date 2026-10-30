@@ -1,0 +1,151 @@
+---
+title: Date Range Picker
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Date range picker combines localized segmented start/end entry with a popup [`calendar`](/components/calendar). It is form-associated and submits one slash-separated value.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Travel dates"
+  name="travel-dates"
+  value="2026-10-18/2026-10-24"
+  min-range="2"
+  max-range="14"
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Label the overall range and translate the start, end, and segment names.
+- Use ISO dates separated by `/` for `value` (`YYYY-MM-DD/YYYY-MM-DD`).
+- Use `min`, `max`, and `min-range`/`max-range` to express range constraints.
+
+**_Don't_**
+
+- Assume the picker submits two fields: it submits one named, slash-separated value.
+- Expect unavailable dates between available endpoints to invalidate the range; only endpoints are checked.
+
+## Examples
+
+### Restrict dates and range length
+
+The endpoint bounds apply to both dates. Range length counts both endpoints inclusively.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker
+  label="Hotel stay"
+  name="stay"
+  min="2026-06-01"
+  max="2026-06-30"
+  min-range="2"
+  max-range="14"
+  disabled-dates="2026-06-12 2026-06-19"
+  disabled-week-days="0,6"
+></ch-date-range-picker>
+```
+
+</code-bubble>
+
+Dates unavailable between the selected endpoints are allowed; the start and end dates themselves must be available.
+
+### Translate segments, separator, and calendar controls
+
+The start/end segment groups follow the closest `lang` attribute and remain individually named. Each default placeholder is a single localized field initial (for example, English `M/D/Y` or French `J/M/A`) in the locale's segment order. Browsers without localized date-field names fall back to `M`, `D`, and `Y`. Override them with the `*-placeholder` slots.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker lang="fr-FR" label="Dates du séjour">
+  <span slot="start-label">Date de début</span>
+  <span slot="end-label">Date de fin</span>
+  <span slot="start-day-label">Jour de début</span>
+  <span slot="start-month-label">Mois de début</span>
+  <span slot="start-year-label">Année de début</span>
+  <span slot="end-day-label">Jour de fin</span>
+  <span slot="end-month-label">Mois de fin</span>
+  <span slot="end-year-label">Année de fin</span>
+  <span slot="day-placeholder">JJ</span>
+  <span slot="month-placeholder">MM</span>
+  <span slot="year-placeholder">AAAA</span>
+  <span slot="range-separator">à</span>
+  <span slot="previous-month-label">Mois précédent</span>
+  <span slot="next-month-label">Mois suivant</span>
+  <span slot="month-label">Mois</span>
+  <span slot="year-label">Année</span>
+  <span slot="toggle-label">Ouvrir le calendrier</span>
+  <span slot="popup-label">Calendrier</span>
+</ch-date-range-picker>
+```
+
+</code-bubble>
+
+### Translate validation messages
+
+Plural messages use locale plural rules and replace `{count}` with the constraint value.
+
+<code-bubble>
+
+```html
+<ch-date-range-picker label="Dates du séjour" min-range="2" max-range="14">
+  <span slot="incomplete-range-message">Saisissez les deux dates.</span>
+  <span slot="invalid-range-message">Saisissez une période valide.</span>
+  <span slot="unavailable-range-message">Une date de début ou de fin n’est pas disponible.</span>
+  <span slot="min-range-message">Choisissez au moins {count} jour.</span>
+  <span slot="min-range-message-other">Choisissez au moins {count} jours.</span>
+  <span slot="max-range-message">Choisissez au plus {count} jour.</span>
+  <span slot="max-range-message-other">Choisissez au plus {count} jours.</span>
+</ch-date-range-picker>
+```
+
+</code-bubble>
+
+### Submit one range value
+
+For the example above, form data contains `stay=2026-06-03/2026-06-10`. An unfinished calendar selection stays in a draft and does not replace the saved value; Escape, outside click, or closing the toggle cancels that draft.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-date-range-picker label="Travel dates" name="travel-dates" required></ch-date-range-picker>
+  <button type="submit">Search stays</button>
+</form>
+```
+
+</code-bubble>
+
+### Synchronize controlled state
+
+```js
+const picker = document.querySelector('ch-date-range-picker');
+
+picker.addEventListener('change', () => {
+  applicationState.travelDates = picker.value;
+});
+```
+
+An invalid programmatic range is retained and marked invalid. Optional but partially entered ranges are invalid. The Today action selects a same-day range.
+
+## Keyboard
+
+| Key                 | Action                                                               |
+| ------------------- | -------------------------------------------------------------------- |
+| Left / Right        | Move between segments, including start/end (direction-aware in RTL). |
+| Up / Down           | Step the focused segment when editable.                              |
+| Space or Alt + Down | Open the calendar.                                                   |
+| Escape              | Close the popup, discard a draft, and restore focus.                 |
+| Enter               | Preserve native form submission behavior.                            |
+
+## API
+
+<ComponentMetadata />

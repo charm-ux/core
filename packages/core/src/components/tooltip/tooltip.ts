@@ -7,7 +7,7 @@ import { parseDuration } from '../../internal/animations.js';
 import { keys } from '../../utilities/key-map.js';
 import styles from './tooltip.styles.js';
 
-/** Possible tooltip placements */
+let tooltipDescriptionId = 0;
 
 /**
  * Tooltips display informative text when users hover over, focus on, or tap an element.
@@ -41,12 +41,12 @@ import styles from './tooltip.styles.js';
  * @cssprop --charm-tooltip-border-width - The border width of the tooltip
  * @cssprop --charm-tooltip-shadow - The box shadow of the tooltip
  * @cssprop --charm-tooltip-fg-color - The foreground color of the tooltip
- * @cssprop --charm-tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
+ * @cssprop --tooltip-hide-delay - The amount of time to wait before hiding the tooltip when hovering.
  * @cssprop --charm-tooltip-max-width - The maximum width of the tooltip.
  * @cssprop --charm-tooltip-padding - The padding of the tooltip
- * @cssprop --charm-tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
+ * @cssprop --tooltip-show-delay - The amount of time to wait before showing the tooltip when hovering.
  * @cssprop --charm-tooltip-show-transition - The transition effect when opening the tooltip
- * @cssprop --charm-tooltip-show-transition - The transition effect when closing the tooltip
+ * @cssprop --charm-tooltip-hide-transition - The transition effect when closing the tooltip
  */
 
 export class CoreTooltip extends CharmDismissibleElement {
@@ -88,6 +88,9 @@ export class CoreTooltip extends CharmDismissibleElement {
   // when the pointer fully leaves the anchor and tooltip or when the anchor blurs.
   protected dismissedByPress = false;
   protected waitingForPopupHide = false;
+  protected descriptionElement?: HTMLElement;
+  protected isHovering = false;
+  protected isFocused = false;
 
   /** Keeps the closed initial render to the anchor until the tooltip is first shown. */
   protected hasOpened = false;
@@ -160,6 +163,7 @@ export class CoreTooltip extends CharmDismissibleElement {
     // A new anchor must not inherit press dismissal state from the old one.
     this.dismissedByPress = false;
     this.removeListeners();
+    this.removeAnchorDescription();
     this.anchorEl = target;
     this.attachListeners();
     this.updateAnchorDescription();
@@ -168,8 +172,12 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Disables/enables the tooltip */
   public set disabled(val: boolean) {
     this._disabled = val;
+    // A disabled tooltip no longer describes its anchor.
+    this.updateAnchorDescription();
 
     if (val && this.open) {
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = undefined;
       this.hide();
     }
   }
@@ -181,6 +189,7 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   public set content(val: string | undefined) {
     this._content = val;
+    this.updateAnchorDescription();
     this.handleOptionsChange();
   }
 
@@ -199,20 +208,24 @@ export class CoreTooltip extends CharmDismissibleElement {
     this.handleOptionsChange();
   }
 
+  public override show() {
+    if (!this.disabled) super.show();
+  }
+
   public override connectedCallback() {
     super.connectedCallback();
-    this.handleBlur = this.handleBlur.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleFocus = this.handleFocus.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleMouseDown = this.handleMouseDown.bind(this);
-    this.handleMouseOver = this.handleMouseOver.bind(this);
-    this.handleMouseOut = this.handleMouseOut.bind(this);
 
     // Re-arm the tooltip after a light dismiss in case the re-arm events were missed while disconnected.
     this.dismissedByPress = false;
 
-    this.updateComplete.then(() => this.attachListeners());
+    this.updateComplete.then(() => {
+      if (!this.isConnected) return;
+      this.updateAnchorElement();
+      this.attachListeners();
+      this.updateAnchorDescription();
+      // Restore the Escape listener when an open tooltip is moved.
+      if (this.open) document.addEventListener('keydown', this.handleKeyDown);
+    });
   }
 
   public override firstUpdated() {
@@ -224,18 +237,43 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   public override disconnectedCallback() {
     super.disconnectedCallback();
+    document.removeEventListener('keydown', this.handleKeyDown);
     this.removeListeners();
+    this.removeAnchorDescription();
     if (this.hoverTimeout) {
       clearTimeout(this.hoverTimeout);
       this.hoverTimeout = undefined;
     }
   }
 
-  /** Updates the trigger of the tooltip if the anchor is provided as a string. */
+  /** Updates the trigger of the tooltip from the property or default slot, releasing the previous anchor. */
   protected updateAnchorElement() {
-    if (typeof this.anchor === 'string' && this.anchor.length > 0) {
-      this.anchorEl = (this.getScopedElementById(this.anchor) as HTMLElement) || undefined;
+    let target: HTMLElement | undefined;
+    if (this.anchor instanceof HTMLElement) {
+      target = this.anchor;
+    } else if (typeof this.anchor === 'string' && this.anchor.length > 0) {
+      target = (this.getScopedElementById(this.anchor) as HTMLElement | null) ?? undefined;
+    } else {
+      target = this.getDefaultAnchor();
     }
+
+    if (target === this.anchorEl) return;
+    this.removeListeners();
+    this.removeAnchorDescription();
+    this.anchorEl = target;
+    // The popup's anchor binding only exists once the tooltip has rendered open.
+    if (this.hasOpened) this.requestUpdate();
+  }
+
+  /** Returns the first element assigned to the default slot. */
+  protected getDefaultAnchor(): HTMLElement | undefined {
+    for (const child of Array.from(this.children)) {
+      if (child.slot) continue;
+      // Slots use display:contents and can't be positioned, so use their first assigned element.
+      const el = child instanceof HTMLSlotElement ? child.assignedElements({ flatten: true })[0] : child;
+      if (el instanceof HTMLElement) return el;
+    }
+    return undefined;
   }
 
   /** Adds event listeners for the anchor. */
@@ -271,16 +309,20 @@ export class CoreTooltip extends CharmDismissibleElement {
 
   /** Handles internal logic for when the open attribute changes */
   protected override onOpenChange(open: boolean) {
-    if (open && this.disabled) return;
+    if (open && this.disabled) {
+      this.open = false;
+      return;
+    }
 
     if (open) {
+      document.addEventListener('keydown', this.handleKeyDown);
       this.hasOpened = true;
       this.requestUpdate();
       // Make the popup content accessible immediately, then activate the visible
       // class on the next render so the initial open transition can reliably
       // animate from the closed state instead of snapping in.
       this.updateComplete.then(() => {
-        if (this.open) this.activateTooltip();
+        if (this.isConnected && this.open) this.activateTooltip();
       });
       this.visible = false;
       requestAnimationFrame(() => {
@@ -290,6 +332,7 @@ export class CoreTooltip extends CharmDismissibleElement {
       });
       this.announceTooltip();
     } else {
+      document.removeEventListener('keydown', this.handleKeyDown);
       // trigger transition; hide side effects are applied when transition settles
       this.visible = false;
       this.announceContent = '';
@@ -307,25 +350,69 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     this.body.hidden = false;
     this.popup.open = true;
-    this.updateAnchorDescription();
     this.announceTooltip();
     this.popup.reposition();
   }
 
-  /** References the live tooltip content after its first render. */
+  /**
+   * Describes the anchor with a hidden copy of the tooltip text while the tooltip is enabled, whether or not it is
+   * open. The copy lives in the anchor's tree scope (in the tooltip's light DOM when they share one) so the
+   * `aria-describedby` reference resolves.
+   */
   protected updateAnchorDescription() {
-    if (!this.hasOpened || !this.anchorEl) return;
-
-    const describedBy = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
-    if (!describedBy.includes('tooltip')) {
-      this.anchorEl.setAttribute('aria-describedby', [...describedBy, 'tooltip'].join(' '));
+    if (!this.isConnected || !this.anchorEl) return;
+    const text = this.getTooltipText();
+    if (this.disabled || !text) {
+      this.removeAnchorDescription();
+      return;
     }
+
+    if (!this.descriptionElement) {
+      this.descriptionElement = document.createElement('span');
+      this.descriptionElement.id = `ch-tooltip-description-${++tooltipDescriptionId}`;
+      this.descriptionElement.hidden = true;
+      // An unrendered slot name keeps the copy out of the anchor slot and avoids slotchange churn.
+      this.descriptionElement.slot = 'description';
+    }
+    const root = this.anchorEl.getRootNode();
+    const parent = root === this.getRootNode() ? this : root instanceof Document ? root.body : (root as ShadowRoot);
+    if (this.descriptionElement.parentNode !== parent) parent.append(this.descriptionElement);
+    if (this.descriptionElement.textContent !== text) this.descriptionElement.textContent = text;
+
+    const tokens = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
+    if (!tokens.includes(this.descriptionElement.id)) {
+      this.anchorEl.setAttribute('aria-describedby', [...tokens, this.descriptionElement.id].join(' '));
+    }
+  }
+
+  /** Removes the generated description and its `aria-describedby` token from the anchor. */
+  protected removeAnchorDescription() {
+    const description = this.descriptionElement;
+    if (!description) return;
+    description.remove();
+    if (!this.anchorEl) return;
+    const tokens = this.anchorEl.getAttribute('aria-describedby')?.split(/\s+/).filter(Boolean) ?? [];
+    const remaining = tokens.filter(token => token !== description.id);
+    if (remaining.length === tokens.length) return;
+    if (remaining.length) this.anchorEl.setAttribute('aria-describedby', remaining.join(' '));
+    else this.anchorEl.removeAttribute('aria-describedby');
+  }
+
+  /** Returns the tooltip's text from the `content` slot, falling back to the `content` property. */
+  protected getTooltipText() {
+    let slotted = '';
+    for (const child of Array.from(this.children)) {
+      if (child.slot !== 'content') continue;
+      const nodes = child instanceof HTMLSlotElement ? child.assignedNodes({ flatten: true }) : [child];
+      for (const node of nodes) slotted += node.textContent ?? '';
+    }
+    return (slotted || this.content || '').trim();
   }
 
   /** Announces the tooltip content to screen readers */
   protected announceTooltip() {
     if (this.body) {
-      this.announceContent = this.body.textContent || '';
+      this.announceContent = this.getTooltipText();
     }
   }
 
@@ -372,18 +459,18 @@ export class CoreTooltip extends CharmDismissibleElement {
   }
 
   /** Handles blur event on the popup */
-  protected handleBlur() {
+  protected handleBlur = (event: FocusEvent) => {
     // Moving focus away re-arms the tooltip after a light dismiss. On touch devices no mouseout fires, so this is
     // the reset path.
     this.dismissedByPress = false;
-
-    if (this.hasTrigger('focus')) {
-      this.hide();
-    }
-  }
+    const focusRemainsWithinAnchor =
+      event.relatedTarget instanceof Node && this.anchorEl?.contains(event.relatedTarget);
+    if (!focusRemainsWithinAnchor) this.isFocused = false;
+    if (this.hasTrigger('focus') && !this.isHovering && !this.isFocused) this.hide();
+  };
 
   /** Handles click event on the popup */
-  protected handleClick() {
+  protected handleClick = () => {
     if (this.hasTrigger('click')) {
       if (this.open) {
         this.hide();
@@ -399,17 +486,17 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     // Light dismiss for activations that don't fire mousedown, like Enter or Space on a button.
     this.lightDismiss();
-  }
+  };
 
   /** Handles mousedown event on the popup */
-  protected handleMouseDown() {
+  protected handleMouseDown = () => {
     if (this.hasTrigger('click') || this.hasTrigger('manual')) {
       return;
     }
 
     // Light dismiss before focus fires so the tooltip doesn't flash visible during the click.
     this.lightDismiss();
-  }
+  };
 
   /** Hides the tooltip, or cancels a pending show, and keeps it hidden until re-armed. */
   protected lightDismiss() {
@@ -419,36 +506,49 @@ export class CoreTooltip extends CharmDismissibleElement {
   }
 
   /** Handles focus event on the popup */
-  protected handleFocus() {
-    if (this.hasTrigger('focus')) {
+  protected handleFocus = () => {
+    clearTimeout(this.hoverTimeout);
+    this.hoverTimeout = undefined;
+    this.isFocused = true;
+    // A press light-dismissed the tooltip, so the focus that follows mousedown must not reopen it.
+    if (this.hasTrigger('focus') && !this.dismissedByPress) {
       this.show();
     }
-  }
+  };
 
-  /** Handles keydown event on the popup */
-  protected handleKeyDown(event: KeyboardEvent) {
-    // Pressing escape when the target element has focus should dismiss the tooltip
+  /**
+   * Handles Escape on the anchor and, while open, the document. The anchor path stops propagation so Escape closes
+   * only the tooltip (not a parent dialog or menu), which also keeps the document listener from handling it twice.
+   */
+  protected handleKeyDown = (event: KeyboardEvent) => {
     if (this.open && event.key === keys.Escape) {
-      event.stopPropagation();
+      if (event.currentTarget !== document) event.stopPropagation();
+      clearTimeout(this.hoverTimeout);
+      this.hoverTimeout = undefined;
       this.hide();
     }
-  }
+  };
 
   /** Handles mouseover event on the popup */
-  protected handleMouseOver() {
+  protected handleMouseOver = (event: MouseEvent) => {
     if (this.dismissedByPress) {
       return;
     }
 
     if (this.hasTrigger('hover')) {
+      const relatedTarget = event.relatedTarget as Node | null;
+      if (relatedTarget && (this.anchorEl?.contains(relatedTarget) || this.contains(relatedTarget))) return;
+      this.isHovering = true;
       const delay = parseDuration(getComputedStyle(this).getPropertyValue('--tooltip-show-delay'));
       clearTimeout(this.hoverTimeout);
-      this.hoverTimeout = window.setTimeout(() => this.show(), delay);
+      this.hoverTimeout = window.setTimeout(() => {
+        if (!this.disabled && this.isHovering) this.show();
+      }, delay);
     }
-  }
+  };
 
   /** Handles mouseout event on the popup */
-  protected handleMouseOut(event: MouseEvent) {
+  protected handleMouseOut = (event: MouseEvent) => {
     const relatedTarget = event.relatedTarget as Node | null;
 
     // Don't hide when the pointer moves between the anchor and the tooltip. Relying on `:hover` matching here is
@@ -463,13 +563,16 @@ export class CoreTooltip extends CharmDismissibleElement {
 
     // The pointer has fully left, so hovering can show the tooltip again after a light dismiss.
     this.dismissedByPress = false;
+    this.isHovering = false;
 
     if (this.hasTrigger('hover')) {
       const delay = parseDuration(getComputedStyle(this).getPropertyValue('--tooltip-hide-delay'));
       clearTimeout(this.hoverTimeout);
-      this.hoverTimeout = window.setTimeout(() => this.hide(), delay);
+      this.hoverTimeout = window.setTimeout(() => {
+        if (!this.isFocused) this.hide();
+      }, delay);
     }
-  }
+  };
 
   /** Utility method to check if specified trigger is present */
   protected hasTrigger(triggerType: string) {
@@ -478,23 +581,25 @@ export class CoreTooltip extends CharmDismissibleElement {
   }
 
   /** Handles the change of the default slot which contains the anchor of the tooltip. */
-  protected handleSlotChange(e: Event) {
+  protected handleSlotChange() {
     // Don't reset the anchor element if it was already set by the `anchor` property.
-    if (this.anchor) return;
+    if (this.anchor || !this.isConnected) return;
 
-    const slot = e.target as HTMLSlotElement | null;
-    if (!slot) return;
+    this.updateAnchorElement();
+    this.attachListeners();
+    this.updateAnchorDescription();
+  }
 
-    // Use the first assigned element as the anchor (slots use display:contents so the slot itself can't be positioned)
-    const assigned = slot.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
-    this.anchorEl = assigned;
+  /** Keeps the anchor's description in sync with the slotted tooltip content. */
+  protected handleContentSlotChange() {
     this.updateAnchorDescription();
   }
 
   /** Generates the template for the tooltip */
   protected tooltipTemplate() {
     if (!this.hasOpened && !this.open) {
-      return this.html`<slot @slotchange=${this.handleSlotChange}></slot>`;
+      return this.html`<slot @slotchange=${this.handleSlotChange}></slot>
+        <slot name="content" hidden @slotchange=${this.handleContentSlotChange}></slot>`;
     }
 
     return this.html`
@@ -518,7 +623,7 @@ export class CoreTooltip extends CharmDismissibleElement {
         placement=${this.placement ?? 'bottom'}
         shift
         skidding=${this.skidding ?? 0}
-        strategy=${this.fixedPlacement ? 'fixed' : 'absolute'}
+        strategy=${ifDefined(this.fixedPlacement ? 'fixed' : undefined)}
         @popup-after-hide=${this.handlePopupAfterHide}
       >
         <slot slot="anchor" @slotchange=${this.handleSlotChange}></slot>
@@ -531,7 +636,7 @@ export class CoreTooltip extends CharmDismissibleElement {
   /** Generates the template for the tooltip body and contents */
   protected tooltipBodyTemplate() {
     return this.html` <div class="body" id="tooltip" part="body" @transitionend=${this.handleTransitionEnd}>
-      <slot name="content">${this.content}</slot>
+      <slot name="content" @slotchange=${this.handleContentSlotChange}>${this.content}</slot>
     </div>`;
   }
 

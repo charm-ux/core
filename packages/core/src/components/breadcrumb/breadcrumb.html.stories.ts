@@ -11,7 +11,7 @@ const { args, argTypes, events, template } = getStorybookHelpers('ch-breadcrumb'
 const meta: Meta<CoreBreadcrumb> = {
   title: 'Core/Breadcrumb',
   component: 'ch-breadcrumb',
-  args,
+  args: { ...args, label: 'Breadcrumb navigation' },
   argTypes,
   parameters: {
     actions: {
@@ -107,7 +107,7 @@ export const LongNames: Story = {
       args,
       html` <ch-breadcrumb-item>item 1</ch-breadcrumb-item>
         <ch-tooltip arrow content="Item 2 is long. Don't think about what you want to be, but what you want to do.">
-          <ch-breadcrumb-item style="--breadcrumb-item-control-width: 200px;"
+          <ch-breadcrumb-item style="--charm-breadcrumb-item-control-width: 200px;"
             >Item 2 is long. Don't think about what you want to be, but what you want to do.
           </ch-breadcrumb-item>
         </ch-tooltip>

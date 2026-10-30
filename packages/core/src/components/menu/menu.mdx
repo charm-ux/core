@@ -138,4 +138,4 @@ Menu groups can be configured for single selection using radio buttons.
 
 ## Accessibility
 
-Keyboard functionality is designed to work seamlessly with the `<ch-menu>` and `<ch-menu-item>` elements. If you want to create a custom menu, you can still get appropriate keyboard functionality by using the `role="menu-item"` in your custom menu items. Currently, keyboard events may not appropriately set focus to elements within a `<ch-menu>` if they aren't part of a menu pattern.
+Keyboard functionality is designed to work seamlessly with `<ch-menu>` and `<ch-menu-item>`. Custom items placed inside `<ch-menu>` should use the valid `role="menuitem"` so the menu can include them in keyboard navigation.

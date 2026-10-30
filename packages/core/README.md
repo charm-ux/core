@@ -166,6 +166,9 @@ setThemeDefinition(myTokens.definition);
 > `setThemeDefinition()` **before** importing any component module, or the change will not
 > apply to already-imported components. A dev-only `console.warn` fires if you configure the
 > theme after styles have been evaluated.
+>
+> The tag `prefix` must be set before any component registers. Changing it afterwards throws,
+> because already-defined custom elements cannot be renamed.
 
 For convenience in component styles, the helpers are also exported directly:
 

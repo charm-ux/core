@@ -17,8 +17,12 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
             description: 'from control properties',
             tests: {
               placeholder: {
-                description: 'attaches the placeholder attribute to the input',
-                test: async () => {},
+                description: 'binds the checked property to the native switch input',
+                test: async () => {
+                  this.component.checked = true;
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.querySelector('input')).property('checked', true);
+                },
               },
             },
           },
@@ -33,7 +37,7 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   this.component.addEventListener('focus', inputHandler);
                   this.component.shadowRoot?.querySelector('label')?.click();
                   await elementUpdated(this.component);
-                  if (!isSafari) {
+                  if (!isSafari()) {
                     expect(inputHandler).to.have.been.callCount(1);
                   }
                 },
@@ -49,6 +53,18 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   form.reset();
                   await elementUpdated(el);
                   expect(el.checked).to.be.false;
+                },
+              },
+              formResetCustomValue: {
+                description: 'restores the initial checked state when a custom value is submitted',
+                test: async () => {
+                  const el = document.createElement('ch-switch') as CoreSwitch;
+                  el.checked = true;
+                  el.value = 'custom';
+                  const form = await fixture<HTMLFormElement>(html`<form>${el}</form>`);
+                  form.reset();
+                  await elementUpdated(el);
+                  expect(el.checked).to.be.true;
                 },
               },
             },
@@ -88,7 +104,7 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   await el.updateComplete;
                   const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
                   expect(input.disabled).to.be.true;
-                  expect(input.readOnly).to.be.true;
+                  expect(input.hasAttribute('readonly')).to.be.false;
                 },
               },
               describedBy: {
@@ -160,6 +176,20 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   expect(el.checked).to.be.true;
                 },
               },
+              readonlyClick: {
+                description: 'does not toggle or emit change when clicked while readonly',
+                test: async () => {
+                  const el = this.component;
+                  el.readonly = true;
+                  await elementUpdated(el);
+                  const changeSpy = sinon.spy();
+                  el.addEventListener('change', changeSpy);
+                  el.shadowRoot?.querySelector<HTMLInputElement>('input')?.click();
+                  await elementUpdated(el);
+                  expect(el.checked).to.be.false;
+                  expect(changeSpy).not.to.have.been.called;
+                },
+              },
               spaceBar: {
                 description: 'should fire change when toggled with spacebar',
                 test: async () => {
@@ -186,11 +216,28 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                 description: 'should fire change when toggled with the left arrow',
                 test: async () => {
                   const el = this.component;
+                  el.checked = true;
+                  await elementUpdated(el);
                   el.focus();
                   setTimeout(() => sendKeys({ press: 'ArrowLeft' }));
                   const event = (await oneEvent(el, 'change')) as CustomEvent;
                   expect(event.target).to.equal(el);
                   expect(el.checked).to.be.false;
+                },
+              },
+              sameArrowStateDoesNotEmit: {
+                description: 'does not emit input or change when an arrow targets the current state',
+                test: async () => {
+                  const el = this.component;
+                  const inputSpy = sinon.spy();
+                  const changeSpy = sinon.spy();
+                  el.addEventListener('input', inputSpy);
+                  el.addEventListener('change', changeSpy);
+                  el.focus();
+                  await sendKeys({ press: 'ArrowLeft' });
+                  expect(el.checked).to.be.false;
+                  expect(inputSpy).not.to.have.been.called;
+                  expect(changeSpy).not.to.have.been.called;
                 },
               },
               rightArrowInput: {
@@ -443,14 +490,14 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
 
                   el.required = true;
                   await elementUpdated(el);
-                  expect(getComputedStyle(errorMessage).display).to.equal('none');
+                  expect(errorMessage.classList.contains('visually-hidden')).to.be.true;
 
                   const reportValidity = el.reportValidity();
                   await elementUpdated(el);
 
                   expect(reportValidity).to.be.false;
                   expect(el.invalid).to.be.true;
-                  expect(getComputedStyle(errorMessage).display).to.not.equal('none');
+                  expect(errorMessage.classList.contains('visually-hidden')).to.be.false;
                 },
               },
             },
@@ -464,7 +511,7 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   const el = this.component;
                   el.required = true;
                   await elementUpdated(el);
-                  expect(el.invalid).to.be.false;
+                  expect(el.invalid).to.be.true;
                 },
               },
               disabled: {
@@ -482,7 +529,7 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
                   const el = this.component;
                   el.required = true;
                   await elementUpdated(el);
-                  expect(el.invalid).to.be.false;
+                  expect(el.invalid).to.be.true;
                 },
               },
               requiredAndBlurred: {

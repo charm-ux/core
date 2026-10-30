@@ -68,6 +68,7 @@ export class CharmElementTests<T extends CharmElement> {
             // wait for initial animations to complete
             await aTimeout(500);
             await expect(this.component).to.be.accessible({
+              // Components may intentionally expose ARIA roles not in axe's built-in role registry.
               ignoredRules: ['aria-allowed-role'],
             });
           },
@@ -81,7 +82,7 @@ export class CharmElementTests<T extends CharmElement> {
               description: 'should have an attribute that matches the component name',
               test: async () => {
                 const attr = this.component.hasAttribute(project.scope.getBaseName(this.component));
-                expect(attr).to.not.be.undefined;
+                expect(attr).to.be.true;
               },
             },
           },
@@ -232,15 +233,8 @@ export class CharmElementTests<T extends CharmElement> {
    * @param group the object of tests to run
    */
   protected runTestGroup(group: TestGroup) {
-    if (group.skip) {
-      return describe.skip(group.description, () => this.runComponentTests(group.tests));
-    }
-
-    if (group.only) {
-      return describe.only(group.description, () => this.runComponentTests(group.tests));
-    }
-
-    return describe(group.description, () => {
+    const suite = group.skip ? describe.skip : group.only ? describe.only : describe;
+    return suite(group.description, () => {
       if (group.before) {
         before(group.before);
       }

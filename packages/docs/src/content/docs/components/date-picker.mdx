@@ -1,0 +1,138 @@
+---
+title: Date Picker
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+Date picker combines localized segmented date entry with a popup [`calendar`](/components/calendar) and participates in form submission and validation.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Appointment date" name="appointment" value="2026-10-18"></ch-date-picker>
+```
+
+</code-bubble>
+
+## Best Practices
+
+**_Do_**
+
+- Provide a visible label and set `lang` when the page language differs from the browser default.
+- Use `readonly` to prevent value changes while retaining calendar navigation.
+- Keep `value` in ISO civil-date form (`YYYY-MM-DD`) when syncing from application state.
+
+**_Don't_**
+
+- Treat `valueAsDate` as UTC midnight: it represents the local calendar day.
+- Use `disabled` when users should still be able to navigate the calendar; use `readonly` instead.
+
+## Examples
+
+### Restrict available dates
+
+Use `min` and `max` for bounds and `disabled-dates` or `disabled-week-days` for unavailable dates.
+
+<code-bubble>
+
+```html
+<ch-date-picker
+  label="Appointment date"
+  name="appointment"
+  min="2026-06-01"
+  max="2026-06-30"
+  disabled-dates="2026-06-12 2026-06-19"
+  disabled-week-days="0,6"
+></ch-date-picker>
+```
+
+</code-bubble>
+
+### Localize segments and calendar controls
+
+The segments follow the closest `lang` attribute. Each default placeholder is a single localized field initial (for example, English `M/D/Y` or French `J/M/A`) in the locale's segment order. Browsers without localized date-field names fall back to `M`, `D`, and `Y`. Override them with the `*-placeholder` slots. Segment labels are separate from the nested calendar's month/year labels.
+
+<code-bubble>
+
+```html
+<ch-date-picker lang="fr-FR" label="Date du rendez-vous">
+  <span slot="day-segment-label">Jour</span>
+  <span slot="month-segment-label">Mois</span>
+  <span slot="year-segment-label">Année</span>
+  <span slot="day-placeholder">JJ</span>
+  <span slot="month-placeholder">MM</span>
+  <span slot="year-placeholder">AAAA</span>
+  <span slot="previous-month-label">Mois précédent</span>
+  <span slot="next-month-label">Mois suivant</span>
+  <span slot="month-label">Mois</span>
+  <span slot="year-label">Année</span>
+  <span slot="toggle-label">Ouvrir le calendrier</span>
+  <span slot="popup-label">Calendrier</span>
+</ch-date-picker>
+```
+
+</code-bubble>
+
+### Translate validation messages
+
+Validation copy is provided through slots so it can be translated with the rest of the page.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Date de livraison" required>
+  <span slot="incomplete-date-message">Saisissez le jour, le mois et l’année.</span>
+  <span slot="invalid-date-message">Saisissez une date valide.</span>
+  <span slot="unavailable-date-message">Cette date n’est pas disponible.</span>
+  <span slot="today-label">Aujourd’hui</span>
+  <span slot="clear-label">Effacer</span>
+</ch-date-picker>
+```
+
+</code-bubble>
+
+### Submit with a form
+
+The `name` participates in form submission. An invalid programmatic value is retained and marked invalid; a partially entered optional date is invalid too.
+
+<code-bubble>
+
+```html
+<form>
+  <ch-date-picker label="Appointment date" name="appointment" required></ch-date-picker>
+  <button type="submit">Book appointment</button>
+</form>
+```
+
+</code-bubble>
+
+### Controlled value and `Date` access
+
+```js
+const picker = document.querySelector('ch-date-picker');
+
+picker.addEventListener('change', () => {
+  applicationState.appointment = picker.value;
+});
+
+// Date arguments use the local calendar day.
+picker.valueAsDate = new Date(2026, 5, 15);
+```
+
+`valueAsDate` gets or sets a `Date` at local midnight. Use `focus-date` to choose the initial calendar focus; standalone [`calendar`](/components/calendar) also exposes `goToDate()` for navigation without selection.
+
+## Keyboard
+
+| Key                 | Action                                               |
+| ------------------- | ---------------------------------------------------- |
+| Left / Right        | Move between date segments (direction-aware in RTL). |
+| Up / Down           | Step the focused segment when editable.              |
+| Space or Alt + Down | Open the calendar.                                   |
+| Escape              | Close the popup and restore focus.                   |
+| Enter               | Preserve native form submission behavior.            |
+
+The calendar itself supports arrow, Home/End, and Page Up/Page Down navigation. See [Calendar](/components/calendar) for its complete key map. Clicking outside closes the popup without moving focus away from the clicked destination.
+
+## API
+
+<ComponentMetadata />

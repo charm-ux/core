@@ -12,7 +12,7 @@ function toKebabCase(value: string): string {
 }
 
 function varName(prefix: string, ...segments: (string | number)[]): string {
-  const parts = segments.map(s => toKebabCase(String(s)));
+  const parts = segments.map(s => toKebabCase(String(s)).replace(/([.:])/g, '\\$1'));
   return `--${prefix}-${parts.join('-')}`;
 }
 

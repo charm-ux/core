@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreSelect } from './index.js';
@@ -108,6 +108,15 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
                   await elementUpdated(el);
                   const selectedOption = document.querySelector('[selected]') as HTMLOptionElement;
                   expect(selectedOption.value).to.equal('2');
+                },
+              },
+              autocomplete: {
+                description: 'forwards autocomplete to the native select',
+                test: async () => {
+                  const el = this.component;
+                  el.autocomplete = 'country';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('select')).attribute('autocomplete', 'country');
                 },
               },
               valueAfterUpdate: {
@@ -297,7 +306,123 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
           // interaction tests
           interactions: {
             description: 'interactions',
-            tests: {},
+            tests: {
+              multipleFormValues: {
+                description: 'submits every selected value from a multiple select',
+                test: async () => {
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <ch-select name="choice" multiple>
+                        <option value="one">One</option>
+                        <option value="two">Two</option>
+                        <option value="three">Three</option>
+                      </ch-select>
+                    </form>
+                  `);
+                  const el = form.querySelector<CoreSelect>('ch-select')!;
+                  await elementUpdated(el);
+
+                  const select = el.shadowRoot!.querySelector('select')!;
+                  select.options[0].selected = true;
+                  select.options[2].selected = true;
+                  select.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+
+                  expect(new FormData(form).getAll('choice')).to.deep.equal(['one', 'three']);
+                },
+              },
+              multipleDuplicateValues: {
+                description: 'submits a duplicated value once, from the selected enabled option',
+                test: async () => {
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <ch-select name="choice" multiple>
+                        <option value="x" disabled>Disabled X</option>
+                        <option value="x">Enabled X</option>
+                        <option value="y">Y</option>
+                      </ch-select>
+                    </form>
+                  `);
+                  const el = form.querySelector<CoreSelect>('ch-select')!;
+                  await elementUpdated(el);
+
+                  const select = el.shadowRoot!.querySelector('select')!;
+                  select.options[1].selected = true;
+                  select.dispatchEvent(new Event('change'));
+                  await elementUpdated(el);
+
+                  expect(new FormData(form).getAll('choice')).to.deep.equal(['x']);
+                  expect(select.options[0].selected).to.be.false;
+                  expect(select.options[1].selected).to.be.true;
+                },
+              },
+              multipleNameChange: {
+                description: 'rebuilds the multiple-select payload when the name changes',
+                test: async () => {
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <ch-select name="before" multiple>
+                        <option value="one" selected>One</option>
+                        <option value="two" selected>Two</option>
+                      </ch-select>
+                    </form>
+                  `);
+                  const el = form.querySelector<CoreSelect>('ch-select')!;
+                  await elementUpdated(el);
+                  expect(new FormData(form).getAll('before')).to.deep.equal(['one', 'two']);
+
+                  el.name = 'after';
+                  await elementUpdated(el);
+
+                  const formData = new FormData(form);
+                  expect(formData.getAll('before')).to.deep.equal([]);
+                  expect(formData.getAll('after')).to.deep.equal(['one', 'two']);
+                },
+              },
+              multipleInitiallyUnnamed: {
+                description: 'submits the multiple-select payload once an unnamed select is named',
+                test: async () => {
+                  const form = await fixture<HTMLFormElement>(html`
+                    <form>
+                      <ch-select multiple>
+                        <option value="one" selected>One</option>
+                        <option value="two">Two</option>
+                      </ch-select>
+                    </form>
+                  `);
+                  const el = form.querySelector<CoreSelect>('ch-select')!;
+                  await elementUpdated(el);
+                  expect([...new FormData(form).keys()]).to.deep.equal([]);
+
+                  el.name = 'choice';
+                  await elementUpdated(el);
+
+                  expect(new FormData(form).getAll('choice')).to.deep.equal(['one']);
+                },
+              },
+              valueAfterUserSelection: {
+                description: 'shows a programmatic value after the user changed the selection',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = `
+                    <option value="a">A</option>
+                    <option value="b">B</option>
+                  `;
+                  await elementUpdated(el);
+                  await elementUpdated(el);
+
+                  const select = el.shadowRoot!.querySelector('select')!;
+                  select.value = 'b';
+                  select.dispatchEvent(new Event('change'));
+                  await elementUpdated(el);
+                  expect(el.value).to.equal('b');
+
+                  el.value = 'a';
+                  await elementUpdated(el);
+
+                  expect(select.value).to.equal('a');
+                },
+              },
+            },
           },
         },
       },

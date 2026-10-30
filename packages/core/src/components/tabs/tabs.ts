@@ -1,9 +1,9 @@
 import { html } from 'lit/static-html.js';
-import { property, queryAssignedElements, state } from 'lit/decorators.js';
+import { property, queryAssignedElements } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { keys } from '../../utilities/key-map.js';
-import { asyncTimeout, findNextEnabledIndex } from '../../utilities/helpers.js';
+import { findNextEnabledIndex } from '../../utilities/helpers.js';
 import styles from './tabs.styles.js';
 import type { CoreTab } from '../tab/tab.js';
 import type { CoreTabPanel } from '../tab-panel/tab-panel.js';
@@ -25,8 +25,9 @@ let charmTabsId = 0;
  * @slot tabpanel - where the content that belongs to a individual Tab is displayed.
  *
  * @csspart tabs-tablist - The tab list container.
+ * @attr {string} label - Accessible name for the tab list.
  *
- * @cssprop --charm-tabs-align - The alignment of the tabs ('start', 'center', or 'end').
+ * @cssprop --charm-tabs-align - The alignment of the tabs ('start' or 'flex-start', 'center', or 'end').
  * @cssprop --charm-tabs-bg-color - The background color of the tabs container.
  * @cssprop --charm-tabs-border-color - The border color of the tabs container.
  * @cssprop --charm-tabs-border-radius - The border radius of the tabs container.
@@ -58,6 +59,10 @@ export class CoreTabs extends CharmElement {
   @property({ attribute: 'manual-activation', type: Boolean, reflect: true })
   public manualActivation?: boolean;
 
+  /** Required localized accessible name for the tab list. */
+  @property()
+  public label!: string;
+
   /**
    * Selects the tab elements that are provided by the user.
    */
@@ -70,15 +75,20 @@ export class CoreTabs extends CharmElement {
   @queryAssignedElements({ slot: 'tabpanel', selector: '[role="tabpanel"]', flatten: true })
   protected tabPanels!: Array<CoreTabPanel>;
 
-  @state() protected selectedTab?: CoreTab;
+  protected selectedTab?: CoreTab;
 
   protected focusedIndex: number = -1;
-  protected prevSelectedIndex: number = -1;
   protected _activeId: string | undefined;
+  protected readonly instanceId: number;
+  protected generatedTabId = 0;
+  protected generatedPanelId = 0;
+  protected previousTabs: CoreTab[] = [];
+  protected previousPanels: CoreTabPanel[] = [];
+  protected observer?: MutationObserver;
 
   public constructor() {
     super();
-    charmTabsId++;
+    this.instanceId = ++charmTabsId;
   }
 
   /** Controls which tab is selected. (You can also set `selected` on a single tab.) */
@@ -89,8 +99,36 @@ export class CoreTabs extends CharmElement {
 
   /** Refers to the currently active tab. */
   public set activeId(value: string | undefined) {
-    this._activeId = value || this.selectedTab?.id;
-    this.handleActiveIdChange(value);
+    const nextValue = value || undefined;
+    if (nextValue === this._activeId) return;
+    const oldValue = this._activeId;
+    this._activeId = nextValue;
+    this.requestUpdate('activeId', oldValue);
+    this.handleActiveIdChange(nextValue);
+  }
+
+  public override connectedCallback() {
+    super.connectedCallback();
+    this.observer = new MutationObserver(records => {
+      if (records.some(record => record.type === 'childList' || this.tabs.includes(record.target as CoreTab))) {
+        const selectedTab = records.find(
+          record => record.attributeName === 'selected' && (record.target as CoreTab).selected
+        )?.target as CoreTab | undefined;
+        this.syncTabsAndPanels(selectedTab);
+      }
+    });
+    this.observer.observe(this, {
+      attributes: true,
+      attributeFilter: ['selected', 'disabled', 'id'],
+      childList: true,
+      subtree: true,
+    });
+  }
+
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.observer?.disconnect();
+    this.observer = undefined;
   }
 
   public override firstUpdated() {
@@ -99,9 +137,11 @@ export class CoreTabs extends CharmElement {
   }
 
   protected handleActiveIdChange(value: string | undefined) {
-    const tab = this.tabs.find(tab => tab.id === value);
-    if (tab) {
+    const tab = this.tabs?.find(tab => tab.id === value);
+    if (tab && !tab.disabled) {
       this.updateSelection(tab);
+    } else if (value && this.hasUpdated) {
+      this._activeId = this.selectedTab?.id;
     }
   }
 
@@ -115,9 +155,10 @@ export class CoreTabs extends CharmElement {
 
   /** Checks if the given key is invalid for the current layout. Don't handle horizontal keys if we're vertical and vice versa */
   protected isInvalidKeyForLayout(key: string) {
+    const layout = this.layout ?? 'horizontal';
     return (
-      (this.layout == 'horizontal' && [keys.ArrowUp, keys.ArrowDown].includes(key)) ||
-      ((this.layout == 'vertical' || undefined) && [keys.ArrowRight, keys.ArrowLeft].includes(key))
+      (layout === 'horizontal' && [keys.ArrowUp, keys.ArrowDown].includes(key)) ||
+      (layout === 'vertical' && [keys.ArrowRight, keys.ArrowLeft].includes(key))
     );
   }
 
@@ -194,6 +235,7 @@ export class CoreTabs extends CharmElement {
     this.setFocus(this.focusedIndex, nextIndex);
 
     if (!this.manualActivation) {
+      if (this.selectedTab === this.tabs[nextIndex]) return;
       this.updateSelection(this.tabs[nextIndex]);
       this.emitChange({ activeTab: this.tabs[nextIndex] });
     }
@@ -212,10 +254,11 @@ export class CoreTabs extends CharmElement {
 
     const prevIndex = this.selectedTab ? this.tabs.indexOf(this.selectedTab) : -1;
     if (prevIndex === nextIndex) {
+      this.setFocus(this.focusedIndex, nextIndex);
       return;
     }
 
-    this.setFocus(prevIndex, this.tabs.indexOf(tab));
+    this.setFocus(this.focusedIndex, nextIndex);
     this.updateSelection(tab);
     this.emitChange({ activeTab: this.selectedTab! });
   }
@@ -223,8 +266,7 @@ export class CoreTabs extends CharmElement {
   /** Sets the focus on the specified tab indices. */
   protected setFocus(prevIndex: number, newIndex: number) {
     this.focusedIndex = newIndex;
-    this.prevSelectedIndex = prevIndex;
-    this.tabs[this.prevSelectedIndex]?.setAttribute('tabindex', '-1');
+    this.tabs[prevIndex]?.setAttribute('tabindex', '-1');
     this.tabs[this.focusedIndex]?.setAttribute('tabindex', '0');
     this.tabs[this.focusedIndex]?.focus();
   }
@@ -238,19 +280,32 @@ export class CoreTabs extends CharmElement {
       return;
     }
 
+    if (this.selectedTab === next) {
+      this._activeId = next.id;
+      this.focusedIndex = this.tabs.indexOf(next);
+      next.setAttribute('tabindex', '0');
+      return;
+    }
+
     if (nextIndex !== undefined) {
-      this.prevSelectedIndex = nextIndex;
       this.focusedIndex = nextIndex;
+    }
+
+    const resolvedNextIndex = this.tabs.indexOf(next);
+    if (this.focusedIndex >= 0 && this.tabs[this.focusedIndex] !== next) {
+      this.tabs[this.focusedIndex]?.setAttribute('tabindex', '-1');
     }
 
     // Unselect the previously selected tab and hide the tab panel
     if (this.selectedTab) {
+      this.selectedTab.setAttribute('tabindex', '-1');
       this.selectedTab.selected = false;
     }
 
     this.selectedTab = next;
     this.selectedTab.selected = true;
     this._activeId = this.selectedTab?.id;
+    if (resolvedNextIndex >= 0) this.focusedIndex = resolvedNextIndex;
     next.setAttribute('tabindex', '0');
   }
 
@@ -260,67 +315,113 @@ export class CoreTabs extends CharmElement {
   }
 
   /** Handles the change in the tab panels slot. */
-  protected async handleTabsSlotChange() {
-    await asyncTimeout(); // Wait for the DOM to update
-    let firstSelectableTab: CoreTab | undefined;
-    let firstSelectableTabIndex: number | undefined;
+  protected handleTabsSlotChange() {
+    this.syncTabsAndPanels();
+  }
 
-    this.tabs.forEach((tab, i) => {
+  protected handlePanelSlotChange() {
+    this.syncTabsAndPanels();
+  }
+
+  protected syncTabsAndPanels(preferredSelected?: CoreTab) {
+    const tabs = this.tabs;
+    const panels = this.tabPanels;
+    const previousSelected = this.selectedTab;
+    // focusedIndex points into the tab list from the previous sync.
+    const previousFocused = this.previousTabs[this.focusedIndex];
+
+    for (const tab of this.previousTabs) {
+      if (!tabs.includes(tab)) {
+        tab.tabPanel = undefined;
+        tab.removeAttribute('aria-controls');
+      }
+    }
+    for (const panel of this.previousPanels) {
+      if (!panels.includes(panel)) panel.tab = undefined;
+    }
+    this.previousTabs = [...tabs];
+    this.previousPanels = [...panels];
+    panels.forEach((panel, index) => {
+      const associatedTab = tabs[index];
+      if (panel.tab !== associatedTab) panel.tab = associatedTab;
+    });
+
+    let firstSelectableTab: CoreTab | undefined;
+    let selectedByAttribute: CoreTab | undefined;
+    let activeById: CoreTab | undefined;
+
+    tabs.forEach((tab, i) => {
       tab.setAttribute('tabindex', '-1');
-      tab.setAttribute('aria-selected', tab.selected ? 'true' : 'false');
 
       // Set ID if needed
-      tab.id ||= `tab-${charmTabsId}-${i}`;
+      tab.id ||= `tab-${this.instanceId}-${++this.generatedTabId}`;
 
       // Link tab to panel if available
-      if (this.tabPanels[i]) {
-        const panelId = this.tabPanels[i]?.id || `tab-panel-${charmTabsId}-${i}`;
-        tab.setAttribute('aria-controls', panelId);
+      const panel = panels[i];
+      if (panel) {
+        panel.id ||= `tab-panel-${this.instanceId}-${++this.generatedPanelId}`;
+        if (tab.tabPanel !== panel) tab.tabPanel = panel;
+        panel.setAttribute('aria-labelledby', tab.id);
+        tab.setAttribute('aria-controls', panel.id);
+      } else {
+        if (tab.tabPanel) tab.tabPanel = undefined;
+        tab.removeAttribute('aria-controls');
       }
-
-      // Mark disabled state
-      tab.disabled && tab.setAttribute('aria-disabled', 'true');
 
       // Track first selectable tab
       if (!tab.disabled && !firstSelectableTab) {
         firstSelectableTab = tab;
-        firstSelectableTabIndex = i;
       }
 
-      // Handle selected tab
-      if (tab.selected && !tab.disabled) {
-        this.updateSelection(tab, i);
-      }
-
-      if (tab.id === this.activeId && !tab.disabled) {
-        this.updateSelection(tab, i);
-      }
+      if (tab.selected && !tab.disabled && !selectedByAttribute) selectedByAttribute = tab;
+      if (tab.id === this._activeId && !tab.disabled) activeById = tab;
     });
 
-    // Select first tab if none is selected
-    if (!this.selectedTab && firstSelectableTab && firstSelectableTabIndex !== undefined) {
-      this.updateSelection(firstSelectableTab, firstSelectableTabIndex);
-    } else if (!this.selectedTab) {
-      this.focusedIndex = 0;
-      this.prevSelectedIndex = -1;
-      this.tabs[this.focusedIndex]?.setAttribute('tabindex', '0');
+    if (this.selectedTab && (!tabs.includes(this.selectedTab) || this.selectedTab.disabled)) {
+      this.selectedTab.selected = false;
+      this.selectedTab = undefined;
     }
-  }
-
-  protected async handlePanelSlotChange() {
-    await asyncTimeout(); // Wait for the DOM to update
-    this.tabPanels.forEach((panel, i) => {
-      this.tabs[i].tabPanel = panel;
-      panel.tab = this.tabs[i];
-      panel.id ||= `tab-panel-${charmTabsId}-${i}`;
-      panel.setAttribute('aria-labelledby', this.tabs[i]?.id || `tab-${charmTabsId}-${i}`);
-    });
+    const retainedSelection =
+      this.selectedTab ??
+      (previousSelected && tabs.includes(previousSelected) && !previousSelected.disabled
+        ? previousSelected
+        : undefined);
+    const next =
+      (preferredSelected && tabs.includes(preferredSelected) && !preferredSelected.disabled
+        ? preferredSelected
+        : undefined) ??
+      activeById ??
+      selectedByAttribute ??
+      retainedSelection ??
+      firstSelectableTab;
+    if (next) this.updateSelection(next, tabs.indexOf(next));
+    // Keep an independently focused tab (manual activation) as the tab stop when selection is unchanged.
+    const focused =
+      previousFocused &&
+      this.selectedTab === previousSelected &&
+      tabs.includes(previousFocused) &&
+      !previousFocused.disabled
+        ? previousFocused
+        : this.selectedTab;
+    if (focused && tabs.includes(focused)) {
+      if (focused !== this.selectedTab) this.selectedTab?.setAttribute('tabindex', '-1');
+      focused.setAttribute('tabindex', '0');
+      this.focusedIndex = tabs.indexOf(focused);
+    } else {
+      this.focusedIndex = -1;
+    }
   }
 
   /** Generates the template for the tab list. */
   protected tabListTemplate() {
     return html`
-      <div class="tablist" part="tabs-tablist" role="tablist" aria-orientation=${ifDefined(this.layout)}>
+      <div
+        class="tablist"
+        part="tabs-tablist"
+        role="tablist"
+        aria-label=${ifDefined(this.label)}
+        aria-orientation=${this.layout ?? 'horizontal'}
+      >
         <slot
           @slotchange=${this.handleTabsSlotChange}
           @click=${this.handleTabClick}

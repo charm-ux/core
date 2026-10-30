@@ -3,7 +3,7 @@ import type { LitElement } from 'lit';
 export interface ComponentPerformanceCase {
   name: string;
   create: () => HTMLElement;
-  update: (element: HTMLElement, iteration: number) => void;
+  update: (element: HTMLElement, iteration: number) => void | Promise<void>;
 }
 
 export interface ComponentPerformanceOptions {
@@ -131,7 +131,7 @@ async function measureRerender(component: ComponentPerformanceCase, iteration: n
   await waitForTreeUpdate(host);
 
   const start = performance.now();
-  component.update(element, iteration);
+  await component.update(element, iteration);
   await waitForTreeUpdate(host);
   const duration = performance.now() - start;
 
@@ -168,18 +168,14 @@ export async function benchmarkComponentPerformance(
 
   const mount = await measureSamples(() => measureMount(component.create), iterations, warmups);
   const rerender = await measureSamples(iteration => measureRerender(component, iteration), iterations, warmups);
-  const bulk = Object.fromEntries(
-    await Promise.all(
-      bulkCounts.map(async count => [
-        count,
-        await measureSamples(
-          () => measureBulkMount(component.create, count),
-          Math.max(5, Math.floor(iterations / 2)),
-          warmups
-        ),
-      ])
-    )
-  );
+  const bulk: Record<number, TimingSummary> = {};
+  for (const count of bulkCounts) {
+    bulk[count] = await measureSamples(
+      () => measureBulkMount(component.create, count),
+      Math.max(5, Math.floor(iterations / 2)),
+      warmups
+    );
+  }
 
   const header = 'Scenario'.padEnd(10) + ' | Samples |    Median |        P95 |        Min |        Max';
   const separator = '-'.repeat(header.length);

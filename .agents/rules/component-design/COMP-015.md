@@ -9,6 +9,26 @@ fallback timer (`transitionMaxTime + 50`) so the `after-*` step runs even if `tr
 never fires. `CharmDismissibleElement` already implements this; reuse it rather than
 re-inventing.
 
+`transitionend` fires once per transitioned property, so ignore pseudo-element events and events
+from other elements. Compare `elapsedTime` against the longest transition **duration**, not
+duration + delay: `elapsedTime` excludes `transition-delay`, so comparing against the delayed total
+rejects the real event and every settle falls through to the fallback timer. Allow about 1ms of
+tolerance for float rounding (`elapsedTime * 1000 >= maxDuration - 1`). Under
+`prefers-reduced-motion`, durations collapse to near 0, so settle on any matching event. The base
+tracks `transitionMaxDuration` (without delay) next to `transitionMaxTime` (with delay, used for the
+fallback timer). Reuse both rather than re-deriving them, and give each pending settle an id so
+stale events and late timers are ignored. Keep the fallback timer for missing events. When there is no transition, wait for
+`updateComplete` before emitting `after-*`; listeners must see the updated DOM. On disconnect,
+clear the timer, invalidate the pending wait, and resume settlement on reconnect if the same
+open/closed transition is still pending. If a `show`/`hide` listener reverses `open`, do not arm
+the stale after-event.
+
+Test through the public event flow: initially-open elements, multiple transition durations,
+pseudo-element/unrelated transition events, no-transition DOM ordering, fallback settlement,
+disconnect/reconnect during a transition, a `transition-delay`, a fractional duration such as
+`1.001s`, and reduced motion. Dispatch real `TransitionEvent`s on the transitioning element rather
+than calling the handler through a cast.
+
 **Do:**
 
 ```ts

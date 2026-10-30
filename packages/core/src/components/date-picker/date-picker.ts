@@ -3,24 +3,30 @@ import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query, state } from 'lit/decorators.js';
 import { CharmElement, CharmFormControlElement } from '../../base/index.js';
+import { LocaleController } from '../../controller/locale.js';
 import {
   addDays,
   clampDate,
   compareDates,
   createDateConstraints,
+  createLocalDate,
   dateFromParts,
   getDateInputLayout,
-  getMonthName,
+  getDateSegmentPlaceholder,
   isDateUnavailable,
-  normalizeInputDigits,
+  normalizeDateSegmentInput,
   parseIsoDate,
+  parsePastedDate,
   partsFromDate,
   shiftDatePart,
+  stepDateSegmentValue,
   todayDate,
   toIsoDate,
+  toIsoLocalDate,
 } from '../../internal/date.js';
 import { keys } from '../../utilities/key-map.js';
-import { normalizeLocale } from '../../utilities/locale.js';
+import { endTemplate } from '../../templates/end.js';
+import { startTemplate } from '../../templates/start.js';
 import { CoreCalendar } from '../calendar/calendar.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CorePopup, type PopupPlacement } from '../popup/popup.js';
@@ -28,7 +34,9 @@ import styles from './date-picker.styles.js';
 import type { CalendarChangeEventDetail } from '../calendar/calendar.js';
 import type { DateConstraints, DateInputSegment } from '../../internal/date.js';
 
-interface DatePickerTodayEventDetail {
+const supportsFieldSizingContent = typeof CSS !== 'undefined' && CSS.supports('field-sizing', 'content');
+
+export interface DatePickerTodayEventDetail {
   value: string;
 }
 
@@ -47,6 +55,16 @@ interface DatePickerTodayEventDetail {
  * @slot toggle-label - Accessible label for the calendar toggle button.
  * @slot clear-label - Label for the clear button in the popup footer.
  * @slot today-label - Label for the today button in the popup footer.
+ * @slot day-segment-label - Accessible name for the day segment.
+ * @slot month-segment-label - Accessible name for the month segment.
+ * @slot year-segment-label - Accessible name for the year segment.
+ * @slot day-placeholder - Translated day segment placeholder.
+ * @slot month-placeholder - Translated month segment placeholder.
+ * @slot year-placeholder - Translated year segment placeholder.
+ * @slot incomplete-date-message - Validation text for a partially entered date; translated consumers may provide it here.
+ * @slot invalid-date-message - Validation text for an impossible date.
+ * @slot unavailable-date-message - Validation text for a date outside the available dates.
+ * @slot popup-label - Accessible name for the calendar dialog when no field label is set.
  * @slot previous-month-label - Forwarded to the nested calendar previous month control.
  * @slot next-month-label - Forwarded to the nested calendar next month control.
  * @slot month-label - Forwarded to the nested calendar month selector.
@@ -74,6 +92,7 @@ interface DatePickerTodayEventDetail {
 export class CoreDatePicker extends CharmFormControlElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'date-picker';
+  public static override watchedSlots = ['label', 'help-text', 'start', 'end'];
 
   /** The earliest selectable date, in `YYYY-MM-DD` format. */
   @property()
@@ -115,6 +134,10 @@ export class CoreDatePicker extends CharmFormControlElement {
   @property({ attribute: 'fixed-placement', type: Boolean, reflect: true })
   public fixedPlacement = false;
 
+  /** Autofill hint for the date segments. Set to `bday` to autofill a birthday. */
+  @property()
+  public autocomplete?: string;
+
   @state()
   protected day = '';
 
@@ -131,10 +154,14 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected calendar?: CoreCalendar;
 
   protected constraints: DateConstraints = createDateConstraints();
-  protected suppressInputEvent = false;
   protected suppressSegmentSync = false;
+  protected preserveProgrammaticValue = false;
+  protected controlUpdatePending = false;
   protected committedValue = '';
   protected hasOpened = false;
+  protected blurFrame?: number;
+  protected wasOutsideDismiss = false;
+  protected readonly localeController = new LocaleController(this);
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreCalendar, CoreIcon, CorePopup];
@@ -144,9 +171,14 @@ export class CoreDatePicker extends CharmFormControlElement {
     return this._value ?? this.defaultValue ?? '';
   }
 
-  /** Gets or sets the current value as a `Date` object. */
+  /** Gets or sets the value as a `Date` at local midnight; the Date's local calendar day is used. */
   public get valueAsDate(): Date | null {
-    return parseIsoDate(this.value) ?? null;
+    const civil = parseIsoDate(this.value);
+    return civil ? createLocalDate(civil.getUTCFullYear(), civil.getUTCMonth(), civil.getUTCDate()) : null;
+  }
+
+  protected override get validationAnchor(): HTMLElement | undefined {
+    return this.segmentInput(this.firstSegmentKind) ?? undefined;
   }
 
   protected get dateSegments(): readonly DateInputSegment[] {
@@ -162,7 +194,7 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   protected get currentLocale(): string {
-    return normalizeLocale(this.lang || navigator.language || 'en');
+    return this.localeController.locale;
   }
 
   protected get hasCompleteSegments(): boolean {
@@ -188,29 +220,31 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   public set valueAsDate(newValue: Date | null) {
-    this.value = newValue ? toIsoDate(newValue) : '';
+    this.value = newValue ? toIsoLocalDate(newValue) : '';
   }
 
   public override connectedCallback(): void {
     super.connectedCallback();
-    document.addEventListener('pointerdown', this.handleDocumentPointerDown);
+    if (this.open) document.addEventListener('pointerdown', this.handleDocumentPointerDown);
   }
 
   public override disconnectedCallback(): void {
-    super.disconnectedCallback();
     document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
+    if (this.blurFrame !== undefined) cancelAnimationFrame(this.blurFrame);
+    super.disconnectedCallback();
   }
 
   /** Opens the popup calendar. */
   public show(): void {
     if (this.disabled) return;
     this.open = true;
-    void this.updateComplete.then(() => this.calendar?.focus());
+    void this.updateComplete.then(() => this.focusCalendar());
   }
 
   /** Closes the popup calendar and commits pending changes. */
   public hide(): void {
     if (!this.open) return;
+    this.wasOutsideDismiss = false;
     this.open = false;
     this.commitChange();
   }
@@ -221,6 +255,7 @@ export class CoreDatePicker extends CharmFormControlElement {
     this.day = '';
     this.month = '';
     this.year = '';
+    this.suppressSegmentSync = true;
     this.value = '';
     this.open = false;
     this.updateControlFromState();
@@ -231,6 +266,13 @@ export class CoreDatePicker extends CharmFormControlElement {
   /** Focuses the first segment. */
   public override focus(options?: FocusOptions): void {
     this.segmentInput(this.firstSegmentKind)?.focus(options);
+  }
+
+  protected async focusCalendar(): Promise<void> {
+    const calendar = this.calendar;
+    if (!calendar) return;
+    await calendar.updateComplete;
+    calendar.focus();
   }
 
   protected override firstUpdated(): void {
@@ -249,11 +291,14 @@ export class CoreDatePicker extends CharmFormControlElement {
       changedProperties.has('disabledWeekDays')
     ) {
       this.constraints = createDateConstraints(this.min, this.max, this.disabledDates, this.disabledWeekDays);
+      if (this.value) this.preserveProgrammaticValue = true;
     }
 
     if (this.open) this.hasOpened = true;
 
     const shouldSyncSegments = changedProperties.has('value') && !this.suppressSegmentSync;
+    if (shouldSyncSegments) this.preserveProgrammaticValue = true;
+    if (shouldSyncSegments && this.hasUpdated) this.committedValue = this.value;
     this.suppressSegmentSync = false;
     if (!this.hasUpdated || shouldSyncSegments) this.syncSegmentsFromValue();
   }
@@ -261,7 +306,18 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected override updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
 
-    if (
+    if (changedProperties.has('open')) {
+      if (this.open) {
+        document.addEventListener('pointerdown', this.handleDocumentPointerDown);
+        this.wasOutsideDismiss = false;
+      } else {
+        document.removeEventListener('pointerdown', this.handleDocumentPointerDown);
+        if (this.wasOutsideDismiss) this.wasOutsideDismiss = false;
+        else if (changedProperties.get('open') === true) void this.updateComplete.then(() => this.focus());
+      }
+    }
+
+    const shouldUpdateControl =
       changedProperties.has('value') ||
       changedProperties.has('required') ||
       changedProperties.has('min') ||
@@ -269,9 +325,12 @@ export class CoreDatePicker extends CharmFormControlElement {
       changedProperties.has('disabledDates') ||
       changedProperties.has('disabledWeekDays') ||
       changedProperties.has('disabled') ||
-      changedProperties.has('readonly')
-    ) {
+      changedProperties.has('readonly');
+    if (this.controlUpdatePending) {
+      this.controlUpdatePending = false;
+    } else if (shouldUpdateControl) {
       this.updateControlFromState();
+      this.controlUpdatePending = false;
     }
 
     if (changedProperties.has('open') && !this.open && changedProperties.get('open') === true) {
@@ -299,6 +358,7 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected labelTemplate() {
     return this.html`
         <label
+          id="date-picker-label"
           aria-hidden=${!this.hasLabel}
         class=${classMap({
           'form-control-label': true,
@@ -324,6 +384,7 @@ export class CoreDatePicker extends CharmFormControlElement {
         shift
         auto-size="vertical"
         content-role="dialog"
+        label=${this.popupLabel()}
         focus-trap
         @popup-hide=${this.handlePopupHide}
       >
@@ -336,7 +397,13 @@ export class CoreDatePicker extends CharmFormControlElement {
         >
           <div class="entry">
             ${this.startTemplate()}
-            <div class="segments" part="date-picker-segments" @keydown=${this.handleSegmentsKeyDown}>
+            <div
+              class="segments"
+              part="date-picker-segments"
+              role="group"
+              aria-labelledby=${ifDefined(this.hasLabel ? 'date-picker-label' : undefined)}
+              @keydown=${this.handleSegmentsKeyDown}
+            >
               ${this.dateSegments.map(segment => this.renderSegment(segment))}
             </div>
             ${this.endTemplate()}
@@ -345,7 +412,6 @@ export class CoreDatePicker extends CharmFormControlElement {
             type="button"
             class="action"
             part="date-picker-toggle"
-            aria-label="Open calendar"
             aria-haspopup="dialog"
             aria-expanded=${this.open}
             ?disabled=${this.disabled}
@@ -359,8 +425,6 @@ export class CoreDatePicker extends CharmFormControlElement {
             class="native-input"
             type="text"
             name=${ifDefined(this.name)}
-            min=${ifDefined(this.min)}
-            max=${ifDefined(this.max)}
             .value=${this.value}
             ?disabled=${this.disabled}
             ?required=${this.required}
@@ -392,6 +456,15 @@ export class CoreDatePicker extends CharmFormControlElement {
             <slot name="footer"></slot>
           </div>
         </div>
+        <span hidden>
+          <slot name="incomplete-date-message">Enter a complete date.</slot>
+          <slot name="invalid-date-message">Enter a valid date.</slot>
+          <slot name="unavailable-date-message">Date is unavailable.</slot>
+          <slot name="popup-label">Calendar</slot>
+          <slot name="day-placeholder">DD</slot>
+          <slot name="month-placeholder">MM</slot>
+          <slot name="year-placeholder">YYYY</slot>
+        </span>
       </scoped-popup>
     `;
   }
@@ -413,21 +486,22 @@ export class CoreDatePicker extends CharmFormControlElement {
         .readOnly=${this.readonly}
         @input=${this.handleCalendarInput}
         @change=${this.handleCalendarChange}
+        @click=${this.handleCalendarClick}
       >
-        <slot name="previous-month-label" slot="previous-month-label"></slot>
-        <slot name="next-month-label" slot="next-month-label"></slot>
-        <slot name="month-label" slot="month-label"></slot>
-        <slot name="year-label" slot="year-label"></slot>
+        <slot name="previous-month-label" slot="previous-month-label">Previous month</slot>
+        <slot name="next-month-label" slot="next-month-label">Next month</slot>
+        <slot name="month-label" slot="month-label">Month</slot>
+        <slot name="year-label" slot="year-label">Year</slot>
       </scoped-calendar>
     `;
   }
 
   protected startTemplate() {
-    return this.html`<span class="start" part="start"><slot name="start"></slot></span>`;
+    return this.hasNamedSlot('start') ? startTemplate() : nothing;
   }
 
   protected endTemplate() {
-    return this.html`<span class="end" part="end"><slot name="end"></slot></span>`;
+    return this.hasNamedSlot('end') ? endTemplate() : nothing;
   }
 
   protected renderSegment(segment: DateInputSegment) {
@@ -438,12 +512,20 @@ export class CoreDatePicker extends CharmFormControlElement {
     }
 
     const segmentValue = this.segmentValue(segment.kind);
-    const placeholder = segment.kind === 'year' ? 'yyyy' : segment.kind === 'month' ? 'mm' : 'dd';
+    const placeholder = this.messageText(
+      `${segment.kind}-placeholder`,
+      getDateSegmentPlaceholder(this.currentLocale, segment.kind)
+    );
     const maxLength = segment.kind === 'year' ? 4 : 2;
+    const placeholderSize = supportsFieldSizingContent
+      ? maxLength
+      : Math.max(maxLength, Array.from(placeholder).length * 2);
 
     return html`
       <span class="segment-wrap">
-        <label class="visually-hidden" for=${`segment-${segment.kind}`}>${segment.kind}</label>
+        <label class="visually-hidden" for=${`segment-${segment.kind}`}>
+          <slot name="${segment.kind}-segment-label">${segment.kind[0]!.toUpperCase()}${segment.kind.slice(1)}</slot>
+        </label>
         <input
           id=${`segment-${segment.kind}`}
           class="segment"
@@ -451,10 +533,11 @@ export class CoreDatePicker extends CharmFormControlElement {
           data-segment=${segment.kind}
           inputmode="numeric"
           maxlength=${maxLength}
+          size=${placeholderSize}
+          autocomplete=${ifDefined(this.segmentAutocomplete(segment.kind))}
           aria-describedby=${ifDefined(this.describedBy)}
-          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-          aria-invalid=${this.invalid}
-          aria-valuetext=${ifDefined(this.segmentAriaValueText(segment.kind))}
+          aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+          aria-invalid=${this.showInvalid}
           ?required=${this.required}
           ?disabled=${this.disabled}
           ?readonly=${this.readonly}
@@ -463,10 +546,17 @@ export class CoreDatePicker extends CharmFormControlElement {
           @focus=${this.handleSegmentFocus}
           @click=${this.handleSegmentClick}
           @input=${this.handleSegmentInput}
+          @paste=${this.handleSegmentPaste}
           @blur=${this.handleSegmentBlur}
         />
       </span>
     `;
+  }
+
+  protected segmentAutocomplete(kind: 'day' | 'month' | 'year'): string | undefined {
+    if (!this.autocomplete) return undefined;
+    if (this.autocomplete === 'bday') return `bday-${kind}`;
+    return this.autocomplete;
   }
 
   protected segmentValue(kind: 'day' | 'month' | 'year'): string {
@@ -483,15 +573,6 @@ export class CoreDatePicker extends CharmFormControlElement {
 
   protected segmentInput(kind: 'day' | 'month' | 'year'): HTMLInputElement | null {
     return this.shadowRoot?.querySelector<HTMLInputElement>(`#segment-${kind}`) ?? null;
-  }
-
-  protected segmentAriaValueText(kind: 'day' | 'month' | 'year'): string | undefined {
-    if (kind !== 'month') return undefined;
-
-    const value = Number(this.month);
-    if (!Number.isInteger(value) || value < 1 || value > 12) return undefined;
-
-    return getMonthName(this.currentLocale, value - 1);
   }
 
   protected syncSegmentsFromValue(): void {
@@ -519,29 +600,27 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   protected updateControlFromState(): void {
+    this.controlUpdatePending = true;
     const parsed = this.parsedSegmentsDate();
-    const nextValue = parsed && !this.isUnavailableDate(parsed) ? toIsoDate(parsed) : '';
+    const nextValue =
+      parsed && !this.isUnavailableDate(parsed) ? toIsoDate(parsed) : this.preserveProgrammaticValue ? this.value : '';
 
     if (this.value !== nextValue) {
-      this.suppressInputEvent = true;
       this.suppressSegmentSync = true;
       this.value = nextValue;
-      this.suppressInputEvent = false;
     }
 
     if (this.input) {
       this.input.value = this.value;
-      this.input.min = this.min ?? '';
-      this.input.max = this.max ?? '';
-      this.input.required = this.required;
-      this.input.disabled = this.disabled;
     }
 
     if (!this.customErrorMessage && this.input) {
-      if (this.hasCompleteSegments && !parsed) {
-        this.input.setCustomValidity('Enter a valid date.');
+      if (!this.allSegmentsEmpty && !this.hasCompleteSegments) {
+        this.input.setCustomValidity(this.messageText('incomplete-date-message', 'Enter a complete date.'));
+      } else if ((this.hasCompleteSegments && !parsed) || (this.value && this.allSegmentsEmpty && !parsed)) {
+        this.input.setCustomValidity(this.messageText('invalid-date-message', 'Enter a valid date.'));
       } else if (parsed && this.isUnavailableDate(parsed)) {
-        this.input.setCustomValidity('Date is unavailable.');
+        this.input.setCustomValidity(this.messageText('unavailable-date-message', 'Date is unavailable.'));
       } else {
         this.input.setCustomValidity('');
       }
@@ -552,39 +631,10 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   protected updateFromSegmentInput(target: HTMLInputElement): void {
+    this.preserveProgrammaticValue = false;
     const kind = target.dataset.segment as 'day' | 'month' | 'year';
-    const maxLength = kind === 'year' ? 4 : 2;
-    let digits = normalizeInputDigits(target.value).slice(0, maxLength);
-    let shouldAdvance = false;
+    const { digits, shouldAdvance } = normalizeDateSegmentInput(target.value, kind);
     let nextKind: 'day' | 'month' | 'year' | undefined;
-
-    if (kind !== 'year' && digits.length === 1) {
-      const numeric = Number(digits);
-      const maxValue = kind === 'month' ? 12 : 31;
-      if (Number.isInteger(numeric) && numeric > 0 && numeric * 10 > maxValue) {
-        digits = numeric.toString().padStart(2, '0');
-        shouldAdvance = true;
-      }
-    }
-
-    if (digits.length === maxLength) {
-      if (kind === 'month') {
-        const numeric = Math.min(Math.max(Number(digits), 1), 12);
-        digits = numeric.toString().padStart(2, '0');
-      }
-
-      if (kind === 'day') {
-        const numeric = Math.min(Math.max(Number(digits), 1), 31);
-        digits = numeric.toString().padStart(2, '0');
-      }
-
-      if (kind === 'year') {
-        const numeric = Math.min(Math.max(Number(digits), 1), 9999);
-        digits = numeric.toString().padStart(4, '0');
-      }
-
-      shouldAdvance = true;
-    }
 
     this.setSegmentValue(kind, digits);
     target.value = digits;
@@ -606,7 +656,7 @@ export class CoreDatePicker extends CharmFormControlElement {
       });
     }
 
-    if (!this.suppressInputEvent && previous !== this.value) this.emitInput();
+    if (previous !== this.value) this.emitInput();
   }
 
   protected focusNextSegment(kind: 'day' | 'month' | 'year'): void {
@@ -628,14 +678,25 @@ export class CoreDatePicker extends CharmFormControlElement {
   }
 
   protected stepSegment(kind: 'day' | 'month' | 'year', direction: 1 | -1): void {
-    const parsed = this.parsedSegmentsDate() ?? parseIsoDate(this.value) ?? parseIsoDate(this.focusDate) ?? todayDate();
+    if (this.readonly || this.disabled) return;
+    this.preserveProgrammaticValue = false;
+    const parsed = this.parsedSegmentsDate();
+    if (!parsed) {
+      const fallback = parseIsoDate(this.value) ?? parseIsoDate(this.focusDate) ?? todayDate();
+      this.setSegmentValue(kind, stepDateSegmentValue(this.segmentValue(kind), kind, direction, fallback));
+      const previous = this.value;
+      this.updateControlFromState();
+      if (previous !== this.value) this.emitInput();
+      return;
+    }
+
     let nextDate = clampDate(shiftDatePart(parsed, kind, direction), this.constraints);
 
     let attempts = 0;
     while (this.isUnavailableDate(nextDate) && attempts < 366) {
       nextDate = addDays(nextDate, direction);
-      if (this.constraints.minDate && compareDates(nextDate, this.constraints.minDate) < 0) return;
-      if (this.constraints.maxDate && compareDates(nextDate, this.constraints.maxDate) > 0) return;
+      if (compareDates(nextDate, this.constraints.minDate) < 0) return;
+      if (compareDates(nextDate, this.constraints.maxDate) > 0) return;
       attempts += 1;
     }
 
@@ -648,7 +709,7 @@ export class CoreDatePicker extends CharmFormControlElement {
 
     const previous = this.value;
     this.updateControlFromState();
-    if (!this.suppressInputEvent && previous !== this.value) this.emitInput();
+    if (previous !== this.value) this.emitInput();
   }
 
   protected handleControlClick(event: MouseEvent): void {
@@ -656,6 +717,7 @@ export class CoreDatePicker extends CharmFormControlElement {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.closest('.action')) return;
     if (target.closest('.segment')) return;
+    if (target.closest('button, input, select, textarea, a[href], [contenteditable="true"]')) return;
 
     const firstInput = this.segmentInput(this.firstSegmentKind);
     firstInput?.focus();
@@ -667,6 +729,7 @@ export class CoreDatePicker extends CharmFormControlElement {
     const target = event.composedPath()[0] as HTMLElement;
     if (target.closest('.action')) return;
     if (target.closest('.segment')) return;
+    if (target.closest('button, input, select, textarea, a[href], [contenteditable="true"]')) return;
 
     event.preventDefault();
     const firstInput = this.segmentInput(this.firstSegmentKind);
@@ -677,8 +740,7 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected handleToggleClick(event: Event): void {
     event.preventDefault();
     if (this.disabled) return;
-    this.open = !this.open;
-    if (!this.open) this.commitChange();
+    this.open ? this.hide() : this.show();
   }
 
   protected handleClearClick(event: Event): void {
@@ -693,12 +755,13 @@ export class CoreDatePicker extends CharmFormControlElement {
 
     const today = todayDate();
     const isoDate = toIsoDate(today);
+    this.suppressSegmentSync = true;
     this.value = isoDate;
     this.syncSegmentsFromValue();
     this.updateControlFromState();
     this.emitInput();
     this.commitChange();
-    this.emit('date-picker-today', { detail: { value: isoDate } satisfies DatePickerTodayEventDetail });
+    this.emitDatePickerToday(isoDate);
   };
 
   protected handleSegmentFocus = (): void => {
@@ -713,17 +776,43 @@ export class CoreDatePicker extends CharmFormControlElement {
   };
 
   protected handleSegmentBlur = (): void => {
-    requestAnimationFrame(() => {
+    if (this.blurFrame !== undefined) cancelAnimationFrame(this.blurFrame);
+    this.blurFrame = requestAnimationFrame(() => {
+      this.blurFrame = undefined;
       const active = this.shadowRoot?.activeElement;
-      if (active instanceof HTMLInputElement && active.classList.contains('segment')) return;
+      if (
+        (active instanceof HTMLInputElement && active.classList.contains('segment')) ||
+        this.open ||
+        this.contains(document.activeElement)
+      )
+        return;
       this.handleBlur();
-      if (!this.open) this.commitChange();
+      this.commitChange();
     });
   };
 
   protected handleSegmentInput(event: Event): void {
+    event.stopPropagation();
     if (this.disabled || this.readonly) return;
     this.updateFromSegmentInput(event.currentTarget as HTMLInputElement);
+  }
+
+  protected handleSegmentPaste(event: ClipboardEvent): void {
+    if (this.disabled || this.readonly) return;
+    const text = event.clipboardData?.getData('text')?.trim();
+    if (!text) return;
+
+    const date = parsePastedDate(text, this.segmentKindsInOrder);
+    if (!date) return;
+
+    event.preventDefault();
+    this.preserveProgrammaticValue = false;
+    const parts = partsFromDate(date);
+    this.day = parts.day;
+    this.month = parts.month;
+    this.year = parts.year;
+    this.updateControlFromState();
+    this.emitInput();
   }
 
   protected handleSegmentsKeyDown(event: KeyboardEvent): void {
@@ -757,6 +846,8 @@ export class CoreDatePicker extends CharmFormControlElement {
       return;
     }
 
+    if (!isModifier && (event.key === keys.ArrowUp || event.key === keys.ArrowDown) && this.readonly) return;
+
     if (!isModifier && event.key === keys.ArrowUp) {
       event.preventDefault();
       this.stepSegment(kind, 1);
@@ -766,12 +857,6 @@ export class CoreDatePicker extends CharmFormControlElement {
     if (!isModifier && event.key === keys.ArrowDown) {
       event.preventDefault();
       this.stepSegment(kind, -1);
-      return;
-    }
-
-    if (!isModifier && event.key === keys.Enter) {
-      event.preventDefault();
-      this.open ? this.hide() : this.show();
       return;
     }
 
@@ -793,27 +878,37 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected applyCalendarValue(detail: CalendarChangeEventDetail): void {
     const next = Array.isArray(detail.value) ? detail.value[0] : detail.value;
     if (!next || typeof next !== 'string') return;
+    this.suppressSegmentSync = true;
     this.value = next;
     this.syncSegmentsFromValue();
     this.updateControlFromState();
   }
 
   protected handleCalendarInput = (event: CustomEvent<CalendarChangeEventDetail>): void => {
+    if (!(event instanceof CustomEvent)) return;
     event.stopPropagation();
     this.applyCalendarValue(event.detail);
     this.emitInput();
   };
 
   protected handleCalendarChange = (event: CustomEvent<CalendarChangeEventDetail>): void => {
+    if (!(event instanceof CustomEvent)) return;
     event.stopPropagation();
     this.applyCalendarValue(event.detail);
     this.open = false;
     this.commitChange();
-    this.segmentInput(this.firstSegmentKind)?.focus();
+  };
+
+  protected handleCalendarClick = (event: MouseEvent): void => {
+    const dateButton = event
+      .composedPath()
+      .find((node): node is HTMLElement => node instanceof HTMLElement && node.dataset.date !== undefined);
+    if (dateButton?.dataset.date === this.value) this.hide();
   };
 
   protected handlePopupHide = (): void => {
     if (!this.open) return;
+    this.wasOutsideDismiss = false;
     this.open = false;
     this.commitChange();
   };
@@ -821,8 +916,31 @@ export class CoreDatePicker extends CharmFormControlElement {
   protected handleDocumentPointerDown = (event: PointerEvent): void => {
     if (!this.open) return;
     if (event.composedPath().includes(this)) return;
-    this.hide();
+    this.wasOutsideDismiss = true;
+    this.open = false;
+    this.commitChange();
   };
+
+  protected popupLabel(): string {
+    const label = this.label || this.querySelector('[slot="label"]')?.textContent?.trim();
+    return label || this.messageText('popup-label', 'Calendar');
+  }
+
+  protected messageText(slotName: string, fallback: string): string {
+    return this.querySelector<HTMLElement>(`[slot="${slotName}"]`)?.textContent?.trim() || fallback;
+  }
+
+  protected override formResetCallback(): void {
+    super.formResetCallback();
+    this.syncSegmentsFromValue();
+    this.committedValue = this.value;
+    this.open = false;
+    this.updateControlFromState();
+  }
+
+  protected emitDatePickerToday(value: string): void {
+    this.emit('date-picker-today', { detail: { value } satisfies DatePickerTodayEventDetail });
+  }
 
   protected commitChange(): void {
     if (this.committedValue === this.value) return;

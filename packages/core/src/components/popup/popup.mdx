@@ -124,7 +124,7 @@ The `skidding` attribute is similar to distance, but instead allows you to offse
 
 ## Custom popup arrow
 
-Attaches an arrow to the popup. The popup's background color can be set with the `--popup-bg-color` custom property, and the arrow's size with `--popup-arrow-size`. The arrow uses the same color as the popup's background, so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
+Attaches an arrow to the popup. The popup's background color can be set with the `--popup-bg-color` custom property, and the arrow's size with `--popup-arrow-size`. The arrow uses the same color as the popup's background, so the two always match. For additional customizations, target it using `::part(popup-arrow)`.
 
 <code-bubble>
 
@@ -183,7 +183,7 @@ When set, placement of the popup will flip to the opposite site to keep it in vi
 <code-bubble>
 
 ```html
-<ch-popup open flip>
+<ch-popup open flip shift>
   <span slot="anchor">Flip</span>
   <div class="box">Flips to stay in view</div>
 </ch-popup>
@@ -369,7 +369,7 @@ The amount of padding, in pixels, to exceed before the auto-size behavior will o
 
 ## Animations
 
-Use the `--popup-show-transition` and `--popup-hide-transition` CSS properties to define the transition for the popup when it is shown or hidden.
+Use the `--charm-popup-show-transition` and `--charm-popup-hide-transition` CSS properties to define the transition for the popup when it is shown or hidden.
 
 <code-bubble>
 
@@ -380,8 +380,8 @@ Use the `--popup-show-transition` and `--popup-hide-transition` CSS properties t
 </ch-popup>
 <style>
   .animation {
-    --popup-show-transition: opacity 1s;
-    --popup-hide-transition: opacity 1s;
+    --charm-popup-show-transition: opacity 1s;
+    --charm-popup-hide-transition: opacity 1s;
     --popup-bg-color: #2c7ef7;
   }
 </style>

@@ -24,7 +24,7 @@ To add a label to the breadcrumb item you can place any element within the openi
 
 ## Rendering an active breadcrumb item link
 
-By default breadcrumb item renders an inactive anchor. To render a link, set an `href` attribute within the `<ch-breadcrumb-item>` element.
+Without an `href`, a breadcrumb item is non-interactive text. To render a link, set an `href` attribute.
 
 <code-bubble>
 
@@ -34,20 +34,9 @@ By default breadcrumb item renders an inactive anchor. To render a link, set an 
 
 </code-bubble>
 
-## Custom separator
+## Separator
 
-By default the slot is a `>`. To customize the separator use the `separator` slot.
-
-<code-bubble>
-
-```html
-<ch-breadcrumb-item>
-  breadcrumb item
-  <span slot="separator">/</span>
-</ch-breadcrumb-item>
-```
-
-</code-bubble>
+Breadcrumb items don't have their own separator. Set it on `<ch-breadcrumb>` instead, using its `separator` slot.
 
 ## Setting a start icon
 
@@ -106,3 +95,5 @@ referrer policy types are `no-referrer` | `no-referrer-when-downgrade` | `origin
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

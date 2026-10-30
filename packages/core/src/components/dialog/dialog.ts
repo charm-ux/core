@@ -2,7 +2,6 @@ import { LitElement } from 'lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { property, query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
-// import { FocusTrapController } from '../../controller/focus-trap.js';
 import { RenderedWatcher } from '../../internal/rendered-watcher.js';
 import { CoreIcon } from '../icon/icon.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
@@ -89,6 +88,7 @@ export class CoreDialog extends CharmDismissibleElement {
   /** Reference-counts body scroll locks so nested dialogs and open-on-connect dialogs don't unlock each other's lock. */
   protected static bodyScrollLockCount = 0;
   protected static previousBodyOverflow = '';
+  protected static previousBodyPaddingInlineEnd = '';
 
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
@@ -106,7 +106,7 @@ export class CoreDialog extends CharmDismissibleElement {
   @property({ type: Boolean, attribute: 'hide-close-button', reflect: true })
   public hideCloseButton?: boolean;
 
-  /** Removes the header. This will also remove the default close button. If using prevent default on dialog-request-close please provide a way for the user to close the dialog. */
+  /** Hides the visible header; the heading and close button remain available to assistive technology. */
   @property({ attribute: 'no-header', type: Boolean, reflect: true })
   public noHeader?: boolean;
 
@@ -117,6 +117,8 @@ export class CoreDialog extends CharmDismissibleElement {
   @query('dialog')
   protected dialog?: HTMLDialogElement;
 
+  protected pointerStartedOutside = false;
+
   /** Keeps the closed initial render to the native dialog shell until first open. */
   protected hasOpened = false;
 
@@ -126,8 +128,6 @@ export class CoreDialog extends CharmDismissibleElement {
   /** Whether this instance currently contributes one reference-counted body scroll lock. */
   private bodyScrollLocked = false;
 
-  // protected readonly focusTrapController = new FocusTrapController(this);
-
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -136,8 +136,10 @@ export class CoreDialog extends CharmDismissibleElement {
     super.connectedCallback();
     this.setAttribute('focusable', '');
     if (this.open) {
-      this.dialog?.setAttribute('hidden', '');
       this.lockBodyScrolling();
+      this.updateComplete.then(() => {
+        if (this.isConnected && this.open) this.activateDialog();
+      });
     }
   }
 
@@ -171,17 +173,13 @@ export class CoreDialog extends CharmDismissibleElement {
     } else {
       this.stopRenderedWatcher();
       this.unlockBodyScrolling();
-      // the dialog will be closed in handleTransitionEnd if there is animation
-      if (!this.transition) {
-        this.dialog?.close();
-      }
     }
     super.onOpenChange(open);
   }
 
   protected override updated(changedProps: Map<string, unknown>) {
     super.updated(changedProps);
-    if (this.open && this.hasOpened && this.dialog && !this.dialog.open) {
+    if (this.open && this.hasOpened && this.dialog && (!this.dialog.open || !this.dialog.matches(':modal'))) {
       this.activateDialog();
     }
   }
@@ -193,7 +191,8 @@ export class CoreDialog extends CharmDismissibleElement {
     // Make sure the hidden attribute is fully removed before triggering transition.
     this.dialog.removeAttribute('hidden');
 
-    this.dialog.showModal();
+    if (this.dialog.open && !this.dialog.matches(':modal')) this.dialog.close();
+    if (!this.dialog.open) this.dialog.showModal();
 
     this.lockBodyScrolling();
     this.startRenderedWatcher();
@@ -225,7 +224,11 @@ export class CoreDialog extends CharmDismissibleElement {
     this.bodyScrollLocked = true;
     if (CoreDialog.bodyScrollLockCount === 0) {
       CoreDialog.previousBodyOverflow = document.body.style.overflow;
+      CoreDialog.previousBodyPaddingInlineEnd = document.body.style.paddingInlineEnd;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const currentPadding = Number.parseFloat(getComputedStyle(document.body).paddingInlineEnd) || 0;
       document.body.style.overflow = 'hidden';
+      if (scrollbarWidth > 0) document.body.style.paddingInlineEnd = `${currentPadding + scrollbarWidth}px`;
     }
     CoreDialog.bodyScrollLockCount += 1;
   }
@@ -238,6 +241,7 @@ export class CoreDialog extends CharmDismissibleElement {
     CoreDialog.bodyScrollLockCount = Math.max(0, CoreDialog.bodyScrollLockCount - 1);
     if (CoreDialog.bodyScrollLockCount === 0) {
       document.body.style.overflow = CoreDialog.previousBodyOverflow;
+      document.body.style.paddingInlineEnd = CoreDialog.previousBodyPaddingInlineEnd;
     }
   }
 
@@ -262,10 +266,6 @@ export class CoreDialog extends CharmDismissibleElement {
   protected override emitRequestClose(source: string) {
     const evt = this.emitScopedEvent('request-close', { cancelable: true, detail: { source } });
     if (!evt.defaultPrevented && (!this.alert || source === 'close-button' || source === 'external')) {
-      // the dialog will be closed in handleTransitionEnd if there is animation
-      if (!this.transition) {
-        this.dialog?.close();
-      }
       // local hide is overridden, call super to prevent infinite recursion
       super.hide();
     }
@@ -310,23 +310,21 @@ export class CoreDialog extends CharmDismissibleElement {
     }
   }
 
-  /**
-   * Handles the 'transitionend' event for CSS transitions.
-   * @param {TransitionEvent} e - The 'transitionend' event object.
-   */
-  protected override handleTransitionEnd(e: TransitionEvent) {
-    super.handleTransitionEnd(e);
-    if (e.target !== e.currentTarget) return;
-    if (!this.open) {
-      this.dialog?.close();
-    }
-  }
+  /** Records whether a pointer gesture began outside the dialog. */
+  protected handlePointerDown = (event: PointerEvent) => {
+    const rect = this.dialog?.getBoundingClientRect();
+    if (!rect) return;
+    this.pointerStartedOutside =
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom;
+  };
 
-  /**
-   * Dismisses the dialog when clicking outside of it.
-   * @param {MouseEvent} e - The 'pointerup' event object.
-   */
-  protected lightDismiss(e: any) {
+  /** Dismisses on pointer-up only when the gesture began and ended outside the dialog. */
+  protected lightDismiss(e: PointerEvent) {
+    if (!this.pointerStartedOutside) return;
+    this.pointerStartedOutside = false;
     const rect = this.dialog?.getBoundingClientRect();
     if (!rect) return;
 
@@ -367,7 +365,11 @@ export class CoreDialog extends CharmDismissibleElement {
   /** Generates the HTML template for the dialog title. */
   protected titleTemplate() {
     return this.html`
-      <h2 class="dialog-title" id="header" part="dialog-header">
+      <h2
+        class=${classMap({ 'dialog-title': true, 'visually-hidden': !!this.noHeader })}
+        id="header"
+        part="dialog-header"
+      >
         <slot name="heading"> ${this.heading} </slot>
       </h2>
     `;
@@ -379,14 +381,14 @@ export class CoreDialog extends CharmDismissibleElement {
       <button
         class="close-btn"
         part="dialog-close-button"
-        aria-label=${this.closeButtonLabel}
         @click=${() => this.requestClose('close-button')}
       >
         <scoped-icon name="dismiss" part="dialog-close-button-icon"></scoped-icon>
+        <span class="visually-hidden">${this.closeButtonLabel}</span>
       </button>
     `;
 
-    return this.hideCloseButton ? '' : this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
+    return this.hideCloseButton || this.noHeader ? this.html`<div class="visually-hidden">${button}</div>` : button;
   }
 
   /** Generates the HTML template for the dialog body. */
@@ -395,7 +397,7 @@ export class CoreDialog extends CharmDismissibleElement {
       <div
         class=${classMap({
           'dialog-body': true,
-          'dialog-body--has-header': this.heading || this.hasNamedSlot('heading'),
+          'dialog-body--has-header': !this.noHeader && (this.heading || this.hasNamedSlot('heading')),
         })}
         part="dialog-body"
       >
@@ -427,6 +429,7 @@ export class CoreDialog extends CharmDismissibleElement {
         tabindex="-1"
         role=${ifDefined(this.alert ? 'alertdialog' : undefined)}
         @cancel=${this.handleDialogCancel}
+        @pointerdown=${this.handlePointerDown}
         @pointerup=${this.lightDismiss}
         @transitionend=${this.handleTransitionEnd}
       ></dialog>`;
@@ -437,15 +440,18 @@ export class CoreDialog extends CharmDismissibleElement {
         base: true,
       })}
       part="dialog-base"
-      aria-labelledby="header"
-      tabindex=${this.open ? 0 : -1}
+      aria-labelledby=${ifDefined(this.heading || this.hasNamedSlot('heading') ? 'header' : undefined)}
+      tabindex="-1"
       @cancel=${this.handleDialogCancel}
+      @pointerdown=${this.handlePointerDown}
       @pointerup=${this.lightDismiss}
       @transitionend=${this.handleTransitionEnd}
       role=${ifDefined(this.alert ? 'alertdialog' : undefined)}
     >
       <div class="dialog-wrapper" part="dialog-wrapper">
-        ${this.noHeader ? this.closeButtonTemplate() : this.dialogHeaderTemplate()} ${this.dialogBodyTemplate()}
+        ${
+          this.noHeader ? this.html`${this.closeButtonTemplate()} ${this.titleTemplate()}` : this.dialogHeaderTemplate()
+        } ${this.dialogBodyTemplate()}
         ${this.dialogFooterTemplate()}
       </div>
     </dialog>`;

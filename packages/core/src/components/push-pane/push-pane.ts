@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
+import { composedContains } from '../../internal/composed-contains.js';
 import { CharmDismissibleElement, CharmElement } from '../../base/index.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './push-pane.styles.js';
@@ -81,7 +82,7 @@ export class CorePushPane extends CharmDismissibleElement {
   public static override styles = [...super.styles, styles];
   public static override shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true };
   public static override baseName = 'push-pane';
-  public static override watchedSlots = ['actions', 'footer'];
+  public static override watchedSlots = ['actions', 'footer', 'heading'];
 
   /** The label for the close button. */
   @property({ attribute: 'close-button-label', reflect: true })
@@ -99,9 +100,11 @@ export class CorePushPane extends CharmDismissibleElement {
   @property({ type: Boolean, attribute: 'hide-close-button', reflect: true })
   public hideCloseButton?: boolean;
 
-  /** Removes the header. This will also remove the default close button. If using prevent default on he-fly-in-request-close please provide a way for the user to close the fly-in-panel. */
+  /** Hides the visible header; the heading and close button remain available to assistive technology. */
   @property({ attribute: 'no-header', type: Boolean, reflect: true })
   public noHeader?: boolean;
+
+  protected opener?: HTMLElement | null;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -119,7 +122,23 @@ export class CorePushPane extends CharmDismissibleElement {
 
   /** Handles internal logic for when open state changes */
   protected override onOpenChange(open: boolean) {
+    if (open) {
+      const active = this.deepActiveElement();
+      this.opener = active instanceof HTMLElement && !this.isWithinPane(active) ? active : null;
+    } else if (this.isWithinPane(this.deepActiveElement())) {
+      this.opener?.focus();
+    }
     super.onOpenChange(open);
+  }
+
+  protected deepActiveElement(): Element | null {
+    let active: Element | null = document.activeElement;
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+    return active;
+  }
+
+  protected isWithinPane(element: Element | null): boolean {
+    return composedContains(this, element);
   }
 
   /** Emits the push-pane-request-close event. */
@@ -131,6 +150,7 @@ export class CorePushPane extends CharmDismissibleElement {
    * Handles the 'keydown' event, specifically for the 'Escape' key.
    */
   protected handleKeydown(e: KeyboardEvent) {
+    if (!this.open) return;
     switch (e.key) {
       case keys.Escape:
         e.stopPropagation();
@@ -138,13 +158,6 @@ export class CorePushPane extends CharmDismissibleElement {
         this.requestClose('keyboard');
         break;
     }
-  }
-
-  /**
-   * Handles close click, closes push pane
-   */
-  protected handleCloseClick() {
-    this.open = false;
   }
 
   /** Generates the template for the footer. */
@@ -160,11 +173,11 @@ export class CorePushPane extends CharmDismissibleElement {
       <button
         class="close-button"
         part="push-pane-close-button"
-        aria-label=${ifDefined(this.closeButtonLabel || 'close-button')}
         @click=${() => this.requestClose('close-button')}
         tabindex=${this.open ? 0 : -1}
       >
-        <scoped-icon name="dismiss" label="close-icon"></scoped-icon>
+        <scoped-icon name="dismiss"></scoped-icon>
+        <span class="visually-hidden">${this.closeButtonLabel || 'Close'}</span>
       </button>
   `;
 
@@ -201,8 +214,8 @@ export class CorePushPane extends CharmDismissibleElement {
   /** Generates the template for the push pane title. */
   protected titleTemplate() {
     return this.html`
-      <h2>
-        <slot name="heading" part="push-pane-heading" class="heading" id="push-pane-heading">${this.heading}</slot>
+      <h2 id="push-pane-heading" class=${classMap({ 'visually-hidden': !!this.noHeader })}>
+        <slot name="heading" part="push-pane-heading" class="heading">${this.heading}</slot>
       </h2>
     `;
   }
@@ -223,14 +236,15 @@ export class CorePushPane extends CharmDismissibleElement {
   /** Generates the template for the push pane itself. */
   protected paneTemplate() {
     return this.html`<aside
-      aria-hidden=${this.open ? 'false' : 'true'}
       part="push-pane-base"
       class="base"
-      aria-labelledby="push-pane-heading"
+      aria-labelledby=${ifDefined(this.heading || this.hasNamedSlot('heading') ? 'push-pane-heading' : undefined)}
       ?inert=${!this.open}
       @transitionend=${this.handleTransitionEnd}
     >
-      ${this.noHeader ? this.closeButtonTemplate() : this.pushPaneHeaderTemplate()} ${this.bodyTemplate()}
+      ${
+        this.noHeader ? this.html`${this.closeButtonTemplate()} ${this.titleTemplate()}` : this.pushPaneHeaderTemplate()
+      } ${this.bodyTemplate()}
       ${this.footerTemplate()}
     </aside>`;
   }

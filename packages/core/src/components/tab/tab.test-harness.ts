@@ -1,6 +1,8 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreTab } from './index.js';
+import '../tabs/index.js';
+import '../tab-panel/index.js';
 
 export class CoreTabTests<T extends CoreTab> extends CharmElementTests<T> {
   public constructor() {
@@ -11,8 +13,17 @@ export class CoreTabTests<T extends CoreTab> extends CharmElementTests<T> {
         description: 'base',
         tests: {
           accessibility: {
-            description: 'tab accessibility requires a parent with the correct role. This is covered via tabs',
-            test: async () => {},
+            description: 'is accessible inside a named tablist',
+            test: async () => {
+              const tabs = await fixture(
+                html`<ch-tabs label="Test sections">
+                  <ch-tab selected>One</ch-tab
+                  ><ch-tab-panel><span style="color: #000">Panel content</span></ch-tab-panel>
+                </ch-tabs>`
+              );
+              // This fixture focuses on tab semantics; contrast is owned by the shared theme, not this widget.
+              await expect(tabs).to.be.accessible({ ignoredRules: ['color-contrast'] });
+            },
           },
         },
       },

@@ -129,6 +129,29 @@ export const Link: Story = {
   },
 };
 
+export const Disabled: Story = {
+  render: args => template(args),
+  args: {
+    'default-slot': 'Disabled button',
+    disabled: true,
+  },
+};
+
+export const SubmitInForm: Story = {
+  render: args => html`
+    <form @submit=${(event: SubmitEvent) => event.preventDefault()}>
+      <label>Message <input name="message" value="Hello" /></label>
+      ${template(args)}
+    </form>
+  `,
+  args: {
+    'default-slot': 'Submit',
+    type: 'submit',
+    name: 'action',
+    value: 'send',
+  },
+};
+
 export const LinkInContext: Story = {
   render: args => html`
     <p>

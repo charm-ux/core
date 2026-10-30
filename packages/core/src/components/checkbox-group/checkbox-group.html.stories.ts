@@ -203,6 +203,7 @@ export const DisabledOptionsOnly: Story = {
     ),
   args: {
     label: 'Interests',
+    valueAsArray: ['books'],
   },
 };
 

@@ -43,6 +43,16 @@ export class CoreDividerTests<T extends CoreDivider> extends CharmElementTests<T
               expect(el.hasAttribute('aria-orientation')).to.be.false;
             },
           },
+          labeledDividerDoesNotExposeSeparatorRole: {
+            description: 'keeps divider text exposed instead of hiding it under separator semantics',
+            test: async () => {
+              const el = this.component;
+              el.textContent = 'Continue with';
+              await elementUpdated(el);
+              expect(el.getAttribute('role')).to.equal('presentation');
+              expect(el.textContent).to.contain('Continue with');
+            },
+          },
 
           slots: {
             description: 'slots',

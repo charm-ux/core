@@ -1,8 +1,7 @@
 import { property, state } from 'lit/decorators.js';
 import { html } from 'lit/static-html.js';
 import { classMap } from 'lit/directives/class-map.js';
-import CharmElement from '../../base/charm-element/charm-element.js';
-import formControlStyles from '../../base/form-control-element/form-control.styles.js';
+import { CharmFormControlElement } from '../../base/index.js';
 import { keys } from '../../utilities/key-map.js';
 import styles from './radio.styles.js';
 
@@ -46,113 +45,141 @@ import styles from './radio.styles.js';
  * @cssprop --charm-radio-label-unchecked-hover-color - The color of the radio label when the radio is unchecked and hovered.
  */
 
-export class CoreRadio extends CharmElement {
-  public static override styles = [...super.styles, formControlStyles, styles];
+export class CoreRadio extends CharmFormControlElement {
+  public static override styles = [...super.styles, styles];
   public static override baseName = 'radio';
-  public static override watchedSlots = ['[default]'];
+  public static override watchedSlots = ['[default]', 'label', 'help-text'];
+  public static override shadowRootOptions = { ...super.shadowRootOptions, delegatesFocus: false };
 
   /** This toggles the selected status for the radio and is for use when a radio button is used outside of a radio group. When used within a radio group, this value be overridden by the radio group's value. */
   @property({ type: Boolean, reflect: true })
   public checked?: boolean;
 
-  /** The radio's value attribute. */
-  @property({ reflect: true })
-  public value?: string;
-
-  /** Disables the radio. */
-  @property({ type: Boolean, reflect: true })
-  public disabled?: boolean;
-
   /** @internal Disables the radio while preserving its own `disabled` state. Set by the containing radio group when the group is disabled. */
   @state()
   public forceDisabled = false;
 
-  /** Focus on the radio on page load. */
-  @property({ type: Boolean, reflect: true })
-  public override autofocus = false;
+  /** @internal Makes the radio readonly while preserving its own `readonly` state. Set by the containing radio group when the group is readonly. */
+  @state()
+  public forceReadonly = false;
 
-  /** The layout direction of the radio. */
-  @property({ type: Boolean, reflect: true })
-  public vertical?: boolean;
+  protected initialChecked = false;
 
-  /** The input's label. Alternatively, you can use the default slot. */
-  @property({ reflect: true })
-  public label?: string;
-
-  /** Hides the input label. */
-  @property({ type: Boolean, attribute: 'hide-label', reflect: true })
-  public hideLabel?: boolean;
-
-  /** Makes the input readonly. */
-  @property({ type: Boolean, reflect: true })
-  public readonly?: boolean;
-
-  @state() protected hasFocus = false;
-
-  /** Whether the radio is disabled by its own `disabled` property or by the containing radio group's `forceDisabled`. */
+  /** Whether the radio is disabled directly, by its form, or by a containing group. */
   protected get effectivelyDisabled() {
     return !!(this.disabled || this.forceDisabled);
+  }
+
+  /** Whether the radio is readonly by itself or by a containing group. */
+  protected get effectivelyReadonly() {
+    return !!(this.readonly || this.forceReadonly);
   }
 
   public override connectedCallback(): void {
     super.connectedCallback();
     this.addEventListeners();
     this.setInitialAttributes();
+    if (this.checked && !this.isInRadioGroup()) this.uncheckNamedPeers();
   }
 
   public override disconnectedCallback() {
+    this.removeEventListeners();
     super.disconnectedCallback();
+  }
+
+  public override checkValidity(): boolean {
+    return this.internals.checkValidity();
+  }
+
+  public override reportValidity(): boolean {
+    this.hadFocus = true;
+    this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
+    return this.internals.reportValidity();
+  }
+
+  public override setCustomValidity(message = '') {
+    this.hadFocus = true;
+    this.customErrorMessage = message;
+    this.updateValidity();
+  }
+
+  protected override getInitialFormValue(): string {
+    return this.checked ? this.value || 'on' : '';
+  }
+
+  protected override syncInitialFormValue() {
+    if (this.hasCapturedInitialValue) return;
+    this.initialChecked = !!this.checked;
+    super.syncInitialFormValue();
+  }
+
+  protected override restoreInitialFormValue() {
+    this.checked = this.initialChecked;
+  }
+
+  protected override formStateRestoreCallback(state: string | File | FormData | null) {
+    this.checked = state === 'checked' || (typeof state === 'string' && state === (this.value || 'on'));
+  }
+
+  protected override firstUpdated() {
+    super.firstUpdated();
+    this.updateValidity();
+  }
+
+  protected override updateValidity() {
+    const customError = this.customErrorMessage !== '';
+    this.internals.setValidity(customError ? { customError: true } : {}, this.customErrorMessage);
+    if (this.hadFocus || this.hasFocus) this.updateErrorMessage();
+    this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
+    this.syncFormValue();
   }
 
   /** Handles the change in the `disabled` and `forceDisabled` state. */
   protected handleDisabledChange() {
     const disabled = this.effectivelyDisabled;
     this.toggleAttribute('force-disabled', this.forceDisabled);
-    this.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-    this.setAttribute('tabindex', disabled ? '-1' : this.checked ? '0' : '-1');
+    this.internals.ariaDisabled = disabled ? 'true' : 'false';
+    this.setAttribute('tabindex', disabled ? '-1' : this.isInRadioGroup() ? (this.checked ? '0' : '-1') : '0');
   }
 
   /** Handles the change in the `checked` property. */
   protected handleCheckedChanged() {
-    this.setAttribute('aria-checked', this.checked ? 'true' : 'false');
+    this.internals.ariaChecked = String(!!this.checked);
+    if (!this.isInRadioGroup()) this.setAttribute('tabindex', this.effectivelyDisabled ? '-1' : '0');
     if (this.checked) {
+      if (!this.isInRadioGroup()) this.uncheckNamedPeers();
       this.emit('selected');
     }
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>) {
+    super.willUpdate(changedProperties);
     if (changedProperties.has('disabled') || changedProperties.has('forceDisabled')) {
       this.handleDisabledChange();
     }
     if (changedProperties.has('checked')) {
       this.handleCheckedChanged();
     }
+    if (changedProperties.has('checked') || changedProperties.has('value') || changedProperties.has('forceDisabled')) {
+      this.syncFormValue();
+    }
   }
-
-  /** Handles the blur event. */
-  protected handleBlur = () => {
-    this.hasFocus = false;
-    this.emit('blur');
-  };
-
-  /** Handles the focus event. */
-  protected handleFocus = () => {
-    this.hasFocus = true;
-    this.emit('focus');
-  };
 
   /** Handles the click event. */
   protected handleClick = () => {
-    if (!this.effectivelyDisabled && !this.readonly) {
+    if (!this.effectivelyDisabled && !this.effectivelyReadonly) {
       this.checked = true;
+      if (!this.isInRadioGroup()) this.uncheckNamedPeers();
     }
   };
 
   /** Handles the keydown event. */
   protected handleKeyDown = (e: KeyboardEvent) => {
-    if (this.effectivelyDisabled || this.readonly) return;
     if (e.key === keys.Space) {
+      e.preventDefault();
+      if (this.effectivelyDisabled || this.effectivelyReadonly) return;
       this.checked = true;
+      if (!this.isInRadioGroup()) this.uncheckNamedPeers();
     }
   };
 
@@ -162,20 +189,59 @@ export class CoreRadio extends CharmElement {
     this.addEventListener('click', this.handleClick);
   }
 
+  protected removeEventListeners() {
+    this.removeEventListener('keydown', this.handleKeyDown);
+    this.removeEventListener('click', this.handleClick);
+  }
+
+  protected isInRadioGroup(): boolean {
+    return this.parentElement?.localName === this.scope.tagName('radio-group').toLowerCase();
+  }
+
+  protected override getFormAssociatedValue(): string | null {
+    return this.isInRadioGroup() || this.effectivelyDisabled || !this.checked ? null : this.value || 'on';
+  }
+
+  protected override getFormAssociatedState() {
+    return this.checked ? 'checked' : 'unchecked';
+  }
+
+  protected uncheckNamedPeers() {
+    if (!this.name) return;
+    const root = this.getRootNode();
+    if (!(root instanceof Document || root instanceof ShadowRoot)) return;
+    const radios = root.querySelectorAll<CoreRadio>(this.scope.tagName('radio'));
+    for (const radio of radios) {
+      if (
+        radio !== this &&
+        !radio.isInRadioGroup() &&
+        radio.name === this.name &&
+        radio.internals.form === this.internals.form
+      ) {
+        radio.checked = false;
+      }
+    }
+  }
+
   /** Sets the initial attributes for the CoreRadio component. */
   protected setInitialAttributes() {
-    this.setAttribute('role', 'radio');
-    this.setAttribute('tabindex', this.effectivelyDisabled ? '-1' : '0');
-    this.setAttribute('aria-disabled', this.effectivelyDisabled ? 'true' : 'false');
-    this.setAttribute('aria-checked', this.checked ? 'true' : 'false');
+    this.internals.role = 'radio';
+    this.setAttribute(
+      'tabindex',
+      this.effectivelyDisabled ? '-1' : this.isInRadioGroup() ? (this.checked ? '0' : '-1') : '0'
+    );
+    this.internals.ariaDisabled = this.effectivelyDisabled ? 'true' : 'false';
+    this.internals.ariaChecked = String(!!this.checked);
     if (this.forceDisabled) this.setAttribute('force-disabled', '');
   }
 
   /** Generates the HTML template for the radio's control. */
   protected radioControlTemplate() {
-    return html` <span part="radio-control" class="radio-control form-control-input">
-      <span class="radio-check" part="radio-checked-icon" ?hidden=${!this.checked}></span>
-    </span>`;
+    return html`
+      <span part="radio-control" class="radio-control form-control-input">
+        <span class="radio-check" part="radio-checked-icon" ?hidden=${!this.checked}></span>
+      </span>
+    `;
   }
 
   /** Generates the HTML template for the radio's label. */

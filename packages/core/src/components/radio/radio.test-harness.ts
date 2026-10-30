@@ -1,8 +1,11 @@
-import { expect } from '@open-wc/testing';
+import { expect, fixture, html } from '@open-wc/testing';
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreRadio } from './index.js';
+
+const getInternals = (radio: CoreRadio): ElementInternals =>
+  (radio as unknown as { internals: ElementInternals }).internals;
 
 export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
   public constructor() {
@@ -22,6 +25,8 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                   test: async () => {
                     this.component.checked = true;
                     await this.component.updateComplete;
+                    expect(getInternals(this.component).role).to.equal('radio');
+                    expect(getInternals(this.component).ariaChecked).to.equal('true');
                     await expect(this.component).to.be.accessible();
                   },
                 },
@@ -31,6 +36,25 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                     this.component.disabled = true;
                     await this.component.updateComplete;
                     expect(this.component.getAttribute('tabindex')).to.equal('-1');
+                  },
+                },
+                standaloneFormGroup: {
+                  description: 'supports same-name standalone radios and submits only the selected value',
+                  test: async () => {
+                    const first = document.createElement('ch-radio') as CoreRadio;
+                    const second = document.createElement('ch-radio') as CoreRadio;
+                    first.name = second.name = 'choice';
+                    first.value = 'first';
+                    second.value = 'second';
+                    const form = await fixture<HTMLFormElement>(html`<form>${first}${second}</form>`);
+                    second.click();
+                    await Promise.all([first.updateComplete, second.updateComplete]);
+                    expect(first.checked).to.be.false;
+                    expect(second.checked).to.be.true;
+                    expect(new FormData(form).get('choice')).to.equal('second');
+                    form.reset();
+                    await Promise.all([first.updateComplete, second.updateComplete]);
+                    expect(second.checked).to.be.false;
                   },
                 },
               },
@@ -109,7 +133,7 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                     this.component.addEventListener('selected', handler);
                     await this.component.updateComplete;
 
-                    expect(this.component.getAttribute('aria-disabled')).to.equal('true');
+                    expect(getInternals(this.component).ariaDisabled).to.equal('true');
                     expect(this.component.hasAttribute('force-disabled')).to.be.true;
                     expect(this.component.getAttribute('tabindex')).to.equal('-1');
 

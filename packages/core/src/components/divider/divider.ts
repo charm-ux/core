@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import styles from './divider.styles.js';
+import type { PropertyValues } from 'lit';
 
 /**
  * Divider is a horizontal or vertical rule that separates content.
@@ -12,7 +13,9 @@ import styles from './divider.styles.js';
  * @status beta
  *
  * @csspart divider-line - The divider's line.
- * @csspart divider-text - The divider's text.
+ * @csspart divider-content - The divider's content wrapper.
+
+ * @slot - Optional content displayed between the divider lines.
  *
  * @cssprop --charm-divider-border-color - The color of the divider line.
  * @cssprop --charm-divider-border-style - The style of the divider line.
@@ -44,8 +47,9 @@ export class CoreDivider extends CharmElement {
   @property({ type: Boolean, reflect: true })
   public inset?: boolean;
 
-  protected override willUpdate() {
-    if (this.presentation) {
+  protected override willUpdate(changedProperties: PropertyValues) {
+    super.willUpdate(changedProperties);
+    if (this.presentation || this.hasDefaultSlot()) {
       this.setAttribute('role', 'presentation');
       this.removeAttribute('aria-orientation');
     } else {
@@ -56,12 +60,12 @@ export class CoreDivider extends CharmElement {
 
   /** Generates the template for the start line of the divider. */
   protected startLineTemplate() {
-    return html`<span class="line start" part="divider-line"></span>`;
+    return html`<span aria-hidden="true" class="line start" part="divider-line"></span>`;
   }
 
   /** Generates the template for the end line of the divider. */
   protected endLineTemplate() {
-    return html`<span class="line end" part="divider-line"></span>`;
+    return html`<span aria-hidden="true" class="line end" part="divider-line"></span>`;
   }
 
   /** Generates the template for the content slot of the divider. */

@@ -4,4 +4,45 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Push Pane
 
-Add examples and descriptions of the component features here.
+A push pane reveals supporting content alongside the page while preserving the surrounding context.
+
+## Default
+
+Use a button with `toggles` to open and close the pane. Add a heading to give the pane a useful accessible name.
+
+<code-bubble>
+
+```html
+<div class="settings-layout">
+  <main>
+    <ch-button toggles="settings-pane">Settings</ch-button>
+    <p>Use the page content here to keep the pane's effect in context.</p>
+  </main>
+  <ch-push-pane id="settings-pane" heading="Settings" position="end">
+    <p>Adjust your preferences here.</p>
+    <ch-button slot="footer" hides="settings-pane">Done</ch-button>
+  </ch-push-pane>
+</div>
+<style>
+  .settings-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    min-height: 24rem;
+  }
+</style>
+```
+
+</code-bubble>
+
+## Position
+
+Set `position` to `start`, `end`, or `bottom`. The start and end positions follow the page direction, including in right-to-left layouts.
+
+## Slots
+
+- Use `heading` for the pane title.
+- Use `actions` for controls in the toolbar.
+- Use the default slot for the main content.
+- Use `footer` for actions at the bottom of the pane.
+
+Set `no-header` to remove the visible header. Provide heading content through the `heading` slot or property; the heading remains visually hidden and names the pane. The built-in close button can be hidden when unfocused with `hide-close-button`; it remains available to keyboard and assistive-technology users.

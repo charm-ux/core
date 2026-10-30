@@ -38,6 +38,7 @@ export default class CharmProject {
    */
   public updateProject(configuration: ProjectConfiguration) {
     this.validateTagPrefix(configuration.prefix);
+    this.scope.assertPrefixChangeAllowed(configuration.prefix ?? 'ch');
     this.configuration = configuration;
     this.updateTheme();
     this.updateIcons();

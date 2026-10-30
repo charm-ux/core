@@ -1,7 +1,9 @@
 import { property, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
+import { composedContains } from '../../internal/composed-contains.js';
 import Button from '../button/button.js';
 import Icon from '../icon/icon.js';
 import Menu from '../menu/menu.js';
@@ -14,6 +16,7 @@ export interface OverflowMenuItem {
   text: string;
   icons: { name: string; slot: string | null }[];
   disabled: boolean;
+  checked?: boolean;
   subMenuItems: OverflowMenuItem[];
   id: string;
 }
@@ -82,11 +85,9 @@ export class CoreOverflow extends CharmElement {
   @property({ type: Boolean, attribute: 'fixed-placement', reflect: true })
   public fixedPlacement = false;
 
-  /**
-   * Internal state tracking whether or not there are overflowing elements.
-   */
-  @state()
-  protected hasOverflow: boolean = false;
+  /** Whether or not there are overflowing elements. */
+  @property({ type: Boolean, reflect: true })
+  public overflowing = false;
 
   /**
    * Overflowed items that are in the menu list.
@@ -107,9 +108,9 @@ export class CoreOverflow extends CharmElement {
   protected collapsingElements!: HTMLElement;
 
   /**
-   * Holds a map of all overflowed slottedElements that are hidden from view.
+   * Tracks slotted elements that this component has hidden in the overflow menu.
    */
-  protected overflowSet = new Map();
+  protected overflowSet = new Set<HTMLElement>();
 
   protected resizeObserver = new ResizeObserver(() => {
     // Guard against callbacks firing after disconnect
@@ -118,23 +119,8 @@ export class CoreOverflow extends CharmElement {
     }
   });
 
-  /**
-   * Used to determine resize direction.
-   */
-  protected lastWidth = 0;
-
-  protected dropdownOpen = false;
-
   public static override get dependencies(): (typeof CharmElement)[] {
     return [Button, Icon, Menu, MenuItem];
-  }
-
-  /**
-   * Whether or not there are overflowing elements. Readonly.
-   */
-  @property({ type: Boolean, reflect: true })
-  public get overflowing() {
-    return this.hasOverflow;
   }
 
   /**
@@ -150,10 +136,9 @@ export class CoreOverflow extends CharmElement {
    */
   public isOverflowing() {
     if (!this.collapsingElements || !this.collapsingContainer) {
-      this.hasOverflow = false;
+      this.overflowing = false;
       return false;
     }
-    this.hasOverflow = this.overflowSet.size > 0;
     return this.collapsingElements.clientWidth > this.collapsingContainer.clientWidth;
   }
 
@@ -165,15 +150,36 @@ export class CoreOverflow extends CharmElement {
   public override disconnectedCallback() {
     // Disconnect observer first to prevent queued callbacks
     this.resizeObserver.disconnect();
-    this.lastWidth = 0;
+    this.overflowSet.forEach(item => (item.hidden = false));
     this.overflowSet.clear();
+    this.overflowing = false;
     super.disconnectedCallback();
+  }
+
+  protected override updated(changedProperties: Map<string, unknown>) {
+    super.updated(changedProperties);
+    if (['min', 'overflowDirection', 'menuPosition'].some(property => changedProperties.has(property))) {
+      this.handleResize();
+    }
   }
 
   /**
    * Handles setting the internal slottedElements array.
    */
   protected handleSlotChange() {
+    const slotted = new Set(this.slottedElements);
+    this.overflowSet.forEach(item => {
+      if (!slotted.has(item)) {
+        item.hidden = false;
+        this.overflowSet.delete(item);
+      }
+    });
+    if (!slotted.size) {
+      this.overflowing = false;
+      this.overflowMenuItems = [];
+      this.emitOverflow();
+      return;
+    }
     this.handleResize();
   }
 
@@ -182,12 +188,15 @@ export class CoreOverflow extends CharmElement {
    */
   protected handleResize() {
     const slottedElements = this.slottedElements;
-    if (!slottedElements.length) return;
+    if (!slottedElements.length) {
+      this.overflowing = false;
+      return;
+    }
 
     const overFlowing = this.isOverflowing();
     const previousOverflowSize = this.overflowSet.size;
-    const containerWidth = this.collapsingContainer.clientWidth;
-    const direction = containerWidth > this.lastWidth ? 'larger' : 'smaller';
+    const activeElement = this.deepActiveElement();
+    const focusedItem = activeElement ? slottedElements.find(item => composedContains(item, activeElement)) : undefined;
 
     if (overFlowing && slottedElements.length - this.overflowSet.size > this.min) {
       // Hide items from right to left until we are no longer overflowing.
@@ -196,7 +205,7 @@ export class CoreOverflow extends CharmElement {
       } else {
         this.hideElements([...slottedElements].reverse());
       }
-    } else if (!overFlowing && direction === 'larger') {
+    } else if (!overFlowing) {
       // Unhide hidden items from left to right until end or overflowing
       if (this.overflowDirection === 'start') {
         this.showElements([...slottedElements].reverse());
@@ -205,13 +214,23 @@ export class CoreOverflow extends CharmElement {
       }
     }
 
-    if (this.lastWidth !== containerWidth) {
-      this.lastWidth = containerWidth;
+    this.overflowing = this.overflowSet.size > 0;
+
+    if (focusedItem && this.overflowSet.has(focusedItem)) {
+      this.updateComplete.then(() => {
+        if (this.isConnected) this.shadowRoot?.querySelector<HTMLElement>('.overflow-trigger')?.focus();
+      });
     }
 
     if (this.overflowSet.size !== previousOverflowSize) {
       this.emitOverflow();
     }
+  }
+
+  protected deepActiveElement(): Element | null {
+    let active: Element | null = document.activeElement;
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement;
+    return active;
   }
 
   /**
@@ -223,8 +242,6 @@ export class CoreOverflow extends CharmElement {
       this.hideItem(item);
       return this.slottedElements.length - this.overflowSet.size <= this.min || !this.isOverflowing();
     });
-    // set the lastWidth to the current width here to avoid an infinite back-and-forth in case the trigger is wider than what was just hidden
-    this.lastWidth = this.collapsingContainer.clientWidth;
   }
 
   /**
@@ -249,7 +266,7 @@ export class CoreOverflow extends CharmElement {
   protected hideItem(item: HTMLElement) {
     if (!item.hidden) {
       item.hidden = true;
-      this.overflowSet.set(item, item);
+      this.overflowSet.add(item);
     }
   }
 
@@ -257,7 +274,7 @@ export class CoreOverflow extends CharmElement {
    * Shows an individual element and removes it from the overflow set.
    */
   protected showItem(item: HTMLElement) {
-    if (item.hidden) {
+    if (this.overflowSet.has(item)) {
       item.hidden = false;
       this.overflowSet.delete(item);
     }
@@ -303,10 +320,16 @@ export class CoreOverflow extends CharmElement {
     return {
       hostElement: element,
       tagName: element.tagName,
-      text: element.textContent || element.innerText,
+      text:
+        element.getAttribute('aria-label') ||
+        element.querySelector('[aria-label]')?.getAttribute('aria-label') ||
+        element.querySelector('[label]')?.getAttribute('label') ||
+        element.textContent ||
+        element.innerText,
       icons: this.parseSlottedIcons(element, ignoreEndSlot),
       subMenuItems: [] as OverflowMenuItem[],
       disabled: element.hasAttribute('disabled'),
+      checked: element instanceof Button && element.toggle ? !!element.pressed : undefined,
     };
   }
 
@@ -330,9 +353,6 @@ export class CoreOverflow extends CharmElement {
   }
 
   protected generateOverflowMenu() {
-    this.dropdownOpen = !this.dropdownOpen;
-    if (!this.dropdownOpen) return;
-
     const results: OverflowMenuItem[] = [];
     let index = 0;
 
@@ -372,7 +392,6 @@ export class CoreOverflow extends CharmElement {
         part="overflow-trigger"
         class="overflow-trigger"
         icon-only
-        @click=${this.generateOverflowMenu}
       >
         <scoped-icon name="more" label=${this.label}></scoped-icon>
       </scoped-button>
@@ -400,8 +419,9 @@ export class CoreOverflow extends CharmElement {
       <scoped-menu-item
         part="overflow-menu-item"
         class="overflow-menu-item"
-        ?fixed-placement=${this.fixedPlacement}
-        @click=${() => overFlowItem.hostElement?.click()}
+        role=${ifDefined(overFlowItem.checked === undefined ? undefined : 'menuitemcheckbox')}
+        .checked=${overFlowItem.checked}
+        @click=${(event: MouseEvent) => this.handleOverflowItemClick(event, overFlowItem)}
         ?disabled=${overFlowItem.disabled ? 'disabled' : ''}
       >
         ${repeat(
@@ -414,6 +434,21 @@ export class CoreOverflow extends CharmElement {
     `;
   }
 
+  protected handleOverflowItemClick(event: MouseEvent, item: OverflowMenuItem) {
+    const path = event.composedPath();
+    const nearestProxy = path.find(
+      node => node instanceof HTMLElement && node.classList.contains('overflow-menu-item')
+    );
+    if (nearestProxy !== event.currentTarget) return;
+    item.hostElement?.click();
+    if (item.hostElement instanceof Button && item.hostElement.toggle) {
+      item.checked = !!item.hostElement.pressed;
+      this.overflowMenuItems = this.overflowMenuItems.map(menuItem =>
+        menuItem === item ? { ...menuItem, checked: item.checked } : menuItem
+      );
+    }
+  }
+
   /**
    * Generates the menu template that contains the overflow menu list.
    */
@@ -421,9 +456,10 @@ export class CoreOverflow extends CharmElement {
     return this.html`
       <slot name="menu">
         <scoped-menu
-          fixed-placement
+          ?fixed-placement=${this.fixedPlacement}
           part="overflow-menu"
           class="overflow-menu"
+          @menu-show=${this.generateOverflowMenu}
         >
           ${this.overflowMenuTriggerTemplate()}
           ${this.overflowMenuItemListTemplate(this.overflowMenuItems)}
@@ -437,10 +473,10 @@ export class CoreOverflow extends CharmElement {
    */
   protected overflowTemplate() {
     return this.html`<span class="collapsing-container" part="overflow-base">
-      <span class="collapsing-content" part="overflow-content" role="group">
-        ${this.startTemplate()} ${this.menuPosition === 'start' && this.hasOverflow ? this.overflowMenuTemplate() : ''}
+      <span class="collapsing-content" part="overflow-content" role="group" aria-label=${this.label}>
+        ${this.startTemplate()} ${this.menuPosition === 'start' && this.overflowing ? this.overflowMenuTemplate() : ''}
         <slot @slotchange=${this.handleSlotChange}></slot>
-        ${this.menuPosition === 'end' && this.hasOverflow ? this.overflowMenuTemplate() : ''} ${this.endTemplate()}
+        ${this.menuPosition === 'end' && this.overflowing ? this.overflowMenuTemplate() : ''} ${this.endTemplate()}
       </span>
     </span>`;
   }

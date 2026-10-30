@@ -35,6 +35,44 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
                   expect(base.inert).to.be.false;
                 },
               },
+              hiddenHeadingKeepsAccessibleName: {
+                description: 'keeps the pane heading available as its accessible name when hidden',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<span slot="heading">Translated pane title</span>';
+                  el.noHeader = true;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const pane = el.shadowRoot?.querySelector('[part="push-pane-base"]');
+                  const heading = el.shadowRoot?.querySelector('#push-pane-heading');
+                  expect(pane?.getAttribute('aria-labelledby')).to.equal('push-pane-heading');
+                  expect(pane?.hasAttribute('aria-label')).to.be.false;
+                  expect(heading?.classList.contains('visually-hidden')).to.be.true;
+                  const slot = heading?.querySelector<HTMLSlotElement>('slot[name="heading"]');
+                  expect(
+                    slot
+                      ?.assignedNodes()
+                      .map(node => node.textContent)
+                      .join('')
+                  ).to.contain('Translated pane title');
+                  await expect(el).to.be.accessible();
+                },
+              },
+              lateHeadingSlotLabelsPane: {
+                description: 'labels the pane when slotted heading content is added later',
+                test: async () => {
+                  const el = this.component;
+                  const pane = el.shadowRoot?.querySelector('[part="push-pane-base"]');
+                  expect(pane?.hasAttribute('aria-labelledby')).to.be.false;
+
+                  const heading = document.createElement('span');
+                  heading.slot = 'heading';
+                  heading.textContent = 'Late title';
+                  el.append(heading);
+                  await waitUntil(() => pane?.getAttribute('aria-labelledby') === 'push-pane-heading');
+                },
+              },
             },
           },
 
@@ -135,7 +173,28 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
           // interaction tests
           interactions: {
             description: 'interactions',
-            tests: {},
+            tests: {
+              restoresFocusToOpener: {
+                description: 'returns focus to the element that opened the pane',
+                test: async () => {
+                  const el = this.component;
+                  const opener = document.createElement('button');
+                  el.before(opener);
+                  opener.focus();
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const closeButton = el.shadowRoot?.querySelector<HTMLElement>('.close-button');
+                  if (!closeButton) throw new Error('Expected the pane close button.');
+                  closeButton.focus();
+                  el.hide();
+                  await elementUpdated(el);
+
+                  expect(document.activeElement).to.equal(opener);
+                  opener.remove();
+                },
+              },
+            },
           },
         },
       },

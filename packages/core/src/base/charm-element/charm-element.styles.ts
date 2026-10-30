@@ -60,7 +60,9 @@ export default css`
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      animation-delay: 0s !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
 
@@ -73,6 +75,14 @@ export default css`
      */
     *::details-content {
       transition-duration: 0.01ms !important;
+    }
+
+    *::backdrop {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
     }
   }
 `;

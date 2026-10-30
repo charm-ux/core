@@ -32,7 +32,7 @@ export default css`
     box-shadow: ${component('button', 'shadow')};
   }
 
-  .control:focus {
+  .control:focus-visible {
     background-color: ${component('button', 'focus', 'bgColor')};
     border-color: ${component('button', 'focus', 'borderColor')};
     color: ${component('button', 'focus', 'fgColor')};
@@ -45,15 +45,8 @@ export default css`
     border: none; /* button group border is applied */
   }
 
-  :host([split]) .control:focus {
+  :host([split]) .control:focus-visible {
     box-shadow: none; /* boxshadow creates a dark line between the buttons when focused */
-  }
-
-  /* Toggle button */
-  .control[aria-pressed='true'] {
-    background-color: ${component('button', 'pressed', 'bgColor')};
-    border-color: ${component('button', 'pressed', 'borderColor')};
-    color: ${component('button', 'pressed', 'fgColor')};
   }
 
   .control:hover {
@@ -61,6 +54,13 @@ export default css`
     border-color: ${component('button', 'hover', 'borderColor')};
     color: ${component('button', 'hover', 'fgColor')};
     box-shadow: ${component('button', 'hover', 'shadow')};
+  }
+
+  /* Toggle button pressed state wins over hover. */
+  .control[aria-pressed='true'] {
+    background-color: ${component('button', 'pressed', 'bgColor')};
+    border-color: ${component('button', 'pressed', 'borderColor')};
+    color: ${component('button', 'pressed', 'fgColor')};
   }
 
   :host(:not([disabled])) .control:active {
@@ -75,7 +75,8 @@ export default css`
     padding: ${component('button', 'iconPaddingY')} ${component('button', 'iconPaddingX')};
   }
 
-  :host([disabled]) .control {
+  :host([disabled]) .control,
+  :host([form-disabled]) .control {
     background-color: ${component('button', 'disabled', 'bgColor')};
     border-color: ${component('button', 'disabled', 'borderColor')};
     color: ${component('button', 'disabled', 'fgColor')};
@@ -100,16 +101,12 @@ export default css`
     margin-inline-start: ${component('button', 'contentGap')};
   }
 
-  .content {
-    grid-column: content;
+  :host(:not([allow-wrap])) .control {
+    white-space: nowrap;
   }
 
-  .start {
-    grid-column: start;
-  }
-
-  .end {
-    grid-column: end;
+  :host([allow-wrap]) .control {
+    white-space: normal;
   }
 
   /* Button styles for Horizontal Split Button Group */

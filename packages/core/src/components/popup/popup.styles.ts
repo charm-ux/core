@@ -6,7 +6,7 @@ export default css`
     /*
      * These properties are computed to account for the arrow's dimensions after being rotated 45º. The constant 0.7071 is derived from sin(45), which is the diagonal size of the arrow's container after rotating.
      */
-    --popup-arrow-size-diagonal: calc(${component('popup', 'arrowSize')} * 0.7071);
+    --popup-arrow-size-diagonal: calc(var(--popup-arrow-size, ${component('popup', 'arrowSize')}) * 0.7071);
     --popup-arrow-padding-offset: calc(
       var(--popup-arrow-size-diagonal) - var(--popup-arrow-size, ${component('popup', 'arrowSize')})
     );

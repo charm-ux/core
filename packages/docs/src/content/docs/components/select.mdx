@@ -52,17 +52,22 @@ Labels can be applied using the `label` attribute and the id which provides the 
 
 </code-bubble>
 
-## Making it multiple
+## Grouping options
 
-Native select allows for multiple selection and all the options to show at once.
+Wrap related options in an `<optgroup>` with a `label`. Disabling an `optgroup` disables every option inside it.
 
 <code-bubble>
 
 ```html
-<ch-select label="Options" id="option-id" multiple>
-  <option value="1">Option One</option>
-  <option value="2">Option Two</option>
-  <option value="3">Option Three</option>
+<ch-select label="Produce" id="produce-id">
+  <optgroup label="Citrus">
+    <option value="orange">Orange</option>
+    <option value="lemon">Lemon</option>
+  </optgroup>
+  <optgroup label="Berries">
+    <option value="strawberry">Strawberry</option>
+    <option value="blueberry">Blueberry</option>
+  </optgroup>
 </ch-select>
 ```
 
@@ -79,6 +84,23 @@ Native select allows for the amount of options shown to the user via changing th
   <option value="1">Option One</option>
   <option value="2">Option Two</option>
   <option value="3">Option Three</option>
+</ch-select>
+```
+
+</code-bubble>
+
+## Autocomplete
+
+Use `autocomplete` to tell browsers which value they may fill in, such as `country` or `address-level1`.
+
+<code-bubble>
+
+```html
+<ch-select label="Country" autocomplete="country">
+  <option value="us">United States</option>
+  <option value="ca">Canada</option>
+  <option value="mx">Mexico</option>
+  <option value="br">Brazil</option>
 </ch-select>
 ```
 
@@ -101,3 +123,5 @@ A Select can include disabled options by setting the disabled attribute on any n
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

@@ -13,7 +13,25 @@ Use `<ch-breadcrumb-item>` as links within the opening and closing of the `<ch-b
 <code-bubble>
 
 ```html
-<ch-breadcrumb>
+<ch-breadcrumb label="Product hierarchy">
+  <ch-breadcrumb-item>Catalog</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Clothing</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Men's</ch-breadcrumb-item>
+  <ch-breadcrumb-item>Suits</ch-breadcrumb-item>
+</ch-breadcrumb>
+```
+
+</code-bubble>
+
+## Custom separator
+
+By default, a chevron separates the items and mirrors in `rtl`. Set the `separator` slot on `<ch-breadcrumb>` to replace it. The separator is placed between every item and mirrors in `rtl` like the default.
+
+<code-bubble>
+
+```html
+<ch-breadcrumb label="Product hierarchy">
+  <span slot="separator">/</span>
   <ch-breadcrumb-item>Catalog</ch-breadcrumb-item>
   <ch-breadcrumb-item>Clothing</ch-breadcrumb-item>
   <ch-breadcrumb-item>Men's</ch-breadcrumb-item>
@@ -25,7 +43,7 @@ Use `<ch-breadcrumb-item>` as links within the opening and closing of the `<ch-b
 
 ## Accessibility
 
-Use the `label` attribute within the `<ch-breadcrumb>` element to set the `aria-label` on the breadcrumb. This will not be shown on the screen, but it will be announced by screen readers and other assistive devices to provide more context for users.
+Every breadcrumb must have a localized `label` attribute. It sets the accessible name of the navigation landmark and is announced by screen readers.
 
 <code-bubble>
 
@@ -41,3 +59,5 @@ Use the `label` attribute within the `<ch-breadcrumb>` element to set the `aria-
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

@@ -121,14 +121,13 @@ Autocapitalize types `off` | `none` | `on` | `sentences` | `words` | `characters
 
 ## Autocomplete
 
-To control whether a browser should automatically complete the input value based on the user's past interactions, use the `autocomplete` attribute within the `<ch-input>` element. By default `autocomplete` is set to `off`. <br></br>
-
-Autocomplete types `off` | `on`
+Use the `autocomplete` attribute to hint what information the browser may fill in. Any valid HTML autocomplete token is supported, including `off` and `on`. When unset, the browser's default heuristics apply. Password inputs honor explicit values such as `current-password` and `new-password`.
 
 <code-bubble>
 
 ```html
-<ch-input autocomplete="on"></ch-input>
+<ch-input autocomplete="email"></ch-input>
+<ch-input type="password" autocomplete="current-password"></ch-input>
 ```
 
 </code-bubble>
@@ -244,3 +243,5 @@ If you want to specify a regular expression to match the value of the input, use
 </code-bubble>
 
 ## API
+
+<ComponentMetadata />

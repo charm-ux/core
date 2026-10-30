@@ -65,11 +65,13 @@ export default css`
     color: ${semantic('formControl', 'invalid', 'message', 'color')};
   }
 
-  :host([disabled]) {
+  :host([disabled]),
+  :host([form-disabled]) {
     cursor: not-allowed;
   }
 
-  :host([disabled]) .form-control-input {
+  :host([disabled]) .form-control-input,
+  :host([form-disabled]) .form-control-input {
     background-color: ${semantic('formControl', 'disabled', 'bgColor')};
     border-color: ${semantic('formControl', 'disabled', 'borderColor')};
     color: ${semantic('formControl', 'disabled', 'fgColor')};
@@ -97,24 +99,14 @@ export default css`
     justify-content: center;
     position: relative;
     border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
-      ${semantic('defaultBorder', 'color')};
+      ${semantic('formControl', 'borderColor')};
     width: 100%;
     background-color: ${semantic('formControl', 'bgColor')};
-    height: ${semantic('formControl', 'inputHeight')};
+    min-height: ${semantic('formControl', 'inputHeight')};
     padding: ${semantic('formControl', 'paddingY')} ${semantic('formControl', 'paddingX')};
     grid-area: control;
     border-radius: ${semantic('formControl', 'borderRadius')};
     line-height: 1;
-  }
-
-  :host(:not(type='range')) .form-control-input {
-    background-color: ${semantic('formControl', 'bgColor')};
-    border: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
-      ${semantic('defaultBorder', 'color')};
-    border-radius: ${semantic('formControl', 'borderRadius')};
-    color: ${semantic('formControl', 'fgColor')};
-    vertical-align: middle;
-    overflow: hidden;
   }
 
   .form-control-input:focus-within {
@@ -158,7 +150,6 @@ export default css`
 
   /* Error text */
   .form-control-error-text {
-    display: none;
     margin-block-start: ${semantic('formControl', 'invalid', 'message', 'gap')};
     color: ${semantic('formControl', 'invalid', 'message', 'color')};
     grid-area: error;
@@ -172,6 +163,12 @@ export default css`
   :host([invalid]) .form-control-has-interaction .form-control-input {
     border-color: ${semantic('formControl', 'invalid', 'borderColor')};
     outline-color: ${semantic('formControl', 'invalid', 'borderColor')};
+  }
+
+  :host([invalid]) .form-control-input:focus-within {
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   :host([invalid]) .form-control-has-interaction .form-control-error-text {
@@ -240,7 +237,8 @@ export default css`
     outline-color: transparent;
   }
 
-  :host([type='range'][disabled]) .form-control-input {
+  :host([type='range'][disabled]) .form-control-input,
+  :host([type='range'][form-disabled]) .form-control-input {
     background-color: transparent;
   }
 
@@ -288,7 +286,9 @@ export default css`
 
   @media screen and (forced-colors: active) {
     :host([disabled]),
-    :host([disabled]) .form-control-input {
+    :host([disabled]) .form-control-input,
+    :host([form-disabled]),
+    :host([form-disabled]) .form-control-input {
       border-color: ${SystemColors.GrayText};
       color: ${SystemColors.GrayText};
       opacity: 1;

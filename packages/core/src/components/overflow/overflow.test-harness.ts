@@ -204,6 +204,16 @@ export class CoreOverflowTests<T extends CoreOverflow> extends CharmElementTests
                   await elementUpdated(this.component);
                   await aTimeout(20);
                   expect(menu!.querySelectorAll('[menu-item]').length).to.equal(3);
+
+                  trigger.click();
+                  await elementUpdated(this.component);
+                  const firstItem = this.component.querySelector('button');
+                  if (!firstItem) throw new Error('Expected a slotted action.');
+                  firstItem.textContent = 'Updated action';
+                  trigger.click();
+                  await elementUpdated(this.component);
+                  await aTimeout(20);
+                  expect(menu!.textContent).to.contain('Updated action');
                 },
               },
             },

@@ -8,14 +8,14 @@ Dialog is a window overlaid above the page that enables interactive communicatio
 
 ## Default dialog
 
-The core dialog has a default layout with three different sections, a header, a body content and a footer. The `header` slot can be used as the title. The body is the `default` slot and it is optional. The `footer` slot is optional and it is commonly used for action buttons. The component also has a built in close button to dismiss the dialog.
+The core dialog has a default layout with a heading, body content, and an optional footer. Use the `heading` slot or `heading` property to name the dialog. The body uses the default slot, and the built-in close button dismisses the dialog.
 
 <code-bubble>
 
 ```html
 <ch-button shows="default">Open dialog</ch-button>
 <ch-dialog id="default">
-  <h2 slot="header">Dialog title</h2>
+  <span slot="heading">Dialog title</span>
   <p>
     Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
     repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
@@ -110,13 +110,14 @@ To remove the close button from the dialog, set the `hide-close-button` attribut
 
 ## No Header
 
-To remove the header from the dialog, set the `no-header` attribute to the element.
+To remove the visible header, set `no-header`. Provide heading content in the `heading` slot; the component keeps that heading visually hidden so it can still name the dialog.
 
 <code-bubble>
 
 ```html
 <ch-button shows="hide-header">Open dialog</ch-button>
-<ch-dialog id="hide-header" heading="No Header" no-header>
+<ch-dialog id="hide-header" no-header>
+  <span slot="heading">No Header</span>
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
   repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
 </ch-dialog>
@@ -124,15 +125,15 @@ To remove the header from the dialog, set the `no-header` attribute to the eleme
 
 </code-bubble>
 
-## Explicit Close
+## Alert dialog
 
-To prevent the dialog from closing by clicking the backdrop, set the `explicit-close` attribute to the element. This will require the user to click the close button or an action button to dismiss the dialog.
+Set `alert` to prevent Escape and backdrop dismissal. The user can still use the close button, or the application can close the dialog programmatically.
 
 <code-bubble>
 
 ```html
 <ch-button shows="exp-close">Open dialog</ch-button>
-<ch-dialog id="exp-close" heading="Explicit Close" explicit-close>
+<ch-dialog id="exp-close" heading="Alert dialog" alert>
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
   repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
 </ch-dialog>

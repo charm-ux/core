@@ -17,14 +17,6 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
             slots: {
               description: 'slots',
               tests: {
-                defaultSlot: {
-                  description: 'place children in the default slot',
-                  test: async () => {
-                    const el = this.component;
-                    const defaultSlot = el.shadowRoot?.querySelector('slot:not(name)') as HTMLSlotElement;
-                    expect(defaultSlot).to.not.be.undefined;
-                  },
-                },
                 error: {
                   description: 'should display the error message when it is set',
                   test: async () => {
@@ -71,10 +63,8 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     const textarea = el.shadowRoot?.querySelector('textarea') as HTMLTextAreaElement;
                     expect(textarea).to.exist;
 
-                    let inputEventEmitted = false;
-                    textarea.addEventListener('input', () => {
-                      inputEventEmitted = true;
-                    });
+                    const inputSpy = sinon.spy();
+                    el.addEventListener('input', inputSpy);
 
                     textarea.focus();
 
@@ -91,7 +81,7 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
 
                     await el.updateComplete;
 
-                    expect(inputEventEmitted).to.be.true;
+                    expect(inputSpy).to.have.been.callCount(9);
                     expect(textarea.value).to.equal('New value');
                   },
                 },
@@ -134,6 +124,17 @@ export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests
                     await aTimeout(0);
                     await el.updateComplete;
                     expect(getLabel()?.getAttribute('aria-hidden')).to.equal('true');
+                  },
+                },
+                autocomplete: {
+                  description: 'forwards autocomplete tokens to the textarea',
+                  test: async () => {
+                    const el = this.component;
+                    el.autocomplete = 'street-address';
+                    await el.updateComplete;
+
+                    const textarea = el.shadowRoot?.querySelector('textarea');
+                    expect(textarea).attribute('autocomplete', 'street-address');
                   },
                 },
                 resizeAuto: {

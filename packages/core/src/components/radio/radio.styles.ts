@@ -110,22 +110,26 @@ export default css`
 
   /* Disabled */
   :host([disabled]) .radio,
+  :host([form-disabled]) .radio,
   :host([force-disabled]) .radio {
     cursor: not-allowed;
   }
 
   :host([disabled]) .radio-control,
+  :host([form-disabled]) .radio-control,
   :host([force-disabled]) .radio-control {
     background-color: ${component('radio', 'disabled', 'bgColor')};
     border-color: ${component('radio', 'disabled', 'borderColor')};
   }
 
   :host([disabled]) .radio-check,
+  :host([form-disabled]) .radio-check,
   :host([force-disabled]) .radio-check {
     background-color: ${component('radio', 'disabled', 'borderColor')};
   }
 
   :host([disabled]) .radio-label,
+  :host([form-disabled]) .radio-label,
   :host([force-disabled]) .radio-label {
     color: ${component('radio', 'label', 'disabled', 'color')};
   }
@@ -138,31 +142,34 @@ export default css`
     }
 
     /* Hover */
-    :host([checked]:not([disabled]):not([force-disabled])) .radio:hover .radio-control,
-    :host(:not([checked]):not([disabled]):not([force-disabled])) .radio:hover .radio-control {
+    :host([checked]:not([disabled]):not([form-disabled]):not([force-disabled])) .radio:hover .radio-control,
+    :host(:not([checked]):not([disabled]):not([form-disabled]):not([force-disabled])) .radio:hover .radio-control {
       outline: ${SystemColors.ButtonText} solid 2px;
     }
 
     /* Checked */
-    :host([checked]:not([disabled]):not([force-disabled])) .radio-control {
+    :host([checked]:not([disabled]):not([form-disabled]):not([force-disabled])) .radio-control {
       background-color: ${SystemColors.HighlightText};
       border-color: ${SystemColors.Highlight};
     }
 
     /* Disabled */
     :host([disabled]) .radio-control,
+    :host([form-disabled]) .radio-control,
     :host([force-disabled]) .radio-control {
       background-color: ${SystemColors.Canvas};
       border-color: ${SystemColors.GrayText};
     }
 
     :host([disabled]) .radio-label,
+    :host([form-disabled]) .radio-label,
     :host([force-disabled]) .radio-label {
       color: ${SystemColors.GrayText};
     }
 
     /* Checked + Disabled */
     :host([disabled][checked]) .radio-check,
+    :host([form-disabled][checked]) .radio-check,
     :host([force-disabled][checked]) .radio-check {
       background-color: ${SystemColors.GrayText};
     }

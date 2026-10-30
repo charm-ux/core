@@ -28,6 +28,19 @@ Set `value` with an ISO date (`YYYY-MM-DD`) to pre-populate the segments and cal
 
 </code-bubble>
 
+## Autocomplete
+
+Set `autocomplete="bday"` to let browsers autofill a birthday across the month, day, and year segments.
+Other values are forwarded to each segment unchanged. Autofill support and behavior vary by browser.
+
+<code-bubble>
+
+```html
+<ch-date-picker label="Birthday" autocomplete="bday"></ch-date-picker>
+```
+
+</code-bubble>
+
 ## Required, help text, and validation
 
 Use `required` with optional `help-text` for forms.

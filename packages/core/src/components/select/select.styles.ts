@@ -56,7 +56,8 @@ export default css`
       --charm-form-control-fg-color: ${SystemColors.ButtonText};
     }
 
-    :host([disabled]) {
+    :host([disabled]),
+    :host([form-disabled]) {
       --charm-form-control-fg-color: ${SystemColors.GrayText};
     }
   }

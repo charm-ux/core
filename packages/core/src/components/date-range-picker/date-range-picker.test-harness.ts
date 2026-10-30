@@ -1,9 +1,11 @@
-import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { CoreFormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import type { CoreDateRangePicker } from './index.js';
+import type { CoreCalendar } from '../calendar/index.js';
 
-export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends CharmElementTests<T> {
+export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends CoreFormControlTests<T> {
   public constructor() {
     super();
 
@@ -75,6 +77,39 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
 
                   await elementUpdated(this.component);
                   expect(this.component.value).to.equal('2026-08-05/2026-08-10');
+                },
+              },
+              segmentPlaceholdersUseShortDateTokens: {
+                description: 'uses compact date tokens that fit each endpoint segment',
+                test: async () => {
+                  this.component.setAttribute('lang', 'en-US');
+                  await elementUpdated(this.component);
+                  for (const endpoint of ['start', 'end'] as const) {
+                    expect(this.segmentInput(endpoint, 'month').placeholder).to.equal('MM');
+                    expect(this.segmentInput(endpoint, 'day').placeholder).to.equal('DD');
+                    expect(this.segmentInput(endpoint, 'year').placeholder).to.equal('YYYY');
+                  }
+                },
+              },
+              longLocalizedPlaceholderCanExpand: {
+                description: 'lets a longer translated placeholder expand in a range endpoint',
+                test: async () => {
+                  const month = this.segmentInput('start', 'month');
+                  const initialWidth = month.getBoundingClientRect().width;
+                  const translatedPlaceholder = document.createElement('span');
+                  translatedPlaceholder.slot = 'month-placeholder';
+                  translatedPlaceholder.textContent = 'MONTH';
+                  this.component.append(translatedPlaceholder);
+                  this.component.requestUpdate();
+                  await elementUpdated(this.component);
+                  if (CSS.supports('field-sizing', 'content')) {
+                    expect(
+                      getComputedStyle(this.segmentInput('start', 'month')).getPropertyValue('field-sizing')
+                    ).to.equal('content');
+                  }
+                  expect(this.segmentInput('start', 'month').getBoundingClientRect().width).to.be.greaterThan(
+                    initialWidth
+                  );
                 },
               },
               localeFirstSegmentFocus: {
@@ -173,8 +208,8 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(startMonth.selectionEnd).to.equal(startMonth.value.length);
                 },
               },
-              monthAriaValueText: {
-                description: 'sets localized month aria-valuetext when month is set',
+              monthFieldUsesNativeTextSemantics: {
+                description: 'does not set aria-valuetext on a text field',
                 test: async () => {
                   this.component.setAttribute('lang', 'en-US');
                   this.component.value = '2026-08-05/2026-08-10';
@@ -182,8 +217,16 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
 
                   const startMonth = this.segmentInput('start', 'month');
                   const endMonth = this.segmentInput('end', 'month');
-                  expect(startMonth.getAttribute('aria-valuetext')).to.equal('August');
-                  expect(endMonth.getAttribute('aria-valuetext')).to.equal('August');
+                  expect(startMonth.hasAttribute('aria-valuetext')).to.equal(false);
+                  expect(endMonth.hasAttribute('aria-valuetext')).to.equal(false);
+                },
+              },
+              accessibleWithValue: {
+                description: 'remains accessible when a range value is present',
+                test: async () => {
+                  this.component.value = '2026-08-05/2026-08-10';
+                  await elementUpdated(this.component);
+                  await expect(this.component).to.be.accessible();
                 },
               },
               rtlArrowNavigation: {
@@ -343,7 +386,7 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                 },
               },
               calendarSelectionEmitsSingleInputPerStep: {
-                description: 'emits one input event for each calendar selection step',
+                description: 'emits input only after a complete range is selected',
                 test: async () => {
                   const inputSpy = sinon.spy();
                   const changeSpy = sinon.spy();
@@ -360,12 +403,234 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
 
                   start.click();
                   await elementUpdated(this.component);
-                  expect(inputSpy.callCount).to.equal(1);
+                  expect(inputSpy.callCount).to.equal(0);
 
                   end.click();
                   await elementUpdated(this.component);
-                  expect(inputSpy.callCount).to.equal(2);
+                  expect(inputSpy.callCount).to.equal(1);
                   expect(changeSpy.callCount).to.equal(1);
+                },
+              },
+              cancellingDraftPreservesSavedRange: {
+                description: 'discards a half-selected range when the popup is cancelled',
+                test: async () => {
+                  const saved = '2025-06-10/2025-06-15';
+                  this.component.value = saved;
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  const calendar = this.component.shadowRoot?.querySelector('.calendar')?.shadowRoot;
+                  const start = calendar?.querySelector<HTMLButtonElement>('[data-date="2025-06-20"]');
+                  if (!start) throw new Error('Expected calendar day button to render.');
+                  start.click();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal(saved);
+                  this.component.hide();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal(saved);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.querySelector<CoreCalendar>('.calendar')?.value).to.deep.equal([
+                    '2025-06-10',
+                    '2025-06-15',
+                  ]);
+                },
+              },
+              changingMonthPreservesSavedRange: {
+                description: 'does not alter a saved range or emit input while navigating calendar months',
+                test: async () => {
+                  const saved = '2025-06-10/2025-06-15';
+                  const inputSpy = sinon.spy();
+                  this.component.value = saved;
+                  this.component.addEventListener('input', inputSpy);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  const calendar = this.component.shadowRoot?.querySelector('.calendar');
+                  const next = calendar?.shadowRoot?.querySelector<HTMLButtonElement>('.navigation-button.next');
+                  if (!next) throw new Error('Expected next-month button to render.');
+                  next.click();
+                  await elementUpdated(this.component);
+                  await elementUpdated(calendar!);
+                  expect(this.component.value).to.equal(saved);
+                  expect(inputSpy.callCount).to.equal(0);
+                  expect(calendar?.shadowRoot?.querySelector('#calendar-heading')?.textContent?.trim()).to.equal(
+                    'July 2025'
+                  );
+                },
+              },
+              escapeRestoresFocusToSegment: {
+                description: 'restores focus to the first segment when Escape closes the popup',
+                test: async () => {
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  await sendKeys({ press: 'Escape' });
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(false);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(this.segmentInput('start', 'month'));
+                },
+              },
+              readonlyArrowKeysDoNotChangeValue: {
+                description: 'does not step date segments with arrow keys while readonly',
+                test: async () => {
+                  this.component.value = '2026-08-05/2026-08-10';
+                  this.component.readonly = true;
+                  await elementUpdated(this.component);
+                  const month = this.segmentInput('start', 'month');
+                  month.focus();
+                  await sendKeys({ press: 'ArrowDown' });
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal('2026-08-05/2026-08-10');
+                },
+              },
+              steppingPartialRangeChangesOnlyFocusedSegment: {
+                description: 'steps only the focused field of a partial range endpoint',
+                test: async () => {
+                  const month = this.segmentInput('start', 'month');
+                  month.value = '08';
+                  month.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  month.focus();
+                  await sendKeys({ press: 'ArrowUp' });
+                  await elementUpdated(this.component);
+                  expect(this.segmentInput('start', 'month').value).to.equal('09');
+                  expect(this.segmentInput('start', 'day').value).to.equal('');
+                  expect(this.segmentInput('start', 'year').value).to.equal('');
+                },
+              },
+              nativeSegmentInputDoesNotEscape: {
+                description: 'does not leak native segment input events to consumers',
+                test: async () => {
+                  const handler = sinon.spy();
+                  this.component.addEventListener('input', handler);
+                  const month = this.segmentInput('start', 'month');
+                  month.value = '1';
+                  month.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  expect(handler.callCount).to.equal(0);
+                },
+              },
+              pasteFillsOneRangeEndpoint: {
+                description: 'accepts a pasted ISO date into the focused range endpoint',
+                test: async () => {
+                  const month = this.segmentInput('start', 'month');
+                  const paste = new Event('paste', { bubbles: true }) as ClipboardEvent;
+                  Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '2026-08-05' } });
+                  month.dispatchEvent(paste);
+                  await elementUpdated(this.component);
+                  expect(this.segmentInput('start', 'year').value).to.equal('2026');
+                  expect(this.component.value).to.equal('');
+                },
+              },
+              formDataUsesOneStartEndValue: {
+                description: 'submits the range as one slash-separated form value',
+                test: async () => {
+                  this.component.name = 'range';
+                  this.component.value = '2026-08-05/2026-08-10';
+                  const form = await fixture<HTMLFormElement>(html`<form>${this.component}</form>`);
+                  await elementUpdated(this.component);
+                  expect(new FormData(form).get('range')).to.equal('2026-08-05/2026-08-10');
+                },
+              },
+              invalidProgrammaticRangeIsRetained: {
+                description: 'retains an out-of-bounds programmatic range while marking it invalid',
+                test: async () => {
+                  const saved = '2026-08-05/2026-08-10';
+                  this.component.value = saved;
+                  this.component.max = '2026-08-04';
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal(saved);
+                  expect(this.component.checkValidity()).to.equal(false);
+                },
+              },
+              narrowingRangeConstraintRetainsValue: {
+                description: 'retains a set range when a later min-range change makes it invalid',
+                test: async () => {
+                  const saved = '2026-08-05/2026-08-10';
+                  this.component.value = saved;
+                  this.component.minRange = 7;
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal(saved);
+                  expect(this.component.checkValidity()).to.equal(false);
+                },
+              },
+              unavailableMiddleDatesRemainAllowed: {
+                description: 'allows unavailable dates between available range endpoints',
+                test: async () => {
+                  this.component.disabledDates = '2026-08-07';
+                  this.component.value = '2026-08-05/2026-08-10';
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.equal('2026-08-05/2026-08-10');
+                  expect(this.component.checkValidity()).to.equal(true);
+                },
+              },
+              externalValueDoesNotEmitChangeOnBlur: {
+                description: 'does not emit change for a programmatic range when focus leaves',
+                test: async () => {
+                  const change = sinon.spy();
+                  this.component.addEventListener('change', change);
+                  this.component.value = '2026-08-05/2026-08-10';
+                  await elementUpdated(this.component);
+                  this.segmentInput('start', 'month').focus();
+                  this.segmentInput('start', 'month').blur();
+                  await new Promise(resolve => requestAnimationFrame(resolve));
+                  await elementUpdated(this.component);
+                  expect(change.callCount).to.equal(0);
+                },
+              },
+              outsideDismissAfterReconnect: {
+                description: 'still closes on an outside pointerdown after being moved while open',
+                test: async () => {
+                  const host = document.createElement('div');
+                  const outside = document.createElement('button');
+                  document.body.append(host, outside);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  host.append(this.component);
+                  await elementUpdated(this.component);
+                  outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(false);
+                  host.remove();
+                  outside.remove();
+                },
+              },
+              outsideDismissKeepsClickedFocus: {
+                description: 'does not restore focus after an outside-pointer dismissal',
+                test: async () => {
+                  const outside = document.createElement('button');
+                  document.body.append(outside);
+                  this.component.show();
+                  await elementUpdated(this.component);
+                  outside.focus();
+                  outside.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  expect(this.component.open).to.equal(false);
+                  expect(document.activeElement).to.equal(outside);
+                  outside.remove();
+                },
+              },
+              formResetClearsPartiallyTypedSegments: {
+                description: 'clears partial range edits when the form resets',
+                test: async () => {
+                  const form = await fixture<HTMLFormElement>(html`<form>${this.component}</form>`);
+                  const month = this.segmentInput('start', 'month');
+                  month.value = '1';
+                  month.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                  await elementUpdated(this.component);
+                  form.reset();
+                  await elementUpdated(this.component);
+                  expect(this.segmentInput('start', 'month').value).to.equal('');
+                  expect(this.segmentInput('end', 'month').value).to.equal('');
+                },
+              },
+              wrapsAtNarrowWidthWithLargeText: {
+                description: 'keeps all range fields visible at a narrow width with enlarged text',
+                test: async () => {
+                  this.component.style.width = '320px';
+                  this.component.style.fontSize = '200%';
+                  await elementUpdated(this.component);
+                  const entry = this.component.shadowRoot?.querySelector<HTMLElement>('.entry');
+                  if (!entry) throw new Error('Expected range input entry to render.');
+                  expect(entry.scrollWidth).to.be.at.most(entry.clientWidth + 1);
                 },
               },
               preservesPartialSegmentInput: {
@@ -518,22 +783,32 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cha
                   expect(message?.textContent?.trim()).to.not.equal('');
                 },
               },
+              requiredValidationFocusesVisibleSegment: {
+                description: 'focuses a visible start segment when required validation is reported',
+                test: async () => {
+                  this.component.required = true;
+                  await elementUpdated(this.component);
+                  expect(this.component.reportValidity()).to.equal(false);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(this.segmentInput('start', 'month'));
+                },
+              },
               today: {
                 description: 'sets a single-day range for today from the footer action',
                 test: async () => {
-                  this.component.open = true;
-                  await elementUpdated(this.component);
+                  const clock = sinon.useFakeTimers({ now: new Date(2024, 5, 15, 12), toFake: ['Date'] });
+                  try {
+                    this.component.open = true;
+                    await elementUpdated(this.component);
 
-                  const today = new Date();
-                  const iso = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(
-                    today.getDate()
-                  ).padStart(2, '0')}`;
-                  const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
-                  if (!todayButton) throw new Error('Expected today button to render.');
+                    const todayButton = this.component.shadowRoot?.querySelector<HTMLButtonElement>('.footer-today');
+                    if (!todayButton) throw new Error('Expected today button to render.');
 
-                  todayButton.click();
-                  await elementUpdated(this.component);
-                  expect(this.component.value).to.equal(`${iso}/${iso}`);
+                    todayButton.click();
+                    await elementUpdated(this.component);
+                    expect(this.component.value).to.equal('2024-06-15/2024-06-15');
+                  } finally {
+                    clock.restore();
+                  }
                 },
               },
             },

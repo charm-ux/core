@@ -9,6 +9,22 @@ import { keys } from '../../utilities/key-map.js';
 import { CoreIcon } from '../icon/icon.js';
 import styles from './input.styles.js';
 
+/** Input types that block implicit submission when more than one is present in a form (HTML spec). */
+const implicitSubmissionBlockingTypes = new Set([
+  'text',
+  'search',
+  'url',
+  'tel',
+  'email',
+  'password',
+  'date',
+  'month',
+  'week',
+  'time',
+  'datetime-local',
+  'number',
+]);
+
 export type InputTypes =
   | 'date'
   | 'datetime-local'
@@ -30,6 +46,9 @@ export type InputTypes =
  * @status beta
  *
  * @slot - The options in the datalist.
+ * @slot clear-label - Accessible label for the clear button.
+ * @slot show-password-label - Accessible label for the password visibility button when hidden.
+ * @slot hide-password-label - Accessible label for the password visibility button when visible.
  * @slot end - A presentational suffix icon or similar element.
  * @slot label - The input's label. Alternatively, you can use the label prop.
  * @slot start - A presentational prefix icon or similar element.
@@ -66,7 +85,7 @@ export class CoreInput extends CharmFormControlElement {
   public pattern?: string;
 
   /** Controls whether and how text input is automatically capitalized as it is entered/edited by the user. */
-  @property({ reflect: true })
+  @property()
   public override autocapitalize: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters' = 'off';
 
   /**
@@ -110,7 +129,7 @@ export class CoreInput extends CharmFormControlElement {
   @property({ reflect: true })
   public step?: number;
 
-  @property({ attribute: true, type: String })
+  @property({ attribute: true, type: String, reflect: true })
   public type?: InputTypes;
 
   /** The input's placeholder text. */
@@ -129,50 +148,40 @@ export class CoreInput extends CharmFormControlElement {
   @property({ attribute: 'password-visible', type: Boolean })
   public passwordVisible = false;
 
-  /** Tooltip text for the input. */
-  @property({ reflect: true })
-  public override title = '';
-
-  //@ts-ignore
   @query('#input')
-  protected override input?: HTMLInputElement;
+  protected override input?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
   @state()
   protected options?: Array<HTMLOptionElement> = [];
 
   protected enterKeyTimer?: number;
+  protected isComposing = false;
+  protected optionObserver?: MutationObserver;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
   public override get value() {
-    return this._value ?? this.defaultValue ?? '';
+    return this._value;
   }
 
   /** Gets or sets the current value as a `Date` object. Only valid when `type` is `date`. */
   public get valueAsDate() {
-    return this.input?.valueAsDate ?? null;
+    return this.nativeInput?.valueAsDate ?? null;
   }
 
   /** Gets or sets the current value as a number. */
   public get valueAsNumber() {
-    return this.input?.valueAsNumber ?? parseFloat(this.value.toString());
+    return this.nativeInput?.valueAsNumber ?? parseFloat(this.value.toString());
+  }
+
+  protected get nativeInput(): HTMLInputElement | undefined {
+    return this.input as HTMLInputElement | undefined;
   }
 
   public override set value(val: string) {
-    if (this.type !== 'number') {
-      this._value = val;
-      this.requestUpdate('value');
-      return;
-    }
-    // check the val is within the range of min and max if they are set
-    const parsedValue = Number(val);
-    if (this.min && parsedValue < this.min) {
-      val = this.min?.toString();
-    } else if (this.max && parsedValue > this.max) {
-      val = this.max?.toString();
-    }
+    if (this._value === val) return;
     this._value = val;
     this.requestUpdate('value');
   }
@@ -197,14 +206,14 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Shows the browser picker for supported input types. */
   public showPicker() {
-    if ('showPicker' in HTMLInputElement.prototype && this.input) {
-      this.input.showPicker();
+    if ('showPicker' in HTMLInputElement.prototype && this.nativeInput) {
+      this.nativeInput.showPicker();
     }
   }
 
   /** Selects all input text. */
   public select() {
-    this.input?.select();
+    this.nativeInput?.select();
   }
 
   /** Sets the start and end positions of the selection. */
@@ -213,7 +222,7 @@ export class CoreInput extends CharmFormControlElement {
     selectionEnd: number,
     selectionDirection: 'forward' | 'backward' | 'none' = 'none'
   ) {
-    this.input?.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
+    this.nativeInput?.setSelectionRange(selectionStart, selectionEnd, selectionDirection);
   }
 
   /** Replaces a range of text in the input. */
@@ -223,10 +232,10 @@ export class CoreInput extends CharmFormControlElement {
     end?: number,
     selectMode: 'select' | 'start' | 'end' | 'preserve' = 'preserve'
   ) {
-    this.input?.setRangeText(
+    this.nativeInput?.setRangeText(
       replacement,
-      start ?? this.input.selectionStart ?? 0,
-      end ?? this.input.selectionEnd ?? 0,
+      start ?? this.nativeInput?.selectionStart ?? 0,
+      end ?? this.nativeInput?.selectionEnd ?? 0,
       selectMode
     );
     if (this.input && this.value !== this.input.value) {
@@ -236,7 +245,7 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Increments the value of a numeric input type by the value of the step attribute. */
   public stepUp() {
-    this.input?.stepUp();
+    this.nativeInput?.stepUp();
     if (this.input && this.value !== this.input.value) {
       this.value = this.input.value;
     }
@@ -244,23 +253,45 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Decrements the value of a numeric input type by the value of the step attribute. */
   public stepDown() {
-    this.input?.stepDown();
+    this.nativeInput?.stepDown();
     if (this.input && this.value !== this.input.value) {
       this.value = this.input.value;
     }
   }
 
   public override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    if (this.enterKeyTimer) {
+    if (this.enterKeyTimer !== undefined) {
       clearTimeout(this.enterKeyTimer);
       this.enterKeyTimer = undefined;
     }
+    this.optionObserver?.disconnect();
+    this.optionObserver = undefined;
+    super.disconnectedCallback();
   }
 
   public override connectedCallback(): void {
     super.connectedCallback();
     this.options = this.getOptions();
+    this.optionObserver = new MutationObserver(records => {
+      if (!this.isConnected) return;
+      const optionsChanged = records.some(record => {
+        const target = record.target instanceof Element ? record.target : record.target.parentElement;
+        const insideOption =
+          target instanceof HTMLOptionElement || target?.closest('option') instanceof HTMLOptionElement;
+        const addedOption = [...record.addedNodes, ...record.removedNodes].some(
+          node => node instanceof HTMLOptionElement || (node instanceof Element && !!node.querySelector('option'))
+        );
+        return insideOption || addedOption || (record.type === 'childList' && record.target === this);
+      });
+      if (optionsChanged) this.handleSlotChange();
+    });
+    this.optionObserver.observe(this, {
+      attributes: true,
+      attributeFilter: ['disabled', 'label', 'value'],
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
   }
 
   /** Gets all the options in the datalist from the input */
@@ -275,44 +306,77 @@ export class CoreInput extends CharmFormControlElement {
 
   /** Handles the change of the input. */
   protected handleChange() {
+    if (this.type === 'range' && this.readonly) {
+      if (this.input) this.input.value = this.value;
+      return;
+    }
     this.value = this.input!.value;
     this.emitChange();
   }
 
   /** Handles input - renamed from handleInput due to collision with base class. */
   protected handleInput() {
-    this.value = this.input!.value;
-  }
-
-  protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
-    super.willUpdate(changedProperties);
-
-    if (changedProperties.has('value') || changedProperties.has('defaultValue') || changedProperties.has('type')) {
-      const sanitizingTypes = ['number', 'date', 'time', 'datetime-local'];
-      if (
-        this.input &&
-        sanitizingTypes.includes(this.type ?? 'text') &&
-        this.value &&
-        this.input.value !== this.value
-      ) {
-        this._value = this.input.value;
-      }
+    if (this.type === 'range' && this.readonly) {
+      if (this.input) this.input.value = this.value;
+      return;
     }
+    this.value = this.input!.value;
   }
 
   /** Handles the Enter key press event. */
   protected handleEnterKey(event: KeyboardEvent) {
+    if (this.enterKeyTimer !== undefined) window.clearTimeout(this.enterKeyTimer);
     this.enterKeyTimer = window.setTimeout(() => {
       this.enterKeyTimer = undefined;
-      const form = this.closest('form');
-      if (event.defaultPrevented || !form) return;
-      form.requestSubmit();
+      const form = this.internals.form;
+      if (event.defaultPrevented || this.isComposing || !form) return;
+
+      const elements = Array.from(form.elements);
+      const submitButtons = elements.filter(element => {
+        if (element instanceof HTMLButtonElement) return element.type === 'submit';
+        if (element instanceof HTMLInputElement) return element.type === 'submit' || element.type === 'image';
+        return (
+          element.localName === this.scope.tagName('button') &&
+          (element as HTMLElement & { type?: string }).type === 'submit'
+        );
+      });
+      if (submitButtons.length) {
+        const defaultSubmitter = submitButtons[0] as HTMLElement & { disabled?: boolean; click(): void };
+        if (!defaultSubmitter.disabled && !defaultSubmitter.hasAttribute('form-disabled')) defaultSubmitter.click();
+        return;
+      }
+
+      // Per the HTML spec, implicit submission only happens when no other field blocks it.
+      const blockingFields = elements.filter(element => {
+        if (element instanceof HTMLInputElement) {
+          return !element.disabled && implicitSubmissionBlockingTypes.has(element.type);
+        }
+        if (element.localName === this.scope.tagName('input')) {
+          const input = element as HTMLElement & { disabled?: boolean; type?: string };
+          return !input.disabled && implicitSubmissionBlockingTypes.has(input.type ?? 'text');
+        }
+        return false;
+      });
+      if (blockingFields.length === 1) form.requestSubmit();
     });
   }
 
   /** Stops the slider default event when readonly. */
   protected handleSliderReadonly(event: KeyboardEvent) {
-    if (this.type === 'range' && this.readonly) {
+    if (
+      this.type === 'range' &&
+      this.readonly &&
+      [
+        keys.ArrowDown,
+        keys.ArrowLeft,
+        keys.ArrowRight,
+        keys.ArrowUp,
+        keys.Home,
+        keys.End,
+        keys.PageDown,
+        keys.PageUp,
+      ].includes(event.key)
+    ) {
       event.preventDefault();
     }
   }
@@ -323,7 +387,7 @@ export class CoreInput extends CharmFormControlElement {
 
     // Pressing enter when focused on an input should submit the form like a native input, but we wait a tick before
     // submitting to allow users to cancel the keydown event if they need to
-    if (event.key === keys.Enter && !hasModifier) {
+    if (event.key === keys.Enter && !hasModifier && !event.isComposing && !this.isComposing) {
       this.handleEnterKey(event);
     }
 
@@ -348,13 +412,6 @@ export class CoreInput extends CharmFormControlElement {
   }
 
   /**
-   * Handles the `mousedown` event for slider.
-   */
-  protected handleMouseDown(event: KeyboardEvent) {
-    this.handleSliderReadonly(event);
-  }
-
-  /**
    * Generates the template for the native input element.
    */
   protected inputElementTemplate() {
@@ -362,10 +419,10 @@ export class CoreInput extends CharmFormControlElement {
     return html`
       <input
         autocapitalize=${ifDefined(this.type === 'password' ? 'off' : this.autocapitalize)}
-        autocomplete=${ifDefined(this.type === 'password' ? 'off' : this.autocomplete) as any}
+        autocomplete=${ifDefined(this.autocomplete) as any}
         aria-describedby=${ifDefined(this.describedBy)}
-        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-        aria-invalid=${this.invalid}
+        aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+        aria-invalid=${this.showInvalid}
         class="form-control-base-input"
         enterkeyhint=${ifDefined(this.enterkeyhint)}
         id="input"
@@ -380,7 +437,6 @@ export class CoreInput extends CharmFormControlElement {
         max=${ifDefined(this.max)}
         spellcheck=${ifDefined(this.spellcheck)}
         step=${ifDefined(this.step)}
-        title=${ifDefined(this.title)}
         ?readonly=${this.readonly}
         ?autofocus=${this.autofocus}
         type=${isPasswordVisible ? 'text' : (this.type ?? 'text')}
@@ -389,15 +445,23 @@ export class CoreInput extends CharmFormControlElement {
         .value=${live(this.value ?? '')}
         @change=${this.handleChange}
         @input=${this.handleInput}
+        @compositionstart=${() => (this.isComposing = true)}
+        @compositionend=${() => (this.isComposing = false)}
         @keydown=${this.handleKeyDown}
-        @mousedown=${(e: KeyboardEvent) => this.handleSliderReadonly(e)}
       />
     `;
   }
 
   /** Generate the options in the datalist. */
   protected optionsTemplate() {
-    return this.options?.map(o => html`<option .value=${o.value}>${o.textContent}</option>`) || '';
+    return (
+      this.options?.map(
+        o =>
+          html`<option .value=${o.value} ?disabled=${o.disabled} label=${ifDefined(o.label || undefined)}>
+            ${o.label || o.textContent}
+          </option>`
+      ) || ''
+    );
   }
 
   /** Generates the template for the input's datalist.  */
@@ -423,29 +487,32 @@ export class CoreInput extends CharmFormControlElement {
   /** Generates the template for the input's control. */
   protected inputControlTemplate() {
     const hasClearButton = this.withClear && !this.disabled && !this.readonly && !!this.value;
-    const hasPasswordToggle = this.passwordToggle && !this.disabled && this.type === 'password';
+    const hasPasswordToggle = this.passwordToggle && !this.disabled && !this.readonly && this.type === 'password';
 
     return html`<div part="input-control" class="form-control-input">
       ${this.inputStartTemplate()} ${this.inputElementTemplate()} ${this.dataListTemplate()}
       ${hasClearButton
-        ? html`<button
+        ? this.html`<button
             type="button"
             class="form-control-clear"
             @click=${this.handleClearClick}
-            tabindex="-1"
-            aria-label="Clear input"
           >
+            <span class="visually-hidden"><slot name="clear-label">Clear input</slot></span>
             <scoped-icon name="dismiss"></scoped-icon>
           </button>`
         : ''}
       ${hasPasswordToggle
-        ? html`<button
+        ? this.html`<button
             type="button"
             class="form-control-password-toggle"
             @click=${this.handlePasswordToggle}
-            tabindex="-1"
-            aria-label=${this.passwordVisible ? 'Hide password' : 'Show password'}
+            aria-pressed=${this.passwordVisible}
           >
+            <span class="visually-hidden">
+              <slot name=${this.passwordVisible ? 'hide-password-label' : 'show-password-label'}>
+                ${this.passwordVisible ? 'Hide password' : 'Show password'}
+              </slot>
+            </span>
             <scoped-icon name=${this.passwordVisible ? 'eye-slash' : 'eye'}></scoped-icon>
           </button>`
         : ''}

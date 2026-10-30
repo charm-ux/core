@@ -18,32 +18,32 @@ export default css`
   .tooltip::part(popup-base) {
     box-shadow: ${component('tooltip', 'shadow')};
     border-radius: ${component('tooltip', 'borderRadius')};
-    z-index: 1000;
+    z-index: ${component('popup', 'zIndex')};
   }
 
   .tooltip::part(popup-arrow) {
-    z-index: 1001;
+    z-index: ${component('popup', 'zIndex')};
     border: 0px ${component('tooltip', 'borderStyle')} ${component('tooltip', 'borderColor')};
   }
 
-  .tooltip::part(popup) {
+  .tooltip::part(popup-base) {
     transform-origin: top;
   }
 
-  .tooltip[data-current-placement^='top']::part(popup) {
+  .tooltip[data-current-placement^='top']::part(popup-base) {
     transform-origin: bottom;
   }
 
-  .tooltip[data-current-placement^='left']::part(popup) {
+  .tooltip[data-current-placement^='left']::part(popup-base) {
     transform-origin: right;
   }
 
-  .tooltip[data-current-placement^='right']::part(popup) {
+  .tooltip[data-current-placement^='right']::part(popup-base) {
     transform-origin: left;
   }
 
   .tooltip[data-current-placement^='top']::part(popup-arrow) {
-    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.07);
+    box-shadow: ${component('tooltip', 'shadow')};
     border-bottom: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
     border-inline-end: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
@@ -51,7 +51,7 @@ export default css`
   }
 
   .tooltip[data-current-placement^='bottom']::part(popup-arrow) {
-    box-shadow: -2px -2px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: ${component('tooltip', 'shadow')};
     border-top: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
     border-inline-start: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
@@ -59,7 +59,7 @@ export default css`
   }
 
   .tooltip[data-current-placement^='left']::part(popup-arrow) {
-    box-shadow: 2px -2px 2px rgba(0, 0, 0, 0.06);
+    box-shadow: ${component('tooltip', 'shadow')};
     border-top: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
     border-inline-end: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
@@ -67,7 +67,7 @@ export default css`
   }
 
   .tooltip[data-current-placement^='right']::part(popup-arrow) {
-    box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.06);
+    box-shadow: ${component('tooltip', 'shadow')};
     border-bottom: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}
       ${component('tooltip', 'arrowBorderColor')};
     border-inline-start: ${semantic('defaultBorder', 'width')} ${semantic('defaultBorder', 'style')}

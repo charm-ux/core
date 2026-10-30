@@ -114,7 +114,7 @@ export const CustomMenu: Story = {
     </script>
   `,
   args: {
-    'end-slot': `<ch-dropdown><button slot="trigger">...</button><ch-menu id="menu"></ch-menu></ch-dropdown>`,
+    'menu-slot': `<ch-menu id="menu"><ch-button slot="trigger">More</ch-button></ch-menu>`,
   },
 };
 
@@ -161,6 +161,6 @@ export const StartEndSlot: Story = {
     'default-slot': `<button>one</button><button>two</button><button>three</button><button>four</button><button>five</button><button>six</button><button>seven</button><button>eight</button><button>nine</button>`,
     'overflow-direction': 'start',
     'start-slot': `<ch-icon name="person" slot="start"></ch-icon>`,
-    'end-slot': `<ch-icon name="warning-shield" slot="start"></ch-icon>`,
+    'end-slot': `<ch-icon name="warning-shield" slot="end"></ch-icon>`,
   },
 };

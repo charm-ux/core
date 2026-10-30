@@ -103,6 +103,38 @@ export const DisabledItems: Story = {
   },
 };
 
+export const IndividuallyDisabled: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-radio value="birds">Birds</ch-radio>
+        <ch-radio value="cats" disabled>Cats</ch-radio>
+        <ch-radio value="dogs">Dogs</ch-radio>
+      `
+    ),
+  args: {
+    label: 'Favorite Pet',
+  },
+};
+
+export const Readonly: Story = {
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-radio value="birds">Birds</ch-radio>
+        <ch-radio value="cats">Cats</ch-radio>
+        <ch-radio value="dogs">Dogs</ch-radio>
+      `
+    ),
+  args: {
+    label: 'Favorite Pet',
+    readonly: true,
+    value: 'cats',
+  },
+};
+
 export const Layout: Story = {
   render: args =>
     template(

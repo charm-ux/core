@@ -1,4 +1,4 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
@@ -22,6 +22,22 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   const el = this.component;
                   const defaultSlot = el.shadowRoot?.querySelector('slot:not(name)') as HTMLSlotElement;
                   expect(defaultSlot).to.not.be.undefined;
+                },
+              },
+            },
+          },
+          accessibility: {
+            description: 'accessibility',
+            tests: {
+              tablistHasAccessibleName: {
+                description: 'applies the label to the internal tablist',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'Account sections';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.querySelector('[role="tablist"]')?.getAttribute('aria-label')).to.equal(
+                    'Account sections'
+                  );
                 },
               },
             },
@@ -403,6 +419,128 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   },
                 },
               },
+              rovingTabIndexAfterManualArrowAndClick: {
+                description: 'keeps only one tab tabbable after manual navigation followed by a click',
+                test: async () => {
+                  const el = this.component;
+                  const tabs = [...el.querySelectorAll<CoreTab>('[role="tab"]')];
+                  el.manualActivation = true;
+                  await elementUpdated(el);
+                  tabs[0].focus();
+                  await sendKeys({ press: 'ArrowRight' });
+                  tabs[2].click();
+
+                  expect(tabs.filter(tab => tab.getAttribute('tabindex') === '0')).to.have.lengthOf(1);
+                  expect(tabs[0].getAttribute('tabindex')).to.equal('-1');
+                  expect(tabs[1].getAttribute('tabindex')).to.equal('-1');
+                  expect(tabs[2].getAttribute('tabindex')).to.equal('0');
+                },
+              },
+              manualFocusSurvivesMutation: {
+                description: 'keeps the manually focused tab when panel content changes',
+                test: async () => {
+                  const el = this.component;
+                  const tabs = [...el.querySelectorAll<CoreTab>('[role="tab"]')];
+                  el.manualActivation = true;
+                  await elementUpdated(el);
+                  tabs[0].focus();
+                  await sendKeys({ press: 'ArrowRight' });
+
+                  el.querySelector('#panel-1')!.append(document.createElement('span'));
+                  await Promise.resolve();
+                  expect(tabs[1].getAttribute('tabindex')).to.equal('0');
+                  expect(tabs[0].getAttribute('tabindex')).to.equal('-1');
+
+                  await sendKeys({ press: 'ArrowRight' });
+                  expect(document.activeElement).to.equal(tabs[2]);
+                  expect(el.activeId).to.equal('tab-1');
+                },
+              },
+              selectedAfterMount: {
+                description: 'updates selection when a tab is selected after mounting',
+                test: async () => {
+                  const el = this.component;
+                  const first = el.querySelector('#tab-1') as CoreTab;
+                  const second = el.querySelector('#tab-2') as CoreTab;
+                  second.selected = true;
+                  await elementUpdated(second);
+                  await elementUpdated(el);
+                  await Promise.resolve();
+
+                  expect(second.selected).to.be.true;
+                  expect(first.selected).to.be.false;
+                  expect(el.activeId).to.equal('tab-2');
+                },
+              },
+              removesSelectedTab: {
+                description: 'selects an enabled fallback when the selected tab is removed',
+                test: async () => {
+                  const el = this.component;
+                  el.querySelector('#tab-1')?.remove();
+                  await elementUpdated(el);
+                  await Promise.resolve();
+
+                  expect(el.activeId).to.equal('tab-2');
+                  expect(el.querySelector('#tab-2')?.getAttribute('tabindex')).to.equal('0');
+                },
+              },
+              reassociatesWhenTabsChange: {
+                description: 'keeps tab and panel references synchronized when only the tab slot changes',
+                test: async () => {
+                  const el = this.component;
+                  const inserted = document.createElement('ch-tab') as CoreTab;
+                  inserted.id = 'inserted-tab';
+                  inserted.textContent = 'Inserted';
+                  el.insertBefore(inserted, el.querySelector('#tab-1'));
+                  await elementUpdated(el);
+                  await elementUpdated(inserted);
+                  await Promise.resolve();
+
+                  expect(inserted.tabPanel?.id).to.equal('panel-1');
+                  expect(el.querySelector('#tab-1')?.getAttribute('aria-controls')).to.equal('panel-2');
+                },
+              },
+              allDisabledNotTabbable: {
+                description: 'does not make a disabled tab tabbable when every tab is disabled',
+                test: async () => {
+                  const el = this.component;
+                  const tabs = [...el.querySelectorAll<CoreTab>('[role="tab"]')];
+                  tabs.forEach(tab => (tab.disabled = true));
+                  await Promise.all(tabs.map(tab => elementUpdated(tab)));
+                  await elementUpdated(el);
+                  await Promise.resolve();
+
+                  expect(tabs.every(tab => tab.getAttribute('tabindex') !== '0')).to.be.true;
+                },
+              },
+              generatedIdsAreUniqueAndStable: {
+                description: 'generates instance-unique tab IDs that do not change when items are inserted',
+                test: async () => {
+                  const el = this.component;
+                  const generated = document.createElement('ch-tab') as CoreTab;
+                  generated.textContent = 'Generated';
+                  el.append(generated);
+                  await elementUpdated(el);
+                  await Promise.resolve();
+                  const originalId = generated.id;
+
+                  const other = document.createElement('ch-tabs') as CoreTabs;
+                  other.innerHTML = '<ch-tab>Other</ch-tab><ch-tab-panel>Other panel</ch-tab-panel>';
+                  document.body.append(other);
+                  await elementUpdated(other);
+                  await Promise.resolve();
+                  const otherId = other.querySelector('ch-tab')?.id;
+                  const inserted = document.createElement('ch-tab') as CoreTab;
+                  inserted.textContent = 'Earlier';
+                  el.insertBefore(inserted, generated);
+                  await elementUpdated(el);
+                  await Promise.resolve();
+
+                  expect(originalId).not.to.equal(otherId);
+                  expect(generated.id).to.equal(originalId);
+                  other.remove();
+                },
+              },
             },
           },
           properties: {
@@ -510,6 +648,17 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   expect(spy).to.not.have.been.called;
                 },
               },
+              noChangeEventWhenHomeKeepsCurrentTab: {
+                description: 'does not emit a change event when Home keeps the current tab selected',
+                test: async () => {
+                  const el = this.component;
+                  const spy = sinon.spy();
+                  el.addEventListener('tabs-change', spy);
+                  (el.querySelector('#tab-1') as CoreTab).focus();
+                  await sendKeys({ press: 'Home' });
+                  expect(spy).not.to.have.been.called;
+                },
+              },
               tabShowEvents: {
                 description: 'emits `tab-show` and `tab-after-show` from tab panel when tab is selected',
                 test: async () => {
@@ -518,18 +667,16 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   panel.style.transition = 'none'; // Disable transition for testing
 
                   const spy = sinon.spy();
-                  const afterSpy = sinon.spy();
-
                   panel.addEventListener('tab-show', spy);
-                  panel.addEventListener('tab-after-show', afterSpy);
+                  const afterShow = oneEvent(panel, 'tab-after-show');
 
                   const newSelection = el.querySelector('#tab-4')! as HTMLElement;
                   newSelection.click();
 
-                  await elementUpdated(el);
+                  await elementUpdated(panel);
+                  await afterShow;
 
                   expect(spy).to.have.been.calledOnce;
-                  expect(afterSpy).to.have.been.calledOnce;
                 },
               },
               tabHideEvents: {
@@ -540,18 +687,16 @@ export class CoreTabsTests<T extends CoreTabs> extends CharmElementTests<T> {
                   panel.style.transition = 'none'; // Disable transition for testing
 
                   const spy = sinon.spy();
-                  const afterSpy = sinon.spy();
-
                   panel.addEventListener('tab-hide', spy);
-                  panel.addEventListener('tab-after-hide', afterSpy);
+                  const afterHide = oneEvent(panel, 'tab-after-hide');
 
                   const newSelection = el.querySelector('#tab-3')! as HTMLElement;
                   newSelection.click();
 
-                  await elementUpdated(el);
+                  await elementUpdated(panel);
+                  await afterHide;
 
                   expect(spy).to.have.been.calledOnce;
-                  expect(afterSpy).to.have.been.calledOnce;
                 },
               },
             },

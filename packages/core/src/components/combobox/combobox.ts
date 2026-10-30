@@ -68,6 +68,9 @@ const OPTION_STATE_KEYS = new Set([
 /** Option attributes that change an option's value, label, or disabled state. Other attributes are managed by the combobox. */
 const OPTION_ATTRIBUTES = new Set(['disabled', 'label', 'value']);
 
+/** Keys handled while a selected tag has focus. */
+const TAG_KEYS = [keys.ArrowLeft, keys.ArrowRight, keys.Home, keys.End, keys.Delete, keys.Backspace];
+
 let comboboxId = 0;
 
 let validationProbe: HTMLInputElement | undefined;
@@ -623,7 +626,7 @@ export class CoreCombobox extends CharmFormControlElement {
   }
 
   /** Applies the current validity state to the element internals and rendered error message. */
-  protected applyValidity() {
+  protected override applyValidity() {
     const validity = this.validity;
     this._errorMessage = validity.valid ? '' : this.validationMessage;
     this.internals.setValidity(
@@ -1060,6 +1063,7 @@ export class CoreCombobox extends CharmFormControlElement {
           this.input.selectionEnd === 0
         ) {
           event.preventDefault();
+          event.stopPropagation();
           this.focusTag(this.selectedValues.length - 1);
         }
         return;
@@ -1223,29 +1227,27 @@ export class CoreCombobox extends CharmFormControlElement {
   protected async handleTagsKeyDown(event: KeyboardEvent) {
     const tags = this.tagElements();
     const index = tags.indexOf(event.target as HTMLElement);
-    if (index === -1) return;
+    if (index === -1 || !TAG_KEYS.includes(event.key)) return;
+
+    event.preventDefault();
+    event.stopPropagation();
 
     switch (event.key) {
       case keys.ArrowLeft:
-        event.preventDefault();
         if (index > 0) this.focusTag(index - 1);
         return;
       case keys.ArrowRight:
-        event.preventDefault();
         if (index < tags.length - 1) this.focusTag(index + 1);
         else this.input?.focus();
         return;
       case keys.Home:
-        event.preventDefault();
         this.focusTag(0);
         return;
       case keys.End:
-        event.preventDefault();
         this.focusTag(tags.length - 1);
         return;
       case keys.Delete:
       case keys.Backspace:
-        event.preventDefault();
         if (this.disabled || this.readonly) return;
         this.removeValue(this.selectedValues[index], false);
         await this.updateComplete;
@@ -1465,7 +1467,7 @@ export class CoreCombobox extends CharmFormControlElement {
     return this.selectedValues.length ? formValue : null;
   }
 
-  protected syncFormValue() {
+  protected override syncFormValue() {
     this.internals.setFormValue(this.getFormValue());
   }
 
@@ -1577,10 +1579,10 @@ export class CoreCombobox extends CharmFormControlElement {
           aria-autocomplete=${ifDefined(this.isSelectOnly ? undefined : this.mode)}
           aria-controls=${this.listboxId}
           aria-describedby=${ifDefined(this.describedBy)}
-          aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
+          aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
           aria-expanded=${this.open}
           aria-haspopup="listbox"
-          aria-invalid=${this.invalid}
+          aria-invalid=${this.showInvalid}
           autocomplete=${this.autocomplete as any}
           class="form-control-base-input combobox-input"
           id=${this.inputId}

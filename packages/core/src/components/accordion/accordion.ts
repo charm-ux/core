@@ -3,6 +3,7 @@ import { property } from 'lit/decorators.js';
 import CharmElement from '../../base/charm-element/charm-element.js';
 import CoreAccordionItem from '../accordion-item/accordion-item.js';
 import styles from './accordion.styles.js';
+import type { PropertyValues } from 'lit';
 
 /**
  * An accordion is a vertically stacked set of interactive headings that each contain a title, content snippet, or thumbnail representing a section of content. The headings function as controls that enable users to reveal or hide their associated sections of content. Accordions are commonly used to reduce the need to scroll when presenting multiple sections of content on a single page.
@@ -11,7 +12,7 @@ import styles from './accordion.styles.js';
  * @since 1.0.0
  * @status beta
  *
- * @slot - The default slot where accordion items are placed.
+ * @slot - Direct child accordion items.
  *
  * @cssproperty --charm-accordion-top-border-color - The border top color of the accordion.
  *
@@ -28,20 +29,33 @@ export class CoreAccordion extends CharmElement {
   /** Ensures only one item is open at a time. */
   protected handleOpenChange(event: Event) {
     if (!this.openSingle) return;
-
     const toggledItem = event.target as CoreAccordionItem;
-    const items = this.querySelectorAll('[accordion-item]') as NodeListOf<CoreAccordionItem>;
+    if (toggledItem.parentElement !== this) return;
+    this.closeOtherItems(toggledItem);
+  }
 
+  protected closeOtherItems(openItem?: CoreAccordionItem) {
+    const items = Array.from(this.children).filter(
+      (child): child is CoreAccordionItem => child instanceof CoreAccordionItem
+    );
+    const keep = openItem ?? items.find(item => item.open);
     for (const item of items) {
-      if (item !== toggledItem && item.open) {
-        item.open = false;
-      }
+      if (item !== keep && item.open) item.open = false;
     }
+  }
+
+  protected handleSlotChange() {
+    if (this.openSingle) this.closeOtherItems();
+  }
+
+  protected override updated(changedProperties: PropertyValues) {
+    super.updated(changedProperties);
+    if (changedProperties.has('openSingle') && this.openSingle) this.closeOtherItems();
   }
 
   /** Generate the accordion template with declarative event handling. */
   protected accordionTemplate() {
-    return html`<slot @accordion-item-show=${this.handleOpenChange}></slot>`;
+    return html`<slot @slotchange=${this.handleSlotChange} @accordion-item-show=${this.handleOpenChange}></slot>`;
   }
 
   protected override render() {

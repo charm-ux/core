@@ -91,6 +91,46 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               }
             },
           },
+          actionableElementsNotFlattened: {
+            description: 'should overflow a directly slotted button as a whole, not its child elements',
+            test: async () => {
+              const container = document.createElement('div');
+              const buttonTag = project.scope.tagName('button');
+              const iconTag = project.scope.tagName('icon');
+              const buttonGroupOverflowTag = project.scope.tagName('button-group-overflow');
+              document.body.appendChild(container);
+
+              try {
+                container.innerHTML = `
+                  <${buttonGroupOverflowTag} style="width: 100px;">
+                    <${buttonTag} style="width: 80px">Keep</${buttonTag}>
+                    <${buttonTag} style="width: 80px"><${iconTag} slot="start" name="more"></${iconTag}>Iconic</${buttonTag}>
+                  </${buttonGroupOverflowTag}>
+                `;
+
+                const el = container.querySelector(buttonGroupOverflowTag) as HTMLElement;
+                const [, iconButton] = Array.from(el.querySelectorAll<HTMLElement>(buttonTag));
+                const icon = iconButton.querySelector(iconTag) as HTMLElement;
+                await elementUpdated(el);
+                await aTimeout(300);
+
+                expect(iconButton.hidden).to.be.true;
+                expect(icon.hidden).to.be.false;
+
+                const trigger = el.shadowRoot!.querySelector('[menu] > [slot="trigger"]') as HTMLButtonElement;
+                trigger.click();
+                await elementUpdated(el);
+                await aTimeout(20);
+
+                const menuItems = Array.from(
+                  el.shadowRoot!.querySelectorAll(`[menu] ${project.scope.tagName('menu-item')}`)
+                );
+                expect(menuItems.some(item => item.textContent?.includes('Iconic'))).to.be.true;
+              } finally {
+                container.remove();
+              }
+            },
+          },
           dividerRendering: {
             description: 'should render dividers correctly in the overflow menu',
             test: async () => {

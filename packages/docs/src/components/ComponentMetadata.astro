@@ -19,7 +19,7 @@ const cssPropertiesMarkdown = marked.parse(getCSSPropertiesTemplate(component));
 const cssPartsMarkdown = marked.parse(getCSSPartsTemplate(component));
 ---
 
-<wc-dox tag="ch-accordion"></wc-dox>
+<wc-dox tag={component?.tagName}></wc-dox>
 
 <Tabs>
   <TabItem label="Public API">
@@ -38,7 +38,6 @@ const cssPartsMarkdown = marked.parse(getCSSPartsTemplate(component));
 <script type="module">
   import { setWcDoxConfig } from 'wc-dox';
   import manifest from '../../custom-elements.json';
-  console.log('manifest', manifest);
   setWcDoxConfig(manifest);
 </script>
 

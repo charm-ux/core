@@ -56,14 +56,13 @@ To add a label, use the `label` attribute within the `<ch-input>` element. This 
 
 </code-bubble>
 
-To create an HTML label in the DOM, use the `label` slot. This option will not make the label accessible.
+To create an HTML label in the DOM, use the `label` slot. Slotted labels are associated with the input and remain accessible.
 
 <code-bubble>
 
 ```html
 <ch-input>
   <span slot="label">Enter your username:</span>
-  /ch-input>
 </ch-input>
 ```
 
@@ -121,14 +120,13 @@ Autocapitalize types `off` | `none` | `on` | `sentences` | `words` | `characters
 
 ## Autocomplete
 
-To control whether a browser should automatically complete the input value based on the user's past interactions, use the `autocomplete` attribute within the `<ch-input>` element. By default `autocomplete` is set to `off`. <br></br>
-
-Autocomplete types `off` | `on`
+Use the `autocomplete` attribute to hint what information the browser may fill in. Any valid HTML autocomplete token is supported, including `off` and `on`. When unset, the browser's default heuristics apply. Password inputs honor explicit values such as `current-password` and `new-password`.
 
 <code-bubble>
 
 ```html
-<ch-input autocomplete="on"></ch-input>
+<ch-input autocomplete="email"></ch-input>
+<ch-input type="password" autocomplete="current-password"></ch-input>
 ```
 
 </code-bubble>
@@ -168,7 +166,7 @@ To specify the minimum value that can be entered into the input field, use the `
 <code-bubble>
 
 ```html
-<ch-input type="number" max="10"></ch-input>
+<ch-input type="number" min="10"></ch-input>
 ```
 
 </code-bubble>
@@ -207,7 +205,7 @@ To specify the maximum amount of characters entered into the input field, use th
 
 ## Spellcheck
 
-To control the spell-checking feature, use the `spellcheck` attribute within the `<ch-input>` element. By default `spellcheck` is set to `true`.
+To control the spell-checking feature, use the `spellcheck` attribute within the `<ch-input>` element. By default `spellcheck` is set to `false`.
 
 <code-bubble>
 
@@ -216,6 +214,21 @@ To control the spell-checking feature, use the `spellcheck` attribute within the
 ```
 
 </code-bubble>
+
+## Clear and password buttons
+
+When enabled, the clear and password visibility buttons are keyboard accessible. Use their label slots to provide localized accessible names.
+
+```html
+<ch-input with-clear>
+  <span slot="clear-label">Clear search</span>
+</ch-input>
+
+<ch-input type="password" password-toggle>
+  <span slot="show-password-label">Show password</span>
+  <span slot="hide-password-label">Hide password</span>
+</ch-input>
+```
 
 ## Step
 

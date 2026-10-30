@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, nextFrame, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CorePopup } from './index.js';
@@ -35,6 +35,8 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                 description: 'does not label presentational content, so its role is not dropped',
                 test: async () => {
                   const el = this.component;
+                  el.label = 'Popup label';
+                  await elementUpdated(el);
                   const dialog = el.shadowRoot!.querySelector('.popup') as HTMLElement;
                   expect(dialog.getAttribute('aria-labelledby')).to.equal('popup-label');
 
@@ -109,7 +111,7 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                 },
               },
               autosize: {
-                description: '',
+                description: 'sets available size variables only for the selected axes',
                 test: async () => {
                   const el = this.component;
                   el.innerHTML = `
@@ -127,19 +129,27 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.autoSize = 'both';
                   await oneEvent(el, 'popup-reposition');
 
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.contain('px');
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.contain('px');
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
 
                   el.autoSize = 'vertical';
                   await oneEvent(el, 'popup-reposition');
 
                   expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.equal('');
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.contain('px');
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
 
                   el.autoSize = 'horizontal';
                   await oneEvent(el, 'popup-reposition');
 
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.contain('px');
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
                   expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.equal('');
                 },
               },
@@ -170,8 +180,12 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
 
                   await oneEvent(el, 'popup-reposition');
 
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.contain('px');
-                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.contain('px');
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-width')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
+                  expect(el.style.getPropertyValue('--popup-auto-size-available-height')).to.match(
+                    /^-?\d+(?:\.\d+)?px$/
+                  );
 
                   scrollContainer.remove();
                 },
@@ -222,8 +236,8 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.distance = 20;
                   el.open = true;
                   await oneEvent(el, 'popup-reposition');
-                  await elementUpdated(el);
-                  expect(el.style.getPropertyValue('--hover-bridge-top-left-x')).to.exist;
+                  await nextFrame();
+                  expect(el.style.getPropertyValue('--hover-bridge-top-left-x')).to.match(/^-?\d+(?:\.\d+)?px$/);
                 },
               },
               popupPlacements: {
@@ -340,6 +354,38 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                     })
                   );
                   expect(document.activeElement).to.equal(last);
+                },
+              },
+              scrollingDoesNotDismissOrReplaceWindowOpen: {
+                description: 'keeps the popup open and preserves window.open while the page scrolls',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<button slot="anchor">Anchor</button><div>Content</div>';
+                  const repositioned = oneEvent(el, 'popup-reposition');
+                  el.open = true;
+                  await repositioned;
+
+                  window.dispatchEvent(new Event('scroll'));
+                  await aTimeout(0);
+
+                  expect(el.open).to.be.true;
+                  expect(window.open).to.be.a('function');
+                },
+              },
+              normalizesFallbackPlacementsFromPropertyAndAttribute: {
+                description: 'normalizes fallback placements from JavaScript and removed attributes',
+                test: async () => {
+                  const el = this.component;
+                  el.flipFallbackPlacements = 'start-top end-bottom';
+                  expect(el.flipFallbackPlacements).to.equal('start-top end-bottom');
+                  el.flipFallbackPlacements = ['start-top', 'end-bottom'];
+                  expect(el.flipFallbackPlacements).to.equal('start-top end-bottom');
+                  el.setAttribute('flip-fallback-placements', 'top bottom');
+                  await elementUpdated(el);
+                  expect(el.flipFallbackPlacements).to.equal('top bottom');
+                  el.removeAttribute('flip-fallback-placements');
+                  await elementUpdated(el);
+                  expect(el.flipFallbackPlacements).to.equal('');
                 },
               },
             },
