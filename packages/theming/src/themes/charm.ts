@@ -1225,6 +1225,60 @@ const charmTokensBase = defineTokens(
         transition: 'opacity 0.15s ease',
       },
 
+      // Tag
+      tag: {
+        bgColor: semantic('surface', 'secondary'),
+        fgColor: semantic('text', 'primary'),
+        borderColor: semantic('border', 'primary'),
+        borderRadius: primitive('borderRadius', 'full'),
+        borderStyle: 'solid',
+        borderWidth: primitive('borderWidth', 'thin'),
+        fontSize: primitive('fontSize', 'sm'),
+        gap: primitive('spacing', '2xs'),
+        paddingX: primitive('spacing', 'sm'),
+        paddingY: primitive('spacing', '2xs'),
+        hover: {
+          bgColor: semantic('surface', 'tertiary'),
+        },
+        selected: {
+          bgColor: semantic('action', 'primary', 'color'),
+          fgColor: semantic('text', 'inverse'),
+          borderColor: semantic('action', 'primary', 'color'),
+        },
+        disabled: {
+          bgColor: semantic('disabled', 'bgColor'),
+          fgColor: semantic('disabled', 'fgColor'),
+          borderColor: semantic('disabled', 'borderColor'),
+        },
+        remove: {
+          bgColor: primitive('color', 'transparent'),
+          borderRadius: primitive('borderRadius', 'full'),
+          iconSize: '16px',
+          padding: primitive('spacing', '3xs'),
+          hover: {
+            bgColor: semantic('surface', 'tertiary'),
+          },
+        },
+      },
+
+      // Tag Group
+      tagGroup: {
+        gap: primitive('spacing', 'xs'),
+        labelGap: primitive('spacing', 'xs'),
+        label: {
+          color: semantic('text', 'primary'),
+          fontSize: primitive('fontSize', 'sm'),
+          fontWeight: primitive('fontWeight', 'medium'),
+        },
+        helpText: {
+          color: semantic('text', 'secondary'),
+          fontSize: primitive('fontSize', 'xs'),
+        },
+        empty: {
+          color: semantic('text', 'secondary'),
+        },
+      },
+
       // Textarea
       textArea: {
         inputLineHeight: primitive('lineHeight', 'md'),

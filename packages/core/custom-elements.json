@@ -41498,6 +41498,1428 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/tag-group/tag-group.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A tag group presents a set of related tags as a list, with a single tab stop, arrow-key navigation, optional\nselection, and focus management when tags are removed. Tags are authored as `<ch-tag>` children. The group never\nremoves tags itself; listen for `tag-remove` (which bubbles from the tag) and remove the element from your code.\n\nWith `selection=\"none\"` the group is a plain list. With `selection=\"single\"` or `selection=\"multiple\"` it becomes\na listbox whose options are the tags, following the WAI-ARIA keyboard guidance for a horizontal, flat collection:\nArrow keys move focus, Home/End jump to the ends, typing jumps to a matching tag, and Space (or Enter) toggles\nselection.",
+          "name": "CoreTagGroup",
+          "cssProperties": [
+            {
+              "description": "The gap between tags.",
+              "name": "--charm-tag-group-gap"
+            },
+            {
+              "description": "The gap between the label, help text, and list.",
+              "name": "--charm-tag-group-label-gap"
+            },
+            {
+              "description": "The label color.",
+              "name": "--charm-tag-group-label-color"
+            },
+            {
+              "description": "The label font size.",
+              "name": "--charm-tag-group-label-font-size"
+            },
+            {
+              "description": "The label font weight.",
+              "name": "--charm-tag-group-label-font-weight"
+            },
+            {
+              "description": "The help text color.",
+              "name": "--charm-tag-group-help-text-color"
+            },
+            {
+              "description": "The help text font size.",
+              "name": "--charm-tag-group-help-text-font-size"
+            },
+            {
+              "description": "The empty state text color.",
+              "name": "--charm-tag-group-empty-color"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The component's base wrapper.",
+              "name": "tag-group-base"
+            },
+            {
+              "description": "The empty state container.",
+              "name": "tag-group-empty"
+            },
+            {
+              "description": "The help text container.",
+              "name": "tag-group-help-text"
+            },
+            {
+              "description": "The label container.",
+              "name": "tag-group-label"
+            },
+            {
+              "description": "The list element that wraps the tags.",
+              "name": "tag-group-list"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The tags.",
+              "name": ""
+            },
+            {
+              "description": "Content shown when the group contains no tags.",
+              "name": "empty"
+            },
+            {
+              "description": "A description of the group. Alternatively, use the `help-text` property.",
+              "name": "help-text"
+            },
+            {
+              "description": "The group's accessible name. Alternatively, use the `label` property.",
+              "name": "label"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "applyPendingValues",
+              "privacy": "protected",
+              "description": "Applies a value set through `value`/`valueAsArray` once there are tags to apply it to. A value set before the\ntags are slotted (for example, the `value` attribute in HTML) is held until the first slot change."
+            },
+            {
+              "kind": "method",
+              "name": "applyValues",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "string[]"
+                  }
+                }
+              ],
+              "description": "Applies a set of selected values to the tags, honoring the selection mode."
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "'tag-group'",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "clearTypeahead",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "resetBuffer",
+                  "default": "true"
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "defaultSlot",
+              "type": {
+                "text": "HTMLSlotElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Disables the group and every tag in it, without changing the tags' own `disabled` state.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "emitChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "detail",
+                  "type": {
+                    "text": "TagGroupChangeEvent"
+                  },
+                  "parsedType": {
+                    "text": "{ value: string, valueAsArray: string[] }"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "emptyTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "findTypeaheadMatch",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "prefix",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "firstEnabledIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "focus",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "FocusOptions"
+                  }
+                }
+              ],
+              "description": "Moves focus to the active tag, or the first enabled tag."
+            },
+            {
+              "kind": "field",
+              "name": "focusedIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "-1"
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getSlottedTags",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "CoreTag[]"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getTagLabel",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "getTagValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "handleClick",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "handleFocusIn",
+              "privacy": "protected",
+              "description": "Keeps the roving tabindex in sync when focus arrives by click, Tab, or script."
+            },
+            {
+              "kind": "field",
+              "name": "handleKeyDown",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "handleTagRemove",
+              "privacy": "protected",
+              "description": "Records which tag asked to be removed so focus can move to its neighbour once it leaves the DOM."
+            },
+            {
+              "kind": "method",
+              "name": "handleTypeahead",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "character",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "hasHelpText",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "hasLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "helpText",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "A description of the group. If you need to display HTML, use the `help-text` slot instead.",
+              "attribute": "help-text"
+            },
+            {
+              "kind": "method",
+              "name": "helpTextTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hideLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Hides the label and help text visually while keeping them available to assistive technology.",
+              "attribute": "hide-label",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "isSelectable",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "isTagEnabled",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "tag is CoreTag"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "tag",
+                  "optional": true,
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The group's accessible name. If you need to display HTML, use the `label` slot instead.",
+              "attribute": "label"
+            },
+            {
+              "kind": "method",
+              "name": "labelTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "lastEnabledIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "listTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "managedAttributes",
+              "privacy": "protected",
+              "default": "new WeakMap<CoreTag, Map<string, string | null>>()"
+            },
+            {
+              "kind": "method",
+              "name": "moveFocus",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "nextEnabledIndex",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "start",
+                  "type": {
+                    "text": "number"
+                  }
+                },
+                {
+                  "name": "direction",
+                  "type": {
+                    "text": "1 | -1"
+                  }
+                }
+              ],
+              "description": "Finds the next enabled tag in a direction without wrapping."
+            },
+            {
+              "kind": "field",
+              "name": "pendingFocusIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "pendingValueAsArray",
+              "type": {
+                "text": "string[] | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "releaseTag",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ],
+              "description": "Restores a tag's original attributes and state when it leaves the group."
+            },
+            {
+              "kind": "method",
+              "name": "rememberAttributes",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "selectAll",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "selection",
+              "type": {
+                "text": "TagGroupSelection"
+              },
+              "privacy": "public",
+              "default": "'none'",
+              "description": "Whether tags can be selected, and how many at a time.",
+              "attribute": "selection",
+              "reflects": true,
+              "parsedType": {
+                "text": "'single' | 'multiple' | 'none'"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setFocusedIndex",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "syncTags",
+              "privacy": "protected",
+              "description": "Reconciles the slotted tags with the group: roles, selection ARIA, roving tabindex, and forced disabled state."
+            },
+            {
+              "kind": "field",
+              "name": "tagCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "tagGroupTemplate",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "tags",
+              "type": {
+                "text": "CoreTag[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelection",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "CoreTag"
+                  }
+                }
+              ],
+              "description": "Toggles a tag's selection and emits `change` when the selection actually changed."
+            },
+            {
+              "kind": "field",
+              "name": "typeahead",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "typeaheadTimer",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The selected values serialized with `valueDelimiter`.",
+              "attribute": "value"
+            },
+            {
+              "kind": "field",
+              "name": "valueAsArray",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "description": "The values of the selected tags as an array. A tag's value is its `value` property, or its text content."
+            },
+            {
+              "kind": "field",
+              "name": "valueDelimiter",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "','",
+              "description": "The delimiter used to parse and serialize `value`. Defaults to a comma.",
+              "attribute": "value-delimiter"
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "array"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['label', 'help-text', 'empty']"
+            }
+          ],
+          "events": [
+            {
+              "type": {
+                "text": "TagGroupChangeEvent"
+              },
+              "description": "Emitted when the user changes the selection.",
+              "name": "change",
+              "parsedType": {
+                "text": "{ value: string, valueAsArray: string[] }"
+              }
+            },
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Disables the group and every tag in it, without changing the tags' own `disabled` state.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "help-text",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "A description of the group. If you need to display HTML, use the `help-text` slot instead.",
+              "fieldName": "helpText"
+            },
+            {
+              "name": "hide-label",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Hides the label and help text visually while keeping them available to assistive technology.",
+              "fieldName": "hideLabel"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The group's accessible name. If you need to display HTML, use the `label` slot instead.",
+              "fieldName": "label"
+            },
+            {
+              "name": "selection",
+              "type": {
+                "text": "TagGroupSelection"
+              },
+              "default": "'none'",
+              "description": "Whether tags can be selected, and how many at a time.",
+              "fieldName": "selection",
+              "parsedType": {
+                "text": "'single' | 'multiple' | 'none'"
+              }
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "The selected values serialized with `valueDelimiter`.",
+              "fieldName": "value"
+            },
+            {
+              "name": "value-delimiter",
+              "type": {
+                "text": "string"
+              },
+              "default": "','",
+              "description": "The delimiter used to parse and serialize `value`. Defaults to a comma.",
+              "fieldName": "valueDelimiter"
+            }
+          ],
+          "superclass": {
+            "name": "CharmElement",
+            "module": "/src/base/charm-element/charm-element.js"
+          },
+          "tagName": "ch-tag-group",
+          "customElement": true,
+          "since": {
+            "name": "1.0.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreTag",
+              "description": ""
+            }
+          ],
+          "modulePath": "src/components/tag-group/tag-group.ts",
+          "cssStates": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreTagGroup",
+          "declaration": {
+            "name": "CoreTagGroup",
+            "module": "src/components/tag-group/tag-group.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreTagGroup",
+            "module": "src/components/tag-group/tag-group.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/tag/tag.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A tag is a compact, keyboard-accessible label used to represent a category, keyword, filter, or selected item. Tags\ncan optionally be removed by the user. A tag does not remove itself from the DOM; listen for `tag-remove` and remove\n(or veto) it from the consuming code. Tags are designed to be composed inside a tag group, which manages list roles,\nselection, and keyboard navigation between tags.",
+          "name": "CoreTag",
+          "cssProperties": [
+            {
+              "description": "The background color.",
+              "name": "--charm-tag-bg-color"
+            },
+            {
+              "description": "The foreground (text) color.",
+              "name": "--charm-tag-fg-color"
+            },
+            {
+              "description": "The border color.",
+              "name": "--charm-tag-border-color"
+            },
+            {
+              "description": "The border radius.",
+              "name": "--charm-tag-border-radius"
+            },
+            {
+              "description": "The border style.",
+              "name": "--charm-tag-border-style"
+            },
+            {
+              "description": "The border width.",
+              "name": "--charm-tag-border-width"
+            },
+            {
+              "description": "The font size.",
+              "name": "--charm-tag-font-size"
+            },
+            {
+              "description": "The space between the start slot, content, end slot, and remove button.",
+              "name": "--charm-tag-gap"
+            },
+            {
+              "description": "The inline padding.",
+              "name": "--charm-tag-padding-x"
+            },
+            {
+              "description": "The block padding.",
+              "name": "--charm-tag-padding-y"
+            },
+            {
+              "description": "The background color when hovered.",
+              "name": "--charm-tag-hover-bg-color"
+            },
+            {
+              "description": "The background color when selected.",
+              "name": "--charm-tag-selected-bg-color"
+            },
+            {
+              "description": "The foreground color when selected.",
+              "name": "--charm-tag-selected-fg-color"
+            },
+            {
+              "description": "The border color when selected.",
+              "name": "--charm-tag-selected-border-color"
+            },
+            {
+              "description": "The background color when disabled.",
+              "name": "--charm-tag-disabled-bg-color"
+            },
+            {
+              "description": "The foreground color when disabled.",
+              "name": "--charm-tag-disabled-fg-color"
+            },
+            {
+              "description": "The border color when disabled.",
+              "name": "--charm-tag-disabled-border-color"
+            },
+            {
+              "description": "The background color of the remove button.",
+              "name": "--charm-tag-remove-bg-color"
+            },
+            {
+              "description": "The border radius of the remove button.",
+              "name": "--charm-tag-remove-border-radius"
+            },
+            {
+              "description": "The size of the remove icon.",
+              "name": "--charm-tag-remove-icon-size"
+            },
+            {
+              "description": "The padding of the remove button.",
+              "name": "--charm-tag-remove-padding"
+            },
+            {
+              "description": "The background color of the remove button when hovered.",
+              "name": "--charm-tag-remove-hover-bg-color"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The component's base wrapper.",
+              "name": "tag-base"
+            },
+            {
+              "description": "The default slot container.",
+              "name": "tag-content"
+            },
+            {
+              "description": "The end slot container.",
+              "name": "tag-end"
+            },
+            {
+              "description": "The remove button.",
+              "name": "tag-remove"
+            },
+            {
+              "description": "The icon inside the remove button.",
+              "name": "tag-remove-icon"
+            },
+            {
+              "description": "The start slot container.",
+              "name": "tag-start"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The content of the tag.",
+              "name": ""
+            },
+            {
+              "description": "Content rendered after the tag content.",
+              "name": "end"
+            },
+            {
+              "description": "Visually hidden text that names the remove button. Defaults to \"Remove\"; supply translated text here.",
+              "name": "remove-label"
+            },
+            {
+              "description": "Content rendered before the tag content.",
+              "name": "start"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "attribute": "autofocus",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              },
+              "default": "'tag'"
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Disables the tag. A disabled tag cannot be removed or selected.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "emitRemove",
+              "privacy": "protected",
+              "description": "Emits the cancelable `tag-remove` event."
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hadFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleBlur",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleFocus",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handleKeyDown",
+              "privacy": "protected",
+              "description": "Delete and Backspace request removal. Keys are canceled synchronously so an enclosing group does not also act on\nthem. Arrow, Home, End, and Space navigation/selection are the containing group's responsibility."
+            },
+            {
+              "kind": "method",
+              "name": "handleRemoveClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "removable",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Renders a remove button and enables removal with the Delete and Backspace keys.",
+              "attribute": "removable",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "removeTemplate",
+              "privacy": "protected",
+              "description": "Generates the remove button. The button is in the natural tab order for a standalone tag; when a tag group\nmanages focus it is reachable by pointer and by Delete/Backspace on the focused tag instead."
+            },
+            {
+              "kind": "method",
+              "name": "requestRemove",
+              "privacy": "protected",
+              "description": "Requests removal when the tag is removable and enabled."
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Draws the tag in a selected state. Selection semantics (ARIA) are managed by the containing tag group.",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "{ ...super.shadowRootOptions, delegatesFocus: false }",
+              "description": "Focus is not delegated: a standalone tag exposes only its remove button in the tab order, while a tag group places\nfocus on the tag host itself through a roving tabindex so the tag is announced as a list item or option.",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "tagTemplate",
+              "privacy": "protected",
+              "description": "Generates the tag template."
+            },
+            {
+              "kind": "field",
+              "name": "useBlurHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "useFocusHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "An identifier for the tag. Included in the `tag-remove` event detail and used as the tag group's value.",
+              "attribute": "value"
+            }
+          ],
+          "events": [
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "type": {
+                "text": "TagRemoveEvent"
+              },
+              "description": "Emitted when the user requests removal of the tag via the remove button, Delete, or Backspace. Cancelable.",
+              "name": "tag-remove",
+              "parsedType": {
+                "text": "{ value?: string }"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "fieldName": "autofocus",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Disables the tag. A disabled tag cannot be removed or selected.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "removable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Renders a remove button and enables removal with the Delete and Backspace keys.",
+              "fieldName": "removable"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Draws the tag in a selected state. Selection semantics (ARIA) are managed by the containing tag group.",
+              "fieldName": "selected"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "An identifier for the tag. Included in the `tag-remove` event detail and used as the tag group's value.",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "CharmFocusableElement",
+            "module": "/src/base/index.js"
+          },
+          "tagName": "ch-tag",
+          "customElement": true,
+          "since": {
+            "name": "1.0.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            }
+          ],
+          "modulePath": "src/components/tag/tag.ts"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreTag",
+          "declaration": {
+            "name": "CoreTag",
+            "module": "src/components/tag/tag.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreTag",
+            "module": "src/components/tag/tag.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/text-area/text-area.ts",
       "declarations": [
         {
