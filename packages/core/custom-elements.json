@@ -41593,6 +41593,12 @@
             },
             {
               "kind": "method",
+              "name": "applyPendingValues",
+              "privacy": "protected",
+              "description": "Applies a value set through `value`/`valueAsArray` once there are tags to apply it to. A value set before the\ntags are slotted (for example, the `value` attribute in HTML) is held until the first slot change."
+            },
+            {
+              "kind": "method",
               "name": "applyValues",
               "privacy": "protected",
               "parameters": [

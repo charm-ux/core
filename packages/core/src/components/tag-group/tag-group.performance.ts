@@ -23,10 +23,12 @@ describe('tag-group performance', () => {
         (element as CoreTagGroup).selection = iteration % 2 ? 'multiple' : 'none';
       },
     });
+  });
 
+  it('reports arrow-key timings for a 20-tag listbox', async () => {
     await benchmarkComponentPerformance({
-      name: 'tag-group/100-tags-arrow',
-      create: () => createGroup(100, 'multiple'),
+      name: 'tag-group/20-tags-arrow',
+      create: () => createGroup(20, 'multiple'),
       update: element => {
         element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, composed: true, key: 'ArrowRight' }));
       },

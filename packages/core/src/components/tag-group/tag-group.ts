@@ -175,14 +175,21 @@ export class CoreTagGroup extends CharmElement {
         if (tag.selected) found = true;
       });
     }
-    if (this.pendingValueAsArray) {
-      const values = this.pendingValueAsArray;
-      this.pendingValueAsArray = undefined;
-      this.applyValues(values);
-    }
+    this.applyPendingValues();
     if (changedProperties.has('selection') || changedProperties.has('disabled')) {
       this.syncTags();
     }
+  }
+
+  /**
+   * Applies a value set through `value`/`valueAsArray` once there are tags to apply it to. A value set before the
+   * tags are slotted (for example, the `value` attribute in HTML) is held until the first slot change.
+   */
+  protected applyPendingValues() {
+    if (!this.pendingValueAsArray || !this.tags.length) return;
+    const values = this.pendingValueAsArray;
+    this.pendingValueAsArray = undefined;
+    this.applyValues(values);
   }
 
   protected getTagValue(tag: CoreTag): string {
@@ -239,6 +246,7 @@ export class CoreTagGroup extends CharmElement {
     this.tags.filter(tag => !next.includes(tag)).forEach(tag => this.releaseTag(tag));
     this.tags = next;
     this.tagCount = next.length;
+    this.applyPendingValues();
 
     if (!this.isTagEnabled(this.tags[this.focusedIndex])) {
       const selectedIndex = this.tags.findIndex(tag => this.isTagEnabled(tag) && tag.selected);

@@ -390,6 +390,32 @@ export class CoreTagGroupTests<T extends CoreTagGroup> extends CharmElementTests
                   expect(handler).to.have.callCount(0);
                 },
               },
+              initialValueAttribute: {
+                description: 'applies a value attribute set before the tags are slotted',
+                test: async () => {
+                  const container = document.createElement('div');
+                  container.innerHTML = `
+                    <ch-tag-group label="Filters" selection="multiple" value="banana,cherry">
+                      <ch-tag value="apple">Apple</ch-tag>
+                      <ch-tag value="banana">Banana</ch-tag>
+                      <ch-tag value="cherry">Cherry</ch-tag>
+                    </ch-tag-group>`;
+                  document.body.append(container);
+                  try {
+                    const group = container.querySelector('ch-tag-group') as CoreTagGroup;
+                    await elementUpdated(group);
+                    await waitUntil(
+                      () => group.valueAsArray.length === 2 && !group.querySelector('ch-tag:not([role])')
+                    );
+                    const tags = [...group.children] as CoreTag[];
+                    expect(tags.map(tag => tag.selected)).to.deep.equal([false, true, true]);
+                    expect(tags.map(tag => tag.getAttribute('aria-selected'))).to.deep.equal(['false', 'true', 'true']);
+                    expect(group.value).to.equal('banana,cherry');
+                  } finally {
+                    container.remove();
+                  }
+                },
+              },
               singleModeTrimsExtraSelections: {
                 description: 'switching to single selection keeps only the first selected tag',
                 test: async () => {
