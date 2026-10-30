@@ -66,10 +66,6 @@ export class CoreTag extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'tag';
 
-  public static override get dependencies(): (typeof CharmElement)[] {
-    return [CoreIcon];
-  }
-
   /** An identifier for the tag. Included in the `tag-remove` event detail. */
   @property()
   public value?: string;
@@ -85,6 +81,10 @@ export class CoreTag extends CharmFocusableElement {
   /** Draws the tag in a selected state. Selection semantics (ARIA) are managed by the containing tag group. */
   @property({ type: Boolean, reflect: true })
   public selected = false;
+
+  public static override get dependencies(): (typeof CharmElement)[] {
+    return [CoreIcon];
+  }
 
   protected override willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);

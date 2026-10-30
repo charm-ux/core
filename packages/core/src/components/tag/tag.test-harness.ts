@@ -120,9 +120,9 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                   for (const id of ids) {
                     expect(this.component.shadowRoot?.getElementById(id)).to.not.be.null;
                   }
-                  const label = this.component.shadowRoot?.getElementById('remove-label')!;
-                  expect(label.classList.contains('visually-hidden')).to.be.true;
-                  expect(label.textContent?.trim()).to.equal('Remove');
+                  const label = this.component.shadowRoot?.getElementById('remove-label');
+                  expect(label?.classList.contains('visually-hidden')).to.be.true;
+                  expect(label?.textContent?.trim()).to.equal('Remove');
                   expect(button.hasAttribute('aria-label')).to.be.false;
                 },
               },
