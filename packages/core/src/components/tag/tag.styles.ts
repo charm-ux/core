@@ -36,7 +36,7 @@ export default css`
     padding-inline: ${component('tag', 'paddingX')};
   }
 
-  :host(:hover:not([disabled])) .base {
+  :host(:hover:not([aria-disabled='true'])) .base {
     background-color: ${component('tag', 'hover', 'bgColor')};
   }
 
@@ -46,7 +46,7 @@ export default css`
     color: ${component('tag', 'selected', 'fgColor')};
   }
 
-  :host([disabled]) .base {
+  :host([aria-disabled='true']) .base {
     background-color: ${component('tag', 'disabled', 'bgColor')};
     border-color: ${component('tag', 'disabled', 'borderColor')};
     color: ${component('tag', 'disabled', 'fgColor')};
@@ -103,7 +103,7 @@ export default css`
       color: HighlightText;
     }
 
-    :host([disabled]) .base {
+    :host([aria-disabled='true']) .base {
       border-color: GrayText;
       color: GrayText;
     }
