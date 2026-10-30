@@ -94,6 +94,23 @@ export class CoreMenuGroupTests<T extends CoreMenuGroup> extends CharmElementTes
                   expect(headingSlot).to.exist;
                 },
               },
+              lateHeadingLabelsGroup: {
+                description: 'labels the group when heading slot content is added after render',
+                test: async () => {
+                  const el = this.component;
+                  const group = el.shadowRoot?.querySelector('[role="group"]') as HTMLElement;
+                  expect(group.hasAttribute('aria-labelledby')).to.be.false;
+
+                  const heading = document.createElement('span');
+                  heading.slot = 'heading';
+                  heading.textContent = 'Late heading';
+                  el.appendChild(heading);
+                  await oneEvent(el.shadowRoot!.querySelector('slot[name="heading"]')!, 'slotchange');
+                  await elementUpdated(el);
+
+                  expect(group.getAttribute('aria-labelledby')).to.equal('heading');
+                },
+              },
             },
           },
 

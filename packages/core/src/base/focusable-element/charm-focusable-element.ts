@@ -23,7 +23,6 @@ export class CharmFocusableElement extends CharmElement {
   @state()
   protected hadFocus = false;
 
-  protected focusableEventOptions: CustomEventInit = {};
   protected useBlurHandler = true;
   protected useFocusHandler = true;
 
@@ -35,17 +34,19 @@ export class CharmFocusableElement extends CharmElement {
     if (this.useFocusHandler) this.addEventListener('focus', this.handleFocus);
   }
 
+  public override disconnectedCallback() {
+    if (this.useBlurHandler) this.removeEventListener('blur', this.handleBlur);
+    if (this.useFocusHandler) this.removeEventListener('focus', this.handleFocus);
+    super.disconnectedCallback();
+  }
+
   protected handleBlur() {
     this.hadFocus = true;
-    if (this.hasFocus) {
-      this.hasFocus = false;
-    }
+    this.hasFocus = false;
   }
 
   protected handleFocus() {
-    if (!this.hasFocus) {
-      this.hasFocus = true;
-    }
+    this.hasFocus = true;
   }
 }
 

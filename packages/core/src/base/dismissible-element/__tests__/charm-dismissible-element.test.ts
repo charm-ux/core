@@ -1,5 +1,6 @@
-import { elementUpdated, expect } from '@open-wc/testing';
+import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
+import { emulateMedia } from '@web/test-runner-commands';
 import { DEFAULT_THEME_PREFIX, setThemePrefix } from '../../../utilities/theme.js';
 import '../../../components/accordion-item/index.js';
 import '../../../components/alert/index.js';
@@ -13,7 +14,6 @@ import '../../../components/tooltip/index.js';
 type DismissibleInternals = {
   getMaxTransitionTime: (styles: string[]) => number;
   getTransitionStyles: () => string[];
-  parseTimeToMilliseconds: (value: string) => number;
 };
 
 const tags = [
@@ -67,13 +67,95 @@ describe('CharmDismissibleElement', () => {
     expect(internals.getTransitionStyles()).to.deep.equal(['opacity 2ms 3ms', 'opacity 1ms']);
   });
 
-  it('parses none, comma-separated transitions, units, delays, and bare seconds', async () => {
+  it('parses none, comma-separated transitions, units, and delays', async () => {
     const element = await mount('ch-alert');
     const getMaxTransitionTime = (element as unknown as DismissibleInternals).getMaxTransitionTime;
 
     expect(getMaxTransitionTime.call(element, ['none'])).to.equal(0);
     expect(getMaxTransitionTime.call(element, ['opacity 0.2s 50ms, transform 300ms 0.1s'])).to.equal(400);
-    expect((element as unknown as DismissibleInternals).parseTimeToMilliseconds('2')).to.equal(2000);
+  });
+
+  it('waits for the initial render before emitting after-show for an initially open component', async () => {
+    const element = document.createElement('ch-alert');
+    element.setAttribute('open', '');
+    const afterShow = oneEvent(element, 'alert-after-show');
+    document.body.append(element);
+
+    await afterShow;
+    expect(element.hasAttribute('open')).to.be.true;
+    expect(element.shadowRoot?.querySelector('.alert-wrapper')).to.not.be.null;
+  });
+
+  async function openAlert(style: string) {
+    const element = await mount('ch-alert', style);
+    const afterShow = sinon.spy();
+    element.addEventListener('alert-after-show', afterShow);
+    (element as HTMLElement & { open: boolean }).open = true;
+    const wrapper = element.shadowRoot!.querySelector('.alert-wrapper')!;
+    const end = (elapsedTime: number, pseudoElement = '') =>
+      wrapper.dispatchEvent(
+        new TransitionEvent('transitionend', { elapsedTime, propertyName: 'opacity', pseudoElement })
+      );
+    return { afterShow, end };
+  }
+
+  it('does not settle on a shorter or pseudo-element transition end', async () => {
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 100ms, transform 500ms;');
+
+    end(0.1);
+    end(0.5, '::before');
+    expect(afterShow).not.to.have.been.called;
+    end(0.5);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('settles on the longest duration when the transition has a delay', async () => {
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 200ms 300ms;');
+
+    end(0.2);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('tolerates float rounding in elapsedTime', async () => {
+    const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 1.001s;');
+
+    end(1.001);
+    expect(afterShow).to.have.been.calledOnce;
+  });
+
+  it('settles on the collapsed transition end under reduced motion', async () => {
+    await emulateMedia({ reducedMotion: 'reduce' });
+    try {
+      const { afterShow, end } = await openAlert('--charm-alert-transition: opacity 500ms;');
+
+      end(0.00001);
+      expect(afterShow).to.have.been.calledOnce;
+    } finally {
+      await emulateMedia({ reducedMotion: 'no-preference' });
+    }
+  });
+
+  it('restarts a pending after event after reconnecting during a transition', async () => {
+    const element = await mount('ch-alert', '--charm-alert-transition: opacity 1ms;');
+    const afterShow = oneEvent(element, 'alert-after-show');
+    (element as HTMLElement & { open: boolean }).open = true;
+    element.remove();
+    document.body.append(element);
+
+    await afterShow;
+    expect((element as HTMLElement & { open: boolean }).open).to.be.true;
+  });
+
+  it('keeps the closed state when a show listener immediately hides the element', async () => {
+    const element = await mount('ch-alert');
+    const afterHide = oneEvent(element, 'alert-after-hide');
+    element.addEventListener('alert-show', () => ((element as HTMLElement & { open: boolean }).open = false), {
+      once: true,
+    });
+    (element as HTMLElement & { open: boolean }).open = true;
+
+    await afterHide;
+    expect((element as HTMLElement & { open: boolean }).open).to.be.false;
   });
 
   it('measures starts-open elements after firstUpdated and reacts to theme changes', async () => {

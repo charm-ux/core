@@ -1,30 +1,34 @@
-# TEST-004: Ship a `*.performance.ts` render-time budget for every component
+# TEST-004: Report component performance benchmarks accurately
 
-Every component includes a `<name>.performance.ts` file that asserts render time stays
-under a fixed millisecond budget, using `web-test-runner-performance`. This catches
-performance regressions per component. Register the component through `createScope` (as the
-harness does), then assert `testRenderTime(...).duration` against the component's budget.
-Keep the (currently stubbed) bundle-size assertion shape in place as a TODO so it can be
-enabled later.
+Components include a `<name>.performance.ts` benchmark using `benchmarkComponentPerformance`
+from `internal/testing/component-performance.ts`. The helper records mount, rerender, and bulk
+mount timing summaries for the `performanceReporter`. Those summaries are diagnostic, not
+budgets. A budget is an explicit `expect(...).to.be.lessThan(budgetMs)` assertion in the same file
+([PERF-002](../performance/PERF-002.md)). Only call a check a budget when such an assertion exists.
 
 Run these separately from unit tests: `pnpm test:core-performance`.
+Run bulk counts sequentially to avoid benchmark contention, and exclude production benchmark
+entries from the source-run glob when they import `dist`.
+
+Benchmarks must exercise the operation they claim to measure. A popup positioning benchmark must
+open the popup with a real anchor and wait for positioning; an overflow-resize benchmark must
+change available width and let the resize/reflow path run. A closed popup or label-only update is
+not evidence about positioning or resizing performance.
 
 **Do:**
 
 ```ts
-it(`should render under 20ms`, async () => {
-  expect((await testRenderTime(element)).duration).to.be.lessThan(20);
+await benchmarkComponentPerformance({
+  name: 'button',
+  create: () => document.createElement('ch-button'),
+  update: element => (element as CharmButton).requestUpdate(),
 });
-
-// TODO: enable bundle-size budget
-// it('should be under Xkb', async () => { ... });
 ```
 
 **Don't:**
 
 ```ts
-// Shipping a component with no .performance.ts — no regression guard on render cost.
-// (or) removing the budget assertion because it's inconvenient.
+// Running bulk scenarios concurrently, which contaminates timing samples.
 ```
 
 See also: [TEST-001](./TEST-001.md), [DOC-002](../documentation/DOC-002.md)

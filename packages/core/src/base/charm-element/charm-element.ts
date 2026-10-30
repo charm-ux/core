@@ -4,6 +4,7 @@ import { property } from 'lit/decorators.js';
 import { HasSlotController } from '../../controller/slot.js';
 import { DEFAULT_THEME_PREFIX, getScope, getThemePrefix } from '../../utilities/index.js';
 import styles from './charm-element.styles.js';
+import type { CharmScope } from '../../utilities/scope.js';
 
 /** Matches an opening or closing `<scoped-*>` tag, capturing the slash and the component base name. */
 const SCOPED_TAG = /<(\/?)scoped-([a-z][a-z0-9-]*)/g;
@@ -21,6 +22,9 @@ function cssTextOf(style: CSSResultOrNative): string {
 function rewriteThemePrefix(cssText: string, prefix: string): string {
   return cssText.split(`--${DEFAULT_THEME_PREFIX}-`).join(`--${prefix}-`);
 }
+
+/** Element classes whose `dependencies` have already been registered, per scope. */
+const registeredDependencies = new WeakMap<CharmScope, WeakSet<typeof CharmElement>>();
 
 /**
  * A base class for all Charm components.
@@ -49,7 +53,7 @@ export class CharmElement extends LitElement {
    */
   private static _scopedTemplateStrings = new WeakMap<TemplateStringsArray, Map<string, TemplateStringsArray>>();
 
-  protected scope: any;
+  protected scope!: CharmScope;
 
   /** @internal Tracks the presence of watched slotted content. */
   protected readonly slotController = new HasSlotController(this);
@@ -58,16 +62,28 @@ export class CharmElement extends LitElement {
 
   public constructor() {
     super();
-    this.scope = getScope(this);
-    if (!this.scope) {
+    const scope = getScope(this);
+    if (!scope) {
       throw new Error(
         `"${this.tagName}" is not registered with a Charm scope. ` +
           'Register the component with project.scope.registerComponent() (import it from its index.ts barrel) ' +
           'instead of using @customElement() / customElements.define().'
       );
     }
-    // @ts-ignore
-    this.constructor.dependencies?.forEach(component => this.scope.registerComponent(component));
+    this.scope = scope;
+    const ctor = this.constructor as typeof CharmElement;
+    let registeredClasses = registeredDependencies.get(scope);
+    if (!registeredClasses) registeredDependencies.set(scope, (registeredClasses = new WeakSet()));
+    if (registeredClasses.has(ctor)) return;
+    let elementClass: typeof CharmElement | null = ctor;
+    while (elementClass) {
+      if (Object.prototype.hasOwnProperty.call(elementClass, 'dependencies')) {
+        elementClass.dependencies.forEach(component => this.scope.registerComponent(component));
+      }
+      if (elementClass === CharmElement) break;
+      elementClass = Object.getPrototypeOf(elementClass) as typeof CharmElement | null;
+    }
+    registeredClasses.add(ctor);
   }
 
   /** @internal An array of components used within this component that will need to match the host scoping */
@@ -89,6 +105,8 @@ export class CharmElement extends LitElement {
       toAttribute: (value: unknown) => value || null,
     },
   })
+
+  /** @internal */
   public override get dir(): 'ltr' | 'rtl' | 'auto' | '' {
     return this._dir ?? '';
   }
@@ -120,12 +138,6 @@ export class CharmElement extends LitElement {
       // `:dir()` is unsupported in older browsers; only they pay for the style recalculation.
       return getComputedStyle(this).direction === 'rtl' ? 'rtl' : 'ltr';
     }
-  }
-
-  /** @internal Gets scoped tag name */
-  // eslint-disable-next-line @typescript-eslint/member-ordering
-  public get customTag() {
-    return `${this.scope.prefix}-${CharmElement.baseName}${this.scope.suffix ? `_${this.scope.suffix}` : ''}`;
   }
 
   public override connectedCallback() {
@@ -168,8 +180,10 @@ export class CharmElement extends LitElement {
     let sheets = byPrefix.get(prefix);
     if (!sheets) {
       sheets = (ctor as unknown as typeof LitElement).elementStyles.map(style => {
+        const cssText = cssTextOf(style);
+        if (!cssText.includes(`--${DEFAULT_THEME_PREFIX}-`) && !('cssText' in style)) return style as CSSStyleSheet;
         const sheet = new CSSStyleSheet();
-        sheet.replaceSync(rewriteThemePrefix(cssTextOf(style), prefix));
+        sheet.replaceSync(rewriteThemePrefix(cssText, prefix));
         return sheet;
       });
       byPrefix.set(prefix, sheets);

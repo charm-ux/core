@@ -50,6 +50,50 @@ export const WithUnavailableDates: Story = {
   },
 };
 
+export const Required: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Required date',
+    required: true,
+  },
+};
+
+export const Readonly: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Readonly date',
+    value: '2026-10-18',
+    readonly: true,
+  },
+};
+
+export const Disabled: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Disabled date',
+    value: '2026-10-18',
+    disabled: true,
+  },
+};
+
+export const Invalid: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Invalid date',
+    value: '2026-10-18',
+    errorMessage: 'Choose an available date.',
+  },
+};
+
+export const RightToLeft: Story = {
+  render: args => template(args),
+  args: {
+    label: 'التاريخ',
+    value: '2026-10-18',
+    dir: 'rtl',
+  },
+};
+
 export const Clearable: Story = {
   render: args => template(args),
   args: {

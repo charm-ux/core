@@ -261,8 +261,8 @@ const charmTokensBase = defineTokens(
         // Base state
         bgColor: { light: primitive('color', 'white'), dark: primitive('color', 'neutral', 800) },
         fgColor: { light: primitive('color', 'neutral', 900), dark: primitive('color', 'neutral', 50) },
-        borderColor: { light: primitive('color', 'neutral', 300), dark: primitive('color', 'neutral', 600) },
-        placeholderColor: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) },
+        borderColor: { light: primitive('color', 'neutral', 400), dark: primitive('color', 'neutral', 500) },
+        placeholderColor: { light: primitive('color', 'neutral', 600), dark: primitive('color', 'neutral', 300) },
         shadow: primitive('shadow', 'none'),
         // Static properties
         borderWidth: primitive('borderWidth', 'thin'),
@@ -345,6 +345,9 @@ const charmTokensBase = defineTokens(
         fgColor: semantic('text', 'primary'),
         borderColor: semantic('border', 'primary'),
         borderWidth: primitive('borderWidth', 'thin'),
+        summaryGap: primitive('spacing', 'xs'),
+        summaryPaddingX: primitive('spacing', 'md'),
+        summaryPaddingY: primitive('spacing', 'sm'),
         hover: {
           bgColor: semantic('surface', 'secondary'),
           fgColor: semantic('text', 'primary'),
@@ -360,6 +363,7 @@ const charmTokensBase = defineTokens(
           timingFunction: 'ease-in-out',
         },
         icon: {
+          size: '20px',
           transition: 'transform 0.3s ease-in-out',
           expandedTransform: 'rotate(180deg)',
           collapsedTransform: 'rotate(0deg)',
@@ -569,7 +573,7 @@ const charmTokensBase = defineTokens(
         item: {
           gap: primitive('spacing', 'xs'),
           padding: `${primitive('spacing', 'xs')} ${primitive('spacing', 'sm')}`,
-          controlWidth: '24px',
+          controlWidth: 'auto',
           borderWidth: primitive('borderWidth', 'thin'),
           bgColor: 'transparent',
           fgColor: semantic('text', 'secondary'),
@@ -683,7 +687,7 @@ const charmTokensBase = defineTokens(
         groupCheckboxGap: primitive('spacing', 'md'),
         bgColor: semantic('surface', 'primary'),
         fgColor: semantic('text', 'primary'),
-        borderColor: semantic('border', 'secondary'),
+        borderColor: semantic('formControl', 'borderColor'),
         hover: {
           fgColor: semantic('text', 'primary'),
           borderColor: semantic('border', 'strong'),
@@ -731,7 +735,7 @@ const charmTokensBase = defineTokens(
         inset: '0',
         size: 'fit-content',
         transition: 'opacity 0.2s ease, transform 0.2s ease',
-        positionTransition: 'top 0.2s ease, left 0.2s ease',
+        positionTransition: 'transform 0.2s ease',
         footerButtonGap: primitive('spacing', 'sm'),
         toolbarButtonGap: primitive('spacing', 'sm'),
         headerToolbarGap: primitive('spacing', 'md'),
@@ -870,6 +874,7 @@ const charmTokensBase = defineTokens(
           },
           radio: {
             bgColor: semantic('surface', 'primary'),
+            indicatorBgColor: semantic('text', 'primary'),
             active: {
               bgColor: semantic('action', 'primary', 'color'),
               borderColor: semantic('border', 'strong'),
@@ -926,7 +931,7 @@ const charmTokensBase = defineTokens(
         bodyMarginInline: primitive('spacing', 'lg'),
         headerPaddingX: primitive('spacing', 'lg'),
         headerPaddingY: primitive('spacing', 'md'),
-        footerPaddingX: primitive('spacing', 'lg'),
+        footerPaddingX: '0',
         footerPaddingY: primitive('spacing', 'md'),
         transition: 'width 0.3s ease, opacity 0.3s ease',
         toolbarButtonGap: primitive('spacing', 'sm'),
@@ -959,7 +964,7 @@ const charmTokensBase = defineTokens(
       // Radio
       radio: {
         bgColor: semantic('surface', 'primary'),
-        borderColor: semantic('border', 'secondary'),
+        borderColor: semantic('formControl', 'borderColor'),
         controlSize: '20px',
         indicatorSize: '8px',
         groupRadioGap: primitive('spacing', 'md'),

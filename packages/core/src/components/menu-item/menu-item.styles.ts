@@ -18,7 +18,7 @@ export default css`
     display: flex;
     justify-content: start;
     list-style: none;
-    min-width: max-content;
+    min-width: 0;
     padding-inline: ${component('menu', 'item', 'paddingX')};
     padding-block: ${component('menu', 'item', 'paddingY')};
     pointer-events: auto;
@@ -78,6 +78,11 @@ export default css`
     transform: rotate(${component('menu', 'item', 'submenu', 'iconRotation')});
   }
 
+  :host(:dir(rtl)) .submenu-item-icon,
+  :host(:dir(rtl)) .submenu-item-icon-expanded {
+    transform: rotate(90deg);
+  }
+
   .input-container {
     position: relative;
     width: ${component('menu', 'item', 'inputContainerWidth')};
@@ -105,6 +110,11 @@ export default css`
     position: relative;
   }
 
+  .content {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
   :host(:hover) .radio {
     border-color: ${component('menu', 'item', 'radio', 'hover', 'borderColor')};
   }
@@ -120,7 +130,7 @@ export default css`
     height: 8px;
     border-radius: 50%;
     display: inline-block;
-    background: ${component('menu', 'item', 'radio', 'bgColor')};
+    background: ${component('menu', 'item', 'radio', 'indicatorBgColor')};
     pointer-events: none;
   }
 

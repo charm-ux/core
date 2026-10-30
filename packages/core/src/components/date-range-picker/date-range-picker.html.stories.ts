@@ -50,6 +50,50 @@ export const WithUnavailableDates: Story = {
   },
 };
 
+export const Required: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Required date range',
+    required: true,
+  },
+};
+
+export const Readonly: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Readonly date range',
+    value: '2026-10-18/2026-10-24',
+    readonly: true,
+  },
+};
+
+export const Disabled: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Disabled date range',
+    value: '2026-10-18/2026-10-24',
+    disabled: true,
+  },
+};
+
+export const Invalid: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Invalid date range',
+    value: '2026-10-18/2026-10-24',
+    errorMessage: 'Choose an available range.',
+  },
+};
+
+export const RightToLeft: Story = {
+  render: args => template(args),
+  args: {
+    label: 'الفترة الزمنية',
+    value: '2026-10-18/2026-10-24',
+    dir: 'rtl',
+  },
+};
+
 export const RangeLengthConstraints: Story = {
   render: args => template(args),
   args: {

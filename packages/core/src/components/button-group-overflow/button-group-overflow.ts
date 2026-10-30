@@ -29,7 +29,14 @@ export class CoreButtonGroupOverflow extends CoreOverflow {
 
   // Override to get slotted element children, or the element itself if it has no children
   protected override get slottedElements(): HTMLElement[] {
+    const actionableTags = [
+      this.scope.tagName('button').toLowerCase(),
+      this.scope.tagName('menu').toLowerCase(),
+      this.scope.tagName('divider').toLowerCase(),
+      this.scope.tagName('tooltip').toLowerCase(),
+    ];
     return this.assignedElements.flatMap(element => {
+      if (actionableTags.includes(element.localName)) return [element];
       const children = Array.from(element.children) as HTMLElement[];
       return children.length > 0 ? children : [element];
     });

@@ -21,7 +21,7 @@ By default the divider is horizontal with a solid line and a height of 1px.
 ## Adding content
 
 To render a content add an element within the opening and closing of the `<ch-divider>` tag. By default the content is in the center of the divider. <br></br>
-The default margin between the content and the divider is `0.25em`. To change the margin you will need to change the value of the `--divider-margin` token.
+The default gap between the content and the divider uses the theme's medium spacing token. Customize it with `--charm-divider-text-gap`.
 
 <code-bubble>
 
@@ -66,7 +66,7 @@ Since the padding is defaulted to `0px`, you will need set the value of the `--d
 
 The orientation of the divider is defaulted to horizontal. To render the divider vertically, use the `orientation` attribute within the `<ch-divider>` element and set the value to `vertical`. <br></br>
 
-In addition, you can adjust the height of the divider by setting the value of the `--divider-vertical-min-heigh` token.
+In addition, you can adjust the height of the divider by setting `--charm-divider-vertical-min-height`.
 
 <code-bubble>
 

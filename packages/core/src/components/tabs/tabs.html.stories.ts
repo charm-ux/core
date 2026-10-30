@@ -11,7 +11,7 @@ const { args, argTypes, events, template } = getStorybookHelpers('ch-tabs');
 const meta: Meta<CoreTabs> = {
   title: 'Core/Tabs',
   component: 'ch-tabs',
-  args,
+  args: { ...args, label: 'Example tabs' },
   argTypes,
   parameters: {
     actions: {

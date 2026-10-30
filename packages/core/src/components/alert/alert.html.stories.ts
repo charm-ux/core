@@ -122,6 +122,6 @@ export const Transition: Story = {
     open: true,
     heading: 'Heading',
     dismissible: true,
-    '--alert-transition': 'opacity 1s',
+    '--charm-alert-transition': 'opacity 1s',
   },
 };

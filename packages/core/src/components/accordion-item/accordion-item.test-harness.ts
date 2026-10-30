@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, waitUntil } from '@open-wc/testing';
+import { elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CoreAccordionItem } from './index.js';
@@ -49,7 +49,6 @@ export class CoreAccordionItemTests<T extends CoreAccordionItem> extends CharmEl
                   const el = this.component;
                   el.open = false;
                   await elementUpdated(el);
-                  await aTimeout(50);
 
                   const showHandler = sinon.spy();
                   const afterShowHandler = sinon.spy();
@@ -70,7 +69,6 @@ export class CoreAccordionItemTests<T extends CoreAccordionItem> extends CharmEl
                   const el = this.component;
                   el.open = true;
                   await elementUpdated(el);
-                  await aTimeout(50);
 
                   const hideHandler = sinon.spy();
                   const afterHideHandler = sinon.spy();

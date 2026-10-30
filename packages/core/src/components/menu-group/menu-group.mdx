@@ -13,13 +13,14 @@ A basic menu group with a heading and three menu items:
 <code-bubble>
 
 ```html
-<div role="menu">
+<ch-menu>
+  <ch-button slot="trigger">Options</ch-button>
   <ch-menu-group heading="Group heading">
     <ch-menu-item>Menu Item 1</ch-menu-item>
     <ch-menu-item>Menu Item 2</ch-menu-item>
     <ch-menu-item>Menu Item 3</ch-menu-item>
   </ch-menu-group>
-</div>
+</ch-menu>
 ```
 
 </code-bubble>
@@ -31,14 +32,15 @@ You can provide a custom heading using the `heading` slot:
 <code-bubble>
 
 ```html
-<div role="menu">
+<ch-menu>
+  <ch-button slot="trigger">Options</ch-button>
   <ch-menu-group>
     <div slot="heading">Slotted heading</div>
     <ch-menu-item>Menu Item 1</ch-menu-item>
     <ch-menu-item>Menu Item 2</ch-menu-item>
     <ch-menu-item>Menu Item 3</ch-menu-item>
   </ch-menu-group>
-</div>
+</ch-menu>
 ```
 
 </code-bubble>
@@ -50,13 +52,14 @@ Use the `select="single"` attribute to create a radio button-style menu group wh
 <code-bubble>
 
 ```html
-<div role="menu">
+<ch-menu>
+  <ch-button slot="trigger">Options</ch-button>
   <ch-menu-group heading="Select One" select="single">
     <ch-menu-item>Menu Item 1</ch-menu-item>
     <ch-menu-item>Menu Item 2</ch-menu-item>
     <ch-menu-item>Menu Item 3</ch-menu-item>
   </ch-menu-group>
-</div>
+</ch-menu>
 ```
 
 </code-bubble>
@@ -68,13 +71,14 @@ Use the `select="multiple"` attribute to create a checkbox-style menu group wher
 <code-bubble>
 
 ```html
-<div role="menu">
+<ch-menu>
+  <ch-button slot="trigger">Options</ch-button>
   <ch-menu-group heading="Select Multiple" select="multiple">
     <ch-menu-item>Menu Item 1</ch-menu-item>
     <ch-menu-item>Menu Item 2</ch-menu-item>
     <ch-menu-item>Menu Item 3</ch-menu-item>
   </ch-menu-group>
-</div>
+</ch-menu>
 ```
 
 </code-bubble>

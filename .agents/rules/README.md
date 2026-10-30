@@ -48,10 +48,11 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [CHARM-003](internal/CHARM-003.md) — Declare nested components in `static dependencies`
 - [CHARM-004](internal/CHARM-004.md) — Theme through the theming package, never hardcode
 - [CHARM-005](internal/CHARM-005.md) — Keep the custom-elements manifest accurate with JSDoc
-- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`; re-apply checked-dependent form values
+- [CHARM-006](internal/CHARM-006.md) — Build form controls on `CharmFormControlElement`; preserve checked values and separate explicit from fieldset-disabled state
 - [CHARM-007](internal/CHARM-007.md) — Use the dual named + default export, class in its own `.ts`
 - [CHARM-008](internal/CHARM-008.md) — Register icons as inline SVG strings in the icon set, not asset files
 - [CHARM-009](internal/CHARM-009.md) — Use correct JSDoc annotation tags (`@cssprop`, not `@cssproperty`)
+- [CHARM-010](internal/CHARM-010.md) — Resolve Charm tag names through the scope in DOM queries
 
 ### COMP — component design (path-gated)
 
@@ -71,6 +72,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [COMP-014](component-design/COMP-014.md) — Position overlays through `ch-popup`, never import a positioning library directly
 - [COMP-015](component-design/COMP-015.md) — Drive show/hide from a `visible` state settled on `transitionend` with a fallback timer
 - [COMP-016](component-design/COMP-016.md) — Prefer `protected` members for component extension points
+- [COMP-017](component-design/COMP-017.md) — Cross shadow roots with the shared composed-tree helpers
 
 ### PROP — properties, attributes, events (path-gated)
 
@@ -99,7 +101,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 
 ### A11Y — accessibility (always loaded)
 
-- [A11Y-001](accessibility/A11Y-001.md) — Use semantic elements and roles; add ARIA only to fill gaps
+- [A11Y-001](accessibility/A11Y-001.md) — Use native semantics first; use `ElementInternals` for host-based custom controls
 - [A11Y-002](accessibility/A11Y-002.md) — Prefer visually-hidden text over `aria-label` for user-facing labels
 - [A11Y-003](accessibility/A11Y-003.md) — Manage focus and keyboard interaction
 - [A11Y-004](accessibility/A11Y-004.md) — Ship an accessibility test for every component
@@ -107,21 +109,27 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-006](accessibility/A11Y-006.md) — Return focus to the opener when a dismissible closes
 - [A11Y-007](accessibility/A11Y-007.md) — Use roving tabindex for composite widgets
 - [A11Y-008](accessibility/A11Y-008.md) — Compare `event.key` against the shared `keys` map, not string literals
-- [A11Y-009](accessibility/A11Y-009.md) — Honor `prefers-reduced-motion` (aspirational)
+- [A11Y-009](accessibility/A11Y-009.md) — Honor `prefers-reduced-motion`
 - [A11Y-010](accessibility/A11Y-010.md) — Reflect disabled state with `aria-disabled` on the widget host, and keep it in sync
 - [A11Y-011](accessibility/A11Y-011.md) — Make closed or off-screen content `inert`
+- [A11Y-012](accessibility/A11Y-012.md) — Meet contrast for text and essential control boundaries
+- [A11Y-013](accessibility/A11Y-013.md) — Label every field in composite form controls and anchor validation to visible controls
+- [A11Y-014](accessibility/A11Y-014.md) — Name the element that carries a composite widget's role
+- [A11Y-015](accessibility/A11Y-015.md) — Own keyboard events synchronously and target the element that takes focus
 
 ### I18N — internationalization (path-gated)
 
 - [I18N-001](i18n/I18N-001.md) — Render user-facing text via slots and DOM, not attributes
 - [I18N-002](i18n/I18N-002.md) — Support RTL through direction-aware styling and behavior
+- [I18N-003](i18n/I18N-003.md) — Keep civil-date math Gregorian while localizing its presentation
 
 ### TEST — testing (path-gated)
 
 - [TEST-001](testing/TEST-001.md) — Use the test-harness pattern
 - [TEST-002](testing/TEST-002.md) — Use `@open-wc/testing` + web-test-runner, and await updates
 - [TEST-003](testing/TEST-003.md) — Assert events with `oneEvent`, keys with `sendKeys`, spies with `sinon`
-- [TEST-004](testing/TEST-004.md) — Ship a `*.performance.ts` render-time budget for every component
+- [TEST-004](testing/TEST-004.md) — Report component performance benchmarks accurately
+- [TEST-005](testing/TEST-005.md) — Unit-test foundation utilities directly
 
 ### DOC — documentation (path-gated)
 

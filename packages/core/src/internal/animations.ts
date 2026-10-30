@@ -13,6 +13,7 @@ export function parseDuration(delay: number | string) {
   return parseFloat(delay);
 }
 
+/** @deprecated No internal call sites remain; CSS styles handle reduced motion. */
 export function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }

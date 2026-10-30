@@ -74,3 +74,23 @@ describe('CharmElement theme prefix transformation', () => {
     expect(el.shadowRoot!.adoptedStyleSheets.length).to.be.greaterThan(1);
   });
 });
+
+describe('CharmElement dependencies', () => {
+  it('registers class dependencies once per scope, not per instance', () => {
+    let reads = 0;
+    class DependencyCounter extends accordionItem {
+      public static override baseName = 'dependency-counter';
+
+      public static override get dependencies() {
+        reads += 1;
+        return super.dependencies;
+      }
+    }
+    project.scope.registerComponent(DependencyCounter);
+
+    document.createElement('ch-dependency-counter');
+    document.createElement('ch-dependency-counter');
+
+    expect(reads).to.equal(1);
+  });
+});

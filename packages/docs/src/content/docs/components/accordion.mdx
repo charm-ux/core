@@ -8,7 +8,7 @@ Accordion consists of multiple details elements, stacked vertically for default 
 
 ## Default
 
-Use [accordion items](/components/accordion-item/) to create individual sections or panels within the opening and closing of the `<ch-accordion>` element.
+Use [accordion items](/components/accordion-item/) as direct children of `<ch-accordion>` to create individual sections or panels. Put nested accordions inside an accordion item's content.
 
 <code-bubble>
 
@@ -17,7 +17,6 @@ Use [accordion items](/components/accordion-item/) to create individual sections
   <ch-accordion-item heading="Panel One">Section Content One</ch-accordion-item>
   <ch-accordion-item heading="Panel Two">Section Content Two</ch-accordion-item>
   <ch-accordion-item heading="Panel Three">Section Content Three</ch-accordion-item>
-  <ch-accordion></ch-accordion>
 </ch-accordion>
 ```
 

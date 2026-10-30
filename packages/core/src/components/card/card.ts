@@ -107,7 +107,8 @@ export class CoreCard extends CharmElement {
   /** Generates the HTML template for Card. */
   protected cardTemplate() {
     return html`<article class="base" part="card-base">
-      ${this.mediaTemplate()} ${this.headerTemplate()} ${this.contentTemplate()} ${this.footerTemplate()}
+      ${this.mediaTemplate()}
+      <div class="content">${this.headerTemplate()} ${this.contentTemplate()} ${this.footerTemplate()}</div>
     </article>`;
   }
 

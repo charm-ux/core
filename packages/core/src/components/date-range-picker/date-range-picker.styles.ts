@@ -19,23 +19,26 @@ export default css`
   .entry {
     align-items: center;
     display: inline-flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
     min-inline-size: 0;
-    overflow: hidden;
   }
 
   .range-input {
     align-items: center;
     display: inline-flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: ${primitive('spacing', '2xs')};
     justify-content: flex-start;
+    max-inline-size: 100%;
     min-inline-size: 0;
   }
 
   .segment-group {
     align-items: center;
     display: inline-flex;
+    flex-wrap: wrap;
+    max-inline-size: 100%;
     min-inline-size: 0;
   }
 
@@ -49,17 +52,19 @@ export default css`
     background: transparent;
     border: 0;
     color: inherit;
+    field-sizing: content;
     font: inherit;
-    inline-size: var(--date-range-picker-segment-width);
+    inline-size: auto;
+    max-inline-size: 100%;
+    min-inline-size: var(--date-range-picker-segment-width);
     margin: 0;
-    min-inline-size: 0;
-    padding: 0;
+    padding: 0 ${primitive('spacing', '2xs')};
     text-align: center;
     -moz-appearance: textfield;
   }
 
   .segment[data-segment='year'] {
-    inline-size: var(--date-range-picker-year-width);
+    min-inline-size: var(--date-range-picker-year-width);
   }
 
   .segment:focus {
@@ -87,11 +92,6 @@ export default css`
   .end {
     align-items: center;
     display: inline-flex;
-  }
-
-  .start:empty,
-  .end:empty {
-    display: none;
   }
 
   .start {

@@ -28,7 +28,7 @@ export class CoreCardTests<T extends CoreCard> extends CharmElementTests<T> {
                   const el = this.component;
                   el.heading = 'Test Heading';
                   await el.updateComplete;
-                  const heading = el.shadowRoot?.querySelector('h3[part="card-heading"]');
+                  const heading = el.shadowRoot?.querySelector('[part="card-heading"]');
                   expect(heading?.textContent).to.include('Test Heading');
                   expect(heading).to.be.visible;
                 },
@@ -39,7 +39,7 @@ export class CoreCardTests<T extends CoreCard> extends CharmElementTests<T> {
                   const el = this.component;
                   el.subheading = 'Test Subheading';
                   await el.updateComplete;
-                  const subheading = el.shadowRoot?.querySelector('h4[part="card-subheading"]');
+                  const subheading = el.shadowRoot?.querySelector('[part="card-subheading"]');
                   expect(subheading?.textContent).to.include('Test Subheading');
                   expect(subheading).to.be.visible;
                 },
@@ -51,6 +51,8 @@ export class CoreCardTests<T extends CoreCard> extends CharmElementTests<T> {
                   el.mediaPosition = 'bottom';
                   await el.updateComplete;
                   expect(el.getAttribute('media-position')).to.equal('bottom');
+                  const media = el.shadowRoot?.querySelector<HTMLElement>('[part="card-media"]');
+                  expect(getComputedStyle(media!).order).to.equal('1');
                 },
               },
             },
@@ -132,6 +134,7 @@ export class CoreCardTests<T extends CoreCard> extends CharmElementTests<T> {
                   expect(content).to.exist;
                   expect(header).to.exist;
                   expect(footer).to.exist;
+                  expect(el.shadowRoot?.querySelector('[part="card-heading"]')?.hasAttribute('hidden')).to.be.true;
                 },
               },
             },

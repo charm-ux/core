@@ -49,7 +49,8 @@ These activate when you edit matching files:
 
 - **Tags** are scoped: a component sets `static override baseName = 'button'` and is
   registered via `project.scope.registerComponent()` in `index.ts` → `<ch-button>`. Never
-  `@customElement`/`customElements.define` directly. (CHARM-002)
+  `@customElement`/`customElements.define` directly. Look tags up with
+  `this.scope.tagName('x')`, never a hardcoded `ch-*` in queries. (CHARM-002, CHARM-010)
 - **Base classes**: `CharmElement` → `CharmFocusableElement` → `CharmFormControlElement`,
   plus `CharmDismissibleElement`. Extend the lowest one that fits. (CHARM-001)
 - **Events** go through the base `emit()` helper (composed by default); names are `change`
@@ -68,6 +69,13 @@ These activate when you edit matching files:
   imports are ordered/sorted, no enums/namespaces, type-only imports marked `type`. (CODE-\*)
 - **Process**: add a changeset for consumer-affecting changes (CI fails without one), and
   run `pnpm lint && pnpm test && pnpm build` before opening a PR. (PROC-\*)
+- **Form-disabled state**: reflect only a form control's own `disabled` state; keep fieldset
+  disabled state separate so re-enabling the fieldset does not leave the host disabled. Bind
+  invalid ARIA to `showInvalid` so pristine fields aren't announced invalid. (CHARM-006)
+- **Keyboard ownership**: cancel keys you handle synchronously, before any `await`, or enclosing
+  composites handle them too. (A11Y-015)
+- **Shadow boundaries**: use `composedContains()` and `LocaleController`, not
+  `closest()`/`contains()` or hand-rolled walks. (COMP-017)
 - **Cleanup**: observers/listeners/timers must be torn down symmetrically — `start()` disposes
   before re-arming, timers are cleared before re-set and on disconnect, observer callbacks
   guard on `isConnected`. Leaks here manifest as a hanging test session, not a failing

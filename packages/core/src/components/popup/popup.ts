@@ -67,9 +67,9 @@ export interface PopupRepositionEvent {
  * @csspart popup-arrow - The arrow's container. Avoid setting `top|bottom|left|right` properties, as these values are assigned dynamically as the popup moves. This is most useful for applying a background color to match the popup, and maybe a border or box shadow.
  *
  * @cssprop --charm-popup-bg-color - The background color of the popup. The arrow uses the same color, so the two always match.
- * @cssprop --charm-popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used.
- * @cssprop --charm-popup-auto-size-available-height - A read-only custom property that determines the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
- * @cssprop --charm-popup-auto-size-available-width - A read-only custom property that determines the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. This property is only available when using `auto-size`.
+ * @cssprop --popup-arrow-size - The size of the arrow. Note that an arrow won't be shown unless the `arrow` attribute is used. Defaults to the theme's `--charm-popup-arrow-size` token.
+ * @cssprop --popup-auto-size-available-height - A read-only custom property set on the host with the amount of height the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `vertical` or `both`.
+ * @cssprop --popup-auto-size-available-width - A read-only custom property set on the host with the amount of width the popup can be before overflowing. Useful for positioning child elements that need to overflow. Only set when `auto-size` is `horizontal` or `both`.
  * @cssprop --charm-popup-drop-shadow - The shadow of the popup, using CSS filter drop-shadow approach, enabling shadowing on non-rectangular shapes.
  * @cssprop --charm-popup-hide-transition - animation when the overlay is hidden.
  * @cssprop --charm-popup-show-transition - animation when the overlay is shown.
@@ -98,10 +98,10 @@ export class CorePopup extends CharmDismissibleElement {
   public strategy?: 'absolute' | 'fixed';
 
   /**
-   * The `aria-label` of the popup for assistive technologies.
+   * Accessible name for the popup content.
    */
   @property({ reflect: true })
-  public label?: string = 'popup';
+  public label?: string;
 
   /** The distance in pixels from which to offset the panel away from its anchor. */
   @property({ type: Number })
@@ -112,7 +112,7 @@ export class CorePopup extends CharmDismissibleElement {
   public skidding: number = 0;
 
   /**
-   * Attaches an arrow to the popup. The arrow's size can be customized using the `--popup-arrow-size` custom property, and its color follows the popup's background color (`--popup-bg-color`) so the two always match. For additional customizations, you can also target the arrow using `::part(arrow)` in your stylesheet.
+   * Attaches an arrow to the popup. The arrow's size can be customized using `--popup-arrow-size`, and its color follows `--popup-bg-color`. For additional customizations, target it with `::part(popup-arrow)`.
    */
   @property({ type: Boolean, reflect: true })
   public arrow = false;
@@ -127,7 +127,7 @@ export class CorePopup extends CharmDismissibleElement {
    * Sets the role of the overlay content.
    */
   @property({ attribute: 'content-role' })
-  public contentRole? = 'dialog';
+  public contentRole?: string = 'dialog';
 
   /**
    * The amount of padding between the arrow and the edges of the popup. If the popup has a border-radius, for example, this will prevent it from overflowing the corners.
@@ -140,25 +140,6 @@ export class CorePopup extends CharmDismissibleElement {
    */
   @property({ type: Boolean, reflect: true })
   public flip = false;
-
-  /**
-   * If the preferred placement doesn't fit, popup will be tested in these fallback placements until one fits. Must be a string of any number of placements separated by a space, e.g. "top bottom left". If no placement fits, the flip fallback strategy will be used instead.
-   */
-  @property({
-    attribute: 'flip-fallback-placements',
-    converter: {
-      fromAttribute: (value: string) => {
-        return value
-          .split(' ')
-          .map(p => p.trim())
-          .filter(p => p !== '');
-      },
-      toAttribute: (value: []) => {
-        return value.join(' ');
-      },
-    },
-  })
-  public flipFallbackPlacements = '';
 
   /**
    * When neither the preferred placement nor the fallback placements fit, this value will be used to determine whether the popup should be positioned as it was initially preferred or using the best available fit based on available space.
@@ -226,11 +207,44 @@ export class CorePopup extends CharmDismissibleElement {
 
   protected anchorEl?: HTMLElement | null;
   protected cleanup: ReturnType<typeof autoUpdate> | undefined;
+  protected positionRequest = 0;
+  private _flipFallbackPlacements: Array<Placement | PopupPlacement> = [];
+
+  /**
+   * Fallback placements tried when the preferred placement does not fit. The attribute accepts placements separated by spaces.
+   */
+  @property({
+    attribute: 'flip-fallback-placements',
+    converter: {
+      fromAttribute: (value: string | null): Array<Placement | PopupPlacement> =>
+        (value ?? '')
+          .split(' ')
+          .map(p => p.trim())
+          .filter(Boolean) as Array<Placement | PopupPlacement>,
+      toAttribute: (value: string | Array<Placement | PopupPlacement>) =>
+        Array.isArray(value) ? value.join(' ') : value,
+    },
+  })
+  public get flipFallbackPlacements(): string {
+    return this._flipFallbackPlacements.join(' ');
+  }
+
+  public set flipFallbackPlacements(value: string | Array<Placement | PopupPlacement>) {
+    this._flipFallbackPlacements = Array.isArray(value)
+      ? value
+      : (value
+          .split(' ')
+          .map(placement => placement.trim())
+          .filter(Boolean) as Array<Placement | PopupPlacement>);
+  }
 
   public override connectedCallback() {
     super.connectedCallback();
     this.setAnchorElement();
     this.addEventListener('keydown', this.handleKeydown);
+    this.updateComplete.then(() => {
+      if (this.isConnected && this.open) this.start();
+    });
   }
 
   public override disconnectedCallback() {
@@ -257,7 +271,9 @@ export class CorePopup extends CharmDismissibleElement {
       };
     }
 
+    const request = ++this.positionRequest;
     await this.updateComplete;
+    if (!this.isConnected || !this.open || request !== this.positionRequest) return;
     const middleware = this.configureMiddleware();
     const position = await computePosition(this.anchorEl, this.popup, {
       placement: this.floatingUIPlacement(this.placement),
@@ -265,6 +281,8 @@ export class CorePopup extends CharmDismissibleElement {
       strategy: this.strategy,
       platform: floatingUiPlatform,
     });
+
+    if (!this.isConnected || !this.open || request !== this.positionRequest) return;
 
     this.setAttribute('data-current-placement', position.placement);
     this.setPopupPosition(position.x, position.y);
@@ -307,7 +325,8 @@ export class CorePopup extends CharmDismissibleElement {
     if (this.distance && this.anchorEl) {
       const anchorRect = this.anchorEl.getBoundingClientRect();
       const popupRect = this.popup.getBoundingClientRect();
-      const isVertical = !this.placement || this.placement.includes('top') || this.placement.includes('bottom');
+      const placement = this.getAttribute('data-current-placement') ?? this.placement;
+      const isVertical = !placement || placement.startsWith('top') || placement.startsWith('bottom');
       let topLeftX = 0;
       let topLeftY = 0;
       let topRightX = 0;
@@ -385,8 +404,8 @@ export class CorePopup extends CharmDismissibleElement {
     }
 
     if (e.key === keys.Escape) {
-      this.emitRequestClose('escape');
-      this.anchorEl?.focus();
+      const requestClose = this.emitRequestClose('escape');
+      if (!requestClose.defaultPrevented) this.anchorEl?.focus();
       e.stopPropagation();
       return;
     }
@@ -432,6 +451,8 @@ export class CorePopup extends CharmDismissibleElement {
     const focusable: HTMLElement[] = [];
 
     const collect = (node: Node): boolean => {
+      if (node instanceof Element && node.closest('[hidden], [inert], [aria-hidden="true"]')) return false;
+
       if (node instanceof HTMLSlotElement) {
         let found = false;
         for (const assigned of Array.from(node.assignedNodes({ flatten: true }))) {
@@ -445,7 +466,7 @@ export class CorePopup extends CharmDismissibleElement {
         for (const child of Array.from(node.shadowRoot.children)) {
           found = collect(child) || found;
         }
-        if (found || !node.matches(selector)) {
+        if (found || !node.matches(selector) || !(node instanceof HTMLElement) || !this.isFocusable(node)) {
           return found;
         }
         focusable.push(node as HTMLElement);
@@ -453,7 +474,7 @@ export class CorePopup extends CharmDismissibleElement {
       }
 
       let found = false;
-      if (node instanceof Element && node.matches(selector)) {
+      if (node instanceof HTMLElement && node.matches(selector) && this.isFocusable(node)) {
         focusable.push(node as HTMLElement);
         found = true;
       }
@@ -470,6 +491,15 @@ export class CorePopup extends CharmDismissibleElement {
     }
 
     return focusable;
+  }
+
+  protected isFocusable(element: HTMLElement) {
+    // Cheap attribute checks first; [hidden]/[inert] ancestors are already skipped by getFocusableElements().
+    if (element.hasAttribute('disabled') || element.tabIndex < 0) return false;
+    if (typeof element.checkVisibility === 'function') return element.checkVisibility({ visibilityProperty: true });
+
+    const style = getComputedStyle(element);
+    return style.display !== 'none' && style.visibility !== 'hidden';
   }
 
   protected deepActiveElement(): Element | null {
@@ -531,14 +561,11 @@ export class CorePopup extends CharmDismissibleElement {
     }
   }
 
-  /**
-   * Handles the 'transitionend' event for CSS transitions.
-   * @param {TransitionEvent} e - The 'transitionend' event object.
-   */
-  protected override handleTransitionEnd(e: TransitionEvent) {
-    super.handleTransitionEnd(e);
-
-    if (!this.open) {
+  /** Hides the popup after its closing transition settles. */
+  protected override settleTransition(waitId: number) {
+    const closing = this.pendingAfterEvent === 'after-hide';
+    super.settleTransition(waitId);
+    if (closing && waitId === this.transitionWaitId && !this.pendingAfterEvent && !this.open && this.popup) {
       this.popup.hidden = true;
     }
   }
@@ -572,10 +599,11 @@ export class CorePopup extends CharmDismissibleElement {
         class="popup"
         part="popup-base"
         role=${ifDefined(this.contentRole)}
-        aria-labelledby="popup-label"
+        aria-labelledby=${ifDefined(this.label && this.contentRole !== 'none' ? 'popup-label' : undefined)}
+        ?inert=${!this.open}
         @transitionend=${this.handleTransitionEnd}
       >
-        <span id="popup-label" class="visually-hidden">${this.label}</span>
+        ${this.label ? html`<span id="popup-label" class="visually-hidden">${this.label}</span>` : ''}
         <slot></slot>
         ${this.arrowTemplate()}
       </dialog>
@@ -626,7 +654,6 @@ export class CorePopup extends CharmDismissibleElement {
     if (this.cleanup) {
       this.cleanup();
       this.cleanup = undefined;
-      window.removeEventListener('scroll', this.handleScrollDismiss);
     }
 
     this.cleanup = autoUpdate(this.anchorEl, this.popup, async () => {
@@ -634,22 +661,16 @@ export class CorePopup extends CharmDismissibleElement {
         await this.reposition();
       }
     });
-
-    window.addEventListener('scroll', this.handleScrollDismiss, { passive: true });
-  }
-
-  protected handleScrollDismiss() {
-    this.open = false;
   }
 
   protected stop(): void {
+    this.positionRequest += 1;
     if (this.cleanup) {
       this.cleanup();
       this.cleanup = undefined;
       this.removeAttribute('data-current-placement');
       this.style.removeProperty('--popup-auto-size-available-width');
       this.style.removeProperty('--popup-auto-size-available-height');
-      window.removeEventListener('scroll', this.handleScrollDismiss);
     }
   }
 
@@ -714,8 +735,11 @@ export class CorePopup extends CharmDismissibleElement {
     middleware.push(
       flip({
         boundary: this.resolveBoundary(this.flipBoundary),
-        // @ts-expect-error - We're converting a string attribute to an array here
-        fallbackPlacements: this.flipFallbackPlacements,
+        fallbackPlacements: this._flipFallbackPlacements.length
+          ? this._flipFallbackPlacements.map(
+              placement => (this.floatingUIPlacement(placement as PopupPlacement) ?? placement) as Placement
+            )
+          : undefined,
         fallbackStrategy: this.flipFallbackStrategy === 'best-fit' ? 'bestFit' : 'initialPlacement',
         padding: this.flipPadding,
       })
@@ -800,8 +824,8 @@ export class CorePopup extends CharmDismissibleElement {
     ]!;
 
     const isRtl = this.resolvedDir === 'rtl';
-    const arrowX = position.middlewareData.arrow!.x;
-    const arrowY = position.middlewareData.arrow!.y;
+    const arrowX = position.middlewareData.arrow?.x;
+    const arrowY = position.middlewareData.arrow?.y;
     const shiftOffsetX = position.middlewareData.shift?.x || 0;
     const shiftOffsetY = position.middlewareData.shift?.y || 0;
 

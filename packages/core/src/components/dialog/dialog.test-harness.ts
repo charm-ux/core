@@ -63,6 +63,29 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(getComputedStyle(dialog!).borderWidth).to.equal('0px');
                 },
               },
+              hiddenHeadingKeepsAccessibleName: {
+                description: 'keeps the dialog heading in the accessibility tree when visually hidden',
+                test: async () => {
+                  const el = this.component;
+                  el.innerHTML = '<span slot="heading">Translated title</span>';
+                  el.noHeader = true;
+                  el.open = true;
+                  await elementUpdated(el);
+
+                  const nativeDialog = el.shadowRoot?.querySelector('dialog');
+                  const heading = el.shadowRoot?.querySelector('#header');
+                  expect(nativeDialog?.getAttribute('aria-labelledby')).to.equal('header');
+                  expect(nativeDialog?.hasAttribute('aria-label')).to.be.false;
+                  expect(heading?.classList.contains('visually-hidden')).to.be.true;
+                  const headingSlot = heading?.querySelector<HTMLSlotElement>('slot[name="heading"]');
+                  const assignedText = headingSlot
+                    ?.assignedNodes({ flatten: true })
+                    .map(node => node.textContent)
+                    .join('');
+                  expect(assignedText).to.contain('Translated title');
+                  await expect(el).to.be.accessible();
+                },
+              },
               defaultBodyDoesNotGrow: {
                 description: 'keeps short default dialog content from filling the dialog shell',
                 test: async () => {
@@ -152,7 +175,9 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
                   expect(getComputedStyle(button).display).to.equal('block');
                   this.component.hideCloseButton = true;
                   await elementUpdated(this.component);
-                  expect(this.component.shadowRoot!.querySelector('.close-btn')).to.be.null;
+                  // The button stays in the DOM, visually hidden until focused, so keyboard users can reach it.
+                  const hiddenButton = this.component.shadowRoot!.querySelector('.close-btn')!;
+                  expect(hiddenButton.parentElement?.classList.contains('visually-hidden')).to.be.true;
                 },
               },
               notAlertRole: {
@@ -610,14 +635,21 @@ export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> 
               restoreFocus: {
                 description: 'should restore focus on to button that triggered open when dialog closes',
                 test: async () => {
-                  const el = await this.component;
+                  const el = this.component;
                   const button = document.createElement('button');
                   el.after(button);
-                  button.addEventListener('keydown', async _e => el.show());
-                  el.addEventListener('after-show', async () => await sendKeys({ press: 'Escape' }));
-                  el.addEventListener('after-close', () => expect(document.activeElement).to.equal(button));
+                  // Open on click, like a real trigger. Opening on keydown moves focus to the close button
+                  // before the browser's Enter activation runs, which then clicks the close button instead.
+                  button.addEventListener('click', () => el.show());
+                  const afterShow = oneEvent(el, 'dialog-after-show');
                   button.focus();
                   await sendKeys({ press: 'Enter' });
+                  await afterShow;
+
+                  const afterHide = oneEvent(el, 'dialog-after-hide');
+                  await sendKeys({ press: 'Escape' });
+                  await afterHide;
+                  expect(document.activeElement).to.equal(button);
                 },
               },
               focusTrap: {

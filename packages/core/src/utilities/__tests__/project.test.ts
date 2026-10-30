@@ -1,9 +1,15 @@
 import { expect } from '@open-wc/testing';
 import CharmProject from '../project.js';
-import { tokens } from '../theme.js';
+import { setProjectConfig } from '../scope.js';
+import { DEFAULT_THEME_PREFIX, setThemePrefix, tokens } from '../theme.js';
 
 describe('CharmProject', () => {
   const defaultButton = tokens.var.component('button', 'bgColor');
+
+  afterEach(() => {
+    setProjectConfig({});
+    setThemePrefix(DEFAULT_THEME_PREFIX);
+  });
 
   it('defaults to charm prefix with no config', () => {
     new CharmProject();

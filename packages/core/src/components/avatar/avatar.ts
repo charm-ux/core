@@ -122,23 +122,20 @@ export class CoreAvatar extends CharmElement {
   /** Generates the template for the avatar's background. */
   protected backgroundTemplate() {
     const hasImageSlot = this.hasNamedSlot('image');
-
-    let content: TemplateResult;
-    if (hasImageSlot) {
-      content = this.html`<slot name="image"></slot>`;
-    } else if (this.image && !this.hasError) {
-      content = this.imageTemplate();
-    } else if (this.initials) {
-      content = this.initialsTemplate();
-    } else {
-      content = this.defaultSlotTemplate();
-    }
+    const fallback = this.fallbackTemplate();
 
     return this.html`
       <div class="background" part="avatar-background">
-        ${content}
+        <slot name="image"></slot>
+        ${hasImageSlot ? '' : fallback}
       </div>
     `;
+  }
+
+  protected fallbackTemplate(): TemplateResult {
+    if (this.image && !this.hasError) return this.imageTemplate();
+    if (this.initials) return this.initialsTemplate();
+    return this.defaultSlotTemplate();
   }
 
   protected statusIndicatorSlotTemplate() {

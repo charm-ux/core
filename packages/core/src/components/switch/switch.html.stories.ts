@@ -40,6 +40,23 @@ export const Disabled: Story = {
   },
 };
 
+export const Readonly: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'Readonly notifications',
+    readonly: true,
+    checked: true,
+  },
+};
+
+export const CheckedWithLongLabel: Story = {
+  render: args => template(args),
+  args: {
+    'label-slot': 'Enable notifications for account security updates and important changes',
+    checked: true,
+  },
+};
+
 export const Required: Story = {
   render: args => template(args),
   args: {

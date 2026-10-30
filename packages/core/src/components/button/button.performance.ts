@@ -16,7 +16,7 @@ describe('core-button performance', () => {
         element.textContent = 'Button';
         return element;
       },
-      update: (element, iteration) => element.setAttribute('disabled', String(iteration % 2 === 0)),
+      update: (element, iteration) => element.toggleAttribute('disabled', iteration % 2 === 0),
     });
   });
 });

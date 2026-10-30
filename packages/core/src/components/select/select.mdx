@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Select
 
-A select lets people choose a single option from a list of at least four options.
+A select lets people choose one or more options from a list.
 Selects use browser native styling for the listed options.
 They are ideal for data submission in forms and ease of use on mobile platforms.
 
@@ -52,17 +52,22 @@ Labels can be applied using the `label` attribute and the id which provides the 
 
 </code-bubble>
 
-## Making it multiple
+## Grouping options
 
-Native select allows for multiple selection and all the options to show at once.
+Wrap related options in an `<optgroup>` with a `label`. Disabling an `optgroup` disables every option inside it.
 
 <code-bubble>
 
 ```html
-<ch-select label="Options" id="option-id" multiple>
-  <option value="1">Option One</option>
-  <option value="2">Option Two</option>
-  <option value="3">Option Three</option>
+<ch-select label="Produce" id="produce-id">
+  <optgroup label="Citrus">
+    <option value="orange">Orange</option>
+    <option value="lemon">Lemon</option>
+  </optgroup>
+  <optgroup label="Berries">
+    <option value="strawberry">Strawberry</option>
+    <option value="blueberry">Blueberry</option>
+  </optgroup>
 </ch-select>
 ```
 
@@ -116,3 +121,5 @@ A Select can include disabled options by setting the disabled attribute on any n
 ```
 
 </code-bubble>
+
+The inherited `readonly` property is not supported by native selects and does not prevent changes. Use `disabled` when the control must not be changed; disabled controls are omitted from form submission.

@@ -1,5 +1,5 @@
 import { css } from 'lit';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 import { SystemColors } from '../../theme/styles/system-colors.js';
 
 export default css`
@@ -42,10 +42,13 @@ export default css`
     color: ${component('tab', 'hover', 'fgColor')};
   }
 
-  :host(:focus:not([disabled])) {
+  :host(:focus-visible:not([disabled])) {
     background-color: ${component('tab', 'focus', 'bgColor')};
     border-color: ${component('tab', 'focus', 'borderColor')};
     color: ${component('tab', 'focus', 'fgColor')};
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   :host(:active:not([disabled])) {
@@ -59,8 +62,12 @@ export default css`
       color: ${SystemColors.GrayText};
     }
 
-    :host(:hover:not([disabled]))::before {
-      background: ${SystemColors.Highlight};
+    :host(:hover:not([disabled])) {
+      outline: 1px solid ${SystemColors.Highlight};
+    }
+
+    :host(:focus-visible:not([disabled])) {
+      outline: 2px solid ${SystemColors.Highlight};
     }
   }
 

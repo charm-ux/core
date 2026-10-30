@@ -118,6 +118,22 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-12']);
                 },
               },
+              restartingRangeStartHonorsMinimum: {
+                description: 'restarts a range when clicking its start again would violate min-range',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.minRange = 3;
+                  await elementUpdated(this.component);
+                  this.getDay('2025-06-10').click();
+                  await elementUpdated(this.component);
+                  this.getDay('2025-06-10').click();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.deep.equal(['2025-06-10']);
+                  this.getDay('2025-06-12').click();
+                  await elementUpdated(this.component);
+                  expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-12']);
+                },
+              },
               multipleDates: {
                 description: 'toggles independently selected dates in multiple mode',
                 test: async () => {
@@ -210,6 +226,31 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(this.getDay('2026-06-15').tabIndex).to.equal(0);
                 },
               },
+              endStaysWithinWeekWhenDaysUnavailable: {
+                description: 'keeps End in the current week while skipping unavailable dates',
+                test: async () => {
+                  this.component.focusDate = '2025-06-10';
+                  this.component.disabledWeekDays = '0,6';
+                  await elementUpdated(this.component);
+                  this.getDay('2025-06-10').focus();
+                  await sendKeys({ press: 'End' });
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(this.getDay('2025-06-13'));
+                },
+              },
+              pageDownClampsAtUnavailableMaximum: {
+                description: 'keeps PageDown within max when max itself is unavailable',
+                test: async () => {
+                  this.component.focusDate = '2025-05-30';
+                  this.component.max = '2025-06-30';
+                  this.component.disabledDates = '2025-06-30';
+                  await elementUpdated(this.component);
+                  this.getDay('2025-05-30').focus();
+                  await sendKeys({ press: 'PageDown' });
+                  await elementUpdated(this.component);
+                  expect(this.component.shadowRoot?.activeElement).to.equal(this.getDay('2025-06-29'));
+                },
+              },
             },
           },
           focus: {
@@ -222,6 +263,16 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   expect(tabStops?.length).to.equal(1);
                 },
               },
+              findsEarlierAvailableDateAtMaximum: {
+                description: 'keeps one day tabbable when the maximum date is unavailable',
+                test: async () => {
+                  this.component.focusDate = '2025-06-30';
+                  this.component.max = '2025-06-30';
+                  this.component.disabledDates = '2025-06-30';
+                  await elementUpdated(this.component);
+                  expect(this.getDay('2025-06-29').tabIndex).to.equal(0);
+                },
+              },
               goToDate: {
                 description: 'goes to a date without selecting it',
                 test: async () => {
@@ -230,6 +281,14 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
 
                   expect(this.getDay('2025-06-15').tabIndex).to.equal(0);
                   expect(this.component.value).to.be.undefined;
+                },
+              },
+              dateArgumentUsesLocalCivilDay: {
+                description: 'uses the local calendar day when goToDate receives a Date',
+                test: async () => {
+                  this.component.goToDate(new Date(2025, 5, 15));
+                  await elementUpdated(this.component);
+                  expect(this.getDay('2025-06-15').tabIndex).to.equal(0);
                 },
               },
               monthAndYearControls: {
@@ -251,6 +310,24 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
 
                   expect(yearInput.value).to.equal('2026');
                   expect(this.getDay('2026-07-15').tabIndex).to.equal(0);
+                },
+              },
+              selectsDisplayedMonthInitially: {
+                description: 'selects the visible month in the month selector on first render',
+                test: async () => {
+                  const monthSelect = this.component.shadowRoot?.querySelector<HTMLSelectElement>('#month-select');
+                  expect(monthSelect?.value).to.equal('5');
+                },
+              },
+              nativeHeaderInputDoesNotEscape: {
+                description: 'stops native month and year input events at the calendar boundary',
+                test: async () => {
+                  const inputHandler = sinon.spy();
+                  this.component.addEventListener('input', inputHandler);
+                  const month = this.component.shadowRoot?.querySelector<HTMLSelectElement>('#month-select');
+                  if (!month) throw new Error('Expected month selector to render.');
+                  month.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                  expect(inputHandler.callCount).to.equal(0);
                 },
               },
             },

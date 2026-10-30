@@ -9,6 +9,23 @@ private internals.
   (`{ press: 'Enter' }`, `{ type: '...' }`) after focusing the element — this exercises the
   real accessibility path ([A11Y-003](../accessibility/A11Y-003.md)).
 - **Spies/stubs**: use `sinon` for callbacks and timers.
+- **Focus**: assert the resulting `document.activeElement` (or the relevant shadow root's
+  `activeElement`). Do not replace or spy on `.focus()`; that proves a method was called, not that
+  the browser moved focus.
+- **Forms**: assert submitted values at the consumer boundary, e.g. `new FormData(form).getAll(name)`
+  for multi-value controls, rather than checking only the component's `value` property.
+- **Lifecycle events**: await the exact public event (`dialog-after-hide`, not `after-close`) before
+  asserting its effects. A listener that is never awaited is not a regression test.
+
+- **Real events:** dispatch real platform events (`new TransitionEvent('transitionend', {
+propertyName, elapsedTime })`) on the element that would receive them. Don't call protected
+  handlers through casts.
+- **Time:** freeze `Date` for anything relative to "today" with
+  `sinon.useFakeTimers({ now, toFake: ['Date'] })` so Lit's scheduling keeps working, and restore
+  it in `finally`. Computing the expected value from a live `new Date()` races midnight.
+- **Fixtures:** start from fixtures that are already connected where they'll be used, such as a
+  control inside its `<form>`. Re-appending an element in the test (`form.append(el)`) disconnects
+  and reconnects it, which re-runs setup and hides lifecycle bugs. Test moving as its own case.
 
 **Do:**
 
@@ -28,6 +45,10 @@ expect(clickSpy.callCount).to.equal(1);
 // Keyboard
 el.focus();
 await sendKeys({ press: 'Enter' });
+
+// Focus and repeated form values
+expect(document.activeElement).to.equal(nextItem);
+expect(new FormData(form).getAll('choice')).to.deep.equal(['one', 'two']);
 ```
 
 **Don't:**

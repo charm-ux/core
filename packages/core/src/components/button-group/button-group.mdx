@@ -20,14 +20,27 @@ Button groups can be used to group related buttons into sections.
 
 </code-bubble>
 
-## Accessibility with label
+## Accessible name
 
-Use the `label` attribute to provide an accessible name for the button group, which will be used as the `aria-label`.
+Use the `label` property for a plain-text accessible name, or the `label` slot for rich or localized content. The group references the rendered label text with `aria-labelledby`.
 
 <code-bubble class="not-content">
 
 ```html
 <ch-button-group label="Text formatting options">
+  <ch-button>Bold</ch-button>
+  <ch-button>Italic</ch-button>
+  <ch-button>Underline</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group>
+  <span slot="label">Text formatting options</span>
   <ch-button>Bold</ch-button>
   <ch-button>Italic</ch-button>
   <ch-button>Underline</ch-button>
@@ -101,15 +114,69 @@ The `split` attribute can be used to create a split button group, styled as a si
 
 ## Toolbar button groups
 
-The `toolbar` attribute can be used to cause the button group to function as a toolbar. This adds the `toolbar` ARIA role and enables keyboard navigation between buttons using arrow keys, with a roving tab index pattern for improved accessibility.
+The `toolbar` attribute makes the button group a toolbar and enables arrow-key navigation with a roving tab index. Give each toolbar an accessible name with `label` or the `label` slot.
 
 <code-bubble class="not-content">
 
 ```html
-<ch-button-group toolbar>
+<ch-button-group toolbar label="Document formatting">
   <ch-button>Button</ch-button>
   <ch-button>Button</ch-button>
   <ch-button>Button</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+## Common scenarios
+
+### Text formatting toolbar
+
+Use toggle buttons for formatting states and a divider to separate action groups.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group toolbar label="Document formatting">
+  <ch-button toggle>Bold</ch-button>
+  <ch-button toggle>Italic</ch-button>
+  <ch-button toggle>Underline</ch-button>
+  <ch-divider></ch-divider>
+  <ch-button>Align left</ch-button>
+  <ch-button>Align center</ch-button>
+  <ch-button>Align right</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+### View-mode selector
+
+Use `select="single"` for mutually exclusive options. The active option can be toggled off, so the group may have no selection.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group select="single" label="View mode">
+  <ch-button pressed>List</ch-button>
+  <ch-button>Board</ch-button>
+  <ch-button>Calendar</ch-button>
+</ch-button-group>
+```
+
+</code-bubble>
+
+### Navigation links
+
+Use links when each action navigates to another location, and name the group for assistive technology.
+
+<code-bubble class="not-content">
+
+```html
+<ch-button-group label="Primary navigation">
+  <ch-button href="/dashboard" current="page">Dashboard</ch-button>
+  <ch-button href="/projects">Projects</ch-button>
+  <ch-button href="/reports">Reports</ch-button>
 </ch-button-group>
 ```
 
@@ -122,7 +189,10 @@ The `select` attribute can be set to "single" to allow the selection of a single
 <code-bubble class="not-content">
 
 ```html
-<ch-button-group select="single" style="--button-pressed-bg-color: var(--button-active-bg-color);">
+<ch-button-group
+  select="single"
+  style="--charm-button-pressed-bg-color: var(--charm-button-active-bg-color);"
+>
   <ch-button>Select Single</ch-button>
   <ch-button>Select Single</ch-button>
   <ch-button>Select Single</ch-button>
@@ -136,7 +206,7 @@ The `select` attribute can be set to "single" to allow the selection of a single
 ```html
 <ch-button-group
   select="multiple"
-  style="--button-pressed-bg-color: var(--button-active-bg-color);"
+  style="--charm-button-pressed-bg-color: var(--charm-button-active-bg-color);"
 >
   <ch-button>Select Multiple</ch-button>
   <ch-button>Select Multiple</ch-button>

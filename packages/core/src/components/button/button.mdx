@@ -82,10 +82,10 @@ To allow a toggling behavior on the button that emits the `change` event when it
 ```html
 <ch-button toggle>Button</ch-button>
 <style>
-  [button] {
-    --button-pressed-bg-color: darkgrey;
-    --button-pressed-hover-bg-color: grey;
-    --button-pressed-active-bg-color: white;
+  ch-button {
+    --charm-button-pressed-bg-color: darkgrey;
+    --charm-button-pressed-border-color: grey;
+    --charm-button-pressed-fg-color: white;
   }
 </style>
 ```
@@ -235,7 +235,7 @@ When the button is `shows` is called, the `expanded` attribute will be set to "t
 <ch-dialog id="my-dialog" heading="Dialog">
   Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam exercitationem cumque
   repellendus eaque est dolor eius expedita nulla ullam? Tenetur reprehenderit.
-  <ch-button hides="dialog" slot="footer">Close Dialog</ch-button>
+  <ch-button hides="my-dialog" slot="footer">Close Dialog</ch-button>
 </ch-dialog>
 ```
 

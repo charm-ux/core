@@ -5,10 +5,9 @@ The public API surface is deliberate:
 - **`src/kitchen-sink.ts` is generated** (by `scripts/make-kitchen-sink.js` from the
   custom-elements manifest) and side-effect-registers every component. Never hand-edit it;
   regenerate instead. It is **not** a published entry (`package.json` `files` omits it).
-- **`src/index.ts` is a curated barrel** exporting only the infrastructure layers (`base`,
-  `controller`, `internal`, `theme`, `utilities`). `@charm-ux/core` publishes a single
-  `main`/`types` entry with **no `exports` map**, so deep imports into component internals are
-  not a supported contract — export what's public through the barrel.
+- **`src/index.ts` is a curated barrel** exporting the infrastructure layers. `package.json`
+  also declares explicit subpath exports for component and infrastructure modules; consumers
+  should use those exports rather than source-tree deep imports.
 - **`@charm-ux/theming`** exposes explicit subpath entrypoints (`.`, `./themes`, `./lit`,
   `./cem-plugin`) and re-exports through per-folder `index.ts` barrels; when names collide,
   re-export explicitly with a rename rather than `export *`.

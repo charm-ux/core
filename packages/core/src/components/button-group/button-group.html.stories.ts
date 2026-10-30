@@ -481,3 +481,90 @@ export const LongTextVerticalWrap: Story = {
       `
     ),
 };
+
+export const DocumentFormattingToolbar: Story = {
+  args: {
+    toolbar: true,
+    label: 'Document formatting',
+  },
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-button toggle>Bold</ch-button>
+        <ch-button toggle>Italic</ch-button>
+        <ch-button toggle>Underline</ch-button>
+        <ch-divider></ch-divider>
+        <ch-button>Align left</ch-button>
+        <ch-button>Align center</ch-button>
+        <ch-button>Align right</ch-button>
+      `
+    ),
+};
+
+export const ViewModeSelector: Story = {
+  args: {
+    select: 'single',
+    label: 'View mode',
+  },
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-button pressed>List</ch-button>
+        <ch-button>Board</ch-button>
+        <ch-button>Calendar</ch-button>
+      `
+    ),
+};
+
+export const MessageFilters: Story = {
+  args: {
+    select: 'multiple',
+    label: 'Message filters',
+  },
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-button toggle>Unread</ch-button>
+        <ch-button toggle>Assigned to me</ch-button>
+        <ch-button toggle>Flagged</ch-button>
+      `
+    ),
+};
+
+export const PrimaryNavigation: Story = {
+  args: {
+    label: 'Primary navigation',
+  },
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-button href="/dashboard" current="page">Dashboard</ch-button>
+        <ch-button href="/projects">Projects</ch-button>
+        <ch-button href="/reports">Reports</ch-button>
+        <ch-button href="/settings">Settings</ch-button>
+      `
+    ),
+};
+
+export const SaveAndMore: Story = {
+  args: {
+    split: true,
+    label: 'Save actions',
+  },
+  render: args =>
+    template(
+      args,
+      html`
+        <ch-button type="submit">Save</ch-button>
+        <ch-menu>
+          <ch-button slot="trigger">More save options</ch-button>
+          <ch-menu-item>Save as draft</ch-menu-item>
+          <ch-menu-item>Save and close</ch-menu-item>
+        </ch-menu>
+      `
+    ),
+};

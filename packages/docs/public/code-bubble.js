@@ -1,12 +1,12 @@
 import { CodeBubble } from 'https://esm.run/code-bubble@1.3.3';
 
 async function fetchLibData(url) {
+  const resolved = new URL(url, import.meta.url);
   try {
-    const base = location.href.includes('localhost') ? '' : document.location.origin;
-    const response = await fetch(base + url); // Make the request
+    const response = await fetch(resolved); // Make the request
     return await response.text(); // Extract JSON data
   } catch (error) {
-    console.error('Error fetching data:', base + url, error);
+    console.error('Error fetching data:', resolved.href, error);
     return null; // Handle the error gracefully
   }
 }
@@ -19,6 +19,13 @@ function createScript(src) {
   return script.outerHTML;
 }
 
+const libFiles = await Promise.all(
+  ['kitchen-sink.js', 'reset.css', 'theme.css', 'utility-classes.css'].map(async name => [
+    `libs/${name}`,
+    await fetchLibData(`./charm/${name}`),
+  ])
+);
+
 new CodeBubble({
   sandbox: 'stackblitz',
   sandboxConfig: {
@@ -28,12 +35,7 @@ new CodeBubble({
         project: {
           title: 'Charm Kitchen Sink',
           description: 'A live demo of all the components in Charm',
-          files: {
-            'libs/kitchen-sink.js': await fetchLibData('/charm/kitchen-sink.js'),
-            'libs/reset.css': await fetchLibData('/charm/reset.css'),
-            'libs/theme.css': await fetchLibData('/charm/theme.css'),
-            'libs/utility-classes.css': await fetchLibData('/charm/utility-classes.css'),
-          },
+          files: Object.fromEntries(libFiles),
         },
         exampleTemplate: {
           fileName: 'index.html',

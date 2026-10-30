@@ -69,8 +69,8 @@ export class CoreSwitch extends CharmFormControlElement {
 
   @state() protected _resolvedDir: 'ltr' | 'rtl' = 'ltr';
 
-  protected usesArrowKeys = true;
   protected _checked: boolean = false;
+  protected initialChecked = false;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
@@ -83,8 +83,10 @@ export class CoreSwitch extends CharmFormControlElement {
   }
 
   public set checked(val: boolean) {
+    if (this._checked === val) return;
+    const oldValue = this._checked;
     this._checked = val;
-    this.requestUpdate('checked');
+    this.requestUpdate('checked', oldValue);
   }
 
   /** Simulates a click on the switch. */
@@ -92,16 +94,17 @@ export class CoreSwitch extends CharmFormControlElement {
     this.input?.click();
   }
 
-  public override connectedCallback(): void {
-    super.connectedCallback();
-    // The base class syncs the form value from `value` on (re)connection, which
-    // would clobber the checked-dependent form value. Re-apply it.
-    this.internals.setFormValue(this.checked ? this.value || 'on' : null);
-  }
-
   /** Gets the control's initial form value for reset behavior. */
   protected override getInitialFormValue(): string {
     return this.checked ? this.value || 'on' : '';
+  }
+
+  protected override getFormAssociatedValue() {
+    return !this.disabled && this.checked ? this.value || 'on' : null;
+  }
+
+  protected override getFormAssociatedState() {
+    return this.checked ? 'checked' : 'unchecked';
   }
 
   protected override firstUpdated(): void {
@@ -110,11 +113,23 @@ export class CoreSwitch extends CharmFormControlElement {
   }
 
   protected override formResetCallback(): void {
-    this.checked = this.initialValue === 'on';
+    this.restoreInitialFormValue();
   }
 
   protected override restoreInitialFormValue(): void {
-    this.checked = this.initialValue === 'on';
+    this.checked = this.initialChecked;
+  }
+
+  protected override syncInitialFormValue(): void {
+    if (this.hasCapturedInitialValue) return;
+    this.initialChecked = this.checked;
+    super.syncInitialFormValue();
+  }
+
+  protected override formStateRestoreCallback(state: string | File | FormData | null): void {
+    if (state === 'checked') this.checked = true;
+    else if (state === 'unchecked' || state === null) this.checked = false;
+    else if (typeof state === 'string') this.checked = state === (this.value || 'on');
   }
 
   protected override willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
@@ -122,15 +137,15 @@ export class CoreSwitch extends CharmFormControlElement {
     this._resolvedDir = this.resolvedDir;
     if (changedProperties.has('checked')) {
       this.updateValidity();
-      // Set the form value after updateValidity() so the base class' form-value sync
-      // (which uses `value`) doesn't clobber the checked-dependent value.
-      this.internals.setFormValue(this.checked ? this.value || 'on' : null);
     }
   }
 
   /** Handles the click event on the switch. Toggles the checked state and emits a 'change' event. */
-  protected handleClick() {
-    if (this.readonly || this.disabled) return;
+  protected handleClick(event: MouseEvent) {
+    if (this.readonly || this.disabled) {
+      event.preventDefault();
+      return;
+    }
     this.checked = !this.checked;
     this.emit('change');
   }
@@ -138,7 +153,9 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow left keydown event on the switch.*/
   protected handleArrowLeftKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = this.resolvedDir === 'rtl';
+    const nextChecked = this.resolvedDir === 'rtl';
+    if (nextChecked === this.checked) return;
+    this.checked = nextChecked;
     this.emitInput();
     this.emitChange();
   }
@@ -146,7 +163,9 @@ export class CoreSwitch extends CharmFormControlElement {
   /** Handles the arrow right keydown event on the switch. */
   protected handleArrowRightKey(event: KeyboardEvent) {
     event.preventDefault();
-    this.checked = this.resolvedDir !== 'rtl';
+    const nextChecked = this.resolvedDir !== 'rtl';
+    if (nextChecked === this.checked) return;
+    this.checked = nextChecked;
     this.emitInput();
     this.emitChange();
   }
@@ -172,14 +191,12 @@ export class CoreSwitch extends CharmFormControlElement {
         value=${ifDefined(this.value)}
         .checked=${live(this.checked ?? false)}
         role="switch"
-        aria-checked=${this.checked ? 'true' : 'false'}
+        aria-readonly=${ifDefined(this.readonly ? 'true' : undefined)}
         aria-describedby=${ifDefined(this.describedBy)}
-        aria-errormessage=${ifDefined(this.invalid ? 'error-text' : undefined)}
-        aria-invalid=${this.invalid}
+        aria-errormessage=${ifDefined(this.showInvalid ? 'error-text' : undefined)}
+        aria-invalid=${this.showInvalid}
         ?autofocus=${this.autofocus}
-        ?checked=${live(this.checked ?? false)}
         ?disabled=${this.disabled}
-        ?readonly=${this.readonly || this.disabled}
         ?required=${this.required}
         @keydown=${this.handleKeyDown}
         @click=${this.handleClick}
@@ -198,7 +215,7 @@ export class CoreSwitch extends CharmFormControlElement {
           'visually-hidden': this.hideLabel ?? false,
         })}
       >
-        ${this.labelContentTemplate()} ${this.helpTextTemplate()}
+        ${this.labelContentTemplate()}
       </span>
     `;
   }
@@ -267,7 +284,7 @@ export class CoreSwitch extends CharmFormControlElement {
           'form-control-has-help-text': this.hasHelpText,
         })}
       >
-        ${this.baseTemplate()} ${this.errorMessageTemplate()}
+        ${this.baseTemplate()} ${this.helpTextTemplate()} ${this.errorMessageTemplate()}
       </div>
     `;
   }

@@ -3,9 +3,6 @@ import { component } from '../../utilities/theme.js';
 
 export default css`
   :host {
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
     interpolate-size: allow-keywords;
   }
 
@@ -28,13 +25,15 @@ export default css`
 
   .summary {
     display: flex;
-    gap: 0.5rem;
+    gap: ${component('accordionItem', 'summaryGap')};
     list-style: none;
     align-items: center;
-    padding-inline: 0.75rem 1rem;
-    padding-block: 0.5rem;
+    padding: ${component('accordionItem', 'summaryPaddingY')} ${component('accordionItem', 'summaryPaddingX')};
     margin-inline-start: 0;
     border: ${component('accordionItem', 'borderWidth')} solid ${component('accordionItem', 'borderColor')};
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   .summary > h1,
@@ -50,14 +49,10 @@ export default css`
     display: none;
   }
 
-  .summary:hover,
-  .summary:focus,
-  .summary:focus-within,
-  .summary:focus-visible {
+  .summary:hover {
     background: ${component('accordionItem', 'hover', 'bgColor')};
     border-color: ${component('accordionItem', 'hover', 'borderColor')};
     color: ${component('accordionItem', 'hover', 'fgColor')};
-    outline: none;
   }
 
   /*
@@ -68,7 +63,7 @@ export default css`
    * to hidden the instant the item closes and the block-size collapse animates
    * an already-invisible box, making the close look instant.
    */
-  :host([animated]) .base::details-content {
+  .base::details-content {
     transition-property: block-size, content-visibility;
     transition-duration: ${component('accordionItem', 'animation', 'duration')};
     transition-timing-function: ${component('accordionItem', 'animation', 'timingFunction')};
@@ -79,25 +74,42 @@ export default css`
    * Expose the animation through the convention custom-properties that
    * CharmDismissibleElement measures ({baseName}-show/hide-transition) so its
    * after-show / after-hide events settle once the block-size animation has
-   * actually finished. Declared only under [animated] so an unanimated item
-   * settles its after-events immediately. block-size drives the timing;
-   * content-visibility is a discrete flip.
+   * actually finished. block-size drives the timing; content-visibility is a
+   * discrete flip.
    */
-  :host([animated]) {
+  :host {
     --accordion-item-show-transition: block-size ${component('accordionItem', 'animation', 'duration')}
       ${component('accordionItem', 'animation', 'timingFunction')};
     --accordion-item-hide-transition: block-size ${component('accordionItem', 'animation', 'duration')}
       ${component('accordionItem', 'animation', 'timingFunction')};
   }
 
-  :host([disabled]) {
-    cursor: not-allowed;
+  /*
+   * The shared reduced-motion block in charm-element.styles only matches
+   * elements, not ::details-content, so the collapse is disabled here. 'none'
+   * tells CharmDismissibleElement there is no transition, so after-show and
+   * after-hide fire immediately.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .base::details-content {
+      transition: none;
+    }
+
+    :host {
+      --accordion-item-show-transition: none;
+      --accordion-item-hide-transition: none;
+    }
+  }
+
+  :host([disabled]) .base,
+  :host([disabled]) .summary {
     background-color: ${component('accordionItem', 'disabled', 'bgColor')};
     border-color: ${component('accordionItem', 'disabled', 'borderColor')};
     color: ${component('accordionItem', 'disabled', 'fgColor')};
   }
 
   :host([disabled]) .summary {
+    cursor: not-allowed;
     pointer-events: none;
   }
 
@@ -119,17 +131,13 @@ export default css`
   }
 
   :host .chevron {
-    font-size: 20px;
+    font-size: ${component('accordionItem', 'icon', 'size')};
     transform: ${component('accordionItem', 'icon', 'collapsedTransform')};
     transition: ${component('accordionItem', 'icon', 'transition')};
   }
 
   :host([open]) .chevron {
     transform: ${component('accordionItem', 'icon', 'expandedTransform')};
-  }
-
-  :host .chevron-rtl {
-    transform: -(${component('accordionItem', 'icon', 'expandedTransform')});
   }
 
   :host([expand-icon-position='end']) .icon {

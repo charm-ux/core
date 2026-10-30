@@ -38,7 +38,7 @@ export const HeadingLevel: Story = {
       `
     ),
   args: {
-    headingLevel: 2,
+    'heading-level': 2,
   },
 };
 
@@ -88,19 +88,5 @@ export const Disabled: Story = {
     ),
   args: {
     disabled: true,
-  },
-};
-
-export const WithAnimation: Story = {
-  render: args =>
-    template(
-      args,
-      html`
-        <span slot="heading">Accordion Item Summary</span>
-        <p>Accordion item details</p>
-      `
-    ),
-  args: {
-    animated: true,
   },
 };

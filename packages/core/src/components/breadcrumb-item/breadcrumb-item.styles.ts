@@ -22,40 +22,37 @@ export default css`
   }
 
   .control {
+    display: flex;
     width: ${component('breadcrumb', 'item', 'controlWidth')};
     align-items: center;
+    box-sizing: border-box;
     text-decoration: none;
-  }
-
-  a {
-    display: flex;
+    color: ${component('breadcrumb', 'item', 'fgColor')};
     padding: ${component('breadcrumb', 'item', 'padding')};
     background-color: ${component('breadcrumb', 'item', 'bgColor')};
     border: ${component('breadcrumb', 'item', 'borderWidth')} solid ${component('breadcrumb', 'item', 'borderColor')};
-    color: ${component('breadcrumb', 'item', 'fgColor')};
   }
 
-  :host(:not([selected])) a:hover {
+  :host(:not([current])) a.control:hover {
     cursor: pointer;
     background-color: ${component('breadcrumb', 'item', 'hover', 'bgColor')};
     border-color: ${component('breadcrumb', 'item', 'hover', 'borderColor')};
     color: ${component('breadcrumb', 'item', 'hover', 'fgColor')};
   }
 
-  a:hover:active {
+  a.control:hover:active {
     background-color: ${component('breadcrumb', 'item', 'active', 'bgColor')};
     border-color: ${component('breadcrumb', 'item', 'active', 'borderColor')};
     color: ${component('breadcrumb', 'item', 'active', 'fgColor')};
   }
 
-  a:focus {
-    outline: none;
+  a.control:focus-visible {
     background-color: ${component('breadcrumb', 'item', 'focus', 'bgColor')};
     border-color: ${component('breadcrumb', 'item', 'focus', 'borderColor')};
     color: ${component('breadcrumb', 'item', 'focus', 'fgColor')};
   }
 
-  :host([disabled]) a {
+  :host([disabled]) .control {
     background-color: ${component('breadcrumb', 'item', 'disabled', 'bgColor')};
     border-color: ${component('breadcrumb', 'item', 'disabled', 'borderColor')};
     color: ${component('breadcrumb', 'item', 'disabled', 'fgColor')};
@@ -63,6 +60,11 @@ export default css`
 
   :host([disabled]) .control {
     cursor: not-allowed;
+  }
+
+  :host(:dir(rtl)) .separator {
+    display: inline-flex;
+    transform: scaleX(-1);
   }
 
   .start,

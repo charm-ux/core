@@ -57,7 +57,16 @@ export const LabelBefore: Story = {
   render: args => template(args),
   args: {
     label: 'Label before',
-    'label-position': 'before',
+    'label-position': 'start',
+  },
+};
+
+export const Readonly: Story = {
+  render: args => template(args),
+  args: {
+    label: 'Readonly checkbox',
+    checked: true,
+    readonly: true,
   },
 };
 

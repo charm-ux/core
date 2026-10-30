@@ -62,8 +62,8 @@ export const Position: Story = {
             explicabo consequatur
           </p>
           <div slot="footer">
-            <ch-button hides="dialog">Cancel</ch-button>
-            <ch-button hides="dialog">Save</ch-button>
+            <ch-button hides="dialog1">Cancel</ch-button>
+            <ch-button hides="dialog1">Save</ch-button>
           </div>`
       )}
 
@@ -89,8 +89,8 @@ export const InitiallyOpen: Story = {
       html`<span slot="heading">dialog heading</span>
         dialog content
         <div slot="footer">
-          <button hides="dialog">Cancel</button>
-          <button hides="dialog">Save</button>
+          <ch-button hides="dialog1">Cancel</ch-button>
+          <ch-button hides="dialog1">Save</ch-button>
         </div>`
     )}
 
@@ -225,8 +225,8 @@ export const Autofocus: Story = {
         args,
         html` <input type="text" autofocus />
           <div slot="footer">
-            <button id="closeBtn">Cancel</button>
-            <button>Save</button>
+            <ch-button hides="dialog1">Cancel</ch-button>
+            <ch-button hides="dialog1">Save</ch-button>
           </div>`
       )}
 
@@ -290,6 +290,7 @@ export const NoHeader: Story = {
 
       <ch-button shows="dialog1">open dialog</ch-button>`,
   args: {
+    id: 'dialog1',
     'no-header': true,
   },
 };

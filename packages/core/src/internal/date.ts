@@ -23,8 +23,8 @@ export interface DateInputLayout {
 }
 
 export interface DateConstraints {
-  readonly minDate?: Date;
-  readonly maxDate?: Date;
+  readonly minDate: Date;
+  readonly maxDate: Date;
   readonly disabledDates: ReadonlySet<string>;
   readonly disabledWeekDays: ReadonlySet<number>;
 }
@@ -49,10 +49,16 @@ export const DAYS_IN_WEEK = 7;
 
 const MS_PER_DAY = 86_400_000;
 
-const monthYearOptions: Intl.DateTimeFormatOptions = { month: 'long', year: 'numeric', timeZone: 'UTC' };
-const monthOptions: Intl.DateTimeFormatOptions = { month: 'long', timeZone: 'UTC' };
-const fullDateOptions: Intl.DateTimeFormatOptions = { dateStyle: 'full', timeZone: 'UTC' };
+const monthYearOptions: Intl.DateTimeFormatOptions = {
+  calendar: 'gregory',
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+};
+const monthOptions: Intl.DateTimeFormatOptions = { calendar: 'gregory', month: 'long', timeZone: 'UTC' };
+const fullDateOptions: Intl.DateTimeFormatOptions = { calendar: 'gregory', dateStyle: 'full', timeZone: 'UTC' };
 const segmentOptions: Intl.DateTimeFormatOptions = {
+  calendar: 'gregory',
   day: '2-digit',
   month: '2-digit',
   year: 'numeric',
@@ -63,6 +69,7 @@ const formatterCache = new Map<string, Intl.DateTimeFormat>();
 const monthNameCache = new Map<string, readonly string[]>();
 const weekdayNameCache = new Map<string, readonly WeekdayName[]>();
 const dateInputLayoutCache = new Map<string, DateInputLayout>();
+const dateSegmentPlaceholderCache = new Map<string, Readonly<Record<DateSegmentKind, string>>>();
 const firstWeekdayCache = new Map<string, number>();
 
 function getFormatter(locale: string, key: string, options: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
@@ -81,6 +88,19 @@ export function createUtcDate(year: number, month: number, day: number): Date {
   date.setUTCFullYear(year, month, day);
   date.setUTCHours(0, 0, 0, 0);
   return date;
+}
+
+/** Creates a local-midnight `Date` for APIs that accept a Date as a local civil day. */
+export function createLocalDate(year: number, month: number, day: number): Date {
+  const date = new Date(0);
+  date.setFullYear(year, month, day);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+/** Formats a Date argument as its local civil day in `YYYY-MM-DD` form. */
+export function toIsoLocalDate(date: Date): string {
+  return toIsoDate(createUtcDate(date.getFullYear(), date.getMonth(), date.getDate()));
 }
 
 /** Parses a strict `YYYY-MM-DD` civil date, rejecting normalized values such as `2026-02-31`. */
@@ -191,8 +211,8 @@ export function rangeLengthDays(first: Date, second: Date): number {
 
 /** Clamps a date to the constraint bounds. */
 export function clampDate(date: Date, constraints: DateConstraints): Date {
-  if (constraints.minDate && compareDates(date, constraints.minDate) < 0) return constraints.minDate;
-  if (constraints.maxDate && compareDates(date, constraints.maxDate) > 0) return constraints.maxDate;
+  if (compareDates(date, constraints.minDate) < 0) return constraints.minDate;
+  if (compareDates(date, constraints.maxDate) > 0) return constraints.maxDate;
   return date;
 }
 
@@ -205,7 +225,60 @@ export function normalizeRangeBounds(minRange: number, maxRange: number): DayRan
 }
 
 export function normalizeInputDigits(value: string): string {
-  return value.replace(/\D/g, '');
+  return value
+    .normalize('NFKC')
+    .replace(/[٠-٩]/g, digit => String(digit.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, digit => String(digit.charCodeAt(0) - 0x6f0))
+    .replace(/\D/g, '');
+}
+
+/** Normalizes one segmented date field without silently replacing out-of-range digits. */
+export function normalizeDateSegmentInput(
+  value: string,
+  kind: DateSegmentKind
+): { digits: string; shouldAdvance: boolean } {
+  const maxLength = kind === 'year' ? 4 : 2;
+  let digits = normalizeInputDigits(value).slice(0, maxLength);
+  let shouldAdvance = false;
+
+  if (kind !== 'year' && digits.length === 1) {
+    const numeric = Number(digits);
+    const maxValue = kind === 'month' ? 12 : 31;
+    if (Number.isInteger(numeric) && numeric > 0 && numeric * 10 > maxValue) {
+      digits = numeric.toString().padStart(2, '0');
+      shouldAdvance = true;
+    }
+  }
+
+  if (digits.length === maxLength) shouldAdvance = true;
+  return { digits, shouldAdvance };
+}
+
+/** Steps one incomplete segment without replacing the other typed fields. */
+export function stepDateSegmentValue(
+  value: string,
+  kind: DateSegmentKind,
+  direction: 1 | -1,
+  fallbackDate: Date
+): string {
+  const fallback = partsFromDate(fallbackDate)[kind];
+  const current = value && Number.isInteger(Number(value)) ? Number(value) : Number(fallback);
+  const maximum = kind === 'day' ? 31 : kind === 'month' ? 12 : 9999;
+  const next = Math.min(maximum, Math.max(1, current + direction));
+  return next.toString().padStart(kind === 'year' ? 4 : 2, '0');
+}
+
+/** Parses an ISO date or three localized numeric fields in the provided segment order. */
+export function parsePastedDate(value: string, order: readonly DateSegmentKind[]): Date | undefined {
+  const text = value.trim();
+  const isoDate = parseIsoDate(text);
+  if (isoDate) return isoDate;
+
+  const values = text.split(/[^\p{Nd}]+/u).filter(Boolean);
+  if (values.length !== order.length || order.length !== 3) return undefined;
+
+  const parts = new Map(order.map((kind, index) => [kind, normalizeInputDigits(values[index]!)]));
+  return dateFromParts(parts.get('day') ?? '', parts.get('month') ?? '', parts.get('year') ?? '');
 }
 
 /** Parses the `disabled-dates` attribute into an ISO-date set. */
@@ -231,8 +304,8 @@ export function createDateConstraints(
   disabledWeekDays = ''
 ): DateConstraints {
   return {
-    minDate: parseIsoDate(min),
-    maxDate: parseIsoDate(max),
+    minDate: parseIsoDate(min) ?? createUtcDate(1, 0, 1),
+    maxDate: parseIsoDate(max) ?? createUtcDate(9999, 11, 31),
     disabledDates: parseDisabledDates(disabledDates),
     disabledWeekDays: parseDisabledWeekDays(disabledWeekDays),
   };
@@ -241,8 +314,8 @@ export function createDateConstraints(
 /** Whether a date is outside the min/max bounds or explicitly disabled. */
 export function isDateUnavailable(date: Date, constraints: DateConstraints): boolean {
   return (
-    (constraints.minDate !== undefined && compareDates(date, constraints.minDate) < 0) ||
-    (constraints.maxDate !== undefined && compareDates(date, constraints.maxDate) > 0) ||
+    compareDates(date, constraints.minDate) < 0 ||
+    compareDates(date, constraints.maxDate) > 0 ||
     constraints.disabledDates.has(toIsoDate(date)) ||
     constraints.disabledWeekDays.has(date.getUTCDay())
   );
@@ -257,8 +330,9 @@ export function getLocaleFirstDay(locale: string): number {
   try {
     const localeInfo = new Intl.Locale(locale) as Intl.Locale & {
       getWeekInfo?: () => { firstDay: number };
+      weekInfo?: { firstDay: number };
     };
-    const value = localeInfo.getWeekInfo?.().firstDay;
+    const value = localeInfo.getWeekInfo?.().firstDay ?? localeInfo.weekInfo?.firstDay;
     if (value !== undefined) firstDay = value % DAYS_IN_WEEK;
   } catch {
     firstDay = 0;
@@ -287,13 +361,48 @@ export function getMonthName(locale: string, month: number): string {
   return getMonthNames(locale)[month] ?? '';
 }
 
+/** Localized date-pattern token for a segment; callers may override it with a slot. */
+export function getDateSegmentPlaceholder(locale: string, kind: DateSegmentKind): string {
+  let placeholders = dateSegmentPlaceholderCache.get(locale);
+  if (!placeholders) {
+    const fallbackInitial: Record<DateSegmentKind, string> = { day: 'D', month: 'M', year: 'Y' };
+    const fallbackPattern: Record<DateSegmentKind, string> = { day: 'DD', month: 'MM', year: 'YYYY' };
+    try {
+      const names = new Intl.DisplayNames(locale, { type: 'dateTimeField', style: 'long' });
+      const initial = (field: DateSegmentKind): string => {
+        const label = names.of(field)?.trim();
+        const firstLetter = label ? Array.from(label)[0] : fallbackInitial[field];
+        return Array.from(firstLetter!.toLocaleUpperCase(locale))[0] ?? fallbackInitial[field];
+      };
+      placeholders = {
+        day: initial('day').repeat(2),
+        month: initial('month').repeat(2),
+        year: initial('year').repeat(4),
+      };
+    } catch {
+      placeholders = fallbackPattern;
+    }
+    dateSegmentPlaceholderCache.set(locale, placeholders);
+  }
+
+  return placeholders[kind];
+}
+
 /** Weekday names starting on Sunday, cached per locale and format. */
 export function getWeekdayNames(locale: string, format: 'narrow' | 'short' | 'long'): readonly WeekdayName[] {
   const cacheKey = `${locale}|${format}`;
   let names = weekdayNameCache.get(cacheKey);
   if (!names) {
-    const labelFormatter = getFormatter(locale, `weekday-${format}`, { weekday: format, timeZone: 'UTC' });
-    const fullFormatter = getFormatter(locale, 'weekday-long', { weekday: 'long', timeZone: 'UTC' });
+    const labelFormatter = getFormatter(locale, `weekday-${format}`, {
+      calendar: 'gregory',
+      weekday: format,
+      timeZone: 'UTC',
+    });
+    const fullFormatter = getFormatter(locale, 'weekday-long', {
+      calendar: 'gregory',
+      weekday: 'long',
+      timeZone: 'UTC',
+    });
     names = Array.from({ length: DAYS_IN_WEEK }, (_, index) => {
       const date = addDays(WEEK_START_SAMPLE, index);
       return { label: labelFormatter.format(date), fullLabel: fullFormatter.format(date) };

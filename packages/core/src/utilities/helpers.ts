@@ -12,6 +12,7 @@ const whitespaceFilter = (value: Node, _index: number, _array: Node[]) => {
 };
 
 /**
+ * @deprecated No longer used internally. This helper will be removed in a future major release.
  * @description Determine if the only visible slotted content is an icon.
  *
  * @param nodes represent the nodes mirrored in the slots of a component.
@@ -32,11 +33,7 @@ export const isIconOnly = (nodes: Node[], prefix: string): boolean => {
 };
 
 export function minifyCssString(css: string) {
-  return css
-    .replace(/*JSBlockComments*/ /\/\*[\S\s]*?\*\//gm, '')
-    .replace(/\n/g, '')
-    .replace(/\s\s/g, '')
-    .trim();
+  return css.replace(/*JSBlockComments*/ /\/\*[\S\s]*?\*\//gm, '').trim();
 }
 
 /**
