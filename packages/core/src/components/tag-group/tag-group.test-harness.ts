@@ -148,6 +148,27 @@ export class CoreTagGroupTests<T extends CoreTagGroup> extends CharmElementTests
                   ).to.deep.equal(['-1', '-1', '-1']);
                 },
               },
+              presentationalRemoveInListbox: {
+                description: 'swaps the remove button for a pointer-only control while tags are listbox options',
+                test: async () => {
+                  const group = this.component;
+                  group.selection = 'multiple';
+                  await elementUpdated(group);
+                  const tags = this.tags();
+                  await waitUntil(() => tags.every(tag => tag.presentationalRemove));
+                  await Promise.all(tags.map(tag => tag.updateComplete));
+                  expect(tags.every(tag => tag.shadowRoot?.querySelector('button') === null)).to.be.true;
+                  expect(
+                    tags.every(tag => tag.shadowRoot?.querySelector('[part="tag-remove"]')?.getAttribute('aria-hidden'))
+                  ).to.be.true;
+
+                  group.selection = 'none';
+                  await elementUpdated(group);
+                  await waitUntil(() => tags.every(tag => !tag.presentationalRemove));
+                  await Promise.all(tags.map(tag => tag.updateComplete));
+                  expect(tags.every(tag => tag.shadowRoot?.querySelector('button') !== null)).to.be.true;
+                },
+              },
               skipsDisabledTabStop: {
                 description: 'moves the tab stop to the first enabled tag when the first is disabled',
                 test: async () => {

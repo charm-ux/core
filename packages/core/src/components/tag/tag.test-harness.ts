@@ -150,6 +150,24 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
           accessibility: {
             description: 'accessibility',
             tests: {
+              presentationalRemove: {
+                description: 'renders a non-focusable, aria-hidden remove control when exposed as a listbox option',
+                test: async () => {
+                  const el = this.component;
+                  el.managedFocus = true;
+                  el.presentationalRemove = true;
+                  el.tabIndex = 0;
+                  await elementUpdated(el);
+                  const control = el.shadowRoot?.querySelector('[part="tag-remove"]') as HTMLElement;
+                  expect(control.localName).to.equal('span');
+                  expect(control.getAttribute('aria-hidden')).to.equal('true');
+                  expect(el.shadowRoot?.querySelector('button')).to.be.null;
+                  setTimeout(() => control.click());
+                  const event = (await oneEvent(el, 'tag-remove')) as CustomEvent;
+                  expect(event.detail.value).to.equal('apple');
+                  await expect(el).to.be.accessible();
+                },
+              },
               removeButtonName: {
                 description: 'names the remove button with visually hidden DOM text plus the tag content',
                 test: async () => {
