@@ -1,5 +1,6 @@
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmElement, CharmFocusableElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
 import { keys } from '../../utilities/key-map.js';
@@ -16,7 +17,7 @@ export interface TagRemoveEvent {
 /**
  * A tag is a compact, keyboard-accessible label used to represent a category, keyword, filter, or selected item. Tags
  * can optionally be removed by the user. A tag does not remove itself from the DOM; listen for `tag-remove` and remove
- * (or veto) it from the consuming code. Tags are designed to be composed inside a tag group, which manages roles,
+ * (or veto) it from the consuming code. Tags are designed to be composed inside a tag group, which manages list roles,
  * selection, and keyboard navigation between tags.
  *
  * @tag ch-tag
@@ -66,11 +67,17 @@ export class CoreTag extends CharmFocusableElement {
   public static override styles = [...super.styles, styles];
   public static override baseName = 'tag';
 
-  /** An identifier for the tag. Included in the `tag-remove` event detail. */
+  /**
+   * Focus is not delegated: a standalone tag exposes only its remove button in the tab order, while a tag group places
+   * focus on the tag host itself through a roving tabindex so the tag is announced as a list item or option.
+   */
+  public static override shadowRootOptions = { ...super.shadowRootOptions, delegatesFocus: false };
+
+  /** An identifier for the tag. Included in the `tag-remove` event detail and used as the tag group's value. */
   @property()
   public value?: string;
 
-  /** Disables the tag. A disabled tag cannot be removed. */
+  /** Disables the tag. A disabled tag cannot be removed or selected. */
   @property({ type: Boolean, reflect: true })
   public disabled = false;
 
@@ -82,14 +89,41 @@ export class CoreTag extends CharmFocusableElement {
   @property({ type: Boolean, reflect: true })
   public selected = false;
 
+  /** @internal Disables the tag on behalf of a tag group while preserving its own `disabled` state. */
+  @property({ type: Boolean, attribute: false })
+  public forceDisabled = false;
+
+  /**
+   * @internal Set by a tag group that manages focus with a roving tabindex on the tag host. Takes the remove button
+   * out of the tab order so each tag is a single tab stop.
+   */
+  @property({ type: Boolean, attribute: false })
+  public managedFocus = false;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
 
+  /** @internal Whether the tag is disabled by itself or by its group. */
+  public get isDisabled(): boolean {
+    return this.disabled || this.forceDisabled;
+  }
+
+  public override connectedCallback() {
+    super.connectedCallback();
+    // Listen on the host so Delete/Backspace work whether focus is on the host (inside a group) or the remove button.
+    this.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  public override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('keydown', this.handleKeyDown);
+  }
+
   protected override willUpdate(changedProperties: PropertyValues<this>) {
     super.willUpdate(changedProperties);
-    if (changedProperties.has('disabled')) {
-      if (this.disabled) this.setAttribute('aria-disabled', 'true');
+    if (changedProperties.has('disabled') || changedProperties.has('forceDisabled')) {
+      if (this.isDisabled) this.setAttribute('aria-disabled', 'true');
       else this.removeAttribute('aria-disabled');
     }
   }
@@ -102,12 +136,14 @@ export class CoreTag extends CharmFocusableElement {
 
   /** Requests removal when the tag is removable and enabled. */
   protected requestRemove() {
-    if (!this.removable || this.disabled) return;
+    if (!this.removable || this.isDisabled) return;
     this.emitRemove();
   }
 
   protected handleRemoveClick(event: MouseEvent) {
-    if (this.disabled) {
+    // Keep a remove click from being read as a selection click by an enclosing group.
+    event.stopPropagation();
+    if (this.isDisabled) {
       event.preventDefault();
       return;
     }
@@ -118,16 +154,16 @@ export class CoreTag extends CharmFocusableElement {
    * Delete and Backspace request removal. Keys are canceled synchronously so an enclosing group does not also act on
    * them. Arrow, Home, End, and Space navigation/selection are the containing group's responsibility.
    */
-  protected handleKeyDown(event: KeyboardEvent) {
-    if (!this.removable || this.disabled) return;
+  protected handleKeyDown = (event: KeyboardEvent) => {
+    if (!this.removable || this.isDisabled) return;
     if (event.key !== keys.Delete && event.key !== keys.Backspace) return;
     event.preventDefault();
     this.requestRemove();
-  }
+  };
 
   /**
-   * Generates the remove button. The button stays in the natural tab order so a standalone tag is operable; a tag
-   * group sets `tabindex="-1"` on it and manages a roving tabindex on the tags themselves.
+   * Generates the remove button. The button is in the natural tab order for a standalone tag; when a tag group
+   * manages focus it is reachable by pointer and by Delete/Backspace on the focused tag instead.
    */
   protected removeTemplate() {
     if (!this.removable) return nothing;
@@ -135,8 +171,9 @@ export class CoreTag extends CharmFocusableElement {
       <button
         aria-labelledby="remove-label content"
         class="remove"
-        ?disabled=${this.disabled}
+        ?disabled=${this.isDisabled}
         part="tag-remove"
+        tabindex=${ifDefined(this.managedFocus ? '-1' : undefined)}
         type="button"
         @click=${this.handleRemoveClick}
       >
@@ -149,7 +186,7 @@ export class CoreTag extends CharmFocusableElement {
   /** Generates the tag template. */
   protected tagTemplate() {
     return this.html`
-      <div class="base" part="tag-base" @keydown=${this.handleKeyDown}>
+      <div class="base" part="tag-base">
         ${startTemplate('tag-start')}
         <span class="content" id="content" part="tag-content"><slot></slot></span>
         ${endTemplate('tag-end')}

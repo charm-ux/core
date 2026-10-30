@@ -1,10 +1,21 @@
 import { css } from 'lit';
-import { component } from '../../utilities/theme.js';
+import { component, semantic } from '../../utilities/theme.js';
 
 export default css`
   :host {
     display: inline-flex;
     vertical-align: middle;
+  }
+
+  /* The host takes focus when a tag group manages a roving tabindex. */
+  :host(:focus-visible) {
+    outline: none;
+  }
+
+  :host(:focus-visible) .base {
+    outline: ${semantic('focus', 'outlineWidth')} ${semantic('focus', 'outlineStyle')}
+      ${semantic('focus', 'outlineColor')};
+    outline-offset: ${semantic('focus', 'outlineOffset')};
   }
 
   .base {

@@ -1261,6 +1261,24 @@ const charmTokensBase = defineTokens(
         },
       },
 
+      // Tag Group
+      tagGroup: {
+        gap: primitive('spacing', 'xs'),
+        labelGap: primitive('spacing', 'xs'),
+        label: {
+          color: semantic('text', 'primary'),
+          fontSize: primitive('fontSize', 'sm'),
+          fontWeight: primitive('fontWeight', 'medium'),
+        },
+        helpText: {
+          color: semantic('text', 'secondary'),
+          fontSize: primitive('fontSize', 'xs'),
+        },
+        empty: {
+          color: semantic('text', 'secondary'),
+        },
+      },
+
       // Textarea
       textArea: {
         inputLineHeight: primitive('lineHeight', 'md'),

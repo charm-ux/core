@@ -126,14 +126,43 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                   expect(button.hasAttribute('aria-label')).to.be.false;
                 },
               },
-              focusDelegatesToRemoveButton: {
-                description: 'focus() moves focus to the remove button when removable',
+              standaloneRemoveButtonIsTabbable: {
+                description: 'keeps the remove button in the tab order when no group manages focus',
                 test: async () => {
                   const el = this.component;
                   await elementUpdated(el);
+                  expect(el.hasAttribute('tabindex')).to.be.false;
+                  expect(this.removeButton()?.tabIndex).to.equal(0);
+                  this.removeButton()?.focus();
+                  expect(el.shadowRoot?.activeElement).to.equal(this.removeButton());
+                },
+              },
+              managedFocusRemovesButtonTabStop: {
+                description: 'takes the remove button out of the tab order when a group manages focus',
+                test: async () => {
+                  const el = this.component;
+                  el.managedFocus = true;
+                  await elementUpdated(el);
+                  expect(this.removeButton()?.tabIndex).to.equal(-1);
+                  el.tabIndex = 0;
                   el.focus();
                   expect(document.activeElement).to.equal(el);
-                  expect(el.shadowRoot?.activeElement).to.equal(this.removeButton());
+                  expect(el.shadowRoot?.activeElement).to.be.null;
+                },
+              },
+              forceDisabled: {
+                description: 'forceDisabled disables the tag without changing its own disabled property',
+                test: async () => {
+                  const el = this.component;
+                  el.forceDisabled = true;
+                  await elementUpdated(el);
+                  expect(el.disabled).to.be.false;
+                  expect(el.isDisabled).to.be.true;
+                  expect(el.getAttribute('aria-disabled')).to.equal('true');
+                  expect(this.removeButton()?.disabled).to.be.true;
+                  el.forceDisabled = false;
+                  await elementUpdated(el);
+                  expect(el.hasAttribute('aria-disabled')).to.be.false;
                 },
               },
             },
@@ -155,20 +184,22 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                 },
               },
               removeDeleteKey: {
-                description: 'emits tag-remove when Delete is pressed while focused',
+                description: 'emits tag-remove when Delete is pressed while the remove button is focused',
                 test: async () => {
                   const el = this.component;
                   await elementUpdated(el);
-                  el.focus();
+                  this.removeButton()?.focus();
                   setTimeout(() => sendKeys({ press: 'Delete' }));
                   const event = (await oneEvent(el, 'tag-remove')) as CustomEvent;
                   expect(event.detail.value).to.equal('apple');
                 },
               },
               removeBackspaceKey: {
-                description: 'emits tag-remove when Backspace is pressed while focused',
+                description: 'emits tag-remove when Backspace is pressed while the host is focused (group mode)',
                 test: async () => {
                   const el = this.component;
+                  el.managedFocus = true;
+                  el.tabIndex = 0;
                   await elementUpdated(el);
                   el.focus();
                   setTimeout(() => sendKeys({ press: 'Backspace' }));
@@ -181,10 +212,9 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                 test: async () => {
                   const el = this.component;
                   await elementUpdated(el);
-                  const target = el.shadowRoot?.querySelector('.base') as HTMLElement;
                   for (const key of ['Delete', 'Backspace']) {
                     const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-                    target.dispatchEvent(event);
+                    el.dispatchEvent(event);
                     expect(event.defaultPrevented, key).to.be.true;
                   }
                 },
