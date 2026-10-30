@@ -9,6 +9,47 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
     super();
 
     this.updateTests({
+      focusableElement: {
+        description: 'focusable-element',
+        tests: {
+          events: {
+            description: 'events',
+            tests: {
+              // A tag host only takes focus when a group gives it a tabindex; standalone focus goes to the remove button.
+              focus: {
+                description: 'emits a `focus` event when focused through a group-managed tabindex',
+                test: async () => {
+                  const el = this.component;
+                  el.managedFocus = true;
+                  el.tabIndex = 0;
+                  await elementUpdated(el);
+                  const focusHandler = sinon.spy();
+                  el.addEventListener('focus', focusHandler);
+                  el.focus();
+                  await elementUpdated(el);
+                  expect(focusHandler).to.have.been.callCount(1);
+                  expect(document.activeElement).to.equal(el);
+                },
+              },
+              blur: {
+                description: 'emits a `blur` event when blurred through a group-managed tabindex',
+                test: async () => {
+                  const el = this.component;
+                  el.managedFocus = true;
+                  el.tabIndex = 0;
+                  await elementUpdated(el);
+                  const blurHandler = sinon.spy();
+                  el.addEventListener('blur', blurHandler);
+                  el.focus();
+                  el.blur();
+                  await elementUpdated(el);
+                  expect(blurHandler).to.have.been.callCount(1);
+                },
+              },
+            },
+          },
+        },
+      },
       tag: {
         description: 'tag',
         tests: {
@@ -226,7 +267,7 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                   await elementUpdated(el);
                   const handler = sinon.spy();
                   el.addEventListener('tag-remove', handler);
-                  const target = el.shadowRoot?.querySelector('.base') as HTMLElement;
+                  const target = el;
                   for (const key of ['ArrowLeft', 'ArrowRight', 'Home', 'End', ' ', 'Enter']) {
                     const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
                     target.dispatchEvent(event);
@@ -244,7 +285,7 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                   const handler = sinon.spy();
                   el.addEventListener('tag-remove', handler);
                   this.removeButton()?.click();
-                  const target = el.shadowRoot?.querySelector('.base') as HTMLElement;
+                  const target = el;
                   target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
                   await elementUpdated(el);
                   expect(handler).to.have.callCount(0);
@@ -258,7 +299,7 @@ export class CoreTagTests<T extends CoreTag> extends FocusableElementTests<T> {
                   await elementUpdated(el);
                   const handler = sinon.spy();
                   el.addEventListener('tag-remove', handler);
-                  const target = el.shadowRoot?.querySelector('.base') as HTMLElement;
+                  const target = el;
                   target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
                   await elementUpdated(el);
                   expect(handler).to.have.callCount(0);
