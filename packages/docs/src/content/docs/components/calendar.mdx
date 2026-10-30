@@ -89,10 +89,10 @@ Use `min` and `max` to limit the selectable date range. `disabled-dates` accepts
 
 ## Localization
 
-Set `locale` or the inherited `lang` attribute to localize month, weekday, and full-date labels. The first weekday follows the locale; set `first-day-of-week` (0–6) to override it. Use the label slots to translate the month, year, and navigation controls.
+Set the `lang` attribute to localize month, weekday, and full-date labels. The first weekday follows the locale; set `first-day-of-week` (0–6) to override it. Use the label slots to translate the month, year, and navigation controls.
 
 ```html
-<ch-calendar locale="fr-FR" first-day-of-week="1">
+<ch-calendar lang="fr-FR" first-day-of-week="1">
   <span slot="previous-month-label">Mois précédent</span>
   <span slot="next-month-label">Mois suivant</span>
   <span slot="month-label">Mois</span>

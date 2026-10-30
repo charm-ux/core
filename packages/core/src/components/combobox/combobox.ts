@@ -203,6 +203,9 @@ export class CoreCombobox extends CharmFormControlElement {
 
   @state() protected activeIndex = -1;
 
+  /** The tag that holds the roving tab stop, so Tab and arrow keys return to the same tag. */
+  @state() protected activeTagIndex = 0;
+
   @state() protected inputValue = '';
 
   @state() protected isFiltering = false;
@@ -1046,6 +1049,20 @@ export class CoreCombobox extends CharmFormControlElement {
           this.removeValue(this.selectedValues[this.selectedValues.length - 1]);
         }
         return;
+      case keys.ArrowLeft:
+        // At the start of the input, Left continues into the tags that sit before it.
+        if (
+          this.multiple &&
+          this.selectedValues.length > 0 &&
+          !this.open &&
+          !hasModifier &&
+          this.input?.selectionStart === 0 &&
+          this.input.selectionEnd === 0
+        ) {
+          event.preventDefault();
+          this.focusTag(this.selectedValues.length - 1);
+        }
+        return;
       default:
         break;
     }
@@ -1175,15 +1192,69 @@ export class CoreCombobox extends CharmFormControlElement {
   }
 
   /** Removes a value from a multiple selection. */
-  protected removeValue(value: string) {
+  protected removeValue(value: string, focusInput = true) {
+    const label = this.getLabelForValue(value);
     const changed = this.setSelectedValues(
       this.selectedValues.filter(selected => selected !== value),
       true
     );
     this.isFiltering = false;
     this.syncInputToSelection();
-    this.input?.focus();
+    if (focusInput) this.input?.focus();
     this.emitValueChange(changed);
+    if (changed) announce(this, `${label} removed`, { priority: 'high' });
+  }
+
+  /** Moves focus to a tag and makes it the roving tab stop. */
+  protected focusTag(index: number) {
+    this.activeTagIndex = index;
+    this.tagElements()[index]?.focus();
+  }
+
+  /** The rendered tag elements, in selection order. */
+  protected tagElements(): HTMLElement[] {
+    return Array.from(this.renderRoot.querySelectorAll<HTMLElement>('.combobox-tag'));
+  }
+
+  /**
+   * Moves between tags with the arrow, Home, and End keys. Right from the last tag returns to the input. Delete and
+   * Backspace remove the focused tag and move focus to the tag that takes its place.
+   */
+  protected async handleTagsKeyDown(event: KeyboardEvent) {
+    const tags = this.tagElements();
+    const index = tags.indexOf(event.target as HTMLElement);
+    if (index === -1) return;
+
+    switch (event.key) {
+      case keys.ArrowLeft:
+        event.preventDefault();
+        if (index > 0) this.focusTag(index - 1);
+        return;
+      case keys.ArrowRight:
+        event.preventDefault();
+        if (index < tags.length - 1) this.focusTag(index + 1);
+        else this.input?.focus();
+        return;
+      case keys.Home:
+        event.preventDefault();
+        this.focusTag(0);
+        return;
+      case keys.End:
+        event.preventDefault();
+        this.focusTag(tags.length - 1);
+        return;
+      case keys.Delete:
+      case keys.Backspace:
+        event.preventDefault();
+        if (this.disabled || this.readonly) return;
+        this.removeValue(this.selectedValues[index], false);
+        await this.updateComplete;
+        if (this.selectedValues.length) this.focusTag(Math.min(index, this.selectedValues.length - 1));
+        else this.input?.focus();
+        return;
+      default:
+        return;
+    }
   }
 
   /** Emits `input` and `change` when a committed selection actually changed. */
@@ -1431,11 +1502,27 @@ export class CoreCombobox extends CharmFormControlElement {
   protected tagsTemplate() {
     if (!this.multiple || !this.selectedValues.length) return '';
 
+    const tabStop = Math.min(this.activeTagIndex, this.selectedValues.length - 1);
     return this.html`
-      <span class="combobox-tags" part="combobox-tags" @mousedown=${this.handleControlMouseDown}>
+      <span
+        aria-labelledby=${ifDefined(this.hasLabel ? this.labelId : undefined)}
+        aria-orientation="horizontal"
+        class="combobox-tags"
+        part="combobox-tags"
+        role="listbox"
+        @keydown=${this.handleTagsKeyDown}
+        @mousedown=${this.handleControlMouseDown}
+      >
         ${this.selectedTags.map(
-          tag => this.html`
-            <span class="combobox-tag" part="combobox-tag">
+          (tag, index) => this.html`
+            <span
+              aria-label=${`${this.removeLabel} ${tag.label}`}
+              aria-selected="true"
+              class="combobox-tag"
+              part="combobox-tag"
+              role="option"
+              tabindex=${index === tabStop ? 0 : -1}
+            >
               <span class="combobox-tag-label" part="combobox-tag-label">${tag.label}</span>
               <button
                 aria-label=${`${this.removeLabel} ${tag.label}`}

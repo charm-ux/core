@@ -84,9 +84,7 @@ export const Link: Story = {
     template(
       args,
       html`For more details, please refer to our
-        <ch-button href="https://aka.ms/NewAcquisitionReport" appearance="link" target="_blank" external>
-          documentation page.
-        </ch-button>`
+        <ch-button href="https://aka.ms/NewAcquisitionReport" target="_blank"> documentation page. </ch-button>`
     ),
   args: {
     open: true,

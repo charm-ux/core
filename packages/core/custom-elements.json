@@ -13158,6 +13158,16 @@
             },
             {
               "kind": "field",
+              "name": "activeTagIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "The tag that holds the roving tab stop, so Tab and arrow keys return to the same tag."
+            },
+            {
+              "kind": "field",
               "name": "allowsCustomValue",
               "type": {
                 "text": "boolean"
@@ -13610,6 +13620,20 @@
               }
             },
             {
+              "kind": "method",
+              "name": "focusTag",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Moves focus to a tag and makes it the roving tab stop."
+            },
+            {
               "kind": "field",
               "name": "formAssociated",
               "type": {
@@ -13939,6 +13963,20 @@
                   }
                 }
               ]
+            },
+            {
+              "kind": "method",
+              "name": "handleTagsKeyDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ],
+              "description": "Moves between tags with the arrow, Home, and End keys. Right from the last tag returns to the input. Delete and\nBackspace remove the focused tag and move focus to the tag that takes its place."
             },
             {
               "kind": "method",
@@ -14621,6 +14659,10 @@
                   "type": {
                     "text": "string"
                   }
+                },
+                {
+                  "name": "focusInput",
+                  "default": "true"
                 }
               ],
               "description": "Removes a value from a multiple selection."
@@ -14923,6 +14965,17 @@
               "name": "syncOptionState",
               "privacy": "protected",
               "description": "Applies the listbox state to the slotted options. Filtering hides options, the active option is marked `current`,\nand groups are hidden when none of their options are visible. Only changed options are written."
+            },
+            {
+              "kind": "method",
+              "name": "tagElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLElement[]"
+                }
+              },
+              "description": "The rendered tag elements, in selection order."
             },
             {
               "kind": "method",

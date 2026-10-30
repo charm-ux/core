@@ -14,6 +14,9 @@ const getRows = (el: CoreCombobox) => (el.open ? getOptions(el).filter(option =>
 
 const activeRow = (el: CoreCombobox) => getRows(el).findIndex(option => option.hasAttribute('current'));
 
+const focusedTagLabel = (el: CoreCombobox) =>
+  el.shadowRoot?.activeElement?.querySelector('.combobox-tag-label')?.textContent;
+
 const settle = async (el: CoreCombobox) => {
   await aTimeout(0);
   await elementUpdated(el);
@@ -29,7 +32,7 @@ const focusInput = (el: CoreCombobox) => {
 };
 
 interface Announcer {
-  ariaNotify(message: string): void;
+  ariaNotify(message: string, options?: { priority?: 'high' | 'normal' }): void;
 }
 
 const spyOnAnnouncements = (el: Element) => sinon.spy(el as unknown as Announcer, 'ariaNotify');
@@ -774,6 +777,21 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   expect(el.valueAsArray).to.deep.equal(['banana']);
                 },
               },
+              announcesRemovedTag: {
+                description: 'announces the label of a removed tag',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  await elementUpdated(el);
+                  const announcements = spyOnAnnouncements(el);
+
+                  el.shadowRoot?.querySelector<HTMLButtonElement>('.combobox-tag-remove')?.click();
+                  await elementUpdated(el);
+
+                  expect(announcements.calledWith('Apple removed', { priority: 'high' })).to.be.true;
+                },
+              },
               clears: {
                 description: 'clears the selection and input text',
                 test: async () => {
@@ -947,6 +965,85 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   await elementUpdated(el);
 
                   expect(el.valueAsArray).to.deep.equal(['apple']);
+                },
+              },
+              tabsIntoTags: {
+                description: 'moves focus from the input to the first tag with Tab',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  await elementUpdated(el);
+                  focusInput(el);
+
+                  await sendKeys({ press: 'Tab' });
+                  await elementUpdated(el);
+
+                  expect(focusedTagLabel(el)).to.equal('Apple');
+                },
+              },
+              arrowsBetweenTags: {
+                description: 'moves between tags with the arrow keys and returns to the input from the last tag',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  await elementUpdated(el);
+                  focusInput(el);
+
+                  await sendKeys({ press: 'ArrowLeft' });
+                  await elementUpdated(el);
+                  expect(focusedTagLabel(el)).to.equal('Banana');
+
+                  await sendKeys({ press: 'ArrowLeft' });
+                  await elementUpdated(el);
+                  expect(focusedTagLabel(el)).to.equal('Apple');
+
+                  await sendKeys({ press: 'ArrowLeft' });
+                  await elementUpdated(el);
+                  expect(focusedTagLabel(el)).to.equal('Apple');
+
+                  await sendKeys({ press: 'End' });
+                  await elementUpdated(el);
+                  expect(focusedTagLabel(el)).to.equal('Banana');
+
+                  await sendKeys({ press: 'ArrowRight' });
+                  await elementUpdated(el);
+                  expect(el.shadowRoot?.activeElement).to.equal(getInput(el));
+                },
+              },
+              deletesFocusedTag: {
+                description: 'removes the focused tag with Delete and focuses the tag that takes its place',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana', 'cherry'];
+                  await elementUpdated(el);
+                  focusInput(el);
+
+                  await sendKeys({ press: 'Tab' });
+                  await elementUpdated(el);
+                  await sendKeys({ press: 'Delete' });
+                  await settle(el);
+
+                  expect(el.valueAsArray).to.deep.equal(['banana', 'cherry']);
+                  expect(focusedTagLabel(el)).to.equal('Banana');
+                },
+              },
+              tagsExposeListboxRoles: {
+                description: 'exposes the tags as a listbox of options',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  await elementUpdated(el);
+
+                  const listbox = el.shadowRoot?.querySelector('.combobox-tags');
+                  expect(listbox?.getAttribute('role')).to.equal('listbox');
+                  const tags = el.shadowRoot?.querySelectorAll('.combobox-tag') ?? [];
+                  expect(tags).to.have.length(2);
+                  tags.forEach(tag => expect(tag.getAttribute('role')).to.equal('option'));
+                  expect(tags[0].getAttribute('aria-label')).to.equal('Remove Apple');
                 },
               },
               commitsCustomValue: {
