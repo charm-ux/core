@@ -2,7 +2,10 @@
 export default {
   manifestSrc: './packages/core/custom-elements.json',
   // include: ['**/*.html', '**/*.js', '**/*.ts', '**/*.mdx', '**/*.md', '**/*.astro'],
-  exclude: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+  exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', '**/storybook-static/**'],
+  diagnosticSeverity: {
+    unknownElement: 'off',
+  },
   libraries: {
     // 'wc-dox': {
     //   manifestSrc: './packages/docs/node_modules/wc-dox/custom-elements.json',

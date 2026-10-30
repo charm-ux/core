@@ -229,6 +229,11 @@ export class CorePopup extends CharmDismissibleElement {
     return this._flipFallbackPlacements.join(' ');
   }
 
+  /** Whether the content is labelled. Presentational content must not carry a label, since the label makes browsers drop the presentational role. */
+  protected get isContentLabelled(): boolean {
+    return this.contentRole !== 'presentation' && this.contentRole !== 'none';
+  }
+
   public set flipFallbackPlacements(value: string | Array<Placement | PopupPlacement>) {
     this._flipFallbackPlacements = Array.isArray(value)
       ? value
@@ -599,7 +604,7 @@ export class CorePopup extends CharmDismissibleElement {
         class="popup"
         part="popup-base"
         role=${ifDefined(this.contentRole)}
-        aria-labelledby=${ifDefined(this.label && this.contentRole !== 'none' ? 'popup-label' : undefined)}
+        aria-labelledby=${ifDefined(this.label && this.isContentLabelled ? 'popup-label' : undefined)}
         ?inert=${!this.open}
         @transitionend=${this.handleTransitionEnd}
       >

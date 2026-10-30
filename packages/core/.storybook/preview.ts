@@ -2,7 +2,7 @@ import { setCustomElementsManifest } from '@storybook/web-components-vite';
 import { setStorybookHelpersConfig } from '@wc-toolkit/storybook-helpers';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import customElements from '../custom-elements.json';
-import '../dist/kitchen-sink.js';
+import '../src/kitchen-sink.ts';
 import '../dist/themes/charm/selector-theme.css';
 import '../dist/themes/charm/reset.css';
 import '../dist/themes/charm/utility-classes.css';

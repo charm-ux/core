@@ -391,12 +391,12 @@ Use the `--charm-popup-show-transition` and `--charm-popup-hide-transition` CSS 
 
 ## Hover Bridge
 
-When a gap exists between the anchor and the popup element, this option will add a “hover bridge” that fills the gap using an invisible element. This makes listening for events such as `mouseover` and `mouseout` more sane because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is active. For demonstration purposes, the bridge in this example is shown in orange.
+When `distance` is set and a gap exists between the anchor and the popup element, a “hover bridge” that fills the gap using an invisible element. This makes listening for events such as `mouseover` and `mouseout` more sane because the pointer never technically leaves the element. The hover bridge will only be drawn when the popover is active. For demonstration purposes, the bridge in this example is shown in orange.
 
 <code-bubble>
 
 ```html
-<ch-popup open class="hover-bridge-example" hover-bridge distance="20" skidding="20">
+<ch-popup open class="hover-bridge-example" distance="20" skidding="20">
   <span slot="anchor" id="anchor"></span>
   <div class="box"></div>
 </ch-popup>

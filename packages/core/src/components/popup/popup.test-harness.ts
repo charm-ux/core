@@ -31,6 +31,22 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   expect(popup.hidden).to.equal(false);
                 },
               },
+              presentationContentIsUnlabelled: {
+                description: 'does not label presentational content, so its role is not dropped',
+                test: async () => {
+                  const el = this.component;
+                  el.label = 'Popup label';
+                  await elementUpdated(el);
+                  const dialog = el.shadowRoot!.querySelector('.popup') as HTMLElement;
+                  expect(dialog.getAttribute('aria-labelledby')).to.equal('popup-label');
+
+                  el.contentRole = 'presentation';
+                  await elementUpdated(el);
+
+                  expect(dialog.getAttribute('role')).to.equal('presentation');
+                  expect(dialog.hasAttribute('aria-labelledby')).to.equal(false);
+                },
+              },
               anchorFromId: {
                 description: 'should set anchor element when using `anchor` set to an ID',
                 test: async () => {

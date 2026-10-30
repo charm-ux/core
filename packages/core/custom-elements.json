@@ -1093,16 +1093,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -1509,16 +1499,6 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true
             },
             {
               "kind": "method",
@@ -10018,11 +9998,7 @@
               },
               "privacy": "protected",
               "description": "In listbox mode the error text sits inside the listbox host, so it's exposed as a group rather than plain text.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
+              "readonly": true
             },
             {
               "kind": "method",
@@ -11031,20 +11007,6 @@
                   }
                 }
               ]
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "kind": "method",
@@ -12203,20 +12165,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -12802,20 +12750,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "syncFormValue",
               "privacy": "protected",
@@ -13224,6 +13158,3181 @@
           "declaration": {
             "name": "CoreCheckbox",
             "module": "src/components/checkbox/checkbox.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/combobox/combobox.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A combobox combines a text input with a listbox, allowing people to filter and select from a collection of options.\nOptions are authored as `<ch-option>` elements, optionally grouped with `<ch-option-group>`.",
+          "name": "CoreCombobox",
+          "cssProperties": [
+            {
+              "description": "The selected tag background color.",
+              "name": "--charm-combobox-tag-bg-color"
+            },
+            {
+              "description": "The selected tag border radius.",
+              "name": "--charm-combobox-tag-border-radius"
+            },
+            {
+              "description": "The selected tag foreground color.",
+              "name": "--charm-combobox-tag-fg-color"
+            },
+            {
+              "description": "The selected tag font size.",
+              "name": "--charm-combobox-tag-font-size"
+            },
+            {
+              "description": "The gap between tags and within a tag.",
+              "name": "--charm-combobox-tag-gap"
+            },
+            {
+              "description": "The inline padding within a tag.",
+              "name": "--charm-combobox-tag-padding-x"
+            },
+            {
+              "description": "The block padding within a tag.",
+              "name": "--charm-combobox-tag-padding-y"
+            },
+            {
+              "description": "The size of the chevron, clear, and tag icons.",
+              "name": "--charm-combobox-icon-size"
+            },
+            {
+              "description": "The listbox background color.",
+              "name": "--charm-combobox-listbox-bg-color"
+            },
+            {
+              "description": "The listbox border color.",
+              "name": "--charm-combobox-listbox-border-color"
+            },
+            {
+              "description": "The listbox border radius.",
+              "name": "--charm-combobox-listbox-border-radius"
+            },
+            {
+              "description": "The listbox border style.",
+              "name": "--charm-combobox-listbox-border-style"
+            },
+            {
+              "description": "The listbox border width.",
+              "name": "--charm-combobox-listbox-border-width"
+            },
+            {
+              "description": "The color of the empty and loading states.",
+              "name": "--charm-combobox-listbox-empty-color"
+            },
+            {
+              "description": "The maximum height of the listbox.",
+              "name": "--charm-combobox-listbox-max-height"
+            },
+            {
+              "description": "The padding within the listbox.",
+              "name": "--charm-combobox-listbox-padding"
+            },
+            {
+              "description": "The listbox shadow.",
+              "name": "--charm-combobox-listbox-shadow"
+            },
+            {
+              "description": "Determines the background color for the control.",
+              "name": "--charm-form-control-bg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the border radius of the control.",
+              "name": "--charm-form-control-border-radius",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input background color.",
+              "name": "--charm-form-control-disabled-bg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input border color.",
+              "name": "--charm-form-control-disabled-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input foreground color.",
+              "name": "--charm-form-control-disabled-fg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input opacity.",
+              "name": "--charm-form-control-disabled-opacity",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the control text color.",
+              "name": "--charm-form-control-fg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the focused control border color.",
+              "name": "--charm-form-control-focus-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the font size.",
+              "name": "--charm-form-control-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text color.",
+              "name": "--charm-form-control-help-text-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text font size.",
+              "name": "--charm-form-control-help-text-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text font weight.",
+              "name": "--charm-form-control-help-text-font-weight",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin after help text.",
+              "name": "--charm-form-control-help-text-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between start/end icons and the input.",
+              "name": "--charm-form-control-icon-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the input height.",
+              "name": "--charm-form-control-input-height",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error border color.",
+              "name": "--charm-form-control-invalid-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error text color.",
+              "name": "--charm-form-control-invalid-message-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error message font size.",
+              "name": "--charm-form-control-invalid-message-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label color.",
+              "name": "--charm-form-control-label-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label font size.",
+              "name": "--charm-form-control-label-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label font weight.",
+              "name": "--charm-form-control-label-font-weight",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between label and the control.",
+              "name": "--charm-form-control-label-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between the required indicator and the label.",
+              "name": "--charm-form-control-label-required-indicator-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the inline padding within the input element.",
+              "name": "--charm-form-control-padding-x",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the input block padding within the input element.",
+              "name": "--charm-form-control-padding-y",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the placeholder text color.",
+              "name": "--charm-form-control-placeholder-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines thumb size when the input type is range.",
+              "name": "--charm-form-control-range-thumb-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin-top of the track when the input type is range.",
+              "name": "--charm-form-control-range-track-margin-top",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines track size when the input type is range.",
+              "name": "--charm-form-control-range-track-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The component's form-control wrapper.",
+              "name": "combobox-base"
+            },
+            {
+              "description": "The chevron indicator.",
+              "name": "combobox-chevron"
+            },
+            {
+              "description": "The clear button.",
+              "name": "combobox-clear"
+            },
+            {
+              "description": "The control wrapping the input, tags, and icons.",
+              "name": "combobox-control"
+            },
+            {
+              "description": "The container shown when no options match.",
+              "name": "combobox-empty"
+            },
+            {
+              "description": "The native text input.",
+              "name": "combobox-input"
+            },
+            {
+              "description": "The combobox label.",
+              "name": "combobox-label"
+            },
+            {
+              "description": "The listbox containing options.",
+              "name": "combobox-listbox"
+            },
+            {
+              "description": "The container shown while loading.",
+              "name": "combobox-loading"
+            },
+            {
+              "description": "The popup element that positions the listbox.",
+              "name": "combobox-popup"
+            },
+            {
+              "description": "Container for the start slot.",
+              "name": "combobox-start"
+            },
+            {
+              "description": "A selected-value tag.",
+              "name": "combobox-tag"
+            },
+            {
+              "description": "The text within a tag.",
+              "name": "combobox-tag-label"
+            },
+            {
+              "description": "The remove button within a tag.",
+              "name": "combobox-tag-remove"
+            },
+            {
+              "description": "Container for selected-value tags.",
+              "name": "combobox-tags"
+            },
+            {
+              "description": "The error message container.",
+              "name": "form-control-error-text",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "The error message icon.",
+              "name": "form-control-error-text-icon",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "The error message text.",
+              "name": "form-control-error-text-message",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "The help text container.",
+              "name": "form-control-help-text",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            }
+          ],
+          "slots": [
+            {
+              "description": "The options and option groups provided to the combobox.",
+              "name": ""
+            },
+            {
+              "description": "Accessible text for the clear button. Defaults to \"Clear\".",
+              "name": "clear-label"
+            },
+            {
+              "description": "Help text that describes how to use the combobox. Alternatively, use the `help-text` property.",
+              "name": "help-text"
+            },
+            {
+              "description": "The combobox label. Alternatively, use the `label` property.",
+              "name": "label"
+            },
+            {
+              "description": "Replaces the default spinner shown while `loading` is true.",
+              "name": "loading"
+            },
+            {
+              "description": "Content shown when no options match the current input value.",
+              "name": "no-results"
+            },
+            {
+              "description": "Content placed before the text input, such as an icon.",
+              "name": "start"
+            },
+            {
+              "description": "Accessible name for the listbox toggle button. Defaults to \"Options\".",
+              "name": "toggle-label"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_errorMessage",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_value",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "_valueDelimiter",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "','"
+            },
+            {
+              "kind": "field",
+              "name": "activeIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "-1"
+            },
+            {
+              "kind": "field",
+              "name": "activeIndexFromPointer",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "activeOption",
+              "type": {
+                "text": "ComboboxOptionInfo | undefined"
+              },
+              "privacy": "protected",
+              "description": "The active option, if one is highlighted.",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "activeTagIndex",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0",
+              "description": "The tag that holds the roving tab stop, so Tab and arrow keys return to the same tag."
+            },
+            {
+              "kind": "field",
+              "name": "allowsCustomValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Allows the user to commit a value that does not match any option. Only applies to single selection.",
+              "attribute": "allows-custom-value",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "allowsEmptyCollection",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Keeps the listbox open when the collection is empty.",
+              "attribute": "allows-empty-collection",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "announceOption",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "ComboboxOptionInfo"
+                  },
+                  "parsedType": {
+                    "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string }"
+                  }
+                }
+              ],
+              "description": "Announces an option with its position in the visible list."
+            },
+            {
+              "kind": "method",
+              "name": "announceResults",
+              "privacy": "protected",
+              "description": "Announces the listbox status when it changes: loading, and the result count while filtering. Repeats are skipped,\nso typing that leaves the result count unchanged stays quiet."
+            },
+            {
+              "kind": "method",
+              "name": "applyValidity",
+              "privacy": "protected",
+              "description": "Applies the current validity state to the element internals and rendered error message.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autocomplete",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "'off'",
+              "description": "Controls browser autofill for the text input.",
+              "attribute": "autocomplete"
+            },
+            {
+              "kind": "field",
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "attribute": "autofocus",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autoHighlight",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Highlights the first enabled option while filtering.",
+              "attribute": "auto-highlight",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              },
+              "default": "'combobox'"
+            },
+            {
+              "kind": "field",
+              "name": "blurTimeout",
+              "type": {
+                "text": "number | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "checkValidity",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "description": "Checks for validity but doesn't report a validation message when invalid.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "clear",
+              "privacy": "public",
+              "description": "Clears the selection and the input value."
+            },
+            {
+              "kind": "method",
+              "name": "clearPendingBlur",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "clearTemplate",
+              "privacy": "protected",
+              "description": "Generates the clear button."
+            },
+            {
+              "kind": "method",
+              "name": "collectOptions",
+              "privacy": "protected",
+              "description": "Collects options from the light DOM, including options inside option groups."
+            },
+            {
+              "kind": "method",
+              "name": "comboboxTemplate",
+              "privacy": "protected",
+              "description": "Generates the combobox template."
+            },
+            {
+              "kind": "method",
+              "name": "commitActiveOption",
+              "privacy": "protected",
+              "description": "Commits the active option or editable input text."
+            },
+            {
+              "kind": "method",
+              "name": "commitCustomValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "focusInput",
+                  "default": "true"
+                }
+              ],
+              "description": "Commits the current input text as a custom value."
+            },
+            {
+              "kind": "method",
+              "name": "computeDerivedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "ComboboxDerivedState"
+                }
+              },
+              "description": "Computes the filtering state for the current options and input."
+            },
+            {
+              "kind": "field",
+              "name": "controlId",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "`combobox-control-${this.instanceId}`"
+            },
+            {
+              "kind": "method",
+              "name": "controlTemplate",
+              "privacy": "protected",
+              "description": "Generates the control containing the input and actions."
+            },
+            {
+              "kind": "field",
+              "name": "currentElement",
+              "type": {
+                "text": "CoreOption | undefined"
+              },
+              "privacy": "protected",
+              "description": "The option element currently marked `current`, so only the changed option is updated."
+            },
+            {
+              "kind": "field",
+              "name": "customErrorMessage",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "defaultValue",
+              "type": {
+                "text": "string | null"
+              },
+              "privacy": "protected",
+              "default": "null",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "derived",
+              "type": {
+                "text": "ComboboxDerivedState"
+              },
+              "privacy": "protected",
+              "description": "The derived filtering state. It is recomputed only when the options, input text, or filter inputs change, so\nevent handlers and rendering share one result per change instead of rescanning the collection.",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ filter?: ComboboxFilter | undefined, inlineCompletion?: ComboboxOptionInfo | undefined, inlineCompletionEnabled: false | true, inputValue: string, isFiltering: false | true, mode: ComboboxMode, multiple: false | true, optionInfos: ComboboxOptionInfo[], visibleIndexByElement: Map<CoreOption, number>, visibleOptions: ComboboxOptionInfo[] }"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "derivedCache",
+              "type": {
+                "text": "ComboboxDerivedState | undefined"
+              },
+              "privacy": "protected",
+              "parsedType": {
+                "text": "{ filter?: ComboboxFilter | undefined, inlineCompletion?: ComboboxOptionInfo | undefined, inlineCompletionEnabled: false | true, inputValue: string, isFiltering: false | true, mode: ComboboxMode, multiple: false | true, optionInfos: ComboboxOptionInfo[], visibleIndexByElement: Map<CoreOption, number>, visibleOptions: ComboboxOptionInfo[] } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "describedBy",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "description": "Disables the input.",
+              "attribute": "disabled",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "displayLabel",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "description": "The label shown in the input for single selection.",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "emitChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "CustomEventInit"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "emitInput",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "options",
+                  "optional": true,
+                  "type": {
+                    "text": "CustomEventInit"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "emitValueChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "changed",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Emits `input` and `change` when a committed selection actually changed."
+            },
+            {
+              "kind": "method",
+              "name": "endEditing",
+              "privacy": "protected",
+              "description": "Closes the listbox and restores the input to the selected value."
+            },
+            {
+              "kind": "field",
+              "name": "errorMessage",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The input's error message.",
+              "attribute": "error-message",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "errorMessageTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for form control error message",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "filter",
+              "type": {
+                "text": "ComboboxFilter | undefined"
+              },
+              "privacy": "public",
+              "description": "A custom filter function. Receives the source option and the current input value.",
+              "parsedType": {
+                "text": "{  } | undefined"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "finishEditing",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "commitAutocomplete",
+                  "default": "true"
+                }
+              ],
+              "description": "Commits any editable input text and closes the listbox. Committing never moves focus, so leaving the combobox\nstays left."
+            },
+            {
+              "kind": "method",
+              "name": "focusTag",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "index",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Moves focus to a tag and makes it the roving tab stop."
+            },
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "static": true,
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "formDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formDisabledCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "disabled",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Reflects the disabled state when the control is disabled via a parent `<fieldset>`.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formResetCallback",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "formStateRestoreCallback",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "state",
+                  "type": {
+                    "text": "string | File | FormData | null"
+                  }
+                }
+              ],
+              "description": "Restores the control's value when the browser restores form state (bfcache navigation or autofill).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedState",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null | undefined"
+                }
+              },
+              "description": "Form state used for restoration; checkbox-like subclasses override to return their checked state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormAssociatedValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string | File | FormData | null"
+                }
+              },
+              "description": "Form-associated value; checkbox-like subclasses override for checked-dependent submission.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "FormData | string | null"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getInitialFormValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "Gets the control's initial form value for reset behavior. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getLabelForValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "The label for a selected value, falling back to the raw value for custom values."
+            },
+            {
+              "kind": "method",
+              "name": "getNativeErrorMessage",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hadFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleBlur",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleClearClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleControlClick",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleControlMouseDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "handleDocumentPointerDown",
+              "privacy": "protected",
+              "description": "Commits an outside pointer press. Listens only while the listbox is open."
+            },
+            {
+              "kind": "method",
+              "name": "handleFocus",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleInput",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleInputBlur",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleInputFocus",
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyboardActiveOption",
+              "privacy": "protected",
+              "description": "Handles a change of the active option from the keyboard or typing. Without `aria-activedescendant` the option is\nnever focused, so the change is scrolled into view and announced."
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxMouseDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleListboxMouseMove",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "handleMutations",
+              "privacy": "protected",
+              "description": "Re-collects options when their values, labels, disabled state, or content change in the light DOM."
+            },
+            {
+              "kind": "field",
+              "name": "handleNativeInput",
+              "privacy": "protected",
+              "description": "Revalidates when the native control's input changes validity without changing `value` (e.g. `badInput`).",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handlePopupRequestClose",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleSelectOnlyTypeahead",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "character",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Finds a matching option for printable-key typeahead without changing the input value."
+            },
+            {
+              "kind": "method",
+              "name": "handleTagClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "handleTagsKeyDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ],
+              "description": "Moves between tags with the arrow, Home, and End keys. Right from the last tag returns to the input. Delete and\nBackspace remove the focused tag and move focus to the tag that takes its place."
+            },
+            {
+              "kind": "method",
+              "name": "handleToggleClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "hasCapturedInitialValue",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasHelpText",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hasListAutocomplete",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the current mode uses a filtered listbox autocomplete.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "helpText",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The input's help text. Alternatively, you can use the help-text slot.",
+              "attribute": "help-text",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "helpTextTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for form control help text",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "hide",
+              "privacy": "public",
+              "description": "Closes the listbox and restores the input to the selected value."
+            },
+            {
+              "kind": "field",
+              "name": "hideLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Hides the input label and help text.",
+              "attribute": "hide-label",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "indexOfVisibleOption",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "number"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "ComboboxOptionInfo"
+                  },
+                  "parsedType": {
+                    "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string }"
+                  }
+                }
+              ],
+              "description": "The index of a visible option, or -1 when it is not visible."
+            },
+            {
+              "kind": "field",
+              "name": "initialValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "initialValues",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "initialValuesPending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "inlineCompletionDisplayOption",
+              "type": {
+                "text": "ComboboxOptionInfo | undefined"
+              },
+              "privacy": "protected",
+              "description": "The inline completion for the active list option, falling back to the first match.",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "inlineCompletionEnabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "inlineCompletionOption",
+              "type": {
+                "text": "ComboboxOptionInfo | undefined"
+              },
+              "privacy": "protected",
+              "description": "The option used to complete a typed prefix inline, when this mode supports it.",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "input",
+              "type": {
+                "text": "HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | undefined"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "inputId",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "`combobox-input-${this.instanceId}`"
+            },
+            {
+              "kind": "field",
+              "name": "inputmode",
+              "type": {
+                "text": "'none' | 'text' | 'decimal' | 'numeric' | 'tel' | 'search' | 'email' | 'url' | undefined"
+              },
+              "privacy": "public",
+              "description": "Hints at the type of data that might be entered by the user.",
+              "attribute": "inputmode"
+            },
+            {
+              "kind": "field",
+              "name": "inputValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "instanceId",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "default": "++comboboxId"
+            },
+            {
+              "kind": "field",
+              "name": "internals",
+              "type": {
+                "text": "ElementInternals"
+              },
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "invalid",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "This will be true when the control is in an invalid state. Validity is determined by the `required` prop.",
+              "attribute": "invalid",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "isFiltering",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "isSelectOnly",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the combobox is using the non-editable select-only interaction.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The input's label. If you need to display HTML, you can use the `label` slot instead.",
+              "attribute": "label",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "labelContentTemplate",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "labelSlot",
+                  "default": "true"
+                }
+              ],
+              "description": "Generates the template for form control labels",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "labelId",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "`combobox-label-${this.instanceId}`"
+            },
+            {
+              "kind": "field",
+              "name": "labelPosition",
+              "type": {
+                "text": "'end' | 'start' | 'top' | undefined"
+              },
+              "privacy": "public",
+              "description": "The position of the label",
+              "attribute": "label-position",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "labelTemplate",
+              "privacy": "protected",
+              "description": "Generates the form-control label."
+            },
+            {
+              "kind": "field",
+              "name": "lastAnnouncement",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "listboxId",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "`combobox-listbox-${this.instanceId}`"
+            },
+            {
+              "kind": "method",
+              "name": "listboxTemplate",
+              "privacy": "protected",
+              "description": "Generates the listbox. Options are slotted into it and render themselves."
+            },
+            {
+              "kind": "field",
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Shows a spinner and allows the listbox to open while options are loading.",
+              "attribute": "loading",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "maxTagCount",
+              "privacy": "public",
+              "default": "2",
+              "description": "The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only \"+N\" tag.",
+              "attribute": "max-tag-count",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "menuTrigger",
+              "type": {
+                "text": "ComboboxMenuTrigger"
+              },
+              "privacy": "public",
+              "default": "'input'",
+              "description": "The interaction that opens the listbox.",
+              "attribute": "menu-trigger",
+              "reflects": true,
+              "parsedType": {
+                "text": "'focus' | 'input' | 'manual'"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "mode",
+              "type": {
+                "text": "ComboboxMode"
+              },
+              "privacy": "public",
+              "default": "'both'",
+              "description": "Controls whether typing shows a list, an inline completion, both, or neither.",
+              "attribute": "mode",
+              "reflects": true,
+              "parsedType": {
+                "text": "'none' | 'inline' | 'list' | 'both' | 'select-only'"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "moveActiveOption",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "delta",
+                  "type": {
+                    "text": "number"
+                  }
+                }
+              ],
+              "description": "Moves the active option by a number of enabled options in the given direction."
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Allows more than one option to be selected.",
+              "attribute": "multiple",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "mutationObserver",
+              "type": {
+                "text": "MutationObserver | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The input's name attribute.",
+              "attribute": "name",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "onOpenChange",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "open",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Handles the open state transition after it has rendered."
+            },
+            {
+              "kind": "field",
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Indicates whether the listbox is open.",
+              "attribute": "open",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "openMenu",
+              "privacy": "protected",
+              "description": "Opens the listbox when the current state allows it."
+            },
+            {
+              "kind": "field",
+              "name": "optionInfoByElement",
+              "privacy": "protected",
+              "default": "new Map<CoreOption, ComboboxOptionInfo>()"
+            },
+            {
+              "kind": "method",
+              "name": "optionInfoFromEvent",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "ComboboxOptionInfo | undefined"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "Event"
+                  }
+                }
+              ],
+              "description": "The option whose element the event passed through, if any."
+            },
+            {
+              "kind": "field",
+              "name": "optionInfos",
+              "type": {
+                "text": "ComboboxOptionInfo[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "optionsByValue",
+              "privacy": "protected",
+              "default": "new Map<string, ComboboxOptionInfo>()"
+            },
+            {
+              "kind": "field",
+              "name": "optionsCollected",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "optionsUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "overflowCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of selected values hidden behind the \"+N\" tag.",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "parseValue",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string[]"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "pendingSuggestion",
+              "type": {
+                "text": "ComboboxOptionInfo | undefined"
+              },
+              "privacy": "protected",
+              "description": "The option that finishing an edit would commit: the active option while open, otherwise the inline completion.",
+              "readonly": true,
+              "parsedType": {
+                "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string } | undefined"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The text input's placeholder.",
+              "attribute": "placeholder",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "placement",
+              "type": {
+                "text": "PopupPlacement"
+              },
+              "privacy": "public",
+              "default": "'bottom-start'",
+              "description": "The preferred placement of the listbox.",
+              "attribute": "placement",
+              "reflects": true,
+              "parsedType": {
+                "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "popupTemplate",
+              "privacy": "protected",
+              "description": "Generates the anchored popup."
+            },
+            {
+              "kind": "field",
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "description": "Makes the input readonly.",
+              "attribute": "readonly",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "removeLabel",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "default": "'Remove'",
+              "description": "Accessible label prefix for a tag's remove button.",
+              "attribute": "remove-label"
+            },
+            {
+              "kind": "method",
+              "name": "removeValue",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "string"
+                  }
+                },
+                {
+                  "name": "focusInput",
+                  "default": "true"
+                }
+              ],
+              "description": "Removes a value from a multiple selection."
+            },
+            {
+              "kind": "field",
+              "name": "renderedInputValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "description": "The text rendered in the input, including an uncommitted inline completion.",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "reportValidity",
+              "privacy": "public",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "description": "Checks for validity and shows the browser's validation message if the control is invalid.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Makes the input a required field.",
+              "attribute": "required",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "requiredTemplate",
+              "privacy": "protected",
+              "description": "Generates the template for the required asterisk",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "restoreInitialFormValue",
+              "privacy": "protected",
+              "description": "Restores the control's initial form value. Subclasses can override for checked-backed values.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "resultsAnnouncement",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "string"
+                }
+              },
+              "description": "The status message for the current listbox state, or an empty string when there is nothing to announce."
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "scrollActiveOptionIntoView",
+              "privacy": "protected",
+              "description": "Scrolls the active option into view."
+            },
+            {
+              "kind": "field",
+              "name": "selectedSet",
+              "type": {
+                "text": "Set<string>"
+              },
+              "privacy": "protected",
+              "description": "The selected values as a set, for constant-time membership checks.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "selectedSetCache",
+              "type": {
+                "text": "{ set: Set<string>; values: string[] } | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "selectedTags",
+              "type": {
+                "text": "Array<{ label: string; value: string }>"
+              },
+              "privacy": "protected",
+              "description": "Selected values paired with their display labels.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "selectedValues",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "protected",
+              "default": "[]"
+            },
+            {
+              "kind": "method",
+              "name": "selectOption",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "option",
+                  "type": {
+                    "text": "ComboboxOptionInfo"
+                  },
+                  "parsedType": {
+                    "text": "{ disabled: false | true, element: CoreOption, label: string, searchLabel: string, value: string }"
+                  }
+                },
+                {
+                  "name": "focusInput",
+                  "default": "true"
+                }
+              ],
+              "description": "Selects or deselects an option."
+            },
+            {
+              "kind": "method",
+              "name": "setActiveEdge",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "edge",
+                  "type": {
+                    "text": "'first' | 'last'"
+                  }
+                }
+              ],
+              "description": "Sets the active option to the first or last enabled option."
+            },
+            {
+              "kind": "method",
+              "name": "setCustomValidity",
+              "privacy": "public",
+              "parameters": [
+                {
+                  "name": "message",
+                  "default": "''"
+                }
+              ],
+              "description": "Sets a custom validation message.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "setDismissListener",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "active",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "method",
+              "name": "setInitialActiveOption",
+              "privacy": "protected",
+              "description": "Sets the active option to the selected option, or the first enabled option."
+            },
+            {
+              "kind": "method",
+              "name": "setSelectedValues",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "readonly string[]"
+                  }
+                },
+                {
+                  "name": "syncInput",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "description": "Sets the internal selected values and synchronizes related state."
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true }",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "shouldFocusWrap",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Wraps keyboard navigation from the last option to the first and vice versa.",
+              "attribute": "should-focus-wrap",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "show",
+              "privacy": "public",
+              "description": "Opens the listbox."
+            },
+            {
+              "kind": "method",
+              "name": "startTemplate",
+              "privacy": "protected",
+              "description": "Generates the start slot."
+            },
+            {
+              "kind": "method",
+              "name": "syncFormValue",
+              "privacy": "protected",
+              "description": "Submits the form-associated value and restoration state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInitialFormValue",
+              "privacy": "protected",
+              "description": "Saves the current form value as the initial reset state.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncInlineCompletionSelection",
+              "privacy": "protected",
+              "description": "Selects the inline-completed suffix once the rendered value is in the input."
+            },
+            {
+              "kind": "method",
+              "name": "syncInputToSelection",
+              "privacy": "protected",
+              "description": "Synchronizes the visible input value with the current selection."
+            },
+            {
+              "kind": "method",
+              "name": "syncOptionSelectedAttributes",
+              "privacy": "protected",
+              "description": "Applies selection state to the source options, writing only the options whose state changed."
+            },
+            {
+              "kind": "method",
+              "name": "syncOptionState",
+              "privacy": "protected",
+              "description": "Applies the listbox state to the slotted options. Filtering hides options, the active option is marked `current`,\nand groups are hidden when none of their options are visible. Only changed options are written."
+            },
+            {
+              "kind": "field",
+              "name": "tagCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of tags rendered, including the \"+N\" tag when values overflow.",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "tagElements",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "HTMLElement[]"
+                }
+              },
+              "description": "The rendered tag elements, in selection order."
+            },
+            {
+              "kind": "method",
+              "name": "tagsTemplate",
+              "privacy": "protected",
+              "description": "Generates tags for the selected values."
+            },
+            {
+              "kind": "method",
+              "name": "toggle",
+              "privacy": "public",
+              "description": "Toggles the listbox."
+            },
+            {
+              "kind": "field",
+              "name": "typeaheadBuffer",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "protected",
+              "default": "''"
+            },
+            {
+              "kind": "field",
+              "name": "typeaheadLastTime",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "default": "0"
+            },
+            {
+              "kind": "method",
+              "name": "updateErrorMessage",
+              "privacy": "protected",
+              "description": "Updates the displayed validation message without showing the browser's validation UI.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "updateValidity",
+              "privacy": "protected",
+              "description": "Updates validity and the `invalid` property. Applies immediately when the native control is rendered and current;\notherwise defers until the pending render completes. `disabled` and `readonly` inputs are always valid.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "useBlurHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "useFocusHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationAnchor",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validationMessage",
+              "privacy": "public",
+              "description": "Gets the current validation message, if one exists.",
+              "readonly": true,
+              "type": {
+                "text": "string"
+              },
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validity",
+              "type": {
+                "text": "ValidityState"
+              },
+              "privacy": "public",
+              "description": "Gets the current validity, where a required combobox must have at least one selected value.",
+              "readonly": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validityUpdatePending",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The selected value, or a delimiter-separated list when multiple selection is enabled.",
+              "attribute": "value",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "valueAsArray",
+              "type": {
+                "text": "string[]"
+              },
+              "privacy": "public",
+              "description": "The selected values as an array."
+            },
+            {
+              "kind": "field",
+              "name": "valueDelimiter",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The delimiter used to parse and serialize `value` when multiple selection is enabled.",
+              "attribute": "value-delimiter"
+            },
+            {
+              "kind": "field",
+              "name": "visibleOptions",
+              "type": {
+                "text": "ComboboxOptionInfo[]"
+              },
+              "privacy": "protected",
+              "description": "Options that match the current input value.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "visibleTagCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of selected values rendered as removable tags, limited by `max-tag-count`.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "watchedSlots",
+              "type": {
+                "text": "array"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "['help-text', 'label']",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "withClear",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Adds a clear button when the combobox has a selection or input text.",
+              "attribute": "with-clear"
+            }
+          ],
+          "events": [
+            {
+              "description": "Emitted when the user commits a new value.",
+              "name": "change",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Emitted when the listbox closes.",
+              "name": "combobox-hide"
+            },
+            {
+              "description": "Emitted when the listbox opens.",
+              "name": "combobox-show"
+            },
+            {
+              "description": "Emitted when the value is being changed by the user.",
+              "name": "input",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "allows-custom-value",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Allows the user to commit a value that does not match any option. Only applies to single selection.",
+              "fieldName": "allowsCustomValue"
+            },
+            {
+              "name": "allows-empty-collection",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Keeps the listbox open when the collection is empty.",
+              "fieldName": "allowsEmptyCollection"
+            },
+            {
+              "name": "auto-highlight",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Highlights the first enabled option while filtering.",
+              "fieldName": "autoHighlight"
+            },
+            {
+              "name": "autocomplete",
+              "type": {
+                "text": "string"
+              },
+              "default": "'off'",
+              "description": "Controls browser autofill for the text input.",
+              "fieldName": "autocomplete"
+            },
+            {
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "fieldName": "autofocus",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Disables the input.",
+              "fieldName": "disabled",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "error-message",
+              "type": {
+                "text": "string"
+              },
+              "description": "The input's error message.",
+              "fieldName": "errorMessage",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "help-text",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The input's help text. Alternatively, you can use the help-text slot.",
+              "fieldName": "helpText",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "hide-label",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Hides the input label and help text.",
+              "fieldName": "hideLabel",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "inputmode",
+              "type": {
+                "text": "'none' | 'text' | 'decimal' | 'numeric' | 'tel' | 'search' | 'email' | 'url' | undefined"
+              },
+              "description": "Hints at the type of data that might be entered by the user.",
+              "fieldName": "inputmode"
+            },
+            {
+              "name": "invalid",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "This will be true when the control is in an invalid state. Validity is determined by the `required` prop.",
+              "fieldName": "invalid",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The input's label. If you need to display HTML, you can use the `label` slot instead.",
+              "fieldName": "label",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "label-position",
+              "type": {
+                "text": "'end' | 'start' | 'top' | undefined"
+              },
+              "description": "The position of the label",
+              "fieldName": "labelPosition",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Shows a spinner and allows the listbox to open while options are loading.",
+              "fieldName": "loading"
+            },
+            {
+              "name": "max-tag-count",
+              "default": "DEFAULT_MAX_TAG_COUNT",
+              "description": "The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only \"+N\" tag.",
+              "fieldName": "maxTagCount"
+            },
+            {
+              "name": "menu-trigger",
+              "type": {
+                "text": "ComboboxMenuTrigger"
+              },
+              "default": "'input'",
+              "description": "The interaction that opens the listbox.",
+              "fieldName": "menuTrigger",
+              "parsedType": {
+                "text": "'focus' | 'input' | 'manual'"
+              }
+            },
+            {
+              "name": "mode",
+              "type": {
+                "text": "ComboboxMode"
+              },
+              "default": "'both'",
+              "description": "Controls whether typing shows a list, an inline completion, both, or neither.",
+              "fieldName": "mode",
+              "parsedType": {
+                "text": "'none' | 'inline' | 'list' | 'both' | 'select-only'"
+              }
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Allows more than one option to be selected.",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The input's name attribute.",
+              "fieldName": "name",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "open",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Indicates whether the listbox is open.",
+              "fieldName": "open"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The text input's placeholder.",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "placement",
+              "type": {
+                "text": "PopupPlacement"
+              },
+              "default": "'bottom-start'",
+              "description": "The preferred placement of the listbox.",
+              "fieldName": "placement",
+              "parsedType": {
+                "text": "'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start' | 'start-top' | 'start-bottom' | 'end' | 'end-top' | 'end-bottom'"
+              }
+            },
+            {
+              "name": "readonly",
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Makes the input readonly.",
+              "fieldName": "readonly",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "remove-label",
+              "type": {
+                "text": "string"
+              },
+              "default": "'Remove'",
+              "description": "Accessible label prefix for a tag's remove button.",
+              "fieldName": "removeLabel"
+            },
+            {
+              "name": "required",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Makes the input a required field.",
+              "fieldName": "required",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "should-focus-wrap",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Wraps keyboard navigation from the last option to the first and vice versa.",
+              "fieldName": "shouldFocusWrap"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "description": "The input's value attribute.",
+              "fieldName": "value",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "name": "value-delimiter",
+              "type": {
+                "text": "string"
+              },
+              "description": "The delimiter used to parse and serialize `value` when multiple selection is enabled.",
+              "fieldName": "valueDelimiter"
+            },
+            {
+              "name": "with-clear",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Adds a clear button when the combobox has a selection or input text.",
+              "fieldName": "withClear"
+            }
+          ],
+          "superclass": {
+            "name": "CharmFormControlElement",
+            "module": "/src/base/index.js"
+          },
+          "tagName": "ch-combobox",
+          "customElement": true,
+          "since": {
+            "name": "0.6.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            },
+            {
+              "name": "CoreOption",
+              "description": ""
+            },
+            {
+              "name": "CoreOptionGroup",
+              "description": ""
+            },
+            {
+              "name": "CorePopup",
+              "description": ""
+            },
+            {
+              "name": "CoreSpinner",
+              "description": ""
+            }
+          ],
+          "modulePath": "src/components/combobox/combobox.ts"
+        },
+        {
+          "kind": "variable",
+          "name": "element"
+        },
+        {
+          "kind": "variable",
+          "name": "label"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreCombobox",
+          "declaration": {
+            "name": "CoreCombobox",
+            "module": "src/components/combobox/combobox.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreCombobox",
+            "module": "src/components/combobox/combobox.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/combobox/combobox.utils.ts",
+      "declarations": [
+        {
+          "kind": "function",
+          "name": "findEdgeEnabledIndex",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          },
+          "parameters": [
+            {
+              "name": "options",
+              "type": {
+                "text": "readonly SearchableOption[]"
+              }
+            },
+            {
+              "name": "edge",
+              "type": {
+                "text": "'first' | 'last'"
+              }
+            }
+          ],
+          "description": "Returns the index of the first or last enabled option, or -1 when every option is disabled."
+        },
+        {
+          "kind": "function",
+          "name": "findTypeaheadMatch",
+          "return": {
+            "type": {
+              "text": "number"
+            }
+          },
+          "parameters": [
+            {
+              "name": "options",
+              "type": {
+                "text": "readonly SearchableOption[]"
+              }
+            },
+            {
+              "name": "query",
+              "type": {
+                "text": "string"
+              }
+            },
+            {
+              "name": "startIndex",
+              "type": {
+                "text": "number"
+              }
+            }
+          ],
+          "description": "Finds the first enabled option whose search label starts with `query`, searching forward from `startIndex` and wrapping."
+        },
+        {
+          "kind": "function",
+          "name": "normalizeValues",
+          "return": {
+            "type": {
+              "text": "string[]"
+            }
+          },
+          "parameters": [
+            {
+              "name": "values",
+              "type": {
+                "text": "readonly string[]"
+              }
+            }
+          ],
+          "description": "Trims values, drops empty entries, and removes duplicates while preserving order."
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "findEdgeEnabledIndex",
+          "declaration": {
+            "name": "findEdgeEnabledIndex",
+            "module": "src/components/combobox/combobox.utils.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "findTypeaheadMatch",
+          "declaration": {
+            "name": "findTypeaheadMatch",
+            "module": "src/components/combobox/combobox.utils.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "normalizeValues",
+          "declaration": {
+            "name": "normalizeValues",
+            "module": "src/components/combobox/combobox.utils.ts"
           }
         }
       ]
@@ -13840,20 +16949,6 @@
               "name": "errorMessageTemplate",
               "privacy": "protected",
               "description": "Generates the template for form control error message",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "src/base/form-control-element/charm-form-control-element.ts"
@@ -14957,20 +18052,6 @@
                 }
               },
               "description": "Opens the popup calendar."
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "kind": "method",
@@ -16563,20 +19644,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "firstDayOfWeek",
               "type": {
                 "text": "number | undefined"
@@ -17774,20 +20841,6 @@
                 }
               },
               "description": "Opens the calendar and starts a fresh in-progress selection from the committed value."
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "kind": "field",
@@ -21849,20 +24902,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -22704,20 +25743,6 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -25255,6 +28280,714 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/option-group/option-group.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An option group labels and groups related options within a combobox. The label is announced before its options.",
+          "name": "CoreOptionGroup",
+          "cssProperties": [
+            {
+              "description": "The gap between option groups.",
+              "name": "--charm-combobox-group-gap"
+            },
+            {
+              "description": "The group label color.",
+              "name": "--charm-combobox-group-label-color"
+            },
+            {
+              "description": "The group label font size.",
+              "name": "--charm-combobox-group-label-font-size"
+            },
+            {
+              "description": "The group label font weight.",
+              "name": "--charm-combobox-group-label-font-weight"
+            },
+            {
+              "description": "The group label line height.",
+              "name": "--charm-combobox-group-label-line-height"
+            },
+            {
+              "description": "The block padding within a group label.",
+              "name": "--charm-combobox-group-label-padding-y"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The group's label.",
+              "name": "label"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The options in the group.",
+              "name": ""
+            },
+            {
+              "description": "The group's label. Alternatively, use the `label` property.",
+              "name": "label"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "'option-group'",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Disables every option in the group.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "generatedLabel",
+              "type": {
+                "text": "HTMLSpanElement | undefined"
+              },
+              "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "handleLabelSlotChange",
+              "privacy": "protected"
+            },
+            {
+              "kind": "field",
+              "name": "hasLabel",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "readonly": true
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The group's label, announced before its options.",
+              "attribute": "label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "labelId",
+              "privacy": "protected",
+              "readonly": true,
+              "default": "`option-group-label-${++optionGroupId}`"
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "syncLabelReference",
+              "privacy": "protected",
+              "description": "Keeps the accessible name tied to translatable light-DOM content instead of putting text in aria-label."
+            }
+          ],
+          "attributes": [
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Disables every option in the group.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The group's label, announced before its options.",
+              "fieldName": "label"
+            }
+          ],
+          "superclass": {
+            "name": "CharmElement",
+            "module": "/src/base/index.js"
+          },
+          "tagName": "ch-option-group",
+          "customElement": true,
+          "since": {
+            "name": "0.6.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "events": [
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            }
+          ],
+          "modulePath": "src/components/option-group/option-group.ts",
+          "cssStates": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreOptionGroup",
+          "declaration": {
+            "name": "CoreOptionGroup",
+            "module": "src/components/option-group/option-group.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreOptionGroup",
+            "module": "src/components/option-group/option-group.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/option/option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An option represents a single choice within a combobox or option group. Options are slotted into the combobox's\nlistbox and render themselves. The parent combobox manages `selected`, `current`, and `hidden`.",
+          "name": "CoreOption",
+          "cssProperties": [
+            {
+              "description": "The background color of the active option.",
+              "name": "--charm-combobox-option-active-bg-color"
+            },
+            {
+              "description": "The background color of an option.",
+              "name": "--charm-combobox-option-bg-color"
+            },
+            {
+              "description": "The border radius of an option.",
+              "name": "--charm-combobox-option-border-radius"
+            },
+            {
+              "description": "The color of the selected option checkmark.",
+              "name": "--charm-combobox-option-check-color"
+            },
+            {
+              "description": "The size of the selected option checkmark.",
+              "name": "--charm-combobox-option-check-size"
+            },
+            {
+              "description": "The foreground color of a disabled option.",
+              "name": "--charm-combobox-option-disabled-fg-color"
+            },
+            {
+              "description": "The foreground color of an option.",
+              "name": "--charm-combobox-option-fg-color"
+            },
+            {
+              "description": "The background color of a hovered option.",
+              "name": "--charm-combobox-option-hover-bg-color"
+            },
+            {
+              "description": "The inline padding within an option.",
+              "name": "--charm-combobox-option-padding-x"
+            },
+            {
+              "description": "The block padding within an option.",
+              "name": "--charm-combobox-option-padding-y"
+            },
+            {
+              "description": "The background color of a selected option.",
+              "name": "--charm-combobox-option-selected-bg-color"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The option row.",
+              "name": "base"
+            },
+            {
+              "description": "The checkmark shown for selected options.",
+              "name": "check"
+            },
+            {
+              "description": "Container for the end content.",
+              "name": "end"
+            },
+            {
+              "description": "The option's label.",
+              "name": "label"
+            },
+            {
+              "description": "Container for the start content.",
+              "name": "start"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The option's label. Supports rich content such as text and inline markup.",
+              "name": ""
+            },
+            {
+              "description": "Decorative content placed after the label, such as an icon.",
+              "name": "end"
+            },
+            {
+              "description": "Decorative content placed before the label, such as an icon.",
+              "name": "start"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "'option'",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Indicates that the option is the active option of the parent combobox. Managed by the parent combobox.",
+              "attribute": "current",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Disables the option so it cannot be selected or focused.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleSlotChange",
+              "privacy": "protected",
+              "description": "Tracks whether the start and end slots have content, so empty slots take no space."
+            },
+            {
+              "kind": "field",
+              "name": "hasEnd",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "hasStart",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "isDisabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the option is disabled directly or through its option group.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "A plain-text label used for filtering, typeahead, and selected-value display. Defaults to the text content.",
+              "attribute": "label",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "resolvedValue",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The value used by the parent component, falling back to the label when no value is set.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Indicates that the option is selected. Managed by the parent combobox.",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "textLabel",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "description": "The option's text content, used as a fallback label. Excludes the `start` and `end` slotted content.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "The value submitted with the form when this option is selected. Defaults to the option's text content.",
+              "attribute": "value",
+              "reflects": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "current",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Indicates that the option is the active option of the parent combobox. Managed by the parent combobox.",
+              "fieldName": "current"
+            },
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Disables the option so it cannot be selected or focused.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "A plain-text label used for filtering, typeahead, and selected-value display. Defaults to the text content.",
+              "fieldName": "label"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Indicates that the option is selected. Managed by the parent combobox.",
+              "fieldName": "selected"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "The value submitted with the form when this option is selected. Defaults to the option's text content.",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "CharmElement",
+            "module": "/src/base/index.js"
+          },
+          "tagName": "ch-option",
+          "customElement": true,
+          "since": {
+            "name": "0.6.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            }
+          ],
+          "events": [
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            }
+          ],
+          "modulePath": "src/components/option/option.ts",
+          "cssStates": []
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreOption",
+          "declaration": {
+            "name": "CoreOption",
+            "module": "src/components/option/option.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreOption",
+            "module": "src/components/option/option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/overflow/overflow.ts",
       "declarations": [
         {
@@ -26564,6 +30297,16 @@
                 "name": "CharmElement",
                 "module": "src/base/charm-element/charm-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "isContentLabelled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "description": "Whether the content is labelled. Presentational content must not carry a label, since the label makes browsers drop the presentational role.",
+              "readonly": true
             },
             {
               "kind": "method",
@@ -29246,20 +32989,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "focus",
               "privacy": "public",
@@ -29918,20 +33647,6 @@
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               },
               "description": "Radios are slotted, so focus must be explicitly forwarded to an item."
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             },
             {
               "kind": "method",
@@ -31016,20 +34731,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -31623,20 +35324,6 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -33012,20 +36699,6 @@
               }
             },
             {
-              "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
               "kind": "method",
               "name": "findOptionByValue",
               "privacy": "protected",
@@ -33754,20 +37427,6 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -35509,20 +39168,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -36136,20 +39781,6 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -38467,20 +42098,6 @@
             },
             {
               "kind": "field",
-              "name": "errorTextRole",
-              "type": {
-                "text": "string | undefined"
-              },
-              "privacy": "protected",
-              "description": "The role of the error text container; subclasses exposing a listbox host override this to return `group`.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "kind": "field",
               "name": "formAssociated",
               "type": {
                 "text": "boolean"
@@ -39117,20 +42734,6 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
-              }
-            },
-            {
-              "kind": "field",
-              "name": "showInvalid",
-              "type": {
-                "text": "boolean"
-              },
-              "privacy": "protected",
-              "description": "Whether the invalid state is exposed to users (ARIA, error text); pristine controls aren't announced invalid.",
-              "readonly": true,
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {

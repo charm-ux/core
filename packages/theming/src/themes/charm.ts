@@ -1017,6 +1017,56 @@ const charmTokensBase = defineTokens(
         },
       },
 
+      // Combobox
+      combobox: {
+        iconSize: '20px',
+        tag: {
+          bgColor: semantic('surface', 'secondary'),
+          fgColor: semantic('text', 'primary'),
+          borderRadius: primitive('borderRadius', 'full'),
+          fontSize: primitive('fontSize', 'xs'),
+          gap: primitive('spacing', '2xs'),
+          paddingX: primitive('spacing', 'sm'),
+          paddingY: primitive('spacing', '2xs'),
+        },
+        listbox: {
+          bgColor: semantic('surface', 'primary'),
+          borderColor: semantic('border', 'primary'),
+          borderRadius: primitive('borderRadius', 'md'),
+          borderStyle: 'solid',
+          borderWidth: primitive('borderWidth', 'thin'),
+          shadow: primitive('shadow', 'lg'),
+          maxHeight: '320px',
+          padding: primitive('spacing', 'xs'),
+          emptyColor: semantic('text', 'secondary'),
+        },
+        group: {
+          gap: primitive('spacing', 'xs'),
+          label: {
+            color: semantic('text', 'secondary'),
+            fontSize: primitive('fontSize', 'xxs'),
+            fontWeight: primitive('fontWeight', 'semibold'),
+            lineHeight: primitive('lineHeight', 'sm'),
+            paddingY: primitive('spacing', '2xs'),
+          },
+        },
+        option: {
+          bgColor: 'transparent',
+          fgColor: semantic('text', 'primary'),
+          hoverBgColor: semantic('surface', 'secondary'),
+          selectedBgColor: semantic('surface', 'tertiary'),
+          activeBgColor: semantic('surface', 'tertiary'),
+          disabledFgColor: semantic('disabled', 'fgColor'),
+          borderRadius: primitive('borderRadius', 'sm'),
+          paddingX: primitive('spacing', 'sm'),
+          paddingY: primitive('spacing', 'sm'),
+          check: {
+            color: semantic('action', 'primary', 'color'),
+            size: '16px',
+          },
+        },
+      },
+
       // Select
       select: {
         iconSize: '20px',
