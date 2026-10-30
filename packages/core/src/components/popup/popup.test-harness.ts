@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, nextFrame, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import type { CorePopup } from './index.js';
@@ -220,7 +220,7 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.distance = 20;
                   el.open = true;
                   await oneEvent(el, 'popup-reposition');
-                  await elementUpdated(el);
+                  await nextFrame();
                   expect(el.style.getPropertyValue('--hover-bridge-top-left-x')).to.match(/^-?\d+(?:\.\d+)?px$/);
                 },
               },

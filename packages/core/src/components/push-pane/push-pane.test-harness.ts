@@ -49,7 +49,13 @@ export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests
                   expect(pane?.getAttribute('aria-labelledby')).to.equal('push-pane-heading');
                   expect(pane?.hasAttribute('aria-label')).to.be.false;
                   expect(heading?.classList.contains('visually-hidden')).to.be.true;
-                  expect(heading?.textContent).to.contain('Translated pane title');
+                  const slot = heading?.querySelector<HTMLSlotElement>('slot[name="heading"]');
+                  expect(
+                    slot
+                      ?.assignedNodes()
+                      .map(node => node.textContent)
+                      .join('')
+                  ).to.contain('Translated pane title');
                   await expect(el).to.be.accessible();
                 },
               },

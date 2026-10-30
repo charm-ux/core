@@ -7,6 +7,7 @@ import { CoreMenu } from '../menu/menu.js';
 import { CoreTooltip } from '../tooltip/tooltip.js';
 import type { CoreButtonGroup } from './index.js';
 import '../button/index.js';
+import '../menu/index.js';
 
 export class CoreButtonGroupTests<T extends CoreButtonGroup> extends CharmElementTests<T> {
   public constructor() {

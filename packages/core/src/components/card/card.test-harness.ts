@@ -128,13 +128,13 @@ export class CoreCardTests<T extends CoreCard> extends CharmElementTests<T> {
                   await el.updateComplete;
                   const base = el.shadowRoot?.querySelector('article.base[part="card-base"]');
                   const content = el.shadowRoot?.querySelector('div.card-content[part="card-content"]');
-                  const header = el.shadowRoot?.querySelector('div.header[part="card-header"]');
+                  const header = el.shadowRoot?.querySelector('header.header[part="card-header"]');
                   const footer = el.shadowRoot?.querySelector('footer.footer[part="card-footer"]');
                   expect(base).to.exist;
                   expect(content).to.exist;
                   expect(header).to.exist;
                   expect(footer).to.exist;
-                  expect(header?.hasAttribute('hidden')).to.be.true;
+                  expect(el.shadowRoot?.querySelector('[part="card-heading"]')?.hasAttribute('hidden')).to.be.true;
                 },
               },
             },
