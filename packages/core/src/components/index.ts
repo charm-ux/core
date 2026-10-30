@@ -36,6 +36,7 @@ export * from './switch/switch.js';
 export * from './tab-panel/tab-panel.js';
 export * from './tab/tab.js';
 export * from './tabs/tabs.js';
+export * from './tag/tag.js';
 export * from './text-area/text-area.js';
 export * from './scoped-styles/scoped-styles.js';
 export * from './tooltip/tooltip.js';

@@ -94,8 +94,8 @@ export class CoreTag extends CharmFocusableElement {
     }
   }
 
-  /** Emits the cancelable `tag-remove` event. Returns `false` if a listener canceled it. */
-  protected emitRemove(): boolean {
+  /** Emits the cancelable `tag-remove` event. */
+  protected emitRemove() {
     const detail: TagRemoveEvent = { value: this.value };
     return this.emit('tag-remove', { detail, cancelable: true });
   }
