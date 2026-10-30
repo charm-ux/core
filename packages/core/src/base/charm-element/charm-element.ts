@@ -181,7 +181,7 @@ export class CharmElement extends LitElement {
     if (!sheets) {
       sheets = (ctor as unknown as typeof LitElement).elementStyles.map(style => {
         const cssText = cssTextOf(style);
-        if (!cssText.includes(`--${DEFAULT_THEME_PREFIX}-`)) return style as CSSStyleSheet;
+        if (!cssText.includes(`--${DEFAULT_THEME_PREFIX}-`) && !('cssText' in style)) return style as CSSStyleSheet;
         const sheet = new CSSStyleSheet();
         sheet.replaceSync(rewriteThemePrefix(cssText, prefix));
         return sheet;

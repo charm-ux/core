@@ -6,7 +6,8 @@ const LANG_OBSERVER_OPTIONS: MutationObserverInit = { attributes: true, attribut
 /** Returns the next ancestor in the composed tree, crossing shadow roots to their host. */
 function composedParent(node: Node): Element | null {
   const parent = node.parentNode;
-  return parent instanceof ShadowRoot ? parent.host : (parent as Element | null);
+  if (parent instanceof ShadowRoot) return parent.host;
+  return parent instanceof Element ? parent : null;
 }
 
 /**
