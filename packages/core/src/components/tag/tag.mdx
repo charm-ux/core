@@ -1,0 +1,107 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Tag" />
+
+# Tag
+
+A tag is a compact, keyboard-accessible label used to represent a category, keyword, filter, or selected item. Tags can optionally be removed by the user. Tags are designed to be composed inside a tag group, which manages list roles, selection, and keyboard navigation between tags.
+
+## Default
+
+<code-bubble>
+
+```html
+<ch-tag>Design</ch-tag>
+```
+
+</code-bubble>
+
+## Removable
+
+Add the `removable` attribute to render a remove button. The tag emits a cancelable `tag-remove` event when the button is clicked, or when the tag has focus and Delete or Backspace is pressed. The tag does not remove itself; remove it (or cancel the event) from your code.
+
+<code-bubble>
+
+```html
+<div id="tags">
+  <ch-tag removable value="design">Design</ch-tag>
+  <ch-tag removable value="engineering">Engineering</ch-tag>
+</div>
+
+<script>
+  document.querySelector('#tags').addEventListener('tag-remove', event => {
+    console.log('removed', event.detail.value);
+    event.target.remove();
+  });
+</script>
+```
+
+</code-bubble>
+
+## Translating the remove label
+
+The remove button is named by visually hidden text that defaults to "Remove", followed by the tag's content. Provide translated text in the `remove-label` slot.
+
+<code-bubble>
+
+```html
+<ch-tag removable>
+  Diseño
+  <span slot="remove-label">Quitar</span>
+</ch-tag>
+```
+
+</code-bubble>
+
+## Start and End Slots
+
+Use the `start` and `end` slots to place an element, such as an icon, before or after the tag content.
+
+<code-bubble>
+
+```html
+<ch-tag removable>
+  <ch-icon slot="start" name="checkmark-circle"></ch-icon>
+  Verified
+</ch-tag>
+```
+
+</code-bubble>
+
+## Selected
+
+The `selected` attribute draws the tag in its selected state. Selection semantics (`aria-selected` or `aria-checked`) are applied by the containing tag group.
+
+<code-bubble>
+
+```html
+<ch-tag selected>Design</ch-tag>
+```
+
+</code-bubble>
+
+## Disabled
+
+A disabled tag sets `aria-disabled="true"` and cannot be removed.
+
+<code-bubble>
+
+```html
+<ch-tag disabled removable>Design</ch-tag>
+```
+
+</code-bubble>
+
+## Style
+
+Tag exposes CSS custom properties for customization. For example:
+
+```css
+ch-tag {
+  --charm-tag-bg-color: #e0f2fe;
+  --charm-tag-fg-color: #0c4a6e;
+  --charm-tag-border-radius: 4px;
+  --charm-tag-selected-bg-color: #0369a1;
+  --charm-tag-selected-fg-color: white;
+}
+```
