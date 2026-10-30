@@ -1,0 +1,117 @@
+---
+title: Tag Group
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+<ComponentMetadata />
+
+A tag group presents a set of related tags as a list with a single tab stop, arrow-key navigation,
+optional selection, and focus management when tags are removed. Tags are authored as `<ch-tag>`
+children.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+  <ch-tag value="research">Research</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+## Best Practices
+
+- Always give the group an accessible name with `label` (attribute or slot). Use `hide-label` if
+  the name should not be visible.
+- Remove tags from the DOM in a `tag-remove` listener. The group moves focus to a neighbouring tag
+  for you; it never removes tags itself.
+- Use `selection` only when tags act as choices (filters, categories). A plain list of labels
+  should stay at the default `selection="none"`.
+- Provide an `empty` slot when tags can all be removed, so the space does not simply disappear.
+
+## Examples
+
+### Keyboard
+
+The group exposes one tab stop. With a tag focused: arrow keys move between tags (Left/Right follow
+the text direction), Home and End jump to the ends, typing a letter jumps to a matching tag, Delete
+or Backspace removes a removable tag, and Space or Enter toggles selection when selection is
+enabled (Ctrl+A selects all in multiple mode). Disabled tags are skipped.
+
+### Removing tags
+
+<code-bubble>
+
+```html
+<ch-tag-group id="teams" label="Teams">
+  <ch-tag removable value="design">Design</ch-tag>
+  <ch-tag removable value="engineering">Engineering</ch-tag>
+  <span slot="empty">No teams selected.</span>
+</ch-tag-group>
+
+<script>
+  document.querySelector('#teams').addEventListener('tag-remove', event => {
+    event.target.remove();
+  });
+</script>
+```
+
+</code-bubble>
+
+### Selection
+
+With `selection="single"` or `selection="multiple"` the list becomes a listbox and each tag an
+option. Read or set the selection with `valueAsArray` or the delimited `value`; the group emits
+`change` when the user changes it.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Filters" selection="multiple" value="design,research">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+  <ch-tag value="research">Research</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+### Help text
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams" help-text="Teams that can see this document.">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+### Disabled
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams" disabled>
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+### Styling
+
+```css
+ch-tag-group {
+  --charm-tag-group-gap: 4px;
+  --charm-tag-group-label-font-weight: 600;
+}
+```
+
+## API

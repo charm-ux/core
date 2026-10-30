@@ -1,0 +1,118 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Core/Tag Group" />
+
+# Tag Group
+
+A tag group presents a set of related tags as a list with a single tab stop, arrow-key navigation, optional selection, and focus management when tags are removed. Tags are authored as `<ch-tag>` children.
+
+## Default
+
+With `selection="none"` (the default) the group is a plain list. Give it an accessible name with the `label` attribute or slot.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+  <ch-tag value="research">Research</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+## Keyboard
+
+The group has one tab stop. Once a tag has focus:
+
+- Arrow keys move between tags (Left/Right follow the text direction; Up/Down also work).
+- Home and End move to the first and last tag.
+- Typing a letter moves to the next tag that starts with it.
+- Delete or Backspace removes a removable tag.
+- Space or Enter toggles selection when selection is enabled. Ctrl+A selects all in multiple mode.
+
+Disabled tags are skipped.
+
+## Removing tags
+
+Mark tags `removable`. The `tag-remove` event bubbles from the tag; remove the element in a listener. After a tag is removed, focus moves to the tag that took its place (or the previous one at the end of the list). Use the `empty` slot to show a message when no tags remain.
+
+<code-bubble>
+
+```html
+<ch-tag-group id="teams" label="Teams">
+  <ch-tag removable value="design">Design</ch-tag>
+  <ch-tag removable value="engineering">Engineering</ch-tag>
+  <span slot="empty">No teams selected.</span>
+</ch-tag-group>
+
+<script>
+  document.querySelector('#teams').addEventListener('tag-remove', event => {
+    event.target.remove();
+  });
+</script>
+```
+
+</code-bubble>
+
+## Selection
+
+Set `selection` to `single` or `multiple`. The list becomes a listbox and each tag an option with `aria-selected`. Read or set the selection through `valueAsArray` (a `string[]`) or `value` (a delimited string; set `value-delimiter` to change the comma). A tag's value is its `value` attribute, or its text when no value is given. The group emits `change` when the user changes the selection.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Filters" selection="multiple" value="design,research">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+  <ch-tag value="research">Research</ch-tag>
+</ch-tag-group>
+
+<script>
+  document.querySelector('ch-tag-group').addEventListener('change', event => {
+    console.log(event.detail.valueAsArray);
+  });
+</script>
+```
+
+</code-bubble>
+
+## Help text
+
+Describe the group with the `help-text` attribute or slot. Use `hide-label` to keep the label and help text available to assistive technology without showing them.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams" help-text="Teams that can see this document.">
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+## Disabled
+
+A disabled group disables every tag without changing the tags' own `disabled` attributes, and removes the group from the tab order.
+
+<code-bubble>
+
+```html
+<ch-tag-group label="Teams" disabled>
+  <ch-tag value="design">Design</ch-tag>
+  <ch-tag value="engineering">Engineering</ch-tag>
+</ch-tag-group>
+```
+
+</code-bubble>
+
+## Style
+
+```css
+ch-tag-group {
+  --charm-tag-group-gap: 4px;
+  --charm-tag-group-label-font-weight: 600;
+}
+```
