@@ -41498,6 +41498,579 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/components/tag/tag.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "A tag is a compact, keyboard-accessible label used to represent a category, keyword, filter, or selected item. Tags\ncan optionally be removed by the user. A tag does not remove itself from the DOM; listen for `tag-remove` and remove\n(or veto) it from the consuming code. Tags are designed to be composed inside a tag group, which manages roles,\nselection, and keyboard navigation between tags.",
+          "name": "CoreTag",
+          "cssProperties": [
+            {
+              "description": "The background color.",
+              "name": "--charm-tag-bg-color"
+            },
+            {
+              "description": "The foreground (text) color.",
+              "name": "--charm-tag-fg-color"
+            },
+            {
+              "description": "The border color.",
+              "name": "--charm-tag-border-color"
+            },
+            {
+              "description": "The border radius.",
+              "name": "--charm-tag-border-radius"
+            },
+            {
+              "description": "The border style.",
+              "name": "--charm-tag-border-style"
+            },
+            {
+              "description": "The border width.",
+              "name": "--charm-tag-border-width"
+            },
+            {
+              "description": "The font size.",
+              "name": "--charm-tag-font-size"
+            },
+            {
+              "description": "The space between the start slot, content, end slot, and remove button.",
+              "name": "--charm-tag-gap"
+            },
+            {
+              "description": "The inline padding.",
+              "name": "--charm-tag-padding-x"
+            },
+            {
+              "description": "The block padding.",
+              "name": "--charm-tag-padding-y"
+            },
+            {
+              "description": "The background color when hovered.",
+              "name": "--charm-tag-hover-bg-color"
+            },
+            {
+              "description": "The background color when selected.",
+              "name": "--charm-tag-selected-bg-color"
+            },
+            {
+              "description": "The foreground color when selected.",
+              "name": "--charm-tag-selected-fg-color"
+            },
+            {
+              "description": "The border color when selected.",
+              "name": "--charm-tag-selected-border-color"
+            },
+            {
+              "description": "The background color when disabled.",
+              "name": "--charm-tag-disabled-bg-color"
+            },
+            {
+              "description": "The foreground color when disabled.",
+              "name": "--charm-tag-disabled-fg-color"
+            },
+            {
+              "description": "The border color when disabled.",
+              "name": "--charm-tag-disabled-border-color"
+            },
+            {
+              "description": "The background color of the remove button.",
+              "name": "--charm-tag-remove-bg-color"
+            },
+            {
+              "description": "The border radius of the remove button.",
+              "name": "--charm-tag-remove-border-radius"
+            },
+            {
+              "description": "The size of the remove icon.",
+              "name": "--charm-tag-remove-icon-size"
+            },
+            {
+              "description": "The padding of the remove button.",
+              "name": "--charm-tag-remove-padding"
+            },
+            {
+              "description": "The background color of the remove button when hovered.",
+              "name": "--charm-tag-remove-hover-bg-color"
+            }
+          ],
+          "cssParts": [
+            {
+              "description": "The component's base wrapper.",
+              "name": "tag-base"
+            },
+            {
+              "description": "The default slot container.",
+              "name": "tag-content"
+            },
+            {
+              "description": "The end slot container.",
+              "name": "tag-end"
+            },
+            {
+              "description": "The remove button.",
+              "name": "tag-remove"
+            },
+            {
+              "description": "The icon inside the remove button.",
+              "name": "tag-remove-icon"
+            },
+            {
+              "description": "The start slot container.",
+              "name": "tag-start"
+            }
+          ],
+          "slots": [
+            {
+              "description": "The content of the tag.",
+              "name": ""
+            },
+            {
+              "description": "Content rendered after the tag content.",
+              "name": "end"
+            },
+            {
+              "description": "Visually hidden text that names the remove button. Defaults to \"Remove\"; supply translated text here.",
+              "name": "remove-label"
+            },
+            {
+              "description": "Content rendered before the tag content.",
+              "name": "start"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "_dir",
+              "type": {
+                "text": "'ltr' | 'rtl' | 'auto' | undefined"
+              },
+              "privacy": "private",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "attribute": "autofocus",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "baseName",
+              "type": {
+                "text": "string"
+              },
+              "privacy": "public",
+              "static": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              },
+              "default": "'tag'"
+            },
+            {
+              "kind": "field",
+              "name": "dependencies",
+              "type": {
+                "text": "(typeof CharmElement)[]"
+              },
+              "privacy": "public",
+              "static": true,
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "dir",
+              "privacy": "public",
+              "attribute": "dir",
+              "reflects": true,
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Disables the tag. A disabled tag cannot be removed.",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "emitRemove",
+              "privacy": "protected",
+              "description": "Emits the cancelable `tag-remove` event."
+            },
+            {
+              "kind": "method",
+              "name": "getScopedElementById",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "Element | null"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "id",
+                  "type": {
+                    "text": "string"
+                  }
+                }
+              ],
+              "description": "Get an element by ID from the nearest scoped root (ShadowRoot or Document).\nUses getElementById on Document for efficiency, falls back to querySelector on ShadowRoot.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "hadFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleBlur",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleFocus",
+              "privacy": "protected",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "handleKeyDown",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "KeyboardEvent"
+                  }
+                }
+              ],
+              "description": "Delete and Backspace request removal. Keys are canceled synchronously so an enclosing group does not also act on\nthem. Arrow, Home, End, and Space navigation/selection are the containing group's responsibility."
+            },
+            {
+              "kind": "method",
+              "name": "handleRemoveClick",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "event",
+                  "type": {
+                    "text": "MouseEvent"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "field",
+              "name": "hasFocus",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "html",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "TemplateResult"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "strings",
+                  "type": {
+                    "text": "TemplateStringsArray"
+                  }
+                },
+                {
+                  "name": "values",
+                  "type": {
+                    "text": "unknown[]"
+                  }
+                }
+              ],
+              "description": "Scoped HTML template tag. Rewrites `<scoped-*>` tags to this element's registered scope, so\ntemplates don't have to interpolate `${this.scope.tag('…')}` for every nested Charm component.\n\nThe rewrite goes through `scope.tagName()`, so it carries the scope's suffix as well as its\nprefix — `<scoped-icon>` becomes `ch-icon` in the default scope and `ch-icon_support` in a\nscope created with `suffix: 'support'`.\n\nNested components must still be declared in `static dependencies` so they get registered in the\nhost's scope. The helper uses `lit/static-html.js` so templates can still use `literal`/\n`unsafeStatic` for polymorphic tags (`<a>` vs `<button>`) while `<scoped-*>` tags are rewritten.",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "removable",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Renders a remove button and enables removal with the Delete and Backspace keys.",
+              "attribute": "removable",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "removeTemplate",
+              "privacy": "protected",
+              "description": "Generates the remove button. The button stays in the natural tab order so a standalone tag is operable; a tag\ngroup sets `tabindex=\"-1\"` on it and manages a roving tabindex on the tags themselves."
+            },
+            {
+              "kind": "method",
+              "name": "requestRemove",
+              "privacy": "protected",
+              "description": "Requests removal when the tag is removable and enabled."
+            },
+            {
+              "kind": "field",
+              "name": "scope",
+              "type": {
+                "text": "CharmScope"
+              },
+              "privacy": "protected",
+              "default": "scope",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "public",
+              "default": "false",
+              "description": "Draws the tag in a selected state. Selection semantics (ARIA) are managed by the containing tag group.",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "privacy": "public",
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true }",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "tagTemplate",
+              "privacy": "protected",
+              "description": "Generates the tag template."
+            },
+            {
+              "kind": "field",
+              "name": "useBlurHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "useFocusHandler",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "privacy": "public",
+              "description": "An identifier for the tag. Included in the `tag-remove` event detail.",
+              "attribute": "value"
+            }
+          ],
+          "events": [
+            {
+              "description": "Emitted when the component is ready.",
+              "name": "ready",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "type": {
+                "text": "TagRemoveEvent"
+              },
+              "description": "Emitted when the user requests removal of the tag via the remove button, Delete, or Backspace. Cancelable.",
+              "name": "tag-remove",
+              "parsedType": {
+                "text": "{ value?: string }"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "autofocus",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Auto focuses the component on page load.",
+              "fieldName": "autofocus",
+              "inheritedFrom": {
+                "name": "CharmFocusableElement",
+                "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "name": "dir",
+              "fieldName": "dir",
+              "inheritedFrom": {
+                "name": "CharmElement",
+                "module": "src/base/charm-element/charm-element.ts"
+              }
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Disables the tag. A disabled tag cannot be removed.",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "removable",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Renders a remove button and enables removal with the Delete and Backspace keys.",
+              "fieldName": "removable"
+            },
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Draws the tag in a selected state. Selection semantics (ARIA) are managed by the containing tag group.",
+              "fieldName": "selected"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string | undefined"
+              },
+              "description": "An identifier for the tag. Included in the `tag-remove` event detail.",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "CharmFocusableElement",
+            "module": "/src/base/index.js"
+          },
+          "tagName": "ch-tag",
+          "customElement": true,
+          "since": {
+            "name": "1.0.0",
+            "description": ""
+          },
+          "status": {
+            "name": "beta",
+            "description": ""
+          },
+          "dependencies": [
+            {
+              "name": "CoreIcon",
+              "description": ""
+            }
+          ],
+          "modulePath": "src/components/tag/tag.ts"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreTag",
+          "declaration": {
+            "name": "CoreTag",
+            "module": "src/components/tag/tag.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreTag",
+            "module": "src/components/tag/tag.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/components/text-area/text-area.ts",
       "declarations": [
         {
