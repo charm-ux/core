@@ -108,16 +108,28 @@ export class CoreTagGroup extends CharmElement {
     return this.tags.filter(tag => tag.selected).map(tag => this.getTagValue(tag));
   }
 
-  public set valueAsArray(values: string[]) {
-    const next = [...new Set(values.map(value => value.trim()).filter(Boolean))];
-    this.pendingValueAsArray = next;
-    this.requestUpdate('valueAsArray');
-  }
-
   /** The selected values serialized with `valueDelimiter`. */
   @property()
   public get value(): string {
     return this.valueAsArray.join(this.valueDelimiter);
+  }
+
+  protected get isSelectable(): boolean {
+    return this.selection !== 'none';
+  }
+
+  protected get hasLabel(): boolean {
+    return !!this.label || this.hasNamedSlot('label');
+  }
+
+  protected get hasHelpText(): boolean {
+    return !!this.helpText || this.hasNamedSlot('help-text');
+  }
+
+  public set valueAsArray(values: string[]) {
+    const next = [...new Set(values.map(value => value.trim()).filter(Boolean))];
+    this.pendingValueAsArray = next;
+    this.requestUpdate('valueAsArray');
   }
 
   public set value(value: string) {
@@ -171,18 +183,6 @@ export class CoreTagGroup extends CharmElement {
     if (changedProperties.has('selection') || changedProperties.has('disabled')) {
       this.syncTags();
     }
-  }
-
-  protected get isSelectable(): boolean {
-    return this.selection !== 'none';
-  }
-
-  protected get hasLabel(): boolean {
-    return !!this.label || this.hasNamedSlot('label');
-  }
-
-  protected get hasHelpText(): boolean {
-    return !!this.helpText || this.hasNamedSlot('help-text');
   }
 
   protected getTagValue(tag: CoreTag): string {
@@ -248,6 +248,7 @@ export class CoreTagGroup extends CharmElement {
     this.tags.forEach((tag, index) => {
       this.rememberAttributes(tag);
       tag.managedFocus = true;
+      tag.presentationalRemove = this.isSelectable;
       tag.forceDisabled = this.disabled;
       tag.setAttribute('role', this.isSelectable ? 'option' : 'listitem');
       if (this.isSelectable) tag.setAttribute('aria-selected', String(tag.selected));
@@ -272,6 +273,7 @@ export class CoreTagGroup extends CharmElement {
       this.managedAttributes.delete(tag);
     }
     tag.managedFocus = false;
+    tag.presentationalRemove = false;
     tag.forceDisabled = false;
   }
 

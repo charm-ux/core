@@ -1,5 +1,6 @@
 import { nothing } from 'lit';
 import { property } from 'lit/decorators.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { CharmElement, CharmFocusableElement } from '../../base/index.js';
 import { endTemplate, startTemplate } from '../../templates/index.js';
@@ -100,6 +101,14 @@ export class CoreTag extends CharmFocusableElement {
   @property({ type: Boolean, attribute: false })
   public managedFocus = false;
 
+  /**
+   * @internal Set by a tag group that exposes the tag as a listbox option. An option's children are presentational
+   * to assistive technology and must not contain focusable controls, so the remove control is rendered as a
+   * non-focusable, pointer-only affordance; keyboard and screen reader users remove the tag with Delete/Backspace.
+   */
+  @property({ type: Boolean, attribute: false })
+  public presentationalRemove = false;
+
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];
   }
@@ -167,6 +176,18 @@ export class CoreTag extends CharmFocusableElement {
    */
   protected removeTemplate() {
     if (!this.removable) return nothing;
+    if (this.presentationalRemove) {
+      return this.html`
+        <span
+          aria-hidden="true"
+          class=${classMap({ remove: true, 'remove-disabled': this.isDisabled })}
+          part="tag-remove"
+          @click=${this.handleRemoveClick}
+        >
+          <scoped-icon class="remove-icon" name="dismiss" part="tag-remove-icon"></scoped-icon>
+        </span>
+      `;
+    }
     return this.html`
       <button
         aria-labelledby="remove-label content"

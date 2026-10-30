@@ -80,11 +80,12 @@ export default css`
     padding: ${component('tag', 'remove', 'padding')};
   }
 
-  .remove:hover:not(:disabled) {
+  .remove:hover:not(:disabled):not(.remove-disabled) {
     background: ${component('tag', 'remove', 'hover', 'bgColor')};
   }
 
-  .remove:disabled {
+  .remove:disabled,
+  .remove-disabled {
     cursor: not-allowed;
   }
 
