@@ -113,24 +113,20 @@ and `value-delimiter`.
 <code-bubble>
 
 ```html
-<ch-combobox label="Fruits" name="fruits" multiple with-clear>
+<ch-combobox id="fruits" label="Fruits" name="fruits" multiple with-clear>
   <ch-option value="apple">Apple</ch-option>
   <ch-option value="banana">Banana</ch-option>
   <ch-option value="cherry">Cherry</ch-option>
 </ch-combobox>
-```
 
-</code-bubble>
+<script>
+  const combobox = document.getElementById('fruits');
+  combobox.valueAsArray = ['apple', 'cherry'];
 
-<code-bubble>
-
-```js
-const combobox = document.querySelector('ch-combobox');
-combobox.valueAsArray = ['apple', 'cherry'];
-
-combobox.addEventListener('change', () => {
-  console.log(combobox.valueAsArray);
-});
+  combobox.addEventListener('change', () => {
+    console.log(combobox.valueAsArray);
+  });
+</script>
 ```
 
 </code-bubble>
@@ -165,10 +161,18 @@ person types. Provide a `filter` function to customize matching. The function re
 
 <code-bubble>
 
-```js
-const combobox = document.querySelector('ch-combobox');
-combobox.filter = (option, inputValue) =>
-  option.resolvedValue.toLowerCase().startsWith(inputValue.toLowerCase());
+```html
+<ch-combobox id="fruit-filter" label="Fruit">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+
+<script>
+  const combobox = document.getElementById('fruit-filter');
+  combobox.filter = (option, inputValue) =>
+    option.resolvedValue.toLowerCase().startsWith(inputValue.toLowerCase());
+</script>
 ```
 
 </code-bubble>

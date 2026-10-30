@@ -777,6 +777,80 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   expect(el.valueAsArray).to.deep.equal(['banana']);
                 },
               },
+              limitsVisibleTags: {
+                description: 'shows up to max-tag-count tags and a read-only +N tag for the rest',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.maxTagCount = 2;
+                  el.valueAsArray = ['apple', 'banana', 'cherry'];
+                  await elementUpdated(el);
+
+                  const tags = el.shadowRoot?.querySelectorAll('.combobox-tag:not(.combobox-tag-overflow)') ?? [];
+                  expect(tags).to.have.length(2);
+
+                  const overflow = el.shadowRoot?.querySelector<HTMLElement>('.combobox-tag-overflow');
+                  expect(overflow?.querySelector('.combobox-tag-label')?.textContent?.trim()).to.equal('+1');
+                  expect(overflow?.querySelector('.visually-hidden')?.textContent?.trim()).to.equal(
+                    '1 more items selected'
+                  );
+                  expect(overflow?.querySelector('.combobox-tag-remove')).to.be.null;
+                },
+              },
+              defaultsToTwoVisibleTags: {
+                description: 'shows two tags and a +N tag by default',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana', 'cherry'];
+                  await elementUpdated(el);
+
+                  const tags = el.shadowRoot?.querySelectorAll('.combobox-tag:not(.combobox-tag-overflow)') ?? [];
+                  expect(tags).to.have.length(2);
+                  expect(el.shadowRoot?.querySelector('.combobox-tag-overflow')?.textContent).to.include('+1');
+                },
+              },
+              overflowTagIsNotRemovable: {
+                description: 'does not remove a value when the +N tag is clicked or Delete is pressed on it',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.maxTagCount = 2;
+                  el.valueAsArray = ['apple', 'banana', 'cherry'];
+                  await elementUpdated(el);
+
+                  el.shadowRoot?.querySelector<HTMLElement>('.combobox-tag-overflow')?.click();
+                  await elementUpdated(el);
+                  expect(el.valueAsArray).to.deep.equal(['apple', 'banana', 'cherry']);
+
+                  focusInput(el);
+                  await sendKeys({ press: 'Tab' });
+                  await sendKeys({ press: 'ArrowRight' });
+                  await sendKeys({ press: 'ArrowRight' });
+                  await elementUpdated(el);
+                  expect(focusedTagLabel(el)).to.equal('+1');
+
+                  await sendKeys({ press: 'Delete' });
+                  await settle(el);
+                  expect(el.valueAsArray).to.deep.equal(['apple', 'banana', 'cherry']);
+                },
+              },
+              revealsHiddenTagAfterRemoval: {
+                description: 'shows the next hidden value when a visible tag is removed',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.maxTagCount = 2;
+                  el.valueAsArray = ['apple', 'banana', 'cherry'];
+                  await elementUpdated(el);
+
+                  el.shadowRoot?.querySelector<HTMLButtonElement>('.combobox-tag-remove')?.click();
+                  await elementUpdated(el);
+
+                  expect(el.valueAsArray).to.deep.equal(['banana', 'cherry']);
+                  expect(el.shadowRoot?.querySelector('.combobox-tag-overflow')).to.be.null;
+                },
+              },
               announcesRemovedTag: {
                 description: 'announces the label of a removed tag',
                 test: async () => {

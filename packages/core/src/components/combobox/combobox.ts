@@ -68,6 +68,8 @@ const OPTION_STATE_KEYS = new Set([
 /** Option attributes that change an option's value, label, or disabled state. Other attributes are managed by the combobox. */
 const OPTION_ATTRIBUTES = new Set(['disabled', 'label', 'value']);
 
+const DEFAULT_MAX_TAG_COUNT = 2;
+
 /** Keys handled while a selected tag has focus. */
 const TAG_KEYS = [keys.ArrowLeft, keys.ArrowRight, keys.Home, keys.End, keys.Delete, keys.Backspace];
 
@@ -171,6 +173,10 @@ export class CoreCombobox extends CharmFormControlElement {
   /** Shows a spinner and allows the listbox to open while options are loading. */
   @property({ type: Boolean, reflect: true })
   public loading = false;
+
+  /** The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only "+N" tag. */
+  @property({ attribute: 'max-tag-count', type: Number })
+  public maxTagCount = DEFAULT_MAX_TAG_COUNT;
 
   /** The interaction that opens the listbox. */
   @property({ attribute: 'menu-trigger', reflect: true })
@@ -329,6 +335,23 @@ export class CoreCombobox extends CharmFormControlElement {
   /** Selected values paired with their display labels. */
   protected get selectedTags(): Array<{ label: string; value: string }> {
     return this.selectedValues.map(value => ({ label: this.getLabelForValue(value), value }));
+  }
+
+  /** The number of selected values rendered as removable tags, limited by `max-tag-count`. */
+  protected get visibleTagCount(): number {
+    const limit = this.maxTagCount ?? DEFAULT_MAX_TAG_COUNT;
+    const count = Number.isNaN(limit) ? DEFAULT_MAX_TAG_COUNT : Math.max(0, Math.floor(limit));
+    return Math.min(this.selectedValues.length, count);
+  }
+
+  /** The number of selected values hidden behind the "+N" tag. */
+  protected get overflowCount(): number {
+    return this.selectedValues.length - this.visibleTagCount;
+  }
+
+  /** The number of tags rendered, including the "+N" tag when values overflow. */
+  protected get tagCount(): number {
+    return this.visibleTagCount + (this.overflowCount > 0 ? 1 : 0);
   }
 
   /** The selected values as a set, for constant-time membership checks. */
@@ -1064,7 +1087,7 @@ export class CoreCombobox extends CharmFormControlElement {
         ) {
           event.preventDefault();
           event.stopPropagation();
-          this.focusTag(this.selectedValues.length - 1);
+          this.focusTag(this.tagCount - 1);
         }
         return;
       default:
@@ -1248,10 +1271,10 @@ export class CoreCombobox extends CharmFormControlElement {
         return;
       case keys.Delete:
       case keys.Backspace:
-        if (this.disabled || this.readonly) return;
+        if (index >= this.visibleTagCount || this.disabled || this.readonly) return;
         this.removeValue(this.selectedValues[index], false);
         await this.updateComplete;
-        if (this.selectedValues.length) this.focusTag(Math.min(index, this.selectedValues.length - 1));
+        if (this.tagCount) this.focusTag(Math.min(index, this.tagCount - 1));
         else this.input?.focus();
         return;
       default:
@@ -1504,7 +1527,7 @@ export class CoreCombobox extends CharmFormControlElement {
   protected tagsTemplate() {
     if (!this.multiple || !this.selectedValues.length) return '';
 
-    const tabStop = Math.min(this.activeTagIndex, this.selectedValues.length - 1);
+    const tabStop = Math.min(this.activeTagIndex, this.tagCount - 1);
     return this.html`
       <span
         aria-labelledby=${ifDefined(this.hasLabel ? this.labelId : undefined)}
@@ -1515,7 +1538,7 @@ export class CoreCombobox extends CharmFormControlElement {
         @keydown=${this.handleTagsKeyDown}
         @mousedown=${this.handleControlMouseDown}
       >
-        ${this.selectedTags.map(
+        ${this.selectedTags.slice(0, this.visibleTagCount).map(
           (tag, index) => this.html`
             <span
               aria-label=${`${this.removeLabel} ${tag.label}`}
@@ -1541,6 +1564,21 @@ export class CoreCombobox extends CharmFormControlElement {
             </span>
           `
         )}
+        ${
+          this.overflowCount > 0
+            ? this.html`
+              <span
+                class="combobox-tag combobox-tag-overflow"
+                part="combobox-tag"
+                role="option"
+                tabindex=${tabStop === this.visibleTagCount ? 0 : -1}
+              >
+                <span class="combobox-tag-label" part="combobox-tag-label" aria-hidden="true">+${this.overflowCount}</span>
+                <span class="visually-hidden">${this.overflowCount} more items selected</span>
+              </span>
+            `
+            : ''
+        }
       </span>
     `;
   }

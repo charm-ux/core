@@ -118,19 +118,31 @@ Tab from the input to move into the tags, then use the arrow keys, `Home`, and `
   <ch-option value="banana">Banana</ch-option>
   <ch-option value="cherry" selected>Cherry</ch-option>
 </ch-combobox>
+
+<script>
+  const combobox = document.getElementById('fruits');
+  combobox.valueAsArray = ['banana', 'cherry'];
+
+  combobox.addEventListener('change', () => {
+    console.log(combobox.valueAsArray);
+  });
+</script>
 ```
 
 </code-bubble>
 
+## Limiting visible tags
+
+By default, two selected tags are shown. Set `max-tag-count` to change how many are shown; use a large value such as `Infinity` to show all of them. Any remaining selections are summarized by a read-only `+N` tag, which screen readers announce as the number of hidden items. The hidden values stay selected and are included in `value` and `valueAsArray`.
+
 <code-bubble>
 
-```js
-const combobox = document.getElementById('fruits');
-combobox.valueAsArray = ['banana', 'cherry'];
-
-combobox.addEventListener('change', () => {
-  console.log(combobox.valueAsArray);
-});
+```html
+<ch-combobox label="Fruits" multiple max-tag-count="2">
+  <ch-option value="apple" selected>Apple</ch-option>
+  <ch-option value="banana" selected>Banana</ch-option>
+  <ch-option value="cherry" selected>Cherry</ch-option>
+</ch-combobox>
 ```
 
 </code-bubble>
@@ -165,10 +177,18 @@ person types. Provide a `filter` function to customize matching. The function re
 
 <code-bubble>
 
-```js
-const combobox = document.querySelector('ch-combobox');
-combobox.filter = (option, inputValue) =>
-  option.resolvedValue.toLowerCase().startsWith(inputValue.toLowerCase());
+```html
+<ch-combobox id="fruit-filter" label="Fruit">
+  <ch-option value="apple">Apple</ch-option>
+  <ch-option value="banana">Banana</ch-option>
+  <ch-option value="cherry">Cherry</ch-option>
+</ch-combobox>
+
+<script>
+  const combobox = document.getElementById('fruit-filter');
+  combobox.filter = (option, inputValue) =>
+    option.resolvedValue.toLowerCase().startsWith(inputValue.toLowerCase());
+</script>
 ```
 
 </code-bubble>

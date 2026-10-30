@@ -14988,6 +14988,17 @@
             },
             {
               "kind": "field",
+              "name": "maxTagCount",
+              "privacy": "public",
+              "default": "2",
+              "description": "The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only \"+N\" tag.",
+              "attribute": "max-tag-count",
+              "type": {
+                "text": "number"
+              }
+            },
+            {
+              "kind": "field",
               "name": "menuTrigger",
               "type": {
                 "text": "ComboboxMenuTrigger"
@@ -15154,6 +15165,16 @@
               },
               "privacy": "protected",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "overflowCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of selected values hidden behind the \"+N\" tag.",
+              "readonly": true
             },
             {
               "kind": "method",
@@ -15568,6 +15589,16 @@
               "description": "Applies the listbox state to the slotted options. Filtering hides options, the active option is marked `current`,\nand groups are hidden when none of their options are visible. Only changed options are written."
             },
             {
+              "kind": "field",
+              "name": "tagCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of tags rendered, including the \"+N\" tag when values overflow.",
+              "readonly": true
+            },
+            {
               "kind": "method",
               "name": "tagElements",
               "privacy": "protected",
@@ -15750,6 +15781,16 @@
               },
               "privacy": "protected",
               "description": "Options that match the current input value.",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "visibleTagCount",
+              "type": {
+                "text": "number"
+              },
+              "privacy": "protected",
+              "description": "The number of selected values rendered as removable tags, limited by `max-tag-count`.",
               "readonly": true
             },
             {
@@ -15972,6 +16013,12 @@
               "default": "false",
               "description": "Shows a spinner and allows the listbox to open while options are loading.",
               "fieldName": "loading"
+            },
+            {
+              "name": "max-tag-count",
+              "default": "DEFAULT_MAX_TAG_COUNT",
+              "description": "The number of selected tags to show, defaulting to 2. Selections beyond this count are summarized by a read-only \"+N\" tag.",
+              "fieldName": "maxTagCount"
             },
             {
               "name": "menu-trigger",
