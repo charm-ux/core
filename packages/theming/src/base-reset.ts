@@ -19,11 +19,11 @@ export default `
 @property --charm-wc-loaded {
   syntax: "<number>";
   inherits: true;
-  initial-value: 0;
+  initial-value: 1;
 }
 
 body {
-  animation: charm-wc-loaded 0s linear 200ms forwards;
+  animation: charm-wc-loaded 0s linear 200ms both;
   background-color: var(--body-bg-color);
   color: var(--body-fg-color);
   font-family: var(--body-font-family);
@@ -36,11 +36,14 @@ body {
 }
 
 body:has(:not(:defined)) {
-  opacity: var(--charm-wc-loaded, 0);
+  opacity: var(--charm-wc-loaded, 1);
 }
 
 /* Keep later component loads from hiding the page again after the initial timeout. */
 @keyframes charm-wc-loaded {
+  from {
+    --charm-wc-loaded: 0;
+  }
   to {
     --charm-wc-loaded: 1;
   }

@@ -51,7 +51,7 @@ Depending on your configuration, you may also generate the following assets:
 
 The generated reset uses `body:has(:not(:defined))` to reduce flashes of unstyled custom elements during initial page load. It keeps the body transparent until all custom elements are defined or 200 ms have elapsed, whichever happens first. The CSS-only timeout reveals content even if JavaScript is unavailable or a component never loads, and later component loads do not hide the page again after the timeout.
 
-This applies to all custom elements in the document, not only Charm components. Using opacity preserves layout and keeps content available to assistive technologies. Browsers without `:has()` support display the page normally without this loading treatment.
+This applies to all custom elements in the document, not only Charm components. Using opacity preserves layout and keeps content available to assistive technologies. Browsers without `:has()` support display the page normally without this loading treatment. If an application disables CSS animations, content remains visible instead of waiting for the loading animation.
 
 ## Configuration
 

@@ -67,7 +67,7 @@ describe('CSS reset loading behavior', () => {
     const timing = animation.effect!.getTiming();
     expect(timing.delay).to.equal(200);
     expect(timing.duration).to.equal(0);
-    expect(timing.fill).to.equal('forwards');
+    expect(timing.fill).to.equal('both');
 
     animation.currentTime = 199;
     expect(view.getComputedStyle(body).opacity).to.equal('0');
@@ -81,6 +81,18 @@ describe('CSS reset loading behavior', () => {
     expect(view.getComputedStyle(body).opacity).to.equal('1');
 
     body.innerHTML = '<reset-test-element>Late content</reset-test-element>';
+    expect(view.getComputedStyle(body).opacity).to.equal('1');
+  });
+
+  it('displays undefined content when the app disables animations', () => {
+    body.innerHTML = '<reset-test-element>Fallback content</reset-test-element>';
+    expect(view.getComputedStyle(body).opacity).to.equal('0');
+
+    const style = view.document.createElement('style');
+    style.textContent = '* { animation: none !important; }';
+    view.document.head.append(style);
+
+    expect(body.getAnimations()).to.have.length(0);
     expect(view.getComputedStyle(body).opacity).to.equal('1');
   });
 
