@@ -16,7 +16,14 @@ export default `
   }
 }
 
+@property --charm-wc-loaded {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 body {
+  animation: charm-wc-loaded 0s linear 200ms forwards;
   background-color: var(--body-bg-color);
   color: var(--body-fg-color);
   font-family: var(--body-font-family);
@@ -26,6 +33,17 @@ body {
   margin: 0;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+body:has(:not(:defined)) {
+  opacity: var(--charm-wc-loaded, 0);
+}
+
+/* Keep later component loads from hiding the page again after the initial timeout. */
+@keyframes charm-wc-loaded {
+  to {
+    --charm-wc-loaded: 1;
+  }
 }
 
 header, 
