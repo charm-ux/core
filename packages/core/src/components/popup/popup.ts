@@ -50,6 +50,10 @@ function isInert(element: Element): boolean {
     if (ancestor.hasAttribute('inert')) {
       return true;
     }
+    // Modal dialogs escape inertness inherited from their ancestors.
+    if (ancestor.matches('dialog:modal')) {
+      return false;
+    }
 
     // Inertness follows the flat tree, including slots and shadow hosts.
     const root = ancestor.getRootNode();
