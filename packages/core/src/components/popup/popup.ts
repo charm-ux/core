@@ -44,6 +44,24 @@ export interface PopupRepositionEvent {
   placement: PopupPlacement;
 }
 
+function isInert(element: Element): boolean {
+  let ancestor: Element | null = element;
+  while (ancestor) {
+    if (ancestor.hasAttribute('inert')) {
+      return true;
+    }
+    // Modal dialogs escape inertness inherited from their ancestors.
+    if (ancestor.matches('dialog:modal')) {
+      return false;
+    }
+
+    // Inertness follows the flat tree, including slots and shadow hosts.
+    const root = ancestor.getRootNode();
+    ancestor = ancestor.assignedSlot || ancestor.parentElement || (root instanceof ShadowRoot ? root.host : null);
+  }
+  return false;
+}
+
 /**
  *
  * Popup is a utility that lets you declaratively anchor "popup" containers to another element.
@@ -391,9 +409,9 @@ export class CorePopup extends CharmDismissibleElement {
 
     const currentFocusableElement = document.activeElement;
 
-    const focusableChildren = this.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [focusable]'
-    );
+    const focusableChildren = Array.from(
+      this.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), [focusable]')
+    ).filter(element => !isInert(element));
 
     if (focusableChildren.length === 0) {
       return;
