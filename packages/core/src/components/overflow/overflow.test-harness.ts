@@ -188,17 +188,19 @@ export class CoreOverflowTests<T extends CoreOverflow> extends CharmElementTests
               overflowMenuItems: {
                 description: 'should have overflowing items in menu',
                 test: async () => {
-                  await setViewport({ width: 75, height: 600 });
-                  await elementUpdated(this.component);
-                  await aTimeout(20);
-                  const menu = this.component.shadowRoot!.querySelector('[menu]');
+                  const el = this.component;
+                  el.style.width = '400px';
+                  await elementUpdated(el);
+                  const overflowEvent = oneEvent(el, 'overflow');
+                  el.style.width = '75px';
+                  await overflowEvent;
+                  await elementUpdated(el);
+                  const menu = el.shadowRoot!.querySelector('[menu]');
                   // no items until menu is opened
                   expect(menu!.querySelectorAll('[menu-item]').length).to.equal(0);
-                  const trigger = this.component.shadowRoot!.querySelector(
-                    '[menu] > [slot="trigger"]'
-                  ) as HTMLButtonElement;
+                  const trigger = el.shadowRoot!.querySelector('[menu] > [slot="trigger"]') as HTMLButtonElement;
                   trigger.click();
-                  await elementUpdated(this.component);
+                  await elementUpdated(el);
                   await aTimeout(20);
                   expect(menu!.querySelectorAll('[menu-item]').length).to.equal(3);
                 },

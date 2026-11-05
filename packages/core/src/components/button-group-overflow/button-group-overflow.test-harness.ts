@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
 import { setViewport } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
@@ -75,13 +75,15 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               `;
 
               const el = container.querySelector(project.scope.tagName('button-group-overflow')) as HTMLElement;
+              el.style.width = '400px';
               await elementUpdated(el);
               await aTimeout(300);
 
               // Force overflow by setting a small width
+              const overflowEvent = oneEvent(el, 'overflow');
               el.style.width = '100px';
+              await overflowEvent;
               await elementUpdated(el);
-              await aTimeout(300);
 
               // Verify that the button is now in the overflow menu
               const menu = el.shadowRoot!.querySelector('[menu]');
