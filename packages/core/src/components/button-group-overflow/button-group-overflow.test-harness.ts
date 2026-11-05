@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import { setViewport } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
@@ -81,7 +81,11 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               // Force overflow by setting a small width
               el.style.width = '100px';
               await elementUpdated(el);
-              await aTimeout(300);
+              await waitUntil(
+                () => el.shadowRoot!.querySelector('[menu] > [slot="trigger"]') !== null,
+                'overflow trigger should render after resizing',
+                { timeout: 3000 }
+              );
 
               // Verify that the button is now in the overflow menu
               const menu = el.shadowRoot!.querySelector('[menu]');
@@ -93,7 +97,11 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               // Click the trigger to open the menu
               trigger.click();
               await elementUpdated(el);
-              await aTimeout(20);
+              await waitUntil(
+                () => menu!.querySelector(project.scope.tagName('menu-item')) !== null,
+                'single button should render in the overflow menu',
+                { timeout: 3000 }
+              );
 
               // Check that the single button is in the menu
               const menuItem = menu!.querySelector(project.scope.tagName('menu-item'));
