@@ -203,6 +203,8 @@ export class CoreOverflow extends CharmElement {
       this.lastWidth = containerWidth;
     }
 
+    this.hasOverflow = this.overflowSet.size > 0;
+
     if (this.overflowSet.size !== previousOverflowSize) {
       this.emitOverflow();
     }
