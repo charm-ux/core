@@ -1,5 +1,13 @@
 # CHARM-UX Core Changelog
 
+## 0.5.3
+
+### Patch Changes
+
+- 5d0a1cf: Exclude inert elements and their flat-tree descendants from popup focus-trap endpoints, including content assigned to inert slots or shadow wrappers.
+- 7dff2a4: Restore CSS reset protection against flashes of undefined custom elements, with a 200 ms fallback that keeps content accessible when components fail to load.
+- dbb40be: Make Select inherit `line-height` instead of a hardcoded `1` so user text-spacing overrides (WCAG 1.4.12) apply. The open native option list is not affected.
+
 ## 0.5.2
 
 ### Patch Changes
