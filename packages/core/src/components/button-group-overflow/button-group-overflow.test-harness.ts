@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, waitUntil } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import { setViewport } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
@@ -74,18 +74,20 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
                 </${buttonGroupOverflowTag}>
               `;
 
-              const el = container.querySelector(project.scope.tagName('button-group-overflow')) as HTMLElement;
+              const el = container.querySelector(
+                project.scope.tagName('button-group-overflow')
+              ) as CoreButtonGroupOverflow;
+              el.style.width = '400px';
               await elementUpdated(el);
               await aTimeout(300);
+              expect(el.overflowing).to.be.false;
 
               // Force overflow by setting a small width
+              const overflowEvent = oneEvent(el, 'overflow');
               el.style.width = '100px';
+              await overflowEvent;
               await elementUpdated(el);
-              await waitUntil(
-                () => el.shadowRoot!.querySelector('[menu] > [slot="trigger"]') !== null,
-                'overflow trigger should render after resizing',
-                { timeout: 3000 }
-              );
+              expect(el.overflowing).to.be.true;
 
               // Verify that the button is now in the overflow menu
               const menu = el.shadowRoot!.querySelector('[menu]');
@@ -107,6 +109,14 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               const menuItem = menu!.querySelector(project.scope.tagName('menu-item'));
               expect(menuItem).to.not.be.null;
               expect(menuItem!.textContent!.trim()).to.include('Single Button');
+
+              const expandEvent = oneEvent(el, 'overflow');
+              el.style.width = '400px';
+              await expandEvent;
+              await elementUpdated(el);
+              expect(el.overflowing).to.be.false;
+              expect(el.shadowRoot!.querySelector('[menu]')).to.be.null;
+              expect((el.firstElementChild as HTMLElement).hidden).to.be.false;
 
               // Clean up
               document.body.removeChild(container);
