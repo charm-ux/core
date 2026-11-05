@@ -1,4 +1,4 @@
-import { aTimeout, elementUpdated, expect, oneEvent } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import { setViewport } from '@web/test-runner-commands';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
@@ -99,7 +99,11 @@ export class CoreButtonGroupOverflowTests<T extends CoreButtonGroupOverflow> ext
               // Click the trigger to open the menu
               trigger.click();
               await elementUpdated(el);
-              await aTimeout(20);
+              await waitUntil(
+                () => menu!.querySelector(project.scope.tagName('menu-item')) !== null,
+                'single button should render in the overflow menu',
+                { timeout: 3000 }
+              );
 
               // Check that the single button is in the menu
               const menuItem = menu!.querySelector(project.scope.tagName('menu-item'));
