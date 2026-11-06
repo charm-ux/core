@@ -441,14 +441,16 @@ const charmTokensBase = defineTokens(
             bgColor: semantic('action', 'primary', 'color'),
             borderColor: semantic('action', 'primary', 'color'),
             fgColor: primitive('color', 'white'),
+            // Darker in both modes: the shared action hover/active colors lighten in dark mode, which drops white
+            // text below 4.5:1.
             hover: {
-              bgColor: semantic('action', 'primary', 'hover', 'color'),
-              borderColor: semantic('action', 'primary', 'hover', 'color'),
+              bgColor: primitive('color', 'brand', 600),
+              borderColor: primitive('color', 'brand', 600),
               fgColor: primitive('color', 'white'),
             },
             active: {
-              bgColor: semantic('action', 'primary', 'active', 'color'),
-              borderColor: semantic('action', 'primary', 'active', 'color'),
+              bgColor: primitive('color', 'brand', 700),
+              borderColor: primitive('color', 'brand', 700),
               fgColor: primitive('color', 'white'),
             },
           },
@@ -500,6 +502,9 @@ const charmTokensBase = defineTokens(
 
       // Date Picker
       datePicker: {
+        segment: {
+          placeholderColor: semantic('formControl', 'placeholderColor'),
+        },
         popover: {
           maxWidth: '320px',
           bgColor: semantic('surface', 'primary'),
@@ -520,7 +525,8 @@ const charmTokensBase = defineTokens(
             },
           },
           today: {
-            fgColor: semantic('action', 'primary', 'color'),
+            // action.primary is a fill color; as text on the dark popover it is under 4.5:1.
+            fgColor: { light: primitive('color', 'brand', 500), dark: primitive('color', 'brand', 400) },
             hover: {
               bgColor: semantic('surface', 'secondary'),
               fgColor: semantic('action', 'primary', 'hover', 'color'),
@@ -535,6 +541,9 @@ const charmTokensBase = defineTokens(
 
       // Date Range Picker
       dateRangePicker: {
+        segment: {
+          placeholderColor: semantic('formControl', 'placeholderColor'),
+        },
         popover: {
           maxWidth: '320px',
           bgColor: semantic('surface', 'primary'),
@@ -555,7 +564,8 @@ const charmTokensBase = defineTokens(
             },
           },
           today: {
-            fgColor: semantic('action', 'primary', 'color'),
+            // action.primary is a fill color; as text on the dark popover it is under 4.5:1.
+            fgColor: { light: primitive('color', 'brand', 500), dark: primitive('color', 'brand', 400) },
             hover: {
               bgColor: semantic('surface', 'secondary'),
               fgColor: semantic('action', 'primary', 'hover', 'color'),
@@ -1048,20 +1058,27 @@ const charmTokensBase = defineTokens(
             fontWeight: primitive('fontWeight', 'semibold'),
             lineHeight: primitive('lineHeight', 'sm'),
             paddingY: primitive('spacing', '2xs'),
+            disabled: {
+              color: semantic('disabled', 'fgColor'),
+            },
           },
         },
         option: {
           bgColor: 'transparent',
           fgColor: semantic('text', 'primary'),
           hoverBgColor: semantic('surface', 'secondary'),
+          hoverFgColor: semantic('text', 'primary'),
           selectedBgColor: semantic('surface', 'tertiary'),
+          selectedFgColor: semantic('text', 'primary'),
           activeBgColor: semantic('surface', 'tertiary'),
+          activeFgColor: semantic('text', 'primary'),
           disabledFgColor: semantic('disabled', 'fgColor'),
           borderRadius: primitive('borderRadius', 'sm'),
           paddingX: primitive('spacing', 'sm'),
           paddingY: primitive('spacing', 'sm'),
           check: {
-            color: semantic('action', 'primary', 'color'),
+            // Lighter in dark mode so the checkmark keeps 3:1 on the selected/active option background.
+            color: { light: primitive('color', 'brand', 500), dark: primitive('color', 'brand', 300) },
             size: '16px',
           },
         },

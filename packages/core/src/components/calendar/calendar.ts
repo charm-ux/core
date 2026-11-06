@@ -416,6 +416,8 @@ export class CoreCalendar extends CharmFocusableElement {
   /** Generates one date cell. */
   protected dayTemplate(date: Date | undefined, context: CalendarDayContext) {
     if (!date) return html`<td role="gridcell"></td>`;
+    // The focusable day button carries the gridcell role and its state: screen readers announce the focused element,
+    // so `aria-selected`/`aria-current` on the surrounding `<td>` were never read. The `<td>` is presentational.
 
     const isoDate = toIsoDate(date);
     const isRange = this.selectionMode === 'range';
@@ -458,12 +460,13 @@ export class CoreCalendar extends CharmFocusableElement {
           'range-row-start': context.hasRange && startsRow,
           'range-row-end': context.hasRange && endsRow,
         })}
-        role="gridcell"
-        aria-selected=${selected}
-        aria-current=${ifDefined(isToday ? 'date' : undefined)}
+        role="none"
       >
         <button
           type="button"
+          role="gridcell"
+          aria-selected=${selected}
+          aria-current=${ifDefined(isToday ? 'date' : undefined)}
           part=${parts}
           class=${classMap({
             day: true,

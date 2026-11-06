@@ -1,10 +1,10 @@
 import { elementUpdated, expect } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import type { CoreMenu } from './index.js';
 
-export class CoreMenuTests<T extends CoreMenu> extends CharmElementTests<T> {
+export class CoreMenuTests<T extends CoreMenu> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 

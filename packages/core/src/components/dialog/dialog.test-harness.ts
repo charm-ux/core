@@ -3,16 +3,27 @@ import { isSafari } from '@microsoft/applicationinsights-core-js';
 import sinon from 'sinon';
 import { sendKeys, sendMouse } from '@web/test-runner-commands';
 
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import { project } from '../../utilities/index.js';
 import { getMiddleOfElement } from '../../utilities/testing/positioning.js';
 import './index.js';
 import '../button/index.js';
+import { openDismissible } from '../../internal/testing/accessibility-states.js';
 import type { CoreDialog } from './index.js';
 
-export class CoreDialogTests<T extends CoreDialog> extends CharmElementTests<T> {
+export class CoreDialogTests<T extends CoreDialog> extends DismissibleElementTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      alertOpen: {
+        description: 'when open as an alert dialog',
+        setup: el => {
+          el.alert = true;
+          return openDismissible(el);
+        },
+      },
+    });
 
     this.updateTests({
       dialog: {

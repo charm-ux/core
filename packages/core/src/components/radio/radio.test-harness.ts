@@ -1,15 +1,24 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { FormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import type { CoreRadio } from './index.js';
 
 const getInternals = (radio: CoreRadio): ElementInternals =>
   (radio as unknown as { internals: ElementInternals }).internals;
 
-export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
+export class CoreRadioTests<T extends CoreRadio> extends FormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      checked: {
+        description: 'when checked',
+        setup: el => {
+          el.checked = true;
+        },
+      },
+    });
 
     this.tests = {
       ...this.tests, // adds inherited tests
@@ -124,6 +133,21 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                     expect(handler).to.not.have.been.calledOnce;
                   },
                 },
+                ariaDisabledAttribute: {
+                  description: 'sets aria-disabled on the host while disabled and removes it when enabled',
+                  test: async () => {
+                    const el = this.component;
+                    expect(el.hasAttribute('aria-disabled')).to.be.false;
+
+                    el.disabled = true;
+                    await el.updateComplete;
+                    expect(el.getAttribute('aria-disabled')).to.equal('true');
+
+                    el.disabled = false;
+                    await el.updateComplete;
+                    expect(el.hasAttribute('aria-disabled')).to.be.false;
+                  },
+                },
                 forceDisabled: {
                   description: 'should reflect disabled styling and block selection when force-disabled',
                   test: async () => {
@@ -133,7 +157,7 @@ export class CoreRadioTests<T extends CoreRadio> extends CharmElementTests<T> {
                     this.component.addEventListener('selected', handler);
                     await this.component.updateComplete;
 
-                    expect(getInternals(this.component).ariaDisabled).to.equal('true');
+                    expect(this.component.getAttribute('aria-disabled')).to.equal('true');
                     expect(this.component.hasAttribute('force-disabled')).to.be.true;
                     expect(this.component.getAttribute('tabindex')).to.equal('-1');
 

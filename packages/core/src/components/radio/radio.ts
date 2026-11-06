@@ -138,7 +138,7 @@ export class CoreRadio extends CharmFormControlElement {
   protected handleDisabledChange() {
     const disabled = this.effectivelyDisabled;
     this.toggleAttribute('force-disabled', this.forceDisabled);
-    this.internals.ariaDisabled = disabled ? 'true' : 'false';
+    this.syncAriaDisabled();
     this.setAttribute('tabindex', disabled ? '-1' : this.isInRadioGroup() ? (this.checked ? '0' : '-1') : '0');
   }
 
@@ -230,9 +230,15 @@ export class CoreRadio extends CharmFormControlElement {
       'tabindex',
       this.effectivelyDisabled ? '-1' : this.isInRadioGroup() ? (this.checked ? '0' : '-1') : '0'
     );
-    this.internals.ariaDisabled = this.effectivelyDisabled ? 'true' : 'false';
+    this.syncAriaDisabled();
     this.internals.ariaChecked = String(!!this.checked);
     if (this.forceDisabled) this.setAttribute('force-disabled', '');
+  }
+
+  /** Mirrors the effective disabled state to the host's `aria-disabled` attribute, matching checkbox. */
+  protected syncAriaDisabled() {
+    if (this.effectivelyDisabled) this.setAttribute('aria-disabled', 'true');
+    else this.removeAttribute('aria-disabled');
   }
 
   /** Generates the HTML template for the radio's control. */

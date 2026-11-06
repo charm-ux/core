@@ -1,10 +1,10 @@
 import { aTimeout, elementUpdated, expect, nextFrame, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import type { CorePopup } from './index.js';
 import type { PopupPlacement } from './popup.js';
 
-export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
+export class CorePopupTests<T extends CorePopup> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 
@@ -43,8 +43,52 @@ export class CorePopupTests<T extends CorePopup> extends CharmElementTests<T> {
                   el.contentRole = 'presentation';
                   await elementUpdated(el);
 
-                  expect(dialog.getAttribute('role')).to.equal('presentation');
-                  expect(dialog.hasAttribute('aria-labelledby')).to.equal(false);
+                  const surface = el.shadowRoot!.querySelector('.popup') as HTMLElement;
+                  expect(surface.getAttribute('role')).to.equal('presentation');
+                  expect(surface.hasAttribute('aria-labelledby')).to.equal(false);
+                },
+              },
+              presentationalSurfaceIsNotADialog: {
+                description: 'renders presentational content in a div that keeps the popup part and class',
+                test: async () => {
+                  const el = this.component;
+                  expect(el.shadowRoot!.querySelector('.popup')?.localName).to.equal('dialog');
+
+                  for (const role of ['presentation', 'none']) {
+                    el.contentRole = role;
+                    await elementUpdated(el);
+                    const surface = el.shadowRoot!.querySelector('.popup') as HTMLElement;
+                    expect(surface.localName).to.equal('div');
+                    expect(surface.getAttribute('part')).to.equal('popup-base');
+                    expect(surface.getAttribute('role')).to.equal(role);
+                    expect(surface.hasAttribute('open')).to.equal(false);
+                    // A closed popup stays hidden across the element swap.
+                    expect(surface.hidden).to.equal(true);
+                  }
+
+                  el.contentRole = 'dialog';
+                  await elementUpdated(el);
+                  expect(el.shadowRoot!.querySelector('.popup')?.localName).to.equal('dialog');
+                },
+              },
+              presentationalSurfaceAllowedRole: {
+                description: 'passes axe aria-allowed-role when open with presentational content',
+                test: async () => {
+                  const el = this.component;
+                  const anchor = document.createElement('button');
+                  anchor.textContent = 'Anchor';
+                  el.after(anchor);
+                  el.anchor = anchor;
+                  el.contentRole = 'presentation';
+                  el.open = true;
+                  await elementUpdated(el);
+                  await aTimeout(50);
+
+                  const surface = el.shadowRoot!.querySelector('.popup') as HTMLElement;
+                  expect(surface.hidden).to.equal(false);
+                  // Unlike the shared harness test, don't ignore aria-allowed-role.
+                  await expect(el).to.be.accessible({ ignoredRules: [] });
+                  anchor.remove();
                 },
               },
               anchorFromId: {

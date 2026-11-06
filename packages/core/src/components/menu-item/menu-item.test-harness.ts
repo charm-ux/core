@@ -9,32 +9,52 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
   public constructor() {
     super();
 
+    this.addAccessibilityStates({
+      disabled: {
+        description: 'when disabled',
+        setup: el => {
+          el.disabled = true;
+        },
+      },
+      link: {
+        description: 'when a link',
+        setup: el => {
+          el.href = 'https://example.com';
+        },
+      },
+      checkbox: {
+        description: 'as a checked menuitemcheckbox',
+        setup: el => {
+          el.role = 'menuitemcheckbox';
+          el.checked = true;
+        },
+      },
+      radio: {
+        description: 'as a checked menuitemradio',
+        setup: el => {
+          el.role = 'menuitemradio';
+          el.checked = true;
+        },
+      },
+      expanded: {
+        description: 'when expanded',
+        setup: el => {
+          el.expanded = true;
+        },
+      },
+      current: {
+        description: 'when current',
+        setup: el => {
+          el.href = 'https://example.com';
+          el.current = 'page';
+        },
+      },
+    });
+
     this.updateTests({
       menuItem: {
         description: 'menuItem',
         tests: {
-          accessibility: {
-            description: 'accessibility',
-            tests: {
-              accessibleWhenDisabled: {
-                description: 'should be accessible when disabled',
-                test: async () => {
-                  const el = this.component;
-                  el.disabled = true;
-                  await expect(el).to.be.accessible();
-                },
-              },
-              accessibleAsLinks: {
-                description: 'should be accessible when a link',
-                test: async () => {
-                  const el = this.component;
-                  el.href = 'https://example.com';
-                  await expect(el).to.be.accessible();
-                },
-              },
-            },
-          },
-
           properties: {
             description: 'properties',
             tests: {

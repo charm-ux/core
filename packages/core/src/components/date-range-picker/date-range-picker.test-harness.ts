@@ -2,12 +2,34 @@ import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testin
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CoreFormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
+import { expectThemeContrast } from '../../internal/testing/contrast.js';
 import type { CoreDateRangePicker } from './index.js';
 import type { CoreCalendar } from '../calendar/index.js';
+
+/** A value inside the fixture's focused month, so the open calendar renders it selected. */
+const SELECTED_VALUE = '2025-06-10/2025-06-14';
 
 export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends CoreFormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      open: {
+        description: 'when open',
+        setup: async el => {
+          el.show();
+          await el.updateComplete;
+        },
+      },
+      openWithValue: {
+        description: 'when open with a selected value',
+        setup: async el => {
+          el.value = SELECTED_VALUE;
+          el.show();
+          await el.updateComplete;
+        },
+      },
+    });
 
     this.updateTests({
       dateRangePicker: {
@@ -16,6 +38,16 @@ export class CoreDateRangePickerTests<T extends CoreDateRangePicker> extends Cor
           interactions: {
             description: 'interactions',
             tests: {
+              openContrast: {
+                description: 'meets color contrast when open with empty segments in light and dark mode',
+                test: async () => {
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+                  await aTimeout(100);
+                  // Weekday headings and footer buttons render here. axe doesn't check ::placeholder; those colors are checked in theming.
+                  await expectThemeContrast(this.component);
+                },
+              },
               toggle: {
                 description: 'opens and closes the popup from the toggle button',
                 test: async () => {

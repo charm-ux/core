@@ -1,11 +1,26 @@
 import { elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import type { CoreAlert } from './index.js';
 
-export class CoreAlertTests<T extends CoreAlert> extends CharmElementTests<T> {
+export class CoreAlertTests<T extends CoreAlert> extends DismissibleElementTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      dismissible: {
+        description: 'when dismissible',
+        setup: el => {
+          el.dismissible = true;
+        },
+      },
+      heading: {
+        description: 'with a heading',
+        setup: el => {
+          el.heading = 'Heads up';
+        },
+      },
+    });
 
     this.updateTests({
       alert: {
