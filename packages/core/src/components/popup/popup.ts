@@ -21,7 +21,7 @@ import {
 // https://github.com/floating-ui/floating-ui/releases/tag/%40floating-ui%2Fdom%401.0.2
 // https://github.com/shoelace-style/shoelace/issues/1135
 import { offsetParent } from 'composed-offset-position';
-import { html } from 'lit/static-html.js';
+import { html, literal } from 'lit/static-html.js';
 import { property, query } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { keys } from '../../utilities/key-map.js';
@@ -208,6 +208,8 @@ export class CorePopup extends CharmDismissibleElement {
   protected anchorEl?: HTMLElement | null;
   protected cleanup: ReturnType<typeof autoUpdate> | undefined;
   protected positionRequest = 0;
+  /** The surface element last synced with the open state, used to detect a `<dialog>` ↔ `<div>` swap. */
+  protected syncedSurface?: HTMLElement;
   private _flipFallbackPlacements: Array<Placement | PopupPlacement> = [];
 
   /**
@@ -232,6 +234,15 @@ export class CorePopup extends CharmDismissibleElement {
   /** Whether the content is labelled. Presentational content must not carry a label, since the label makes browsers drop the presentational role. */
   protected get isContentLabelled(): boolean {
     return this.contentRole !== 'presentation' && this.contentRole !== 'none';
+  }
+
+  /**
+   * The element that renders the popup surface. ARIA in HTML doesn't allow `presentation`/`none` on `<dialog>`, so
+   * presentational content renders a `<div>`. Neither element enters the top layer (the dialog is never opened with
+   * `showModal()`), so positioning, parts, and styling don't change.
+   */
+  protected get popupTag() {
+    return this.isContentLabelled ? literal`dialog` : literal`div`;
   }
 
   public set flipFallbackPlacements(value: string | Array<Placement | PopupPlacement>) {
@@ -523,6 +534,12 @@ export class CorePopup extends CharmDismissibleElement {
       this.handleAnchorChange();
     }
 
+    // Switching between labelled and presentational content swaps the surface element (`<dialog>` ↔ `<div>`), so
+    // carry the closed state over and point the positioner at the new element.
+    if (changedProps.has('contentRole') && changedProps.get('contentRole') !== undefined) {
+      this.handleSurfaceChange();
+    }
+
     // All other properties will trigger a reposition when active
     if (this.open) {
       await this.reposition();
@@ -538,6 +555,7 @@ export class CorePopup extends CharmDismissibleElement {
     // here is also what lets a consumer stop hiding its own slotted content -
     // which is what was costing consumers their exit transition.
     if (this.popup) this.popup.hidden = !this.open;
+    this.syncedSurface = this.popup;
     if (this.open) {
       this.start();
     }
@@ -599,8 +617,8 @@ export class CorePopup extends CharmDismissibleElement {
   /** Generates the popup control template */
   protected popupControlTemplate() {
     return html`
-      <dialog
-        open
+      <${this.popupTag}
+        ?open=${this.isContentLabelled}
         class="popup"
         part="popup-base"
         role=${ifDefined(this.contentRole)}
@@ -611,13 +629,21 @@ export class CorePopup extends CharmDismissibleElement {
         ${this.label ? html`<span id="popup-label" class="visually-hidden">${this.label}</span>` : ''}
         <slot></slot>
         ${this.arrowTemplate()}
-      </dialog>
+      </${this.popupTag}>
     `;
   }
 
   /** Generates the arrow template */
   protected arrowTemplate() {
     return html` ${this.arrow ? html`<div part="popup-arrow" class="arrow" role="presentation"></div>` : ''} `;
+  }
+
+  /** Re-syncs a freshly rendered popup surface with the current open state and positioner. */
+  protected handleSurfaceChange() {
+    if (!this.popup || this.popup === this.syncedSurface) return;
+    this.syncedSurface = this.popup;
+    this.popup.hidden = !this.open;
+    if (this.open) this.start();
   }
 
   protected handleAnchorChange() {

@@ -104,7 +104,7 @@ Rules are delivered to agents in two tiers (wired in the repo-root `AGENTS.md` a
 - [A11Y-001](accessibility/A11Y-001.md) — Use native semantics first; use `ElementInternals` for host-based custom controls
 - [A11Y-002](accessibility/A11Y-002.md) — Prefer visually-hidden text over `aria-label` for user-facing labels
 - [A11Y-003](accessibility/A11Y-003.md) — Manage focus and keyboard interaction
-- [A11Y-004](accessibility/A11Y-004.md) — Ship an accessibility test for every component
+- [A11Y-004](accessibility/A11Y-004.md) — Ship an accessibility test for every component and a separate axe test for every state
 - [A11Y-005](accessibility/A11Y-005.md) — Generate IDs deterministically — static in the shadow root, a module counter for light DOM
 - [A11Y-006](accessibility/A11Y-006.md) — Return focus to the opener when a dismissible closes
 - [A11Y-007](accessibility/A11Y-007.md) — Use roving tabindex for composite widgets

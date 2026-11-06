@@ -77,7 +77,7 @@ export default css`
   }
 
   .segment::placeholder {
-    color: ${semantic('formControl', 'placeholderColor')};
+    color: ${component('datePicker', 'segment', 'placeholderColor')};
     opacity: 1;
   }
 

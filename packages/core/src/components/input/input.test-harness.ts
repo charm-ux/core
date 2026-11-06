@@ -9,6 +9,24 @@ import type { CoreInput } from './index.js';
 export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      withClear: {
+        description: 'with a clear button and value',
+        setup: el => {
+          el.withClear = true;
+          el.value = 'text';
+        },
+      },
+      password: {
+        description: 'as a password with a visibility toggle',
+        setup: el => {
+          el.type = 'password';
+          el.passwordToggle = true;
+          el.value = 'secret';
+        },
+      },
+    });
     this.updateTests({
       input: {
         description: 'input',
@@ -321,6 +339,29 @@ export class CoreInputTests<T extends CoreInput> extends CoreFormControlTests<T>
                     <form><${unsafeStatic(tag)} required value=""></${unsafeStatic(tag)}><button type="submit">Submit</button></form>
                   `);
                   expect(form.reportValidity()).to.be.false;
+                },
+              },
+              typingRendersOnce: {
+                description: 'applies validity in the same render when typing changes it',
+                test: async () => {
+                  const el = this.component;
+                  el.required = true;
+                  await elementUpdated(el);
+                  await Promise.resolve();
+                  expect(el.invalid).to.be.true;
+
+                  const render = sinon.spy(el as unknown as { render: () => unknown }, 'render');
+                  const input = el.shadowRoot!.querySelector('input')!;
+                  input.value = 'a';
+                  input.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+                  await el.updateComplete;
+                  await aTimeout(0);
+                  await el.updateComplete;
+
+                  expect(el.invalid).to.be.false;
+                  expect(el.checkValidity()).to.be.true;
+                  expect(render).to.have.been.calledOnce;
+                  render.restore();
                 },
               },
               requiredAddedAfterMount: {

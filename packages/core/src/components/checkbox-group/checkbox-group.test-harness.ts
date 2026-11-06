@@ -1,16 +1,25 @@
 import { aTimeout, elementUpdated, expect, fixture, html, oneEvent, waitUntil } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { FormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import type { CoreCheckbox } from '../checkbox/index.js';
 import type { CoreCheckboxGroup } from './index.js';
 
 const getInternals = (group: CoreCheckboxGroup): ElementInternals =>
   (group as unknown as { internals: ElementInternals }).internals;
 
-export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends CharmElementTests<T> {
+export class CoreCheckboxGroupTests<T extends CoreCheckboxGroup> extends FormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      listbox: {
+        description: 'as a listbox',
+        setup: el => {
+          el.listbox = true;
+        },
+      },
+    });
 
     this.updateTests({
       checkboxGroup: {

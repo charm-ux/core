@@ -2,15 +2,30 @@ import { aTimeout, elementUpdated, expect, fixture, oneEvent, waitUntil } from '
 import { html, unsafeStatic } from 'lit/static-html.js';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { FormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import '../button/index.js';
 import './index.js';
 import { project } from '../../utilities/index.js';
 import type { CoreCheckbox } from './index.js';
 
-export class CoreCheckboxTests<T extends CoreCheckbox> extends CharmElementTests<T> {
+export class CoreCheckboxTests<T extends CoreCheckbox> extends FormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      checked: {
+        description: 'when checked',
+        setup: el => {
+          el.checked = true;
+        },
+      },
+      indeterminate: {
+        description: 'when indeterminate',
+        setup: el => {
+          el.indeterminate = true;
+        },
+      },
+    });
 
     this.updateTests({
       checkbox: {

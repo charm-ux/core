@@ -24,6 +24,6 @@ export default css`
   }
 
   :host([disabled]) .option-group-label {
-    color: ${component('combobox', 'option', 'disabledFgColor')};
+    color: ${component('combobox', 'group', 'label', 'disabled', 'color')};
   }
 `;

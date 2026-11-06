@@ -99,6 +99,8 @@ export interface DateRangePickerTodayEventDetail {
  * @csspart date-range-picker-popup - The popup container.
  * @csspart date-range-picker-footer - The popup footer wrapper.
  *
+ * @cssprop --charm-date-range-picker-segment-placeholder-color - The color of empty segment placeholders.
+ *
  * @dependency CoreCalendar
  * @dependency CoreIcon
  * @dependency CorePopup

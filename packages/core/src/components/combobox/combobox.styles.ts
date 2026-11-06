@@ -81,7 +81,7 @@ export default css`
     width: ${component('combobox', 'iconSize')};
   }
 
-  .combobox-tag-remove:disabled {
+  .combobox-tag-remove-disabled {
     cursor: not-allowed;
     opacity: ${semantic('formControl', 'disabled', 'opacity')};
   }

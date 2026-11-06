@@ -981,6 +981,25 @@
             },
             {
               "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render."
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -1549,6 +1568,16 @@
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
               }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render."
             },
             {
               "kind": "field",
@@ -7224,7 +7253,7 @@
                 "text": "string | undefined"
               },
               "privacy": "public",
-              "description": "Relationship tokens for linked buttons.",
+              "description": "Relationship tokens for linked buttons. Defaults to `noreferrer noopener` when `target` is `_blank`.",
               "attribute": "rel"
             },
             {
@@ -7514,7 +7543,7 @@
               "type": {
                 "text": "string | undefined"
               },
-              "description": "Relationship tokens for linked buttons.",
+              "description": "Relationship tokens for linked buttons. Defaults to `noreferrer noopener` when `target` is `_blank`.",
               "fieldName": "rel"
             },
             {
@@ -9798,6 +9827,29 @@
               "default": "'checkbox-group'"
             },
             {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "checkboxes",
               "type": {
@@ -11136,6 +11188,20 @@
             },
             {
               "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationAnchor",
               "type": {
                 "text": "HTMLElement | undefined"
@@ -11979,6 +12045,29 @@
                 "module": "src/base/charm-element/charm-element.ts"
               },
               "default": "'checkbox'"
+            },
+            {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -12827,6 +12916,20 @@
             },
             {
               "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationAnchor",
               "type": {
                 "text": "HTMLElement | undefined"
@@ -13526,7 +13629,7 @@
               "name": "combobox-tag-label"
             },
             {
-              "description": "The remove button within a tag.",
+              "description": "The pointer-only remove control within a tag. Keyboard users remove the focused tag with Delete or Backspace.",
               "name": "combobox-tag-remove"
             },
             {
@@ -13832,6 +13935,29 @@
                 "text": "number | undefined"
               },
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -15262,7 +15388,7 @@
               },
               "privacy": "public",
               "default": "'Remove'",
-              "description": "Accessible label prefix for a tag's remove button.",
+              "description": "Text announced before each tag's label (e.g. \"Remove Apple\"), telling assistive technology that Delete or Backspace removes it.",
               "attribute": "remove-label"
             },
             {
@@ -15611,6 +15737,20 @@
             },
             {
               "kind": "method",
+              "name": "tagRemoveTemplate",
+              "privacy": "protected",
+              "parameters": [
+                {
+                  "name": "tag",
+                  "type": {
+                    "text": "{ label: string; value: string }"
+                  }
+                }
+              ],
+              "description": "Generates a tag's remove control. It is pointer-only and hidden from assistive technology: an `option` can't have\ninteractive descendants, and keyboard users remove the focused tag with Delete or Backspace."
+            },
+            {
+              "kind": "method",
               "name": "tagsTemplate",
               "privacy": "protected",
               "description": "Generates tags for the selected values."
@@ -15683,6 +15823,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -16112,7 +16266,7 @@
                 "text": "string"
               },
               "default": "'Remove'",
-              "description": "Accessible label prefix for a tag's remove button.",
+              "description": "Text announced before each tag's label (e.g. \"Remove Apple\"), telling assistive technology that Delete or Backspace removes it.",
               "fieldName": "removeLabel"
             },
             {
@@ -16345,6 +16499,244 @@
           "kind": "class",
           "description": "Date picker combines segmented date entry with a popup calendar for selecting a single date.",
           "name": "CoreDatePicker",
+          "cssProperties": [
+            {
+              "description": "The color of empty segment placeholders.",
+              "name": "--charm-date-picker-segment-placeholder-color"
+            },
+            {
+              "description": "Determines the background color for the control.",
+              "name": "--charm-form-control-bg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the border radius of the control.",
+              "name": "--charm-form-control-border-radius",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input background color.",
+              "name": "--charm-form-control-disabled-bg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input border color.",
+              "name": "--charm-form-control-disabled-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input foreground color.",
+              "name": "--charm-form-control-disabled-fg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the disabled input opacity.",
+              "name": "--charm-form-control-disabled-opacity",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the control text color.",
+              "name": "--charm-form-control-fg-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the focused control border color.",
+              "name": "--charm-form-control-focus-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the font size.",
+              "name": "--charm-form-control-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text color.",
+              "name": "--charm-form-control-help-text-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text font size.",
+              "name": "--charm-form-control-help-text-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the help text font weight.",
+              "name": "--charm-form-control-help-text-font-weight",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin after help text.",
+              "name": "--charm-form-control-help-text-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between start/end icons and the input.",
+              "name": "--charm-form-control-icon-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the input height.",
+              "name": "--charm-form-control-input-height",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error border color.",
+              "name": "--charm-form-control-invalid-border-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error text color.",
+              "name": "--charm-form-control-invalid-message-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the error message font size.",
+              "name": "--charm-form-control-invalid-message-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label color.",
+              "name": "--charm-form-control-label-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label font size.",
+              "name": "--charm-form-control-label-font-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the label font weight.",
+              "name": "--charm-form-control-label-font-weight",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between label and the control.",
+              "name": "--charm-form-control-label-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin between the required indicator and the label.",
+              "name": "--charm-form-control-label-required-indicator-gap",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the inline padding within the input element.",
+              "name": "--charm-form-control-padding-x",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the input block padding within the input element.",
+              "name": "--charm-form-control-padding-y",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the placeholder text color.",
+              "name": "--charm-form-control-placeholder-color",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines thumb size when the input type is range.",
+              "name": "--charm-form-control-range-thumb-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines the margin-top of the track when the input type is range.",
+              "name": "--charm-form-control-range-track-margin-top",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "description": "Determines track size when the input type is range.",
+              "name": "--charm-form-control-range-track-size",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            }
+          ],
           "cssParts": [
             {
               "description": "The component wrapper.",
@@ -16674,6 +17066,29 @@
               "kind": "method",
               "name": "calendarTemplate",
               "privacy": "protected"
+            },
+            {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
             },
             {
               "kind": "method",
@@ -18206,6 +18621,20 @@
             },
             {
               "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationAnchor",
               "type": {
                 "text": "HTMLElement | undefined"
@@ -18642,7 +19071,41 @@
               "description": ""
             }
           ],
+          "modulePath": "src/components/date-picker/date-picker.ts"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "CoreDatePicker",
+          "declaration": {
+            "name": "CoreDatePicker",
+            "module": "src/components/date-picker/date-picker.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "CoreDatePicker",
+            "module": "src/components/date-picker/date-picker.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/components/date-range-picker/date-range-picker.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Date range picker combines segmented date entry with a popup calendar for selecting a start and end date.",
+          "name": "CoreDateRangePicker",
           "cssProperties": [
+            {
+              "description": "The color of empty segment placeholders.",
+              "name": "--charm-date-range-picker-segment-placeholder-color"
+            },
             {
               "description": "Determines the background color for the control.",
               "name": "--charm-form-control-bg-color",
@@ -18876,36 +19339,6 @@
               }
             }
           ],
-          "modulePath": "src/components/date-picker/date-picker.ts"
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "CoreDatePicker",
-          "declaration": {
-            "name": "CoreDatePicker",
-            "module": "src/components/date-picker/date-picker.ts"
-          }
-        },
-        {
-          "kind": "js",
-          "name": "default",
-          "declaration": {
-            "name": "CoreDatePicker",
-            "module": "src/components/date-picker/date-picker.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/components/date-range-picker/date-range-picker.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "Date range picker combines segmented date entry with a popup calendar for selecting a start and end date.",
-          "name": "CoreDateRangePicker",
           "cssParts": [
             {
               "description": "The component wrapper.",
@@ -19303,6 +19736,29 @@
                 "type": {
                   "text": "string[] | undefined"
                 }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -21043,6 +21499,20 @@
             },
             {
               "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationAnchor",
               "type": {
                 "text": "HTMLElement | undefined"
@@ -21469,240 +21939,6 @@
             {
               "name": "CorePopup",
               "description": ""
-            }
-          ],
-          "cssProperties": [
-            {
-              "description": "Determines the background color for the control.",
-              "name": "--charm-form-control-bg-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the border radius of the control.",
-              "name": "--charm-form-control-border-radius",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the disabled input background color.",
-              "name": "--charm-form-control-disabled-bg-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the disabled input border color.",
-              "name": "--charm-form-control-disabled-border-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the disabled input foreground color.",
-              "name": "--charm-form-control-disabled-fg-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the disabled input opacity.",
-              "name": "--charm-form-control-disabled-opacity",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the control text color.",
-              "name": "--charm-form-control-fg-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the focused control border color.",
-              "name": "--charm-form-control-focus-border-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the font size.",
-              "name": "--charm-form-control-font-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the help text color.",
-              "name": "--charm-form-control-help-text-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the help text font size.",
-              "name": "--charm-form-control-help-text-font-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the help text font weight.",
-              "name": "--charm-form-control-help-text-font-weight",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the margin after help text.",
-              "name": "--charm-form-control-help-text-gap",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the margin between start/end icons and the input.",
-              "name": "--charm-form-control-icon-gap",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the input height.",
-              "name": "--charm-form-control-input-height",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the error border color.",
-              "name": "--charm-form-control-invalid-border-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the error text color.",
-              "name": "--charm-form-control-invalid-message-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the error message font size.",
-              "name": "--charm-form-control-invalid-message-font-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the label color.",
-              "name": "--charm-form-control-label-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the label font size.",
-              "name": "--charm-form-control-label-font-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the label font weight.",
-              "name": "--charm-form-control-label-font-weight",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the margin between label and the control.",
-              "name": "--charm-form-control-label-gap",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the margin between the required indicator and the label.",
-              "name": "--charm-form-control-label-required-indicator-gap",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the inline padding within the input element.",
-              "name": "--charm-form-control-padding-x",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the input block padding within the input element.",
-              "name": "--charm-form-control-padding-y",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the placeholder text color.",
-              "name": "--charm-form-control-placeholder-color",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines thumb size when the input type is range.",
-              "name": "--charm-form-control-range-thumb-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines the margin-top of the track when the input type is range.",
-              "name": "--charm-form-control-range-track-margin-top",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
-            },
-            {
-              "description": "Determines track size when the input type is range.",
-              "name": "--charm-form-control-range-track-size",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "src/base/form-control-element/charm-form-control-element.ts"
-              }
             }
           ],
           "modulePath": "src/components/date-range-picker/date-range-picker.ts"
@@ -24725,6 +24961,29 @@
             },
             {
               "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -25863,6 +26122,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -28310,6 +28583,10 @@
             {
               "description": "The block padding within a group label.",
               "name": "--charm-combobox-group-label-padding-y"
+            },
+            {
+              "description": "The group label color when the group is disabled.",
+              "name": "--charm-combobox-group-label-disabled-color"
             }
           ],
           "cssParts": [
@@ -28578,6 +28855,10 @@
               "name": "--charm-combobox-option-active-bg-color"
             },
             {
+              "description": "The foreground color of a selected option that is also highlighted.",
+              "name": "--charm-combobox-option-active-fg-color"
+            },
+            {
               "description": "The background color of an option.",
               "name": "--charm-combobox-option-bg-color"
             },
@@ -28606,6 +28887,10 @@
               "name": "--charm-combobox-option-hover-bg-color"
             },
             {
+              "description": "The foreground color of the highlighted (keyboard-current) option.",
+              "name": "--charm-combobox-option-hover-fg-color"
+            },
+            {
               "description": "The inline padding within an option.",
               "name": "--charm-combobox-option-padding-x"
             },
@@ -28616,6 +28901,10 @@
             {
               "description": "The background color of a selected option.",
               "name": "--charm-combobox-option-selected-bg-color"
+            },
+            {
+              "description": "The foreground color of a selected option.",
+              "name": "--charm-combobox-option-selected-fg-color"
             }
           ],
           "cssParts": [
@@ -30237,6 +30526,12 @@
             },
             {
               "kind": "method",
+              "name": "handleSurfaceChange",
+              "privacy": "protected",
+              "description": "Re-syncs a freshly rendered popup surface with the current open state and positioner."
+            },
+            {
+              "kind": "method",
               "name": "handleTransitionEnd",
               "privacy": "protected",
               "parameters": [
@@ -30411,6 +30706,13 @@
               "name": "popupControlTemplate",
               "privacy": "protected",
               "description": "Generates the popup control template"
+            },
+            {
+              "kind": "field",
+              "name": "popupTag",
+              "privacy": "protected",
+              "description": "The element that renders the popup surface. ARIA in HTML doesn't allow `presentation`/`none` on `<dialog>`, so\npresentational content renders a `<div>`. Neither element enters the top layer (the dialog is never opened with\n`showModal()`), so positioning, parts, and styling don't change.",
+              "readonly": true
             },
             {
               "kind": "method",
@@ -30637,6 +30939,15 @@
               "privacy": "public",
               "description": "Syncs the popup's width or height to that of the anchor element.",
               "attribute": "sync"
+            },
+            {
+              "kind": "field",
+              "name": "syncedSurface",
+              "type": {
+                "text": "HTMLElement | undefined"
+              },
+              "privacy": "protected",
+              "description": "The surface element last synced with the open state, used to detect a `<dialog>` ↔ `<div>` swap."
             },
             {
               "kind": "method",
@@ -32838,6 +33149,29 @@
             },
             {
               "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -33722,6 +34056,20 @@
             },
             {
               "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "field",
               "name": "validationAnchor",
               "type": {
                 "text": "HTMLElement | undefined"
@@ -34553,6 +34901,29 @@
               "default": "'radio'"
             },
             {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "checked",
               "type": {
@@ -35328,6 +35699,12 @@
             },
             {
               "kind": "method",
+              "name": "syncAriaDisabled",
+              "privacy": "protected",
+              "description": "Mirrors the effective disabled state to the host's `aria-disabled` attribute, matching checkbox."
+            },
+            {
+              "kind": "method",
               "name": "syncFormValue",
               "privacy": "protected",
               "description": "Submits the form-associated value and restoration state.",
@@ -35395,6 +35772,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -36536,6 +36927,29 @@
             },
             {
               "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -37548,6 +37962,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -38980,6 +39408,29 @@
               "description": "Generates the template for the base."
             },
             {
+              "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
               "kind": "field",
               "name": "checked",
               "type": {
@@ -39864,6 +40315,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "false",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {
@@ -41929,6 +42394,29 @@
             },
             {
               "kind": "method",
+              "name": "canApplyValidityBeforeRender",
+              "privacy": "protected",
+              "return": {
+                "type": {
+                  "text": "boolean"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "changedProperties",
+                  "type": {
+                    "text": "Map<string | number | symbol, unknown>"
+                  }
+                }
+              ],
+              "description": "Whether validity can be applied before this render. True only when the only validity inputs that changed are\n`value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or\npicked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
+              }
+            },
+            {
+              "kind": "method",
               "name": "checkValidity",
               "privacy": "public",
               "return": {
@@ -42812,6 +43300,20 @@
               "inheritedFrom": {
                 "name": "CharmFocusableElement",
                 "module": "src/base/focusable-element/charm-focusable-element.ts"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "validatesBeforeRender",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "protected",
+              "default": "true",
+              "description": "Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be\napplied in `willUpdate`, before the render, when the field is already current. That avoids a second render.",
+              "inheritedFrom": {
+                "name": "CharmFormControlElement",
+                "module": "src/base/form-control-element/charm-form-control-element.ts"
               }
             },
             {

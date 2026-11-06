@@ -23,6 +23,7 @@ let optionGroupId = 0;
  * @cssprop --charm-combobox-group-label-font-weight - The group label font weight.
  * @cssprop --charm-combobox-group-label-line-height - The group label line height.
  * @cssprop --charm-combobox-group-label-padding-y - The block padding within a group label.
+ * @cssprop --charm-combobox-group-label-disabled-color - The group label color when the group is disabled.
  */
 export class CoreOptionGroup extends CharmElement {
   public static override styles = [...super.styles, styles];

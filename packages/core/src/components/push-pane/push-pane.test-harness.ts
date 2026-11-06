@@ -1,9 +1,9 @@
 import { elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import type { CorePushPane } from './index.js';
 
-export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests<T> {
+export class CorePushPaneTests<T extends CorePushPane> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 

@@ -70,6 +70,7 @@ export class CoreSelect extends CharmFormControlElement {
   protected pendingNativeValue?: string;
 
   protected optionsObserver?: MutationObserver;
+  protected override validatesBeforeRender = true;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];

@@ -157,6 +157,7 @@ export class CoreInput extends CharmFormControlElement {
   protected enterKeyTimer?: number;
   protected isComposing = false;
   protected optionObserver?: MutationObserver;
+  protected override validatesBeforeRender = true;
 
   public static override get dependencies(): (typeof CharmElement)[] {
     return [CoreIcon];

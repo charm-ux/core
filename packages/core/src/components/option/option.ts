@@ -24,6 +24,7 @@ import styles from './option.styles.js';
  * @csspart check - The checkmark shown for selected options.
  *
  * @cssprop --charm-combobox-option-active-bg-color - The background color of the active option.
+ * @cssprop --charm-combobox-option-active-fg-color - The foreground color of a selected option that is also highlighted.
  * @cssprop --charm-combobox-option-bg-color - The background color of an option.
  * @cssprop --charm-combobox-option-border-radius - The border radius of an option.
  * @cssprop --charm-combobox-option-check-color - The color of the selected option checkmark.
@@ -31,9 +32,11 @@ import styles from './option.styles.js';
  * @cssprop --charm-combobox-option-disabled-fg-color - The foreground color of a disabled option.
  * @cssprop --charm-combobox-option-fg-color - The foreground color of an option.
  * @cssprop --charm-combobox-option-hover-bg-color - The background color of a hovered option.
+ * @cssprop --charm-combobox-option-hover-fg-color - The foreground color of the highlighted (keyboard-current) option.
  * @cssprop --charm-combobox-option-padding-x - The inline padding within an option.
  * @cssprop --charm-combobox-option-padding-y - The block padding within an option.
  * @cssprop --charm-combobox-option-selected-bg-color - The background color of a selected option.
+ * @cssprop --charm-combobox-option-selected-fg-color - The foreground color of a selected option.
  *
  * @dependency CoreIcon
  */

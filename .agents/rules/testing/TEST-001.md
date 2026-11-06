@@ -10,6 +10,17 @@ Component tests follow a two-file pattern:
   tests (accessibility, `ready` event, attribute-name, RTL-safe CSS) and adds
   component-specific tests through `updateTests`.
 
+Extend the base harness that matches the component's base class (mirrors
+[CHARM-001](../internal/CHARM-001.md)), so it inherits that family's shared tests:
+
+| Component base class                                                                            | Harness                                                                                             |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `CharmElement`                                                                                  | `CharmElementTests`                                                                                 |
+| `CharmFocusableElement`                                                                         | `FocusableElementTests`                                                                             |
+| `CharmDismissibleElement`                                                                       | `DismissibleElementTests` (adds the `open` accessibility state)                                     |
+| `CharmFormControlElement`, no single native field (groups, host-based controls)                 | `FormControlTests` (invalid/disabled/readonly/required states, fieldset disabling, custom validity) |
+| `CharmFormControlElement` rendering a native `<input>`/`<select>`/`<textarea>` with a `<label>` | `CoreFormControlTests` (adds label, native-field attribute, error-text, reset, and focus tests)     |
+
 This gives every component baseline coverage for free and keeps custom tests organized and
 reusable. Don't write ad-hoc `describe`/`it` blocks in the `.test.ts` entry file.
 

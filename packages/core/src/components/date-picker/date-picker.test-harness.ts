@@ -2,11 +2,33 @@ import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testin
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
 import { CoreFormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
+import { expectThemeContrast } from '../../internal/testing/contrast.js';
 import type { CoreDatePicker } from './index.js';
+
+/** A value inside the fixture's focused month, so the open calendar renders it selected. */
+const SELECTED_VALUE = '2025-06-16';
 
 export class CoreDatePickerTests<T extends CoreDatePicker> extends CoreFormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      open: {
+        description: 'when open',
+        setup: async el => {
+          el.show();
+          await el.updateComplete;
+        },
+      },
+      openWithValue: {
+        description: 'when open with a selected value',
+        setup: async el => {
+          el.value = SELECTED_VALUE;
+          el.show();
+          await el.updateComplete;
+        },
+      },
+    });
 
     this.updateTests({
       datePicker: {
@@ -15,6 +37,16 @@ export class CoreDatePickerTests<T extends CoreDatePicker> extends CoreFormContr
           interactions: {
             description: 'interactions',
             tests: {
+              openContrast: {
+                description: 'meets color contrast when open with empty segments in light and dark mode',
+                test: async () => {
+                  this.component.open = true;
+                  await elementUpdated(this.component);
+                  await aTimeout(100);
+                  // Weekday headings and footer buttons render here. axe doesn't check ::placeholder; those colors are checked in theming.
+                  await expectThemeContrast(this.component);
+                },
+              },
               toggle: {
                 description: 'opens and closes the popup from the toggle button',
                 test: async () => {

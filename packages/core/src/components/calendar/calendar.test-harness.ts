@@ -2,12 +2,41 @@ import { elementUpdated, expect } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { expectThemeContrast } from '../../internal/testing/contrast.js';
 import { project } from '../../utilities/project.js';
 import type { CalendarChangeEventDetail, CoreCalendar } from './index.js';
 
 export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      selected: {
+        description: 'with a selected date',
+        setup: el => {
+          el.value = '2025-06-16';
+        },
+      },
+      range: {
+        description: 'with a selected range',
+        setup: el => {
+          el.selectionMode = 'range';
+          el.value = ['2025-06-10', '2025-06-14'];
+        },
+      },
+      disabled: {
+        description: 'when disabled',
+        setup: el => {
+          el.disabled = true;
+        },
+      },
+      readonly: {
+        description: 'when readonly',
+        setup: el => {
+          el.readOnly = true;
+        },
+      },
+    });
 
     this.updateTests({
       calendar: {
@@ -16,6 +45,23 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
           selection: {
             description: 'selection',
             tests: {
+              selectedDateContrast: {
+                description: 'meets color contrast with a selected date in light and dark mode',
+                test: async () => {
+                  this.component.value = '2025-06-15';
+                  await elementUpdated(this.component);
+                  await expectThemeContrast(this.component);
+                },
+              },
+              rangeContrast: {
+                description: 'meets color contrast in range mode in light and dark mode',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.value = ['2025-06-10', '2025-06-15'];
+                  await elementUpdated(this.component);
+                  await expectThemeContrast(this.component);
+                },
+              },
               singleDate: {
                 description: 'selects one date and emits input and change events',
                 test: async () => {
@@ -49,7 +95,7 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
                   await elementUpdated(this.component);
 
                   expect(this.component.value).to.deep.equal(['2025-06-10', '2025-06-15']);
-                  expect(this.getCell('2025-06-12').getAttribute('aria-selected')).to.equal('true');
+                  expect(this.getDay('2025-06-12').getAttribute('aria-selected')).to.equal('true');
                   expect(this.getCell('2025-06-10').classList.contains('range-start-cell')).to.equal(true);
                   expect(this.getCell('2025-06-12').classList.contains('range-inner-cell')).to.equal(true);
                   expect(this.getCell('2025-06-15').classList.contains('range-end-cell')).to.equal(true);
@@ -152,6 +198,63 @@ export class CoreCalendarTests<T extends CoreCalendar> extends CharmElementTests
               },
             },
           },
+          semantics: {
+            description: 'screen reader semantics',
+            tests: {
+              focusedDayIsTheGridcell: {
+                description: 'puts the gridcell role on the focusable day, not its table cell',
+                test: async () => {
+                  const day = this.getDay('2025-06-15');
+                  expect(day.getAttribute('role')).to.equal('gridcell');
+                  expect(this.getCell('2025-06-15').getAttribute('role')).to.equal('none');
+                  expect(this.getCell('2025-06-15').hasAttribute('aria-selected')).to.be.false;
+                },
+              },
+              selectedStateOnFocusedDay: {
+                description: 'exposes aria-selected on the focused day so screen readers announce the selection',
+                test: async () => {
+                  this.getDay('2025-06-15').click();
+                  await elementUpdated(this.component);
+
+                  const selected = this.getDay('2025-06-15');
+                  selected.focus();
+                  expect(this.component.shadowRoot?.activeElement).to.equal(selected);
+                  expect(selected.getAttribute('aria-selected')).to.equal('true');
+                  expect(this.getDay('2025-06-16').getAttribute('aria-selected')).to.equal('false');
+                },
+              },
+              rangeSelectedStateOnDays: {
+                description: 'exposes aria-selected on every day in a selected range',
+                test: async () => {
+                  this.component.selectionMode = 'range';
+                  this.component.value = ['2025-06-10', '2025-06-14'];
+                  await elementUpdated(this.component);
+
+                  ['2025-06-10', '2025-06-12', '2025-06-14'].forEach(date =>
+                    expect(this.getDay(date).getAttribute('aria-selected'), date).to.equal('true')
+                  );
+                  expect(this.getDay('2025-06-15').getAttribute('aria-selected')).to.equal('false');
+                },
+              },
+              currentDateOnFocusedDay: {
+                description: 'exposes aria-current="date" on today\'s focusable day',
+                test: async () => {
+                  const clock = sinon.useFakeTimers({ now: new Date(2025, 5, 18, 12), toFake: ['Date'] });
+                  try {
+                    this.component.requestUpdate();
+                    await elementUpdated(this.component);
+
+                    expect(this.getDay('2025-06-18').getAttribute('aria-current')).to.equal('date');
+                    expect(this.getCell('2025-06-18').hasAttribute('aria-current')).to.be.false;
+                    expect(this.getDay('2025-06-17').hasAttribute('aria-current')).to.be.false;
+                  } finally {
+                    clock.restore();
+                  }
+                },
+              },
+            },
+          },
+
           icons: {
             description: 'navigation icons',
             tests: {

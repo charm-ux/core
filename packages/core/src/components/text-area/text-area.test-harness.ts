@@ -1,10 +1,10 @@
 import { aTimeout, expect } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { CoreFormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import type { CoreTextArea } from './index.js';
 
-export class CoreTextAreaTests<T extends CoreTextArea> extends CharmElementTests<T> {
+export class CoreTextAreaTests<T extends CoreTextArea> extends CoreFormControlTests<T> {
   public constructor() {
     super();
 

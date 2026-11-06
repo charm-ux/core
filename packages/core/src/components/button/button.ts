@@ -114,7 +114,7 @@ export class CoreButton extends CharmFocusableElement {
   @property()
   public download?: string;
 
-  /** Relationship tokens for linked buttons. */
+  /** Relationship tokens for linked buttons. Defaults to `noreferrer noopener` when `target` is `_blank`. */
   @property()
   public rel?: string;
 
@@ -442,7 +442,7 @@ export class CoreButton extends CharmFocusableElement {
       download=${ifDefined(isLink ? this.download : undefined)}
       part="button-control"
       referrerpolicy=${ifDefined(isLink ? this.referrerPolicy : undefined)}
-      rel=${ifDefined(isLink ? (this.rel ?? (this.target === '_blank' ? 'noopener' : undefined)) : undefined)}
+      rel=${ifDefined(isLink ? (this.rel ?? (this.target === '_blank' ? 'noreferrer noopener' : undefined)) : undefined)}
       target=${ifDefined(isLink ? this.target : undefined)}
       type=${ifDefined(isLink ? undefined : this.type)}
       value=${ifDefined(isLink ? undefined : this.value)}

@@ -1,9 +1,9 @@
 import { elementUpdated, expect, oneEvent } from '@open-wc/testing';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import { setComponentVar } from '../../test/themeVar.js';
 import type { CoreDisclosure } from './index.js';
 
-export class CoreDisclosureTests<T extends CoreDisclosure> extends CharmElementTests<T> {
+export class CoreDisclosureTests<T extends CoreDisclosure> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 
