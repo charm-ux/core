@@ -1,7 +1,7 @@
 import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import './index.js';
-import { CoreButton } from './index.js';
 import { CoreButtonTests } from './button.test-harness.js';
+import { CoreButton } from './index.js';
 
 new CoreButtonTests().runTests(config => html`<ch-button ${config}>Click here</ch-button>`);
 
@@ -55,7 +55,12 @@ for (const isLink of [false, true]) {
 
       expect(getControl(el).hasAttribute('aria-label')).to.be.false;
       expect(getControl(el).hasAttribute('aria-labelledby')).to.be.false;
-      expect(slot.assignedNodes().map(node => node.textContent).join('')).to.equal('Visible name');
+      expect(
+        slot
+          .assignedNodes()
+          .map(node => node.textContent)
+          .join('')
+      ).to.equal('Visible name');
       await expect(el).to.be.accessible();
     });
 
