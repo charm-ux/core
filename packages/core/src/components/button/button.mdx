@@ -52,6 +52,12 @@ To create an icon-only button, you can use the `icon-only` attribute or leave th
 
 </code-bubble>
 
+## Accessible name
+
+Visible button text provides the accessible name by default. For an icon-only button or an explicit name, set `aria-label` on `<ch-button>`. The label is forwarded to the native button or link and stays in sync when updated or removed. The `ariaLabel` property is also supported.
+
+Host `aria-labelledby` references are not forwarded: IDs outside the component's shadow root cannot be resolved by the internal control. Use visible text or `aria-label` instead.
+
 ## Name
 
 Use the `name` attribute within the `<ch-button>` element if you are using the button component in a form. This is only used for a button and not an anchor.
