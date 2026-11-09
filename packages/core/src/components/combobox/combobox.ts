@@ -1050,6 +1050,11 @@ export class CoreCombobox extends CharmFormControlElement {
         if (this.open) this.commitActiveOption();
         else this.show();
         return;
+      case keys.Tab:
+        // Commit synchronously instead of relying on the deferred blur handler, whose timing varies by browser.
+        // Tab still moves focus because the default action is left intact.
+        this.finishEditing();
+        return;
       case keys.Escape:
         if (this.open) {
           event.preventDefault();
