@@ -27,6 +27,25 @@ export class CoreTabTests<T extends CoreTab> extends CharmElementTests<T> {
           },
         },
       },
+      tabStates: {
+        description: 'tab accessibility states',
+        tests: {
+          disabledInTablist: {
+            description: 'is accessible when disabled inside a named tablist',
+            test: async () => {
+              const tabs = await fixture(
+                html`<ch-tabs label="Test sections">
+                  <ch-tab selected>One</ch-tab><ch-tab disabled>Two</ch-tab>
+                  <ch-tab-panel><span style="color: #000">Panel one</span></ch-tab-panel>
+                  <ch-tab-panel><span style="color: #000">Panel two</span></ch-tab-panel>
+                </ch-tabs>`
+              );
+              // Contrast is owned by the shared theme, not this widget (see the base accessibility test).
+              await expect(tabs).to.be.accessible({ ignoredRules: ['color-contrast'] });
+            },
+          },
+        },
+      },
       tab: {
         description: 'Tab',
         tests: {

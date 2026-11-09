@@ -1,11 +1,23 @@
 import { elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
+import { openDismissible } from '../../internal/testing/accessibility-states.js';
 import type { CorePushPane } from './index.js';
 
-export class CorePushPaneTests<T extends CorePushPane> extends CharmElementTests<T> {
+export class CorePushPaneTests<T extends CorePushPane> extends DismissibleElementTests<T> {
   public constructor() {
     super();
+
+    // The pane is labelled by its heading, so give the open state one before scanning.
+    this.addAccessibilityStates({
+      open: {
+        description: 'when open',
+        setup: el => {
+          el.heading = 'Pane title';
+          return openDismissible(el);
+        },
+      },
+    });
 
     this.updateTests({
       pushPane: {

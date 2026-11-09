@@ -10,6 +10,48 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
   public constructor() {
     super();
 
+    this.addAccessibilityStates({
+      disabled: {
+        description: 'when disabled',
+        setup: el => {
+          el.disabled = true;
+        },
+      },
+      pressed: {
+        description: 'when a pressed toggle',
+        setup: el => {
+          el.toggle = true;
+          el.pressed = true;
+        },
+      },
+      expanded: {
+        description: 'when expanded',
+        setup: el => {
+          el.expanded = true;
+          el.haspopup = 'menu';
+        },
+      },
+      current: {
+        description: 'when current',
+        setup: el => {
+          el.current = 'page';
+        },
+      },
+      link: {
+        description: 'when a link',
+        setup: el => {
+          el.href = 'https://example.com';
+        },
+      },
+      disabledLink: {
+        description: 'when a disabled link',
+        setup: el => {
+          el.href = 'https://example.com';
+          el.disabled = true;
+        },
+      },
+    });
+
     this.updateTests({
       switch: {
         description: 'button',
@@ -75,6 +117,27 @@ export class CoreButtonTests<T extends CoreButton> extends CharmElementTests<T> 
                   el.href = '#';
                   el.innerHTML = 'Link';
                   await expect(el).to.be.accessible();
+                },
+              },
+              linkBlankTargetRel: {
+                description: 'defaults rel to noreferrer noopener for _blank links and honors an explicit rel',
+                test: async () => {
+                  const el = this.component;
+                  el.href = 'https://example.com';
+                  el.target = '_blank';
+                  el.innerHTML = 'Link';
+                  await elementUpdated(el);
+                  const link = () => el.shadowRoot!.querySelector('a')!;
+                  expect(link().getAttribute('rel')).to.equal('noreferrer noopener');
+
+                  el.rel = 'external';
+                  await elementUpdated(el);
+                  expect(link().getAttribute('rel')).to.equal('external');
+
+                  el.rel = undefined;
+                  el.target = '_self';
+                  await elementUpdated(el);
+                  expect(link().hasAttribute('rel')).to.be.false;
                 },
               },
               linkNoNameAttribute: {

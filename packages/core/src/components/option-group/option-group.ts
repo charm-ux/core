@@ -23,6 +23,7 @@ let optionGroupId = 0;
  * @cssprop --charm-combobox-group-label-font-weight - The group label font weight.
  * @cssprop --charm-combobox-group-label-line-height - The group label line height.
  * @cssprop --charm-combobox-group-label-padding-y - The block padding within a group label.
+ * @cssprop --charm-combobox-group-label-disabled-color - The group label color when the group is disabled.
  */
 export class CoreOptionGroup extends CharmElement {
   public static override styles = [...super.styles, styles];
@@ -47,6 +48,7 @@ export class CoreOptionGroup extends CharmElement {
   public override connectedCallback() {
     super.connectedCallback();
     this.setAttribute('role', 'group');
+    this.syncDisabledState();
     this.syncLabelReference();
   }
 
@@ -56,10 +58,16 @@ export class CoreOptionGroup extends CharmElement {
     this.syncLabelReference();
 
     if (changedProperties.has('disabled')) {
+      this.syncDisabledState();
       Array.from(this.children).forEach(child => {
         if (child instanceof CoreOption) child.requestUpdate();
       });
     }
+  }
+
+  /** Exposes the group's disabled state to assistive technology and inherited disabled styling. */
+  protected syncDisabledState() {
+    this.setAttribute('aria-disabled', String(this.disabled));
   }
 
   protected override render() {

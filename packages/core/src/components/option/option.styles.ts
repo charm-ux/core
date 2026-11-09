@@ -27,14 +27,17 @@ export default css`
   :host(:hover) .option-base,
   :host([current]) .option-base {
     background-color: ${component('combobox', 'option', 'hoverBgColor')};
+    color: ${component('combobox', 'option', 'hoverFgColor')};
   }
 
   :host([selected]) .option-base {
     background-color: ${component('combobox', 'option', 'selectedBgColor')};
+    color: ${component('combobox', 'option', 'selectedFgColor')};
   }
 
   :host([selected][current]) .option-base {
     background-color: ${component('combobox', 'option', 'activeBgColor')};
+    color: ${component('combobox', 'option', 'activeFgColor')};
   }
 
   :host([aria-disabled='true']) .option-base,

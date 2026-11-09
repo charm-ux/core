@@ -107,7 +107,7 @@ let validationProbe: HTMLInputElement | undefined;
  * @csspart combobox-tags - Container for selected-value tags.
  * @csspart combobox-tag - A selected-value tag.
  * @csspart combobox-tag-label - The text within a tag.
- * @csspart combobox-tag-remove - The remove button within a tag.
+ * @csspart combobox-tag-remove - The pointer-only remove control within a tag. Keyboard users remove the focused tag with Delete or Backspace.
  * @csspart combobox-clear - The clear button.
  * @csspart combobox-chevron - The chevron indicator.
  * @csspart combobox-popup - The popup element that positions the listbox.
@@ -198,7 +198,7 @@ export class CoreCombobox extends CharmFormControlElement {
   @property({ reflect: true })
   public placement: PopupPlacement = 'bottom-start';
 
-  /** Accessible label prefix for a tag's remove button. */
+  /** Text announced before each tag's label (e.g. "Remove Apple"), telling assistive technology that Delete or Backspace removes it. */
   @property({ attribute: 'remove-label' })
   public removeLabel = 'Remove';
 
@@ -655,7 +655,7 @@ export class CoreCombobox extends CharmFormControlElement {
     this.internals.setValidity(
       validity.valid ? {} : { customError: validity.customError, valueMissing: validity.valueMissing },
       this._errorMessage,
-      this.input
+      this.input ?? undefined
     );
     this.invalid = this.disabled || this.readonly ? false : !validity.valid;
   }
@@ -1050,6 +1050,11 @@ export class CoreCombobox extends CharmFormControlElement {
         if (this.open) this.commitActiveOption();
         else this.show();
         return;
+      case keys.Tab:
+        // Commit synchronously instead of relying on the deferred blur handler, whose timing varies by browser.
+        // Tab still moves focus because the default action is left intact.
+        this.finishEditing();
+        return;
       case keys.Escape:
         if (this.open) {
           event.preventDefault();
@@ -1371,6 +1376,7 @@ export class CoreCombobox extends CharmFormControlElement {
   }
 
   protected handleTagClick(event: MouseEvent) {
+    if (this.disabled || this.readonly) return;
     const target = event
       .composedPath()
       .find(
@@ -1541,26 +1547,15 @@ export class CoreCombobox extends CharmFormControlElement {
         ${this.selectedTags.slice(0, this.visibleTagCount).map(
           (tag, index) => this.html`
             <span
-              aria-label=${`${this.removeLabel} ${tag.label}`}
               aria-selected="true"
               class="combobox-tag"
               part="combobox-tag"
               role="option"
               tabindex=${index === tabStop ? 0 : -1}
             >
+              <span class="visually-hidden">${this.removeLabel} </span>
               <span class="combobox-tag-label" part="combobox-tag-label">${tag.label}</span>
-              <button
-                aria-label=${`${this.removeLabel} ${tag.label}`}
-                class="combobox-tag-remove"
-                data-tag-value=${tag.value}
-                ?disabled=${this.disabled || this.readonly}
-                part="combobox-tag-remove"
-                tabindex="-1"
-                type="button"
-                @click=${this.handleTagClick}
-              >
-                <scoped-icon name="dismiss"></scoped-icon>
-              </button>
+              ${this.tagRemoveTemplate(tag)}
             </span>
           `
         )}
@@ -1579,6 +1574,24 @@ export class CoreCombobox extends CharmFormControlElement {
             `
             : ''
         }
+      </span>
+    `;
+  }
+
+  /**
+   * Generates a tag's remove control. It is pointer-only and hidden from assistive technology: an `option` can't have
+   * interactive descendants, and keyboard users remove the focused tag with Delete or Backspace.
+   */
+  protected tagRemoveTemplate(tag: { label: string; value: string }) {
+    return this.html`
+      <span
+        aria-hidden="true"
+        class=${classMap({ 'combobox-tag-remove': true, 'combobox-tag-remove-disabled': this.disabled || this.readonly })}
+        data-tag-value=${tag.value}
+        part="combobox-tag-remove"
+        @click=${this.handleTagClick}
+      >
+        <scoped-icon name="dismiss"></scoped-icon>
       </span>
     `;
   }

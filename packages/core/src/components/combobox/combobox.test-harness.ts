@@ -2,6 +2,8 @@ import { aTimeout, elementUpdated, expect, fixture, html, oneEvent, waitUntil } 
 import { sendKeys } from '@web/test-runner-commands';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { expectThemeContrast } from '../../internal/testing/contrast.js';
+import { project } from '../../utilities/index.js';
 import type { CoreOption } from '../option/index.js';
 import type { CoreCombobox } from './index.js';
 
@@ -587,6 +589,35 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   expect(getRows(el)).to.have.length(3);
                 },
               },
+              groupsContrast: {
+                description: 'meets color contrast with groups and a highlighted option in light and dark mode',
+                test: async () => {
+                  const el = this.component;
+                  el.value = 'apple';
+                  el.innerHTML = `
+                    <ch-option-group label="Fruits">
+                      <ch-option value="apple">Apple</ch-option>
+                      <ch-option value="banana">Banana</ch-option>
+                    </ch-option-group>
+                    <ch-option-group label="Vegetables" disabled>
+                      <ch-option value="carrot">Carrot</ch-option>
+                    </ch-option-group>
+                  `;
+                  await settle(el);
+                  await openCombobox(el);
+                  focusInput(el);
+                  // Selected + highlighted ("active"), then a highlighted unselected option.
+                  await sendKeys({ press: 'ArrowDown' });
+                  await settle(el);
+                  expect(el.querySelector('ch-option[value="apple"]')?.hasAttribute('current')).to.be.true;
+                  await expectThemeContrast(el);
+
+                  await sendKeys({ press: 'ArrowDown' });
+                  await settle(el);
+                  expect(el.querySelector('ch-option[value="banana"]')?.hasAttribute('current')).to.be.true;
+                  await expectThemeContrast(el);
+                },
+              },
               disablesGroupOptions: {
                 description: 'disables every option in a disabled group',
                 test: async () => {
@@ -769,8 +800,7 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   el.valueAsArray = ['apple', 'banana'];
                   await elementUpdated(el);
 
-                  const removeButtons =
-                    el.shadowRoot?.querySelectorAll<HTMLButtonElement>('.combobox-tag-remove') ?? [];
+                  const removeButtons = el.shadowRoot?.querySelectorAll<HTMLElement>('.combobox-tag-remove') ?? [];
                   removeButtons[0].click();
                   await elementUpdated(el);
 
@@ -844,7 +874,7 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   el.valueAsArray = ['apple', 'banana', 'cherry'];
                   await elementUpdated(el);
 
-                  el.shadowRoot?.querySelector<HTMLButtonElement>('.combobox-tag-remove')?.click();
+                  el.shadowRoot?.querySelector<HTMLElement>('.combobox-tag-remove')?.click();
                   await elementUpdated(el);
 
                   expect(el.valueAsArray).to.deep.equal(['banana', 'cherry']);
@@ -860,7 +890,7 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   await elementUpdated(el);
                   const announcements = spyOnAnnouncements(el);
 
-                  el.shadowRoot?.querySelector<HTMLButtonElement>('.combobox-tag-remove')?.click();
+                  el.shadowRoot?.querySelector<HTMLElement>('.combobox-tag-remove')?.click();
                   await elementUpdated(el);
 
                   expect(announcements.calledWith('Apple removed', { priority: 'high' })).to.be.true;
@@ -1117,7 +1147,56 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   const tags = el.shadowRoot?.querySelectorAll('.combobox-tag') ?? [];
                   expect(tags).to.have.length(2);
                   tags.forEach(tag => expect(tag.getAttribute('role')).to.equal('option'));
-                  expect(tags[0].getAttribute('aria-label')).to.equal('Remove Apple');
+                  // The name comes from DOM text once: no aria-label that would repeat it.
+                  expect(tags[0].hasAttribute('aria-label')).to.be.false;
+                  expect(tags[0].textContent?.replace(/\s+/g, ' ').trim()).to.equal('Remove Apple');
+                },
+              },
+              tagsHaveNoNestedInteractive: {
+                description: 'keeps tag remove controls out of the tab order and accessibility tree',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  await elementUpdated(el);
+
+                  const removes = el.shadowRoot?.querySelectorAll<HTMLElement>('.combobox-tag-remove') ?? [];
+                  expect(removes).to.have.length(2);
+                  removes.forEach(remove => {
+                    expect(remove.getAttribute('part')).to.equal('combobox-tag-remove');
+                    expect(remove.getAttribute('aria-hidden')).to.equal('true');
+                    expect(remove.matches('button, [tabindex], [role]')).to.be.false;
+                  });
+                  await expect(el).to.be.accessible({ ignoredRules: [] });
+                },
+              },
+              openListboxAllowedRole: {
+                description: 'passes axe aria-allowed-role while open (no presentation role on a dialog)',
+                test: async () => {
+                  const el = this.component;
+                  await openCombobox(el);
+                  await elementUpdated(el);
+
+                  const popup = el.shadowRoot?.querySelector(project.scope.tagName('popup'));
+                  const surface = popup?.shadowRoot?.querySelector('.popup');
+                  expect(surface?.localName).to.equal('div');
+                  expect(surface?.getAttribute('role')).to.equal('presentation');
+                  await expect(el).to.be.accessible({ ignoredRules: [] });
+                },
+              },
+              disabledTagIsNotRemovedByClick: {
+                description: 'does not remove a value when a disabled tag is clicked',
+                test: async () => {
+                  const el = this.component;
+                  el.multiple = true;
+                  el.valueAsArray = ['apple', 'banana'];
+                  el.disabled = true;
+                  await elementUpdated(el);
+
+                  el.shadowRoot?.querySelector<HTMLElement>('.combobox-tag-remove')?.click();
+                  await elementUpdated(el);
+
+                  expect(el.valueAsArray).to.deep.equal(['apple', 'banana']);
                 },
               },
               commitsCustomValue: {
@@ -1266,18 +1345,28 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                 description: 'does not return focus to the input when Tab commits a custom value',
                 test: async () => {
                   const el = this.component;
-                  el.allowsCustomValue = true;
-                  await elementUpdated(el);
-                  focusInput(el);
-                  await sendKeys({ type: 'mango' });
-                  await elementUpdated(el);
+                  // Tab needs a following focusable element; otherwise Firefox keeps focus on the only
+                  // focusable element instead of moving it out of the document.
+                  const next = document.createElement('button');
+                  next.textContent = 'Next';
+                  el.after(next);
+                  try {
+                    el.allowsCustomValue = true;
+                    await elementUpdated(el);
+                    focusInput(el);
+                    await sendKeys({ type: 'mango' });
+                    await elementUpdated(el);
 
-                  await sendKeys({ press: 'Tab' });
-                  await aTimeout(0);
-                  await elementUpdated(el);
+                    await sendKeys({ press: 'Tab' });
+                    await aTimeout(0);
+                    await elementUpdated(el);
 
-                  expect(el.value).to.equal('mango');
-                  expect(el.shadowRoot?.activeElement === getInput(el)).to.be.false;
+                    expect(el.value).to.equal('mango');
+                    expect(document.activeElement).to.equal(next);
+                    expect(el.shadowRoot?.activeElement === getInput(el)).to.be.false;
+                  } finally {
+                    next.remove();
+                  }
                 },
               },
             },

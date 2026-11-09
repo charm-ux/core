@@ -15,6 +15,16 @@ export class CoreAvatarTests<T extends CoreAvatar> extends CharmElementTests<T> 
   public constructor() {
     super();
 
+    this.addAccessibilityStates({
+      initials: {
+        description: 'with initials',
+        setup: el => {
+          el.label = 'Ada Lovelace';
+          el.initials = 'AL';
+        },
+      },
+    });
+
     this.updateTests({
       avatar: {
         description: 'avatar',

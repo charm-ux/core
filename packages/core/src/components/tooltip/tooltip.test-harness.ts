@@ -1,6 +1,6 @@
 import { aTimeout, elementUpdated, expect, oneEvent, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import { CorePopup } from '../popup/index.js';
 import { CoreTooltip } from './index.js';
 
@@ -9,7 +9,7 @@ import { CoreTooltip } from './index.js';
 // 1000ms default. Give all settle-driven waits a generous window.
 const SETTLE_WAIT_TIMEOUT = 5000;
 
-export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T> {
+export class CoreTooltipTests<T extends CoreTooltip> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 
@@ -486,7 +486,7 @@ export class CoreTooltipTests<T extends CoreTooltip> extends CharmElementTests<T
   }
 }
 
-export class SiblingTooltipTests<T extends CoreTooltip> extends CharmElementTests<T> {
+export class SiblingTooltipTests<T extends CoreTooltip> extends DismissibleElementTests<T> {
   public constructor() {
     super();
 

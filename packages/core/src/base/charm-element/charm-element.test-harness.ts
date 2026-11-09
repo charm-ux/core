@@ -50,12 +50,32 @@ export type TestConfig = {
   [key: string]: ComponentTest | TestGroup;
 };
 
+/**
+ * A component state that gets its own axe test (see `addAccessibilityStates`). Each state that changes rendered
+ * semantics — open, expanded, invalid, disabled, checked, selected, etc. — must be scanned on its own, because the
+ * base accessibility test only scans the initial render.
+ */
+export type AccessibilityState<T> = BaseTest & {
+  /**
+   * Puts the component into the state under test. Return an element to scan a different root, such as a semantic parent
+   * fixture when the component's role depends on composition; otherwise the component itself is scanned.
+   */
+  setup: (el: T) => Promise<Element | void> | Element | void;
+
+  /** axe rules to skip for this state, in addition to `accessibilityIgnoredRules`. Justify each one in a comment. */
+  ignoredRules?: string[];
+};
+
 export class CharmElementTests<T extends CharmElement> {
   /** Global component reference to be used in each test. Default to a `div` to reduce optional chaining */
   protected component: T = document.createElement('div') as unknown as T;
 
   /** Initial component setup when components are executed. This will be used to reset the component for each test. */
   protected defaultComponent?: (config?: any) => TemplateResult;
+
+  /** axe rules skipped by the base accessibility test and every accessibility state test. */
+  // Components may intentionally expose ARIA roles not in axe's built-in role registry.
+  protected accessibilityIgnoredRules: string[] = ['aria-allowed-role'];
 
   /** Global test object that can be extended and overridden for each component */
   protected tests: TestConfig = {
@@ -67,11 +87,14 @@ export class CharmElementTests<T extends CharmElement> {
           test: async () => {
             // wait for initial animations to complete
             await aTimeout(500);
-            await expect(this.component).to.be.accessible({
-              // Components may intentionally expose ARIA roles not in axe's built-in role registry.
-              ignoredRules: ['aria-allowed-role'],
-            });
+            await expect(this.component).to.be.accessible({ ignoredRules: this.accessibilityIgnoredRules });
           },
+        },
+
+        // One axe test per component state, registered with `addAccessibilityStates`
+        accessibilityStates: {
+          description: 'accessibility states',
+          tests: {},
         },
 
         // attribute and property tests
@@ -185,6 +208,33 @@ export class CharmElementTests<T extends CharmElement> {
       return mergeDeep(target, ...sources);
     }
     this.tests = mergeDeep(this.tests, tests);
+  }
+
+  /**
+   * Registers a separate axe test for each component state. Add one entry for every state that changes the rendered
+   * semantics (open, expanded, invalid, disabled, checked, selected, multiple with values, etc.) so a violation that
+   * only appears in that state fails its own test.
+   * @param states the states to scan, keyed by a unique test name
+   */
+  protected addAccessibilityStates(states: Record<string, AccessibilityState<T>>) {
+    const tests: TestConfig = {};
+
+    Object.entries(states).forEach(([key, { setup, ignoredRules = [], ...state }]) => {
+      tests[key] = {
+        ...state,
+        description: `should be accessible ${state.description}`,
+        test: async () => {
+          const target = (await setup(this.component)) ?? this.component;
+          await elementUpdated(this.component);
+          await expect(target).to.be.accessible({
+            ignoredRules: [...this.accessibilityIgnoredRules, ...ignoredRules],
+          });
+        },
+      };
+    });
+
+    const group = (this.tests.base as TestGroup).tests.accessibilityStates as TestGroup;
+    Object.assign(group.tests, tests);
   }
 
   /**

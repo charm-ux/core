@@ -2,12 +2,12 @@ import { aTimeout, elementUpdated, expect, fixture, html, oneEvent, waitUntil } 
 import sinon from 'sinon';
 import { sendKeys } from '@web/test-runner-commands';
 import { project } from '../../utilities/index.js';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { FormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import { CoreButton } from '../button/index.js';
 import type { CoreRadioGroup } from './index.js';
 import type { CoreRadio } from '../radio/index.js';
 
-export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementTests<T> {
+export class CoreRadioGroupTests<T extends CoreRadioGroup> extends FormControlTests<T> {
   public constructor() {
     super();
 
@@ -138,9 +138,7 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await aTimeout(100);
                     expect(radios[1].checked).to.be.true;
                     expect(radios[1].hasAttribute('disabled')).to.be.false;
-                    expect((radios[1] as unknown as { internals: ElementInternals }).internals.ariaDisabled).to.equal(
-                      'true'
-                    );
+                    expect(radios[1].getAttribute('aria-disabled')).to.equal('true');
                     expect(radios[1].hasAttribute('force-disabled')).to.be.true;
                     expect(radios[1].tabIndex).to.equal(-1);
 
@@ -149,9 +147,7 @@ export class CoreRadioGroupTests<T extends CoreRadioGroup> extends CharmElementT
                     await aTimeout(100);
                     expect(radios[1].checked).to.be.true;
                     expect(radios[1].hasAttribute('disabled')).to.be.false;
-                    expect((radios[1] as unknown as { internals: ElementInternals }).internals.ariaDisabled).to.equal(
-                      'false'
-                    );
+                    expect(radios[1].hasAttribute('aria-disabled')).to.be.false;
                     expect(radios[1].hasAttribute('force-disabled')).to.be.false;
                     expect(radios[1].tabIndex).to.equal(0);
                   },

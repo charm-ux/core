@@ -83,6 +83,8 @@ export class CoreTextArea extends CharmFormControlElement {
   @query('#input')
   protected override input?: HTMLTextAreaElement;
 
+  protected override validatesBeforeRender = true;
+
   /** The width last observed by the resize observer, used to recompute height only when wrapping changes. */
   private lastObservedWidth = 0;
 

@@ -183,7 +183,11 @@ export class CoreCheckbox extends CharmFormControlElement {
     const customError = this.customErrorMessage !== '';
     const message = this.customErrorMessage || (valueMissing ? (this.input?.validationMessage ?? '') : '');
     this._errorMessage = message;
-    this.internals.setValidity(valueMissing || customError ? { valueMissing, customError } : {}, message, this.input);
+    this.internals.setValidity(
+      valueMissing || customError ? { valueMissing, customError } : {},
+      message,
+      this.input ?? undefined
+    );
     this.invalid = !this.disabled && !this.readonly && (valueMissing || customError);
   }
 

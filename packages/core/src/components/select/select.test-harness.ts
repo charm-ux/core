@@ -1,26 +1,25 @@
 import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { CoreFormControlTests } from '../../base/form-control-element/charm-form-control-element.test-harness.js';
 import type { CoreSelect } from './index.js';
 
-export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> {
+export class CoreSelectTests<T extends CoreSelect> extends CoreFormControlTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      multiple: {
+        description: 'when multiple',
+        setup: el => {
+          el.multiple = true;
+        },
+      },
+    });
 
     this.updateTests({
       select: {
         description: 'select',
         tests: {
-          accessibility: {
-            description: 'accessible when disabled',
-            test: async () => {
-              const el = this.component;
-              el.disabled = true;
-
-              await elementUpdated(el);
-              await expect(el).to.be.accessible();
-            },
-          },
           slottedLabelName: {
             description: 'keeps a slotted label in the accessibility tree',
             test: async () => {
@@ -307,6 +306,33 @@ export class CoreSelectTests<T extends CoreSelect> extends CharmElementTests<T> 
           interactions: {
             description: 'interactions',
             tests: {
+              selectingRendersOnce: {
+                description: 'applies validity in the same render when a user selection changes it',
+                test: async () => {
+                  const el = await fixture<CoreSelect>(html`
+                    <ch-select required>
+                      <option value="">Choose</option>
+                      <option value="one">One</option>
+                    </ch-select>
+                  `);
+                  await elementUpdated(el);
+                  await aTimeout(0);
+                  expect(el.invalid).to.be.true;
+
+                  const render = sinon.spy(el as unknown as { render: () => unknown }, 'render');
+                  const select = el.shadowRoot!.querySelector('select')!;
+                  select.selectedIndex = 1;
+                  select.dispatchEvent(new Event('change'));
+                  await el.updateComplete;
+                  await aTimeout(0);
+                  await el.updateComplete;
+
+                  expect(el.value).to.equal('one');
+                  expect(el.invalid).to.be.false;
+                  expect(render).to.have.been.calledOnce;
+                  render.restore();
+                },
+              },
               multipleFormValues: {
                 description: 'submits every selected value from a multiple select',
                 test: async () => {

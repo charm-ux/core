@@ -6,6 +6,9 @@ import CharmFocusableElement from '../focusable-element/charm-focusable-element.
 import styles from './form-control.styles.js';
 import type CharmElement from '../charm-element/charm-element.js';
 
+/** Properties whose changes require revalidating the control. */
+const VALIDITY_PROPERTIES = ['value', 'required', 'disabled', 'readonly', 'customErrorMessage'];
+
 /**
  * Base class for input components.
  *
@@ -95,6 +98,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
   protected _readonly: boolean = false;
   protected validityUpdatePending = false;
   protected hasCapturedInitialValue = false;
+  /**
+   * Controls whose rendered native field holds the user's value (input, select, text area) opt in so validity can be
+   * applied in `willUpdate`, before the render, when the field is already current. That avoids a second render.
+   */
+  protected validatesBeforeRender = false;
 
   public constructor() {
     super();
@@ -199,7 +207,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.customErrorMessage = message;
     this.input?.setCustomValidity(message);
     if (this.input) {
-      this.internals.setValidity(this.input.validity, message || this.input.validationMessage, this.validationAnchor);
+      this.internals.setValidity(
+        this.input.validity,
+        message || this.input.validationMessage,
+        this.validationAnchor ?? undefined
+      );
       this.updateErrorMessage();
       this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
     } else {
@@ -309,7 +321,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control. */
   protected applyValidity() {
     this.validityUpdatePending = false;
-    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
+    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor ?? undefined);
     if (this.hadFocus || this.hasFocus) {
       this.updateErrorMessage();
     }
@@ -384,19 +396,34 @@ export class CharmFormControlElement extends CharmFocusableElement {
     super.willUpdate(changedProperties);
     this.hasLabel = !!(this.label || this.hasNamedSlot('label'));
     this.hasHelpText = !!(this.helpText || this.hasNamedSlot('help-text'));
+    // Apply validity before the render so `invalid` and the error message land in this pass. The revalidation in
+    // `updated()` then finds nothing to change, so it doesn't schedule a second render.
+    if (this.canApplyValidityBeforeRender(changedProperties)) this.applyValidity();
     const ids = [this.hasHelpText ? 'help-text' : '', this.showInvalid ? 'error-text' : ''].filter(Boolean);
     this.describedBy = ids.length ? ids.join(' ') : undefined;
   }
 
   protected override updated(changedProperties: Map<string | number | symbol, unknown>): void {
     super.updated(changedProperties);
-    if (
-      ['value', 'required', 'disabled', 'readonly', 'customErrorMessage'].some(property =>
-        changedProperties.has(property)
-      )
-    ) {
+    if (VALIDITY_PROPERTIES.some(property => changedProperties.has(property))) {
       this.updateValidity();
     }
+  }
+
+  /**
+   * Whether validity can be applied before this render. True only when the only validity inputs that changed are
+   * `value` and/or `customErrorMessage` and the rendered native field already holds `value` (e.g. the user typed or
+   * picked it). Constraint changes (`required`, `disabled`, `readonly`) and programmatic values apply after the render.
+   */
+  protected canApplyValidityBeforeRender(changedProperties: Map<string | number | symbol, unknown>): boolean {
+    if (!this.validatesBeforeRender || !this.hasUpdated || !this.input) return false;
+    let valueChanged = false;
+    for (const property of VALIDITY_PROPERTIES) {
+      if (!changedProperties.has(property)) continue;
+      if (property === 'value') valueChanged = true;
+      else if (property !== 'customErrorMessage') return false;
+    }
+    return valueChanged && this.input.value === String(this.value ?? '');
   }
 
   protected override firstUpdated(): void {

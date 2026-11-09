@@ -112,7 +112,7 @@ export default css`
 
   :host([no-header]) .visually-hidden:focus-within .close-btn {
     position: absolute;
-    inset-inline-end: 0;a
+    inset-inline-end: 0;
     z-index: 1;
   }
 

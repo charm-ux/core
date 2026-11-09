@@ -9,6 +9,15 @@ export class CoreSwitchTests<T extends CoreSwitch> extends CoreFormControlTests<
   public constructor() {
     super();
 
+    this.addAccessibilityStates({
+      checked: {
+        description: 'when checked',
+        setup: el => {
+          el.checked = true;
+        },
+      },
+    });
+
     this.updateTests({
       formControl: {
         description: 'form-control',

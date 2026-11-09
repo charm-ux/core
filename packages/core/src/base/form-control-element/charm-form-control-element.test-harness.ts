@@ -1,11 +1,99 @@
 import { elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import sinon from 'sinon';
-import { FocusableElementTests } from '../focusable-element/focusable-element.test-harness.js';
+import { CharmElementTests } from '../charm-element/charm-element.test-harness.js';
+import { focusableElementTestGroup } from '../focusable-element/focusable-element.test-harness.js';
+import { formControlAccessibilityStates } from '../../internal/testing/accessibility-states.js';
 import CharmFormControlElement from './charm-form-control-element.js';
 
-export class CoreFormControlTests<T extends CharmFormControlElement> extends FocusableElementTests<T> {
+/**
+ * Tests every `CharmFormControlElement` must pass, regardless of how it renders: single native inputs, groups without an
+ * inner input (checkbox-group, radio-group), and host-based controls (radio). Covers the shared accessibility states
+ * (invalid, disabled, readonly, required), fieldset disabling, and custom validity.
+ *
+ * Controls that render a native field with a `<label>` and the shared error text should extend `CoreFormControlTests`,
+ * which adds the input-based tests on top of these.
+ */
+export class FormControlTests<T extends CharmFormControlElement> extends CharmElementTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates(formControlAccessibilityStates());
+
+    this.updateTests({
+      formControlBase: {
+        description: 'form-control base',
+        tests: {
+          interactions: {
+            description: 'interactions',
+            tests: {
+              fieldsetDisabledReset: {
+                description: 'restores enabled state when the containing fieldset is enabled again',
+                test: async () => {
+                  const el = this.component;
+                  const form = await fixture<HTMLFormElement>(html`<form><fieldset>${el}</fieldset></form>`);
+                  const fieldset = form.querySelector('fieldset')!;
+                  fieldset.disabled = true;
+                  await elementUpdated(el);
+                  expect(el.disabled).to.be.true;
+
+                  fieldset.disabled = false;
+                  await elementUpdated(el);
+                  expect(el.disabled).to.be.false;
+                  expect(el.hasAttribute('disabled')).to.be.false;
+                },
+              },
+            },
+          },
+
+          validations: {
+            description: 'validations',
+            tests: {
+              customValidityInvalidates: {
+                description: 'marks the control invalid when `setCustomValidity` is called with a message',
+                test: async () => {
+                  const el = this.component;
+                  el.setCustomValidity('Custom validation message');
+                  await elementUpdated(el);
+
+                  expect(el.invalid).to.be.true;
+                  expect(el.checkValidity()).to.be.false;
+
+                  el.setCustomValidity('');
+                  await elementUpdated(el);
+
+                  expect(el.invalid).to.be.false;
+                  expect(el.checkValidity()).to.be.true;
+                },
+              },
+              preRenderCustomErrorBlocksSubmit: {
+                description: 'reflects an error-message attribute set before rendering to form validity',
+                test: async () => {
+                  const element = document.createElement(this.component.tagName.toLowerCase()) as T;
+                  element.setAttribute('error-message', 'Taken');
+                  const form = await fixture<HTMLFormElement>(html`<form>${element}</form>`);
+                  await elementUpdated(element);
+
+                  expect(form.checkValidity()).to.be.false;
+                  expect(element.checkValidity()).to.be.false;
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+}
+
+/**
+ * Tests for form controls that render a native field (`<input>`, `<select>`, `<textarea>`) with a `<label>`, the shared
+ * error text, and focus delegation. Builds on `FormControlTests`.
+ */
+export class CoreFormControlTests<T extends CharmFormControlElement> extends FormControlTests<T> {
+  public constructor() {
+    super();
+
+    this.updateTests({ focusableElement: focusableElementTestGroup(() => this.component) });
 
     this.updateTests({
       formControl: {
@@ -33,7 +121,7 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
               disabled: {
                 description: 'attaches the disabled attribute to the input',
                 test: async () => {
-                  const getInput = () => this.component.shadowRoot?.querySelector('input');
+                  const getInput = () => this.nativeField;
 
                   this.component.disabled = true;
                   await elementUpdated(this.component);
@@ -94,7 +182,7 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                 description: 'attaches the required attribute to the input',
                 test: async () => {
                   const getRequiredIndicator = () => this.component.shadowRoot?.querySelector('.required-indicator');
-                  const getInput = () => this.component.shadowRoot?.querySelector('input');
+                  const getInput = () => this.nativeField;
 
                   this.component.required = true;
                   await elementUpdated(this.component);
@@ -163,22 +251,6 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   value: 'test',
                 },
               },
-              fieldsetDisabledReset: {
-                description: 'restores enabled state when the containing fieldset is enabled again',
-                test: async () => {
-                  const el = this.component;
-                  const form = await fixture<HTMLFormElement>(html`<form><fieldset>${el}</fieldset></form>`);
-                  const fieldset = form.querySelector('fieldset')!;
-                  fieldset.disabled = true;
-                  await elementUpdated(el);
-                  expect(el.disabled).to.be.true;
-
-                  fieldset.disabled = false;
-                  await elementUpdated(el);
-                  expect(el.disabled).to.be.false;
-                  expect(el.hasAttribute('disabled')).to.be.false;
-                },
-              },
             },
           },
 
@@ -231,22 +303,15 @@ export class CoreFormControlTests<T extends CharmFormControlElement> extends Foc
                   expect(errorMessage?.textContent?.trim()).to.equal('Custom validation message');
                 },
               },
-              preRenderCustomErrorBlocksSubmit: {
-                description: 'reflects an error-message attribute set before rendering to form validity',
-                test: async () => {
-                  const element = document.createElement(this.component.tagName.toLowerCase()) as T;
-                  element.setAttribute('error-message', 'Taken');
-                  const form = await fixture<HTMLFormElement>(html`<form>${element}</form>`);
-                  await elementUpdated(element);
-
-                  expect(form.checkValidity()).to.be.false;
-                  expect(element.checkValidity()).to.be.false;
-                },
-              },
             },
           },
         },
       },
     });
+  }
+
+  /** The native field the control renders. Override for controls whose field isn't the first `<input>`. */
+  protected get nativeField(): HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null | undefined {
+    return this.component.shadowRoot?.querySelector('input, select, textarea');
   }
 }

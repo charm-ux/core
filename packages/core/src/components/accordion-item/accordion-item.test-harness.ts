@@ -1,11 +1,20 @@
 import { elementUpdated, expect, waitUntil } from '@open-wc/testing';
 import sinon from 'sinon';
-import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
+import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
 import type { CoreAccordionItem } from './index.js';
 
-export class CoreAccordionItemTests<T extends CoreAccordionItem> extends CharmElementTests<T> {
+export class CoreAccordionItemTests<T extends CoreAccordionItem> extends DismissibleElementTests<T> {
   public constructor() {
     super();
+
+    this.addAccessibilityStates({
+      disabled: {
+        description: 'when disabled',
+        setup: el => {
+          el.disabled = true;
+        },
+      },
+    });
 
     this.updateTests({
       accordionItem: {

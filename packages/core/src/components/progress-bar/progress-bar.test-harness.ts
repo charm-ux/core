@@ -9,6 +9,28 @@ export class CoreProgressBarTests<T extends CoreProgressBar> extends CharmElemen
   public constructor() {
     super();
 
+    this.addAccessibilityStates({
+      value: {
+        description: 'with a value',
+        setup: el => {
+          el.value = 40;
+        },
+      },
+      indeterminate: {
+        description: 'when indeterminate',
+        setup: el => {
+          el.indeterminate = true;
+        },
+      },
+      meter: {
+        description: 'as a meter',
+        setup: el => {
+          el.meter = true;
+          el.value = 40;
+        },
+      },
+    });
+
     this.updateTests({
       progressBar: {
         description: 'progressBar',
