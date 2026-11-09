@@ -1,4 +1,5 @@
 import { expect, nextFrame } from '@open-wc/testing';
+import { waitForAnimationsToSettle } from './animations.js';
 
 /**
  * Runs axe (including `color-contrast`) against `element` with Charm's default theme in light and then dark mode.
@@ -15,6 +16,7 @@ export async function expectThemeContrast(element: Element, ignoredRules: string
       // Let style recalculation and color transitions settle before axe samples colors.
       await nextFrame();
       await new Promise(resolve => setTimeout(resolve, 350));
+      await waitForAnimationsToSettle(element);
       expect(getComputedStyle(root).colorScheme, 'color-scheme applied').to.equal(scheme);
       await expect(element).to.be.accessible({ ignoredRules });
     }

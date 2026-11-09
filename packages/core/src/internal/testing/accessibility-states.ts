@@ -1,4 +1,5 @@
 import { aTimeout, elementUpdated, oneEvent } from '@open-wc/testing';
+import { waitForAnimationsToSettle } from './animations.js';
 import type CharmDismissibleElement from '../../base/dismissible-element/charm-dismissible-element.js';
 import type CharmFormControlElement from '../../base/form-control-element/charm-form-control-element.js';
 import type { AccessibilityState } from '../../base/charm-element/charm-element.test-harness.js';
@@ -7,8 +8,8 @@ import type { AccessibilityState } from '../../base/charm-element/charm-element.
 const SHOW_SETTLE_TIMEOUT_MS = 1000;
 
 /**
- * Opens a dismissible component and waits for its `{baseName}-after-show` event, so axe scans the settled open state
- * rather than a mid-transition frame.
+ * Opens a dismissible component and waits for its `{baseName}-after-show` event plus any open transition, so axe scans
+ * the settled open state rather than a mid-transition frame.
  */
 export async function openDismissible(el: CharmDismissibleElement): Promise<void> {
   const baseName = (el.constructor as typeof CharmDismissibleElement).baseName;
@@ -16,6 +17,7 @@ export async function openDismissible(el: CharmDismissibleElement): Promise<void
   el.show();
   await Promise.race([afterShow, aTimeout(SHOW_SETTLE_TIMEOUT_MS)]);
   await elementUpdated(el);
+  await waitForAnimationsToSettle(el);
 }
 
 /** The `open` state for components that extend `CharmDismissibleElement`. */
