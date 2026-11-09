@@ -655,7 +655,7 @@ export class CoreCombobox extends CharmFormControlElement {
     this.internals.setValidity(
       validity.valid ? {} : { customError: validity.customError, valueMissing: validity.valueMissing },
       this._errorMessage,
-      this.input
+      this.input ?? undefined
     );
     this.invalid = this.disabled || this.readonly ? false : !validity.valid;
   }

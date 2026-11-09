@@ -1,12 +1,24 @@
 import { aTimeout, elementUpdated, expect, nextFrame, oneEvent } from '@open-wc/testing';
 import sinon from 'sinon';
 import { DismissibleElementTests } from '../../base/dismissible-element/dismissible-element.test-harness.js';
+import { openDismissible } from '../../internal/testing/accessibility-states.js';
 import type { CorePopup } from './index.js';
 import type { PopupPlacement } from './popup.js';
 
 export class CorePopupTests<T extends CorePopup> extends DismissibleElementTests<T> {
   public constructor() {
     super();
+
+    // A labelled content role renders a dialog, which must have an accessible name.
+    this.addAccessibilityStates({
+      open: {
+        description: 'when open',
+        setup: el => {
+          el.label = 'Popup content';
+          return openDismissible(el);
+        },
+      },
+    });
 
     this.updateTests({
       popup: {

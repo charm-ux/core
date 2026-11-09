@@ -8,6 +8,9 @@ import styles from './select.styles.js';
 
 type SelectChildElement = HTMLOptionElement | HTMLOptGroupElement;
 
+const sameItems = <T>(a: readonly T[] | undefined, b: readonly T[]) =>
+  !!a && a.length === b.length && a.every((item, index) => item === b[index]);
+
 /**
  * A select lets people choose one or more options from a list. Selects use browser native styling for the listed options and support form submission. Classified as a form control.
  *
@@ -164,20 +167,24 @@ export class CoreSelect extends CharmFormControlElement {
 
   /** Handles the change of the options in the default slot */
   protected handleSlotChange() {
-    this.optionNodes = this.getOptionNodes();
-    this.options = this.getOptions();
+    // Re-rendering is only needed when the slotted options actually changed. Mutations from syncing
+    // selection state back onto the light DOM would otherwise schedule redundant updates.
+    const optionNodes = this.getOptionNodes();
+    if (!sameItems(this.optionNodes, optionNodes)) this.optionNodes = optionNodes;
+    const options = this.getOptions();
+    if (!sameItems(this.options, options)) this.options = options;
     if (this.multiple) {
-      const options = this.options;
-      this.selectedOptions = this.hasUserSelection
+      let selectedOptions = this.hasUserSelection
         ? this.selectedOptions.filter(option => options.includes(option))
         : options.filter(option => option.selected);
-      if (!this.selectedOptions.length) {
+      if (!selectedOptions.length) {
         const selected = this.findOptionByValue(this.value);
-        if (selected) this.selectedOptions = [selected];
+        if (selected) selectedOptions = [selected];
       }
+      this.applySelectedOptions(selectedOptions);
       this.setValueFromSelection(this.selectedValues[0] ?? '');
     } else if (this.value) {
-      this.options.forEach(o => {
+      options.forEach(o => {
         if (o.value === this.value || o.textContent === this.value) {
           if (!o.hasAttribute('selected')) o.setAttribute('selected', '');
         } else {
@@ -185,14 +192,19 @@ export class CoreSelect extends CharmFormControlElement {
         }
       });
       const selected = this.findOptionByValue(this.value);
-      this.selectedOptions = selected ? [selected] : [];
+      this.applySelectedOptions(selected ? [selected] : []);
     } else {
-      const lastSelectedValue = this.options.find(o => o.selected)?.value;
-      this.setValueFromSelection(lastSelectedValue ?? this.options?.[0]?.value ?? this.options?.[0]?.textContent ?? '');
+      const lastSelectedValue = options.find(o => o.selected)?.value;
+      this.setValueFromSelection(lastSelectedValue ?? options[0]?.value ?? options[0]?.textContent ?? '');
       const selected = this.findOptionByValue(this.value);
-      this.selectedOptions = selected ? [selected] : [];
+      this.applySelectedOptions(selected ? [selected] : []);
     }
     this.updateValidity();
+  }
+
+  /** Assigns `selectedOptions` only when the selection actually changed. */
+  protected applySelectedOptions(selectedOptions: HTMLOptionElement[]) {
+    if (!sameItems(this.selectedOptions, selectedOptions)) this.selectedOptions = selectedOptions;
   }
 
   protected override updated(changedProperties: Map<string, unknown>) {

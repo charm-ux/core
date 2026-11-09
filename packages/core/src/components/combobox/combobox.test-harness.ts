@@ -607,6 +607,7 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                   await openCombobox(el);
                   focusInput(el);
                   // Selected + highlighted ("active"), then a highlighted unselected option.
+                  await sendKeys({ press: 'ArrowDown' });
                   await settle(el);
                   expect(el.querySelector('ch-option[value="apple"]')?.hasAttribute('current')).to.be.true;
                   await expectThemeContrast(el);

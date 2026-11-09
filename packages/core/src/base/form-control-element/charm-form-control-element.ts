@@ -207,7 +207,11 @@ export class CharmFormControlElement extends CharmFocusableElement {
     this.customErrorMessage = message;
     this.input?.setCustomValidity(message);
     if (this.input) {
-      this.internals.setValidity(this.input.validity, message || this.input.validationMessage, this.validationAnchor);
+      this.internals.setValidity(
+        this.input.validity,
+        message || this.input.validationMessage,
+        this.validationAnchor ?? undefined
+      );
       this.updateErrorMessage();
       this.invalid = this.disabled || this.readonly ? false : !this.internals.validity.valid;
     } else {
@@ -317,7 +321,7 @@ export class CharmFormControlElement extends CharmFocusableElement {
   /** Syncs `ElementInternals` validity, the error message, and `invalid` from the rendered native control. */
   protected applyValidity() {
     this.validityUpdatePending = false;
-    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor);
+    this.internals.setValidity(this.input?.validity, this.input?.validationMessage, this.validationAnchor ?? undefined);
     if (this.hadFocus || this.hasFocus) {
       this.updateErrorMessage();
     }

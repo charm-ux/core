@@ -813,7 +813,6 @@ export class CoreCheckboxGroup extends CharmFormControlElement {
       aria-describedby=${ifDefined(!this.listbox ? this.describedBy : undefined)}
       aria-errormessage=${ifDefined(!this.listbox && this.showInvalid ? 'error-text' : undefined)}
       aria-invalid=${this.showInvalid}
-      aria-readonly=${ifDefined(!this.listbox && this.readonly ? 'true' : undefined)}
       class=${classMap({
         'checkbox-group': true,
         'form-control': true,

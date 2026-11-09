@@ -1,9 +1,22 @@
-import { aTimeout, elementUpdated, expect } from '@open-wc/testing';
+import { aTimeout, elementUpdated, expect, fixture, html } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
+import { unsafeStatic } from 'lit/static-html.js';
 import sinon from 'sinon';
 import { CharmElementTests } from '../../base/charm-element/charm-element.test-harness.js';
 import { project } from '../../utilities/index.js';
 import type { CoreMenuItem } from './index.js';
+
+/** Mounts a menu item inside an open menu, since menu item roles require a `menu` ancestor. */
+async function mountInMenu<T extends CoreMenuItem>(el: T): Promise<Element> {
+  const menuTag = project.scope.tagName('menu');
+  const menu = await fixture<HTMLElement & { open: boolean; updateComplete: Promise<void> }>(
+    html`<${unsafeStatic(menuTag)} open></${unsafeStatic(menuTag)}>`
+  );
+  menu.appendChild(el);
+  await menu.updateComplete;
+  await elementUpdated(el);
+  return menu;
+}
 
 export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests<T> {
   public constructor() {
@@ -27,6 +40,7 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
         setup: el => {
           el.role = 'menuitemcheckbox';
           el.checked = true;
+          return mountInMenu(el);
         },
       },
       radio: {
@@ -34,6 +48,7 @@ export class CoreMenuItemTests<T extends CoreMenuItem> extends CharmElementTests
         setup: el => {
           el.role = 'menuitemradio';
           el.checked = true;
+          return mountInMenu(el);
         },
       },
       expanded: {
