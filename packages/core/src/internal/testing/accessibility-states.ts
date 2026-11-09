@@ -38,8 +38,7 @@ async function waitForAnimationsToSettle(element: Element): Promise<void> {
     collectAnimations(element, animations);
     const running = [...animations].filter(animation => {
       const timing = animation.effect?.getComputedTiming();
-      const isRunning = animation.playState === 'running' || animation.playState === 'pending';
-      return isRunning && timing?.iterations !== Infinity;
+      return animation.playState === 'running' && timing?.iterations !== Infinity;
     });
     if (running.length === 0) return;
 
