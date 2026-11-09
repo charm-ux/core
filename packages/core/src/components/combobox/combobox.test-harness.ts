@@ -1345,18 +1345,28 @@ export class CoreComboboxTests<T extends CoreCombobox> extends CharmElementTests
                 description: 'does not return focus to the input when Tab commits a custom value',
                 test: async () => {
                   const el = this.component;
-                  el.allowsCustomValue = true;
-                  await elementUpdated(el);
-                  focusInput(el);
-                  await sendKeys({ type: 'mango' });
-                  await elementUpdated(el);
+                  // Tab needs a following focusable element; otherwise Firefox keeps focus on the only
+                  // focusable element instead of moving it out of the document.
+                  const next = document.createElement('button');
+                  next.textContent = 'Next';
+                  el.after(next);
+                  try {
+                    el.allowsCustomValue = true;
+                    await elementUpdated(el);
+                    focusInput(el);
+                    await sendKeys({ type: 'mango' });
+                    await elementUpdated(el);
 
-                  await sendKeys({ press: 'Tab' });
-                  await aTimeout(0);
-                  await elementUpdated(el);
+                    await sendKeys({ press: 'Tab' });
+                    await aTimeout(0);
+                    await elementUpdated(el);
 
-                  expect(el.value).to.equal('mango');
-                  expect(el.shadowRoot?.activeElement === getInput(el)).to.be.false;
+                    expect(el.value).to.equal('mango');
+                    expect(document.activeElement).to.equal(next);
+                    expect(el.shadowRoot?.activeElement === getInput(el)).to.be.false;
+                  } finally {
+                    next.remove();
+                  }
                 },
               },
             },
