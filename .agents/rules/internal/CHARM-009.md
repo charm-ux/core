@@ -1,6 +1,6 @@
 # CHARM-009: Use correct JSDoc annotation tags
 
-The custom-elements manifest analyzer recognizes a specific set of JSDoc tags. Use the exact tag names listed below:
+The CEM generator and its framework plugins recognize a specific set of JSDoc tags. Use the exact tag names listed below:
 
 | Purpose              | Correct tag   | Incorrect variant(s) |
 | -------------------- | ------------- | -------------------- |
@@ -10,7 +10,7 @@ The custom-elements manifest analyzer recognizes a specific set of JSDoc tags. U
 | Named slot           | `@slot`       | —                    |
 | Component dependency | `@dependency` | `@dependencies`      |
 
-Tag names are matched exactly by `@custom-elements-manifest/analyzer` and `@wc-toolkit/cem-*` plugins — using a wrong tag means the annotation is silently dropped from the generated manifest, and consumers never see it in docs or editor autocomplete.
+Tag names are matched exactly by the CEM tooling and its plugins — using a wrong tag means the annotation is silently dropped from the generated manifest, and consumers never see it in docs or editor autocomplete.
 
 ### `@dependency` values must be class names
 

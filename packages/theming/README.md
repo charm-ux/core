@@ -370,26 +370,39 @@ const { primitive, semantic, component } = createCssHelpers(charmDefinition, 'ch
 
 Charm's components document their CSS custom properties via `@cssproperty` JSDoc tags, which the [Custom Elements Manifest](https://github.com/webcomponents/custom-elements-manifest) (`custom-elements.json`) surfaces to tools like Storybook, VS Code, and design-system docs. Those documented names should carry the same prefix the theme emits at runtime (`charmDefinition.prefix`, default `charm` → `--charm-...`).
 
-The repository provides a small utility that normalizes documented CSS custom property names in a manifest to the active theme prefix. The implementation lives in the theming package at `packages/theming/src/cem-plugin/cem-css-prefix-plugin.ts` (source-only tooling; not exported from the published package). It exposes three helpers you can use in your build-time tooling:
+The theming package provides utilities that normalize documented CSS custom property names in a manifest to the active theme prefix. They are exported from `@charm-ux/theming/cem-plugin` and the package root:
 
-- `cssPrefixPlugin(options?)` — a Custom Elements Manifest analyzer plugin you can register during `cem analyze` to rewrite names as manifests are linked.
+- `cemAnalyzerCssPrefixPlugin(options?)` — the Custom Elements Manifest analyzer plugin.
+- `cssPrefixPlugin(options?)` — backwards-compatible alias for `cemAnalyzerCssPrefixPlugin()`.
+- `cemGeneratorCssPrefixPlugin(options?)` — a CEM Generator plugin that rewrites names after manifest generation.
 - `applyThemePrefix(manifest, options)` — an in-place transform that rewrites every `cssProperties[].name` in a parsed manifest and returns the number of names changed.
 - `rewriteCssVarName(name, options)` — the pure per-name transform used by both helpers.
 
 ### Analyzer plugin
 
-Register `cssPrefixPlugin()` in `custom-elements-manifest.config.mjs`, before the sorter so the finalized names are the ones that get sorted. Import it from the local source file when used in this repository's CEM config:
+Register `cemAnalyzerCssPrefixPlugin()` in `custom-elements-manifest.config.mjs` before the sorter:
 
 ```js
-import { cssPrefixPlugin } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
+import { cemSorterPlugin } from '@wc-toolkit/cem-sorter';
+import { cemAnalyzerCssPrefixPlugin } from '@charm-ux/theming/cem-plugin';
 
 export default {
   // ...
-  plugins: [
-    // ...other plugins
-    cssPrefixPlugin(), // target prefix defaults to charmDefinition.prefix
-    cemSorterPlugin({}),
-  ],
+  plugins: [cemAnalyzerCssPrefixPlugin(), cemSorterPlugin({})], // target prefix defaults to charmDefinition.prefix
+};
+```
+
+### CEM Generator plugin
+
+Register `cemGeneratorCssPrefixPlugin()` in `cem-generator.config.mjs` alongside your framework detector:
+
+```js
+import { litPlugin } from '@wc-toolkit/cem-generator-lit';
+import { cemGeneratorCssPrefixPlugin } from '@charm-ux/theming/cem-plugin';
+
+export default {
+  // ...
+  plugins: [litPlugin(), cemGeneratorCssPrefixPlugin()],
 };
 ```
 
@@ -399,7 +412,7 @@ export default {
 
 ```js
 import fs from 'node:fs';
-import { applyThemePrefix } from './packages/theming/src/cem-plugin/cem-css-prefix-plugin.js';
+import { applyThemePrefix } from '@charm-ux/theming/cem-plugin';
 
 const manifest = JSON.parse(fs.readFileSync('custom-elements.json', 'utf8'));
 const changed = applyThemePrefix(manifest, { prefix: 'acme' });
@@ -411,7 +424,7 @@ console.log(`Rewrote ${changed} CSS custom property names`);
 
 ### Options
 
-Both `cssPrefixPlugin`, `applyThemePrefix`, and `rewriteCssVarName` accept the same options:
+Both plugins, `applyThemePrefix`, and `rewriteCssVarName` accept the same options:
 
 | Option          | Type                           | Default                              | Description                                                         |
 | --------------- | ------------------------------ | ------------------------------------ | ------------------------------------------------------------------- |
