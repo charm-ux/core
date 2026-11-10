@@ -1,0 +1,115 @@
+---
+title: Tag
+---
+
+import ComponentMetadata from '../../../components/ComponentMetadata.astro';
+
+<ComponentMetadata />
+
+A tag is a compact, keyboard-accessible label used to represent a category, keyword, filter, or
+selected item. Tags can optionally be removed by the user. Tags are designed to be composed inside a
+tag group, which manages list roles, selection, and keyboard navigation between tags.
+
+<code-bubble>
+
+```html
+<ch-tag>Design</ch-tag>
+```
+
+</code-bubble>
+
+## Best Practices
+
+- Keep tag text short. Content is truncated with an ellipsis when it cannot fit.
+- When a tag is removable, remove it from the DOM in a `tag-remove` listener, or call
+  `preventDefault()` to keep it. The tag never removes itself.
+- Provide translated remove-button text through the `remove-label` slot; it defaults to "Remove".
+- Use a tag group to present a set of tags. The group supplies list semantics and keyboard
+  navigation between tags; a standalone tag only exposes its remove button in the tab order.
+
+## Examples
+
+### Removable
+
+Add the `removable` attribute to render a remove button. The tag emits a cancelable `tag-remove`
+event when the button is clicked, or when the tag has focus and Delete or Backspace is pressed.
+
+<code-bubble>
+
+```html
+<div id="tags">
+  <ch-tag removable value="design">Design</ch-tag>
+  <ch-tag removable value="engineering">Engineering</ch-tag>
+</div>
+
+<script>
+  document.querySelector('#tags').addEventListener('tag-remove', event => {
+    event.target.remove();
+  });
+</script>
+```
+
+</code-bubble>
+
+### Translating the remove label
+
+<code-bubble>
+
+```html
+<ch-tag removable>
+  Diseño
+  <span slot="remove-label">Quitar</span>
+</ch-tag>
+```
+
+</code-bubble>
+
+### Start and end slots
+
+<code-bubble>
+
+```html
+<ch-tag removable>
+  <ch-icon slot="start" name="checkmark-circle"></ch-icon>
+  Verified
+</ch-tag>
+```
+
+</code-bubble>
+
+### Selected
+
+The `selected` attribute draws the tag in its selected state. Selection semantics are applied by the
+containing tag group.
+
+<code-bubble>
+
+```html
+<ch-tag selected>Design</ch-tag>
+```
+
+</code-bubble>
+
+### Disabled
+
+A disabled tag sets `aria-disabled="true"` and cannot be removed.
+
+<code-bubble>
+
+```html
+<ch-tag disabled removable>Design</ch-tag>
+```
+
+</code-bubble>
+
+### Styling
+
+```css
+ch-tag {
+  --charm-tag-bg-color: #e0f2fe;
+  --charm-tag-fg-color: #0c4a6e;
+  --charm-tag-border-radius: 4px;
+}
+```
+
+## API
