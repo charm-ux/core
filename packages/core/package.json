@@ -63,7 +63,7 @@
     "@open-wc/lit-helpers": "^0.7.0",
     "@open-wc/testing": "^4.0.0",
     "@storybook/addon-a11y": "^10.1.5",
-    "@storybook/addon-docs": "^10.1.5",
+    "@storybook/addon-docs": "^10.6.6",
     "@storybook/addon-links": "^10.1.5",
     "@storybook/addon-themes": "^10.6.5",
     "@storybook/web-components-vite": "^10.6.5",
