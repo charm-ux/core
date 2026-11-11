@@ -81,7 +81,7 @@
     "@web/test-runner-junit-reporter": "^0.7.2",
     "@web/test-runner-playwright": "^1.0.0",
     "code-bubble": "^1.3.3",
-    "eslint-plugin-storybook": "10.1.5",
+    "eslint-plugin-storybook": "10.6.6",
     "globby": "^13.1.1",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.64.1",
