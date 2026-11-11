@@ -8,7 +8,7 @@
       "declarations": [
         {
           "kind": "class",
-          "customElement": true,
+          "customElement": false,
           "name": "CharmElement",
           "description": "A base class for all Charm components.",
           "superclass": {
@@ -37,8 +37,6 @@
               "kind": "field",
               "name": "dir",
               "privacy": "public",
-              "attribute": "dir",
-              "reflects": true,
               "type": {
                 "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
               }
@@ -101,15 +99,6 @@
               }
             }
           ],
-          "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir"
-            }
-          ],
           "events": [
             {
               "name": "ready",
@@ -139,6 +128,7 @@
       "declarations": [
         {
           "kind": "class",
+          "customElement": false,
           "name": "CharmDismissibleElement",
           "description": "Base class for components that can be shown or hidden. They have `show`, `hide`, and `toggle` methods, an `open`\nand `{baseName}-show` and `{baseName}-hide` events.",
           "superclass": {
@@ -556,18 +546,8 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
@@ -607,6 +587,7 @@
       "declarations": [
         {
           "kind": "class",
+          "customElement": false,
           "name": "CharmFocusableElement",
           "description": "Base class for focusable components where the true focused element is inside the shadow root. This class delegates\nfocus to the first focusable element in the shadowroot and adds the `focusable` attribute to the component when the\ncomponent gains or loses focus. It also provides a `hasFocus` property that can be used to style the component when\nit has focus.",
           "superclass": {
@@ -809,17 +790,6 @@
               },
               "default": "false",
               "fieldName": "autofocus"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             }
           ],
           "events": [
@@ -855,6 +825,7 @@
       "declarations": [
         {
           "kind": "class",
+          "customElement": false,
           "name": "CharmFormControlElement",
           "description": "Base class for input components.",
           "superclass": {
@@ -1725,18 +1696,8 @@
               "fieldName": "autofocus"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
@@ -1744,6 +1705,7 @@
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
@@ -1801,6 +1763,7 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
@@ -1817,6 +1780,7 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -2452,6 +2416,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -2663,17 +2629,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
               "description": "Disables the emitted click event.",
               "type": {
@@ -2699,6 +2654,7 @@
             },
             {
               "name": "heading-level",
+              "description": "The header level value (1-6) for summary, when summary is rendered as a header.",
               "type": {
                 "text": "1 | 2 | 3 | 4 | 5 | 6 | undefined"
               },
@@ -2706,14 +2662,11 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             }
           ],
           "events": [
@@ -3123,17 +3076,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "open-single",
               "description": "If set, allows only one child accordion-item to be open at a time.",
@@ -3633,6 +3575,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -3890,17 +3834,6 @@
               "fieldName": "closeLabel"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "dismissible",
               "description": "Shows the close button.",
               "type": {
@@ -3919,17 +3852,15 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "politeness",
+              "description": "Controls how the alert is announced to assistive technology. `polite` renders `role=\"status\"`, `assertive` renders `role=\"alert\"`, and `off` renders neither.",
               "type": {
                 "text": "\"off\" | \"polite\" | \"assertive\""
               },
@@ -4432,17 +4363,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "image",
               "description": "The image URL for the user's avatar.",
               "type": {
@@ -4737,19 +4657,6 @@
               },
               "type": {
                 "text": "CharmScope"
-              }
-            }
-          ],
-          "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
               }
             }
           ],
@@ -5214,17 +5121,6 @@
               "fieldName": "current"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
               "description": "Prevents navigation and presents this item as non-interactive text.",
               "type": {
@@ -5623,17 +5519,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "label",
               "description": "Required localized accessible name for the breadcrumb navigation landmark.",
@@ -6439,17 +6324,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "fixed-placement",
               "description": "Enable this option to prevent the overflow menu from being clipped when the component is placed inside a container with `overflow: auto|hidden|scroll`.",
               "type": {
@@ -7141,17 +7015,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "label",
               "description": "Plain-text accessible name rendered in the group's visually hidden label slot.",
@@ -7990,17 +7853,6 @@
               "fieldName": "current"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
               "description": "Disables the component on page load.",
               "type": {
@@ -8034,6 +7886,7 @@
             },
             {
               "name": "hides",
+              "description": "referencing a dismissible element's ID, this button will hide it when clicked",
               "type": {
                 "text": "string | undefined"
               },
@@ -8090,6 +7943,7 @@
             },
             {
               "name": "shows",
+              "description": "referencing a dismissible element's ID, this button will show it when clicked",
               "type": {
                 "text": "string | undefined"
               },
@@ -8114,6 +7968,7 @@
             },
             {
               "name": "toggles",
+              "description": "referencing a dismissible element's ID, this button will show/hide it when clicked",
               "type": {
                 "text": "string | undefined"
               },
@@ -9163,6 +9018,9 @@
               "attribute": "selection-mode",
               "reflects": true,
               "type": {
+                "text": "CalendarSelectionMode"
+              },
+              "parsedType": {
                 "text": "'range' | 'single' | 'multiple'"
               }
             },
@@ -9267,6 +9125,9 @@
               "privacy": "public",
               "attribute": "value",
               "type": {
+                "text": "CalendarValue"
+              },
+              "parsedType": {
                 "text": "string | string[] | undefined"
               }
             },
@@ -9300,17 +9161,6 @@
               },
               "default": "false",
               "fieldName": "autofocus"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             },
             {
               "name": "disabled",
@@ -9402,6 +9252,9 @@
               "name": "selection-mode",
               "description": "Whether the calendar selects one date, a continuous range, or separate dates.",
               "type": {
+                "text": "CalendarSelectionMode"
+              },
+              "parsedType": {
                 "text": "'range' | 'single' | 'multiple'"
               },
               "default": "'single'",
@@ -9411,6 +9264,9 @@
               "name": "value",
               "description": "The selected date (`YYYY-MM-DD`) or date list. Range values contain the start and end dates.",
               "type": {
+                "text": "CalendarValue"
+              },
+              "parsedType": {
                 "text": "string | string[] | undefined"
               },
               "fieldName": "value"
@@ -9430,6 +9286,9 @@
               "name": "change",
               "description": "Emitted when a selection is committed. In range mode, this fires after the second date is selected.",
               "type": {
+                "text": "CalendarChangeEventDetail"
+              },
+              "parsedType": {
                 "text": "{ value: string | string[] | undefined; selectionMode: 'range' | 'single' | 'multiple' }"
               }
             },
@@ -9437,6 +9296,9 @@
               "name": "input",
               "description": "Emitted when a selection changes during interaction.",
               "type": {
+                "text": "CalendarChangeEventDetail"
+              },
+              "parsedType": {
                 "text": "{ value: string | string[] | undefined; selectionMode: 'range' | 'single' | 'multiple' }"
               }
             },
@@ -9949,17 +9811,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "heading",
               "description": "Provides a heading for the card.",
@@ -10485,6 +10336,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -10544,6 +10396,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -11525,6 +11378,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -12035,37 +11890,20 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -12136,14 +11974,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -12156,6 +11991,7 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -12167,6 +12003,7 @@
             },
             {
               "name": "value-delimiter",
+              "description": "The delimiter used to parse and serialize `value`. Defaults to a comma.",
               "type": {
                 "text": "string"
               },
@@ -12799,6 +12636,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -12878,6 +12716,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -13432,6 +13271,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -13717,6 +13558,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -13762,37 +13605,20 @@
               "fieldName": "checked"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -13854,14 +13680,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -13874,14 +13697,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -14845,6 +14665,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -14944,6 +14765,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -16008,6 +15830,9 @@
               "attribute": "menu-trigger",
               "reflects": true,
               "type": {
+                "text": "ComboboxMenuTrigger"
+              },
+              "parsedType": {
                 "text": "'focus' | 'manual' | 'input'"
               }
             },
@@ -16020,6 +15845,9 @@
               "attribute": "mode",
               "reflects": true,
               "type": {
+                "text": "ComboboxMode"
+              },
+              "parsedType": {
                 "text": "'both' | 'none' | 'inline' | 'list' | 'select-only'"
               }
             },
@@ -16239,6 +16067,9 @@
               "attribute": "placement",
               "reflects": true,
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               }
             },
@@ -16258,6 +16089,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -17015,37 +16848,20 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -17119,6 +16935,9 @@
               "name": "menu-trigger",
               "description": "The interaction that opens the listbox.",
               "type": {
+                "text": "ComboboxMenuTrigger"
+              },
+              "parsedType": {
                 "text": "'focus' | 'manual' | 'input'"
               },
               "default": "'input'",
@@ -17128,6 +16947,9 @@
               "name": "mode",
               "description": "Controls whether typing shows a list, an inline completion, both, or neither.",
               "type": {
+                "text": "ComboboxMode"
+              },
+              "parsedType": {
                 "text": "'both' | 'none' | 'inline' | 'list' | 'select-only'"
               },
               "default": "'both'",
@@ -17171,6 +16993,9 @@
               "name": "placement",
               "description": "The preferred placement of the listbox.",
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               },
               "default": "'bottom-start'",
@@ -17178,14 +17003,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "remove-label",
@@ -17216,6 +17038,7 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -17227,6 +17050,7 @@
             },
             {
               "name": "value-delimiter",
+              "description": "The delimiter used to parse and serialize `value` when multiple selection is enabled.",
               "type": {
                 "text": "string"
               },
@@ -18136,6 +17960,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -18245,6 +18070,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -19201,6 +19027,9 @@
               "attribute": "placement",
               "reflects": true,
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               }
             },
@@ -19228,6 +19057,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -19794,26 +19625,12 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "disabled-dates",
@@ -19835,14 +19652,11 @@
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "first-day-of-week",
@@ -19948,6 +19762,9 @@
               "name": "placement",
               "description": "Preferred popup placement relative to the segmented input.",
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               },
               "default": "'bottom-start'",
@@ -19955,14 +19772,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -19975,6 +19789,7 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -20006,6 +19821,9 @@
               "name": "date-picker-today",
               "description": "Emitted when the Today action sets the value.",
               "type": {
+                "text": "DatePickerTodayEventDetail"
+              },
+              "parsedType": {
                 "text": "{ value: string }"
               }
             },
@@ -20872,6 +20690,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -21038,6 +20857,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -22015,6 +21835,9 @@
               "attribute": "placement",
               "reflects": true,
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               }
             },
@@ -22076,6 +21899,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -22666,26 +22491,12 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "disabled-dates",
@@ -22707,14 +22518,11 @@
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "first-day-of-week",
@@ -22838,6 +22646,9 @@
               "name": "placement",
               "description": "Preferred popup placement relative to the segmented input.",
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               },
               "default": "'bottom-start'",
@@ -22845,14 +22656,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -22865,6 +22673,7 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -22896,6 +22705,9 @@
               "name": "date-range-picker-today",
               "description": "Emitted when the Today action sets the range.",
               "type": {
+                "text": "DateRangePickerTodayEventDetail"
+              },
+              "parsedType": {
                 "text": "{ value: string }"
               }
             },
@@ -23943,6 +23755,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -24304,17 +24118,6 @@
               "fieldName": "closeButtonLabel"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "heading",
               "description": "The optional header of the dialog.",
               "type": {
@@ -24340,14 +24143,11 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "position",
@@ -24384,6 +24184,9 @@
               "name": "dialog-request-close",
               "description": "Emitted when the user attempts to close the dialog. If the event is canceled, the dialog will not close.",
               "type": {
+                "text": "DialogRequestCloseEvent"
+              },
+              "parsedType": {
                 "text": "{ source: 'keyboard' | 'close-button' | 'overlay' | 'external' }"
               }
             },
@@ -25023,6 +24826,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -25289,26 +25094,12 @@
               "fieldName": "contentBelow"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             }
           ],
           "events": [
@@ -25673,17 +25464,6 @@
                 "text": "'center' | 'start' | 'end'"
               },
               "fieldName": "alignContent"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             },
             {
               "name": "inset",
@@ -26104,17 +25884,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "flip",
               "description": "Sets the flip direction of the icon.",
               "type": {
@@ -26170,6 +25939,9 @@
               "name": "icon-error",
               "description": "Emitted when the icon fails to load.",
               "type": {
+                "text": "IconErrorEvent"
+              },
+              "parsedType": {
                 "text": "{ status: number }"
               }
             },
@@ -26487,6 +26259,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -26565,6 +26338,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -27388,6 +27162,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -27682,6 +27458,9 @@
               "attribute": "type",
               "reflects": true,
               "type": {
+                "text": "InputTypes"
+              },
+              "parsedType": {
                 "text": "'number' | 'range' | 'date' | 'time' | 'search' | 'text' | 'tel' | 'email' | 'url' | 'datetime-local' | 'password' | undefined"
               }
             },
@@ -27895,26 +27674,12 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "enterkeyhint",
@@ -27926,14 +27691,11 @@
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -28061,14 +27823,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -28099,12 +27858,16 @@
             {
               "name": "type",
               "type": {
+                "text": "InputTypes"
+              },
+              "parsedType": {
                 "text": "'number' | 'range' | 'date' | 'time' | 'search' | 'text' | 'tel' | 'email' | 'url' | 'datetime-local' | 'password' | undefined"
               },
               "fieldName": "type"
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
@@ -28775,17 +28538,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "heading",
               "description": "The heading text for the menu group.",
               "type": {
@@ -28807,6 +28559,9 @@
               "name": "menu-group-select",
               "description": "Emitted when a menu item is selected in a group.",
               "type": {
+                "text": "SelectedMenuItem"
+              },
+              "parsedType": {
                 "text": "{ selectedItem: CoreMenuItem }"
               }
             },
@@ -29373,17 +29128,6 @@
                 "text": "'page' | 'step' | 'location' | 'date' | 'time' | 'true' | 'false' | null"
               },
               "fieldName": "current"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             },
             {
               "name": "disabled",
@@ -30171,6 +29915,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -30200,6 +29946,9 @@
               "attribute": "placement",
               "reflects": true,
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               }
             },
@@ -30580,17 +30329,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "fixed-placement",
               "description": "Prevents the menu from being clipped when the component is placed inside a container with `overflow` of 'auto', 'hidden' , or 'scroll'.",
               "type": {
@@ -30601,19 +30339,19 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "placement",
               "description": "The placement of the menu.",
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom'"
               },
               "default": "'bottom-start'",
@@ -30646,6 +30384,9 @@
               "name": "menu-request-close",
               "description": "Emitted when the user attempts to close the menu.",
               "type": {
+                "text": "MenuRequestCloseEvent"
+              },
+              "parsedType": {
                 "text": "{ source: 'change' | 'trigger' | 'document' | 'keyboard' }"
               }
             },
@@ -30974,17 +30715,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "disabled",
               "description": "Disables every option in the group.",
@@ -31351,17 +31081,6 @@
               },
               "default": "false",
               "fieldName": "current"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             },
             {
               "name": "disabled",
@@ -32124,17 +31843,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "fixed-placement",
               "description": "Enable this option to prevent the overflow menu from being clipped when the component is placed inside a container with `overflow: auto|hidden|scroll`.",
@@ -33063,6 +32771,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -33092,6 +32802,9 @@
               "attribute": "placement",
               "reflects": true,
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom' | undefined"
               }
             },
@@ -33581,17 +33294,6 @@
               "fieldName": "contentRole"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "distance",
               "description": "The distance in pixels from which to offset the panel away from its anchor.",
               "type": {
@@ -33611,6 +33313,7 @@
             },
             {
               "name": "flip-fallback-placements",
+              "description": "Fallback placements tried when the preferred placement does not fit. The attribute accepts placements separated by spaces.",
               "type": {
                 "text": "string"
               },
@@ -33659,19 +33362,19 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "placement",
               "description": "The preferred placement of the popup. Note that the actual placement will vary as configured to keep the panel inside of the viewport.",
               "type": {
+                "text": "PopupPlacement"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom' | undefined"
               },
               "default": "'top'",
@@ -34164,17 +33867,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "help-text",
               "description": "The input's help text. Alternatively, you can use the help-text slot.",
@@ -34797,6 +34489,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -35105,17 +34799,6 @@
               "fieldName": "closeButtonLabel"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "heading",
               "description": "The heading to display at the top of the pane opposite the close button.",
               "type": {
@@ -35141,14 +34824,11 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "position",
@@ -35185,6 +34865,9 @@
               "name": "push-pane-request-close",
               "description": "Emitted when the pane is requested to close.",
               "type": {
+                "text": "PushPaneRequestCloseEvent"
+              },
+              "parsedType": {
                 "text": "{ source: 'keyboard' | 'close-button' }"
               }
             },
@@ -35655,6 +35338,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -35714,6 +35398,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -36407,6 +36092,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -36708,6 +36395,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -36745,37 +36434,20 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -36837,14 +36509,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -36857,14 +36526,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -37489,6 +37155,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -37568,6 +37235,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -38151,6 +37819,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -38461,6 +38131,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -38506,37 +38178,20 @@
               "fieldName": "checked"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -38590,14 +38245,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -38610,14 +38262,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -39408,21 +39057,11 @@
           "attributes": [
             {
               "name": "css",
+              "description": "CSS styles to scope to this element. Alternatively you can slot `<link>` tags in the `stylesheets` slot.",
               "type": {
                 "text": "string | string[]"
               },
               "fieldName": "css"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             }
           ],
           "events": [
@@ -39748,6 +39387,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -39818,6 +39458,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -40495,6 +40136,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -40926,6 +40569,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -40971,37 +40616,20 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -41064,14 +40692,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -41092,14 +40717,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -41660,17 +41282,6 @@
               "fieldName": "animation"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "shape",
               "description": "The shape of the Skeleton.",
               "type": {
@@ -41942,17 +41553,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
             {
               "name": "label",
               "description": "A custom label rendered under the progress ring.",
@@ -42403,6 +42003,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -42462,6 +42063,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -43062,6 +42664,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -43359,6 +42963,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -43397,43 +43003,27 @@
             },
             {
               "name": "checked",
+              "description": "Draws the switch in a checked state.",
               "type": {
                 "text": "boolean"
               },
               "fieldName": "checked"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -43487,14 +43077,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -43507,14 +43094,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -44280,19 +43864,6 @@
               }
             }
           ],
-          "attributes": [
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            }
-          ],
           "events": [
             {
               "name": "ready",
@@ -44578,17 +44149,6 @@
           ],
           "attributes": [
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
               "description": "Disables the component on page load.",
               "type": {
@@ -44814,7 +44374,7 @@
             {
               "kind": "field",
               "name": "activeId",
-              "description": "Refers to the currently active tab.",
+              "description": "Controls which tab is selected. (You can also set `selected` on a single tab.)",
               "privacy": "public",
               "attribute": "active-id",
               "type": {
@@ -45312,21 +44872,11 @@
           "attributes": [
             {
               "name": "active-id",
+              "description": "Controls which tab is selected. (You can also set `selected` on a single tab.)",
               "type": {
                 "text": "string | undefined"
               },
               "fieldName": "activeId"
-            },
-            {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
             },
             {
               "name": "label",
@@ -45369,6 +44919,9 @@
               "name": "tabs-change",
               "description": "Emitted when the active tab changes.",
               "type": {
+                "text": "TabsChangeEvent"
+              },
+              "parsedType": {
                 "text": "{ activeTab: CoreTab }"
               }
             }
@@ -45732,6 +45285,7 @@
               "name": "disabled",
               "description": "Disables the input.",
               "privacy": "public",
+              "attribute": "disabled",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -45802,6 +45356,7 @@
               "name": "errorMessage",
               "description": "The input's error message.",
               "privacy": "public",
+              "attribute": "error-message",
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -46380,6 +45935,8 @@
               "name": "readonly",
               "description": "Makes the input readonly.",
               "privacy": "public",
+              "attribute": "readonly",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -46729,6 +46286,8 @@
               "name": "value",
               "description": "The input's value attribute.",
               "privacy": "public",
+              "attribute": "value",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmFormControlElement",
                 "module": "dist/base/form-control-element/charm-form-control-element.js"
@@ -46783,26 +46342,12 @@
               }
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the input.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "disabled",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "disabled"
             },
             {
               "name": "enterkeyhint",
@@ -46814,14 +46359,11 @@
             },
             {
               "name": "error-message",
+              "description": "The input's error message.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "errorMessage",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "errorMessage"
             },
             {
               "name": "help-text",
@@ -46907,14 +46449,11 @@
             },
             {
               "name": "readonly",
+              "description": "Makes the input readonly.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "readonly",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "readonly"
             },
             {
               "name": "required",
@@ -46944,14 +46483,11 @@
             },
             {
               "name": "value",
+              "description": "The input's value attribute.",
               "type": {
                 "text": "string"
               },
-              "fieldName": "value",
-              "inheritedFrom": {
-                "name": "CharmFormControlElement",
-                "module": "dist/base/form-control-element/charm-form-control-element.js"
-              }
+              "fieldName": "value"
             }
           ],
           "events": [
@@ -47571,7 +47107,7 @@
             {
               "kind": "field",
               "name": "disabled",
-              "description": "Disables/enables the tooltip",
+              "description": "Disables the tooltip so it won't show when triggered.",
               "privacy": "public",
               "attribute": "disabled",
               "reflects": true,
@@ -48071,6 +47607,8 @@
               "name": "open",
               "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "privacy": "public",
+              "attribute": "open",
+              "reflects": true,
               "inheritedFrom": {
                 "name": "CharmDismissibleElement",
                 "module": "dist/base/dismissible-element/charm-dismissible-element.js"
@@ -48098,6 +47636,9 @@
               "privacy": "public",
               "attribute": "placement",
               "type": {
+                "text": "PopupPlacement | undefined"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom' | undefined"
               }
             },
@@ -48397,6 +47938,7 @@
           "attributes": [
             {
               "name": "anchor",
+              "description": "When the anchor element is separate from the popup, provide its ID or a reference to the anchor element.",
               "type": {
                 "text": "string | Element | undefined"
               },
@@ -48412,24 +47954,15 @@
             },
             {
               "name": "content",
+              "description": "The content to display inside the tooltip. You can use `content` slot instead if you need text formatting.",
               "type": {
                 "text": "string | undefined"
               },
               "fieldName": "content"
             },
             {
-              "name": "dir",
-              "type": {
-                "text": "\"\" | \"ltr\" | \"rtl\" | \"auto\""
-              },
-              "fieldName": "dir",
-              "inheritedFrom": {
-                "name": "CharmElement",
-                "module": "dist/base/charm-element/charm-element.js"
-              }
-            },
-            {
               "name": "disabled",
+              "description": "Disables the tooltip so it won't show when triggered.",
               "type": {
                 "text": "boolean"
               },
@@ -48437,6 +47970,7 @@
             },
             {
               "name": "distance",
+              "description": "The distance in pixels from which to offset the tooltip away from its target.",
               "type": {
                 "text": "number | undefined"
               },
@@ -48444,6 +47978,7 @@
             },
             {
               "name": "fixed-placement",
+              "description": "Enable this option to prevent the tooltip from being clipped when the component is placed inside a container with `overflow: auto|hidden|scroll`.",
               "type": {
                 "text": "boolean"
               },
@@ -48451,24 +47986,26 @@
             },
             {
               "name": "open",
+              "description": "Indicates whether or not the component is open. Can be used in lieu of show/hide methods.",
               "type": {
                 "text": "boolean"
               },
-              "fieldName": "open",
-              "inheritedFrom": {
-                "name": "CharmDismissibleElement",
-                "module": "dist/base/dismissible-element/charm-dismissible-element.js"
-              }
+              "fieldName": "open"
             },
             {
               "name": "placement",
+              "description": "The preferred placement of the tooltip. Note that the actual placement may vary as needed to keep the tooltip inside of the viewport.",
               "type": {
+                "text": "PopupPlacement | undefined"
+              },
+              "parsedType": {
                 "text": "'end' | 'start' | 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'start-top' | 'start-bottom' | 'end-top' | 'end-bottom' | undefined"
               },
               "fieldName": "placement"
             },
             {
               "name": "skidding",
+              "description": "The distance in pixels from which to offset the tooltip along its target.",
               "type": {
                 "text": "number | undefined"
               },

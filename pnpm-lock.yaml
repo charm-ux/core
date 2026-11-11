@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@wc-toolkit/cem-generator': 0.2.10
+
 importers:
 
   .:
@@ -152,14 +155,14 @@ importers:
         specifier: ^17.0.4
         version: 17.0.4
       '@wc-toolkit/cem-generator':
-        specifier: ^0.2.6
-        version: 0.2.6
+        specifier: 0.2.10
+        version: 0.2.10
       '@wc-toolkit/cem-generator-cli':
-        specifier: ^0.3.0
-        version: 0.3.0(@types/node@24.10.0)
+        specifier: ^0.3.3
+        version: 0.3.3(@types/node@24.10.0)
       '@wc-toolkit/cem-generator-lit':
-        specifier: ^0.1.22
-        version: 0.1.22
+        specifier: ^0.1.27
+        version: 0.1.27
       '@wc-toolkit/storybook-helpers':
         specifier: ^10.0.0
         version: 10.0.0(lit@3.3.1)(storybook@10.1.5(@testing-library/dom@10.4.1)(prettier@3.6.2)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -219,13 +222,13 @@ importers:
     dependencies:
       '@astrojs/starlight':
         specifier: ^0.36.2
-        version: 0.36.2(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))
+        version: 0.36.2(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))(supports-color@9.4.0)
       '@floating-ui/dom':
         specifier: ^1.6.13
         version: 1.7.4
       astro:
         specifier: ^5.15.3
-        version: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
+        version: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
       code-bubble:
         specifier: ^1.3.3
         version: 1.3.3
@@ -253,13 +256,13 @@ importers:
         version: 2.1.0
       tsup:
         specifier: ^8.4.0
-        version: 8.5.0(@microsoft/api-extractor@7.53.3(@types/node@24.10.0))(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1)
+        version: 8.5.0(@microsoft/api-extractor@7.53.3(@types/node@24.10.0))(postcss@8.5.6)(supports-color@9.4.0)(typescript@5.9.3)(yaml@2.8.1)
       vite:
         specifier: ^6.2.5
         version: 6.4.1(@types/node@24.10.0)(terser@5.44.0)(yaml@2.8.1)
       vite-plugin-dts:
         specifier: 4.5.3
-        version: 4.5.3(@types/node@24.10.0)(rollup@4.52.5)(typescript@5.9.3)(vite@6.4.1(@types/node@24.10.0)(terser@5.44.0)(yaml@2.8.1))
+        version: 4.5.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(typescript@5.9.3)(vite@6.4.1(@types/node@24.10.0)(terser@5.44.0)(yaml@2.8.1))
 
   packages/theming:
     dependencies:
@@ -2379,18 +2382,18 @@ packages:
   '@vue/shared@3.5.22':
     resolution: {integrity: sha512-F4yc6palwq3TT0u+FYf0Ns4Tfl9GRFURDN2gWG7L1ecIaS/4fCIuFOjMTnCyjsu/OK6vaDKLCrGAa+KvvH+h4w==}
 
-  '@wc-toolkit/cem-generator-cli@0.3.0':
-    resolution: {integrity: sha512-zpz/jvLnZNduWbHrK0ICZkXzpkScGUMMys8pbQN90HLPb1dQnCgZqx3OLYMfnj/xeS5qyy+/xh/n7ekKQeEEjQ==}
+  '@wc-toolkit/cem-generator-cli@0.3.3':
+    resolution: {integrity: sha512-uR+vKJGCWXq3my97Z7x3WkhUMCTIHdJh46ByeupDR2FmEhP9by9Q2DiyrH/LAvb4AmrNF5eVw0za+sZ4HyGDiA==}
     hasBin: true
 
-  '@wc-toolkit/cem-generator-lit@0.1.22':
-    resolution: {integrity: sha512-pL9kz1IJ0ZoVE8imWfrdIZ4RgzvauywbyLTVvLgctvP17exktRPvWI1EpQIyihS9muIzm3LcmMv70MBqPUELwQ==}
+  '@wc-toolkit/cem-generator-lit@0.1.27':
+    resolution: {integrity: sha512-Nf8fZjy7lXXM3UkpIkDgCUksvcAnE1/plagl1UW5sj/Gq2K9S4kebdd405hMuQSLZGhoTJBAZr6IKsXOOJKbsA==}
 
-  '@wc-toolkit/cem-generator-utils@0.1.7':
-    resolution: {integrity: sha512-B/8qlflTOMhkkBVPmElOKgnj6h0IR741zsCjt8Ek448BmElfydrKQksyrTndDkWfR0C4s/hmXnQ1uUYrKbkcUQ==}
+  '@wc-toolkit/cem-generator-utils@0.1.8':
+    resolution: {integrity: sha512-5GL/PhRI3YPoA/KiekYOwaWRfwLRQ6Bw3urVqrqJKXhxSx1vCg0NsA97qLbXmnP1iknrCe1pqO9lYmntVXJKRQ==}
 
-  '@wc-toolkit/cem-generator@0.2.6':
-    resolution: {integrity: sha512-5P2Iiq+yfapgmaQiK5soi873HrdoZHqjuTkyKVOFc6CHr2/8U5LYVJtpGlIOnV8ErSK8xIktku5e5ncFFlN31Q==}
+  '@wc-toolkit/cem-generator@0.2.10':
+    resolution: {integrity: sha512-CtPmduY6ex5eLW6aXJ1BkgTAZ6ZGsxbJfJatIkZqZd9XctbD6EQ+cHUl7jKmO6RXxtW8q8QQENp9HUSQBm8N8Q==}
 
   '@wc-toolkit/cem-utilities@1.5.3':
     resolution: {integrity: sha512-TtKjs9qap7zplE/N/hWOCGWjmaqQm+z9c7K89Kc9ZtZ5byKR2QVdZyixz+gVqBIm4jLOkD40aucil7HoN4MCAA==}
@@ -7748,7 +7751,7 @@ snapshots:
 
   '@astrojs/internal-helpers@0.7.4': {}
 
-  '@astrojs/markdown-remark@6.3.8':
+  '@astrojs/markdown-remark@6.3.8(supports-color@9.4.0)':
     dependencies:
       '@astrojs/internal-helpers': 0.7.4
       '@astrojs/prism': 3.3.0
@@ -7760,8 +7763,8 @@ snapshots:
       mdast-util-definitions: 6.0.0
       rehype-raw: 7.0.0
       rehype-stringify: 10.0.1
-      remark-gfm: 4.0.1
-      remark-parse: 11.0.0
+      remark-gfm: 4.0.1(supports-color@9.4.0)
+      remark-parse: 11.0.0(supports-color@9.4.0)
       remark-rehype: 11.1.2
       remark-smartypants: 3.0.2
       shiki: 3.14.0
@@ -7774,18 +7777,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@4.3.9(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))':
+  '@astrojs/mdx@4.3.9(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))(supports-color@9.4.0)':
     dependencies:
-      '@astrojs/markdown-remark': 6.3.8
-      '@mdx-js/mdx': 3.1.1
+      '@astrojs/markdown-remark': 6.3.8(supports-color@9.4.0)
+      '@mdx-js/mdx': 3.1.1(supports-color@9.4.0)
       acorn: 8.15.0
-      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
+      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
       es-module-lexer: 1.7.0
       estree-util-visit: 2.0.0
       hast-util-to-html: 9.0.5
       picocolors: 1.1.1
       rehype-raw: 7.0.0
-      remark-gfm: 4.0.1
+      remark-gfm: 4.0.1(supports-color@9.4.0)
       remark-smartypants: 3.0.2
       source-map: 0.7.6
       unist-util-visit: 5.0.0
@@ -7803,17 +7806,17 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/starlight@0.36.2(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))':
+  '@astrojs/starlight@0.36.2(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))(supports-color@9.4.0)':
     dependencies:
-      '@astrojs/markdown-remark': 6.3.8
-      '@astrojs/mdx': 4.3.9(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))
+      '@astrojs/markdown-remark': 6.3.8(supports-color@9.4.0)
+      '@astrojs/mdx': 4.3.9(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))(supports-color@9.4.0)
       '@astrojs/sitemap': 3.6.0
       '@pagefind/default-ui': 1.4.0
       '@types/hast': 3.0.4
       '@types/js-yaml': 4.0.9
       '@types/mdast': 4.0.4
-      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
-      astro-expressive-code: 0.41.3(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))
+      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
+      astro-expressive-code: 0.41.3(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1))
       bcp-47: 2.1.0
       hast-util-from-html: 2.0.3
       hast-util-select: 6.0.4
@@ -7822,13 +7825,13 @@ snapshots:
       i18next: 23.16.8
       js-yaml: 4.1.0
       klona: 2.0.6
-      mdast-util-directive: 3.1.0
+      mdast-util-directive: 3.1.0(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
       mdast-util-to-string: 4.0.0
       pagefind: 1.4.0
       rehype: 13.0.2
       rehype-format: 5.0.1
-      remark-directive: 3.0.1
+      remark-directive: 3.0.1(supports-color@9.4.0)
       ultrahtml: 1.6.0
       unified: 11.0.5
       unist-util-visit: 5.0.0
@@ -7836,7 +7839,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/telemetry@3.3.0':
+  '@astrojs/telemetry@3.3.0(supports-color@9.4.0)':
     dependencies:
       ci-info: 4.3.1
       debug: 4.4.3(supports-color@9.4.0)
@@ -8866,7 +8869,7 @@ snapshots:
 
   '@mdn/browser-compat-data@4.2.1': {}
 
-  '@mdx-js/mdx@3.1.1':
+  '@mdx-js/mdx@3.1.1(supports-color@9.4.0)':
     dependencies:
       '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
@@ -8878,14 +8881,14 @@ snapshots:
       estree-util-is-identifier-name: 3.0.0
       estree-util-scope: 1.0.0
       estree-walker: 3.0.3
-      hast-util-to-jsx-runtime: 2.3.6
+      hast-util-to-jsx-runtime: 2.3.6(supports-color@9.4.0)
       markdown-extensions: 2.0.0
       recma-build-jsx: 1.0.0
       recma-jsx: 1.0.1(acorn@8.15.0)
       recma-stringify: 1.0.0
-      rehype-recma: 1.0.0
-      remark-mdx: 3.1.1
-      remark-parse: 11.0.0
+      rehype-recma: 1.0.0(supports-color@9.4.0)
+      remark-mdx: 3.1.1(supports-color@9.4.0)
+      remark-parse: 11.0.0(supports-color@9.4.0)
       remark-rehype: 11.1.2
       source-map: 0.7.6
       unified: 11.0.5
@@ -10026,10 +10029,10 @@ snapshots:
 
   '@vue/shared@3.5.22': {}
 
-  '@wc-toolkit/cem-generator-cli@0.3.0(@types/node@24.10.0)':
+  '@wc-toolkit/cem-generator-cli@0.3.3(@types/node@24.10.0)':
     dependencies:
-      '@wc-toolkit/cem-generator': 0.2.6
-      '@wc-toolkit/cem-generator-utils': 0.1.7
+      '@wc-toolkit/cem-generator': 0.2.10
+      '@wc-toolkit/cem-generator-utils': 0.1.8
       commander: 12.1.0
       custom-elements-manifest: 2.1.0
       inquirer: 14.2.5(@types/node@24.10.0)
@@ -10037,19 +10040,19 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@wc-toolkit/cem-generator-lit@0.1.22':
+  '@wc-toolkit/cem-generator-lit@0.1.27':
     dependencies:
-      '@wc-toolkit/cem-generator': 0.2.6
-      '@wc-toolkit/cem-generator-utils': 0.1.7
+      '@wc-toolkit/cem-generator': 0.2.10
+      '@wc-toolkit/cem-generator-utils': 0.1.8
       typescript: 6.0.3
 
-  '@wc-toolkit/cem-generator-utils@0.1.7':
+  '@wc-toolkit/cem-generator-utils@0.1.8':
     dependencies:
       typescript: 6.0.3
 
-  '@wc-toolkit/cem-generator@0.2.6':
+  '@wc-toolkit/cem-generator@0.2.10':
     dependencies:
-      '@wc-toolkit/cem-generator-utils': 0.1.7
+      '@wc-toolkit/cem-generator-utils': 0.1.8
       postcss: 8.5.6
       typescript: 6.0.3
 
@@ -10507,17 +10510,17 @@ snapshots:
 
   astring@1.9.0: {}
 
-  astro-expressive-code@0.41.3(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)):
+  astro-expressive-code@0.41.3(astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)):
     dependencies:
-      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
+      astro: 5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1)
       rehype-expressive-code: 0.41.3
 
-  astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1):
+  astro@5.15.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(terser@5.44.0)(typescript@5.9.3)(yaml@2.8.1):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.4
-      '@astrojs/markdown-remark': 6.3.8
-      '@astrojs/telemetry': 3.3.0
+      '@astrojs/markdown-remark': 6.3.8(supports-color@9.4.0)
+      '@astrojs/telemetry': 3.3.0(supports-color@9.4.0)
       '@capsizecss/unpack': 3.0.0
       '@oslojs/encoding': 1.1.0
       '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
@@ -12590,7 +12593,7 @@ snapshots:
       unist-util-visit: 5.0.0
       zwitch: 2.0.4
 
-  hast-util-to-estree@3.1.3:
+  hast-util-to-estree@3.1.3(supports-color@9.4.0):
     dependencies:
       '@types/estree': 1.0.8
       '@types/estree-jsx': 1.0.5
@@ -12600,9 +12603,9 @@ snapshots:
       estree-util-attach-comments: 3.0.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@9.4.0)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@9.4.0)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@9.4.0)
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.19
@@ -12625,7 +12628,7 @@ snapshots:
       stringify-entities: 4.0.4
       zwitch: 2.0.4
 
-  hast-util-to-jsx-runtime@2.3.6:
+  hast-util-to-jsx-runtime@2.3.6(supports-color@9.4.0):
     dependencies:
       '@types/estree': 1.0.8
       '@types/hast': 3.0.4
@@ -12634,9 +12637,9 @@ snapshots:
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
       hast-util-whitespace: 3.0.0
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
+      mdast-util-mdx-expression: 2.0.1(supports-color@9.4.0)
+      mdast-util-mdx-jsx: 3.2.0(supports-color@9.4.0)
+      mdast-util-mdxjs-esm: 2.0.1(supports-color@9.4.0)
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
       style-to-js: 1.1.19
@@ -13469,13 +13472,13 @@ snapshots:
       '@types/unist': 3.0.3
       unist-util-visit: 5.0.0
 
-  mdast-util-directive@3.1.0:
+  mdast-util-directive@3.1.0(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
       ccount: 2.0.1
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
       parse-entities: 4.0.2
       stringify-entities: 4.0.4
@@ -13497,23 +13500,6 @@ snapshots:
       micromark: 2.11.4(supports-color@9.4.0)
       parse-entities: 2.0.0
       unist-util-stringify-position: 2.0.3
-    transitivePeerDependencies:
-      - supports-color
-
-  mdast-util-from-markdown@2.0.2:
-    dependencies:
-      '@types/mdast': 4.0.4
-      '@types/unist': 3.0.3
-      decode-named-character-reference: 1.2.0
-      devlop: 1.1.0
-      mdast-util-to-string: 4.0.0
-      micromark: 4.0.2
-      micromark-util-decode-numeric-character-reference: 2.0.2
-      micromark-util-decode-string: 2.0.1
-      micromark-util-normalize-identifier: 2.0.1
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.2
-      unist-util-stringify-position: 4.0.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13542,62 +13528,51 @@ snapshots:
       mdast-util-find-and-replace: 3.0.2
       micromark-util-character: 2.1.1
 
-  mdast-util-gfm-footnote@2.1.0:
+  mdast-util-gfm-footnote@2.1.0(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
       micromark-util-normalize-identifier: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-strikethrough@2.0.0:
+  mdast-util-gfm-strikethrough@2.0.0(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-table@2.0.0:
+  mdast-util-gfm-table@2.0.0(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
       markdown-table: 3.0.4
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm-task-list-item@2.0.0:
+  mdast-util-gfm-task-list-item@2.0.0(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
       devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-gfm@3.1.0:
+  mdast-util-gfm@3.1.0(supports-color@9.4.0):
     dependencies:
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-gfm-autolink-literal: 2.0.1
-      mdast-util-gfm-footnote: 2.1.0
-      mdast-util-gfm-strikethrough: 2.0.0
-      mdast-util-gfm-table: 2.0.0
-      mdast-util-gfm-task-list-item: 2.0.0
-      mdast-util-to-markdown: 2.1.2
-    transitivePeerDependencies:
-      - supports-color
-
-  mdast-util-mdx-expression@2.0.1:
-    dependencies:
-      '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
+      mdast-util-gfm-footnote: 2.1.0(supports-color@9.4.0)
+      mdast-util-gfm-strikethrough: 2.0.0(supports-color@9.4.0)
+      mdast-util-gfm-table: 2.0.0(supports-color@9.4.0)
+      mdast-util-gfm-task-list-item: 2.0.0(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
@@ -13610,23 +13585,6 @@ snapshots:
       devlop: 1.1.0
       mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-to-markdown: 2.1.2
-    transitivePeerDependencies:
-      - supports-color
-
-  mdast-util-mdx-jsx@3.2.0:
-    dependencies:
-      '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      '@types/unist': 3.0.3
-      ccount: 2.0.1
-      devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
-      mdast-util-to-markdown: 2.1.2
-      parse-entities: 4.0.2
-      stringify-entities: 4.0.4
-      unist-util-stringify-position: 4.0.0
-      vfile-message: 4.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -13647,33 +13605,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  mdast-util-mdx@3.0.0:
-    dependencies:
-      mdast-util-from-markdown: 2.0.2
-      mdast-util-mdx-expression: 2.0.1
-      mdast-util-mdx-jsx: 3.2.0
-      mdast-util-mdxjs-esm: 2.0.1
-      mdast-util-to-markdown: 2.1.2
-    transitivePeerDependencies:
-      - supports-color
-
   mdast-util-mdx@3.0.0(supports-color@9.4.0):
     dependencies:
       mdast-util-from-markdown: 2.0.2(supports-color@9.4.0)
       mdast-util-mdx-expression: 2.0.1(supports-color@9.4.0)
       mdast-util-mdx-jsx: 3.2.0(supports-color@9.4.0)
       mdast-util-mdxjs-esm: 2.0.1(supports-color@9.4.0)
-      mdast-util-to-markdown: 2.1.2
-    transitivePeerDependencies:
-      - supports-color
-
-  mdast-util-mdxjs-esm@2.0.1:
-    dependencies:
-      '@types/estree-jsx': 1.0.5
-      '@types/hast': 3.0.4
-      '@types/mdast': 4.0.4
-      devlop: 1.1.0
-      mdast-util-from-markdown: 2.0.2
       mdast-util-to-markdown: 2.1.2
     transitivePeerDependencies:
       - supports-color
@@ -14009,28 +13946,6 @@ snapshots:
     dependencies:
       debug: 4.4.3(supports-color@9.4.0)
       parse-entities: 2.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  micromark@4.0.2:
-    dependencies:
-      '@types/debug': 4.1.12
-      debug: 4.4.3(supports-color@9.4.0)
-      decode-named-character-reference: 1.2.0
-      devlop: 1.1.0
-      micromark-core-commonmark: 2.0.3
-      micromark-factory-space: 2.0.1
-      micromark-util-character: 2.1.1
-      micromark-util-chunked: 2.0.1
-      micromark-util-combine-extensions: 2.0.1
-      micromark-util-decode-numeric-character-reference: 2.0.2
-      micromark-util-encode: 2.0.1
-      micromark-util-normalize-identifier: 2.0.1
-      micromark-util-resolve-all: 2.0.1
-      micromark-util-sanitize-uri: 2.0.1
-      micromark-util-subtokenize: 2.1.0
-      micromark-util-symbol: 2.0.1
-      micromark-util-types: 2.0.2
     transitivePeerDependencies:
       - supports-color
 
@@ -15169,11 +15084,11 @@ snapshots:
       hast-util-raw: 9.1.0
       vfile: 6.0.3
 
-  rehype-recma@1.0.0:
+  rehype-recma@1.0.0(supports-color@9.4.0):
     dependencies:
       '@types/estree': 1.0.8
       '@types/hast': 3.0.4
-      hast-util-to-estree: 3.1.3
+      hast-util-to-estree: 3.1.3(supports-color@9.4.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -15190,30 +15105,23 @@ snapshots:
       rehype-stringify: 10.0.1
       unified: 11.0.5
 
-  remark-directive@3.0.1:
+  remark-directive@3.0.1(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-directive: 3.1.0
+      mdast-util-directive: 3.1.0(supports-color@9.4.0)
       micromark-extension-directive: 3.0.2
       unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
 
-  remark-gfm@4.0.1:
+  remark-gfm@4.0.1(supports-color@9.4.0):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-gfm: 3.1.0
+      mdast-util-gfm: 3.1.0(supports-color@9.4.0)
       micromark-extension-gfm: 3.0.0
-      remark-parse: 11.0.0
+      remark-parse: 11.0.0(supports-color@9.4.0)
       remark-stringify: 11.0.0
       unified: 11.0.5
-    transitivePeerDependencies:
-      - supports-color
-
-  remark-mdx@3.1.1:
-    dependencies:
-      mdast-util-mdx: 3.0.0
-      micromark-extension-mdxjs: 3.0.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15221,15 +15129,6 @@ snapshots:
     dependencies:
       mdast-util-mdx: 3.0.0(supports-color@9.4.0)
       micromark-extension-mdxjs: 3.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  remark-parse@11.0.0:
-    dependencies:
-      '@types/mdast': 4.0.4
-      mdast-util-from-markdown: 2.0.2
-      micromark-util-types: 2.0.2
-      unified: 11.0.5
     transitivePeerDependencies:
       - supports-color
 
@@ -16010,7 +15909,7 @@ snapshots:
 
   tsscmp@1.0.6: {}
 
-  tsup@8.5.0(@microsoft/api-extractor@7.53.3(@types/node@24.10.0))(postcss@8.5.6)(typescript@5.9.3)(yaml@2.8.1):
+  tsup@8.5.0(@microsoft/api-extractor@7.53.3(@types/node@24.10.0))(postcss@8.5.6)(supports-color@9.4.0)(typescript@5.9.3)(yaml@2.8.1):
     dependencies:
       bundle-require: 5.1.0(esbuild@0.25.12)
       cac: 6.7.14
@@ -16367,7 +16266,7 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-plugin-dts@4.5.3(@types/node@24.10.0)(rollup@4.52.5)(typescript@5.9.3)(vite@6.4.1(@types/node@24.10.0)(terser@5.44.0)(yaml@2.8.1)):
+  vite-plugin-dts@4.5.3(@types/node@24.10.0)(rollup@4.52.5)(supports-color@9.4.0)(typescript@5.9.3)(vite@6.4.1(@types/node@24.10.0)(terser@5.44.0)(yaml@2.8.1)):
     dependencies:
       '@microsoft/api-extractor': 7.53.3(@types/node@24.10.0)
       '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
