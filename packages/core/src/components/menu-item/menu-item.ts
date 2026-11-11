@@ -336,15 +336,17 @@ export class CoreMenuItem extends CharmElement {
       ? html`
           <span class="input-container" part="menu-item-checkbox-container">
             <span class="checkbox" part="menu-item-checkbox">
-              ${this.checked
-                ? html`
+              ${
+                this.checked
+                  ? html`
                     <slot name="checkbox-indicator">
                       <${this.scope.tag('icon')}
                           name="checkmark"
                           class="checkbox-icon"
                           part="menu-item-checkbox-icon"
                       ></${this.scope.tag('icon')}></slot>`
-                : nothing}
+                  : nothing
+              }
             </span>
           </span>
         `
@@ -358,11 +360,13 @@ export class CoreMenuItem extends CharmElement {
     return this.role === 'menuitemradio'
       ? html`
           <span class="input-container" part="menu-item-radio-container">
-            ${!hasRadioIndicator
-              ? html` <span class="radio" part="menu-item-radio">
-                  <span class="radio-indicator" part="menu-item-radio-indicator"></span>
-                </span>`
-              : nothing}
+            ${
+              !hasRadioIndicator
+                ? html` <span class="radio" part="menu-item-radio">
+                    <span class="radio-indicator" part="menu-item-radio-indicator"></span>
+                  </span>`
+                : nothing
+            }
             <slot name="radio-indicator"></slot>
           </span>
         `

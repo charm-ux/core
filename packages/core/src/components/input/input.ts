@@ -9,17 +9,7 @@ import { CoreIcon } from '../icon/icon.js';
 import styles from './input.styles.js';
 
 export type InputTypes =
-  | 'date'
-  | 'datetime-local'
-  | 'email'
-  | 'number'
-  | 'password'
-  | 'search'
-  | 'tel'
-  | 'text'
-  | 'time'
-  | 'url'
-  | 'range';
+  'date' | 'datetime-local' | 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'time' | 'url' | 'range';
 
 /**
  * Input allows the user to enter and edit text.

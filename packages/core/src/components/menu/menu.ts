@@ -280,8 +280,7 @@ export class CoreMenu extends CharmDismissibleElement {
   /** Handle radio menu item selection */
   protected handleRadioMenuItemSelection(e: Event) {
     const targetItem = e.composedPath().find(el => (el as HTMLElement).getAttribute?.('role') === 'menuitemradio') as
-      | HTMLElement
-      | undefined;
+      HTMLElement | undefined;
 
     if (targetItem) {
       this.items.forEach(item => {

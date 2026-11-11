@@ -18,9 +18,7 @@ After you install the package, you will need to create a file where you can run 
 // scripts/make-theme.js
 import { generateTheme } from '../index.js';
 
-generateTheme({
-  /* Add your options here */
-});
+generateTheme({/* Add your options here */});
 ```
 
 Now you can execute the theme generator with your npm build scripts or include it as a module in another build file.
