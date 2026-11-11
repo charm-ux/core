@@ -57,7 +57,7 @@ Then create the necessary styles:
 // shaped-button-styles.ts
 import { css } from 'lit';
 
-export default styles = css`
+export default (styles = css`
   :host([shape='square']) {
     --button-border-radius: var(--border-radius-none);
   }
@@ -65,7 +65,7 @@ export default styles = css`
   :host([shape='circular']) {
     --button-border-radius: var(--border-radius-circular);
   }
-`;
+`);
 ```
 
 Finally, register your new component using the `project` object in the `index.ts` file:

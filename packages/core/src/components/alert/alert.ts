@@ -150,8 +150,9 @@ export class CoreAlert extends CharmDismissibleElement {
 
   /** Generates the template for the close button. */
   protected dismissibleButtonTemplate() {
-    return html` ${this.dismissible
-      ? html`
+    return html` ${
+      this.dismissible
+        ? html`
         <button
         class="dismiss-button"
           part="alert-dismiss-button"
@@ -161,7 +162,8 @@ export class CoreAlert extends CharmDismissibleElement {
           </${this.scope.tag('icon')}>
         </button>
       `
-      : ''}`;
+        : ''
+    }`;
   }
 
   /** Generates the template for the action slot. */

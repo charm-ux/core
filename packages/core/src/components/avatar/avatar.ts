@@ -56,23 +56,27 @@ export class CoreAvatar extends CharmElement {
     const hasImageSlot = this.hasSlotController.hasNamedSlot('image');
     return html`
       <div class="background" part="avatar-background">
-        ${!hasImageSlot
-          ? html`
-              <div
-                class="initials"
-                part="avatar-initials"
-                role=${ifDefined(this.label ? 'img' : undefined)}
-                aria-label=${ifDefined(this.label)}
-              >
-                ${this.initials}
-              </div>
-            `
-          : ''}
-        ${hasImageSlot
-          ? html`<slot name="image"></slot>`
-          : this.image
-            ? html`<img class="image" part="avatar-image" src=${this.image} alt=${ifDefined(this.label || '')} />`
-            : ''}
+        ${
+          !hasImageSlot
+            ? html`
+                <div
+                  class="initials"
+                  part="avatar-initials"
+                  role=${ifDefined(this.label ? 'img' : undefined)}
+                  aria-label=${ifDefined(this.label)}
+                >
+                  ${this.initials}
+                </div>
+              `
+            : ''
+        }
+        ${
+          hasImageSlot
+            ? html`<slot name="image"></slot>`
+            : this.image
+              ? html`<img class="image" part="avatar-image" src=${this.image} alt=${ifDefined(this.label || '')} />`
+              : ''
+        }
         ${!hasImageSlot && !this.image && !this.initials ? html`<slot></slot>` : ''}
       </div>
     `;
