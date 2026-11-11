@@ -11,6 +11,11 @@
     "url": "https://github.com/charm-ux/core.git"
   },
   "sideEffects": false,
+  "pnpm": {
+    "overrides": {
+      "@wc-toolkit/cem-generator": "0.2.10"
+    }
+  },
   "license": "MIT",
   "scripts": {
     "analyze": "pnpm build:theming && pnpm -r --filter=\"./packages/*\" analyze",
