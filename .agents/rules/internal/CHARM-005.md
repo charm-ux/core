@@ -1,7 +1,7 @@
 # CHARM-005: Keep the custom-elements manifest accurate with JSDoc tags
 
 The custom-elements manifest (`custom-elements.json`) is generated from the JSDoc block
-above each component class by `@custom-elements-manifest/analyzer`. This manifest powers
+above each component class by `@wc-toolkit/cem-generator`. This manifest powers
 Storybook controls, docs, and editor autocomplete for consumers — so the tags are public
 API, not decoration. Every public event, slot, part, and CSS custom property must have a
 tag, and adding/removing one of these means updating the block comment in the same change.

@@ -32,4 +32,10 @@ export { charmTokens, charmDefinition, charmHelpers, demoTokens, demoDefinition,
 export { createCssHelpers, type CssHelpers } from './lit/index.js';
 
 // Custom Elements Manifest (CEM) plugin helpers
-export { cssPrefixPlugin, applyThemePrefix, rewriteCssVarName } from './cem-plugin/index.js';
+export {
+  applyThemePrefix,
+  cemAnalyzerCssPrefixPlugin,
+  cemGeneratorCssPrefixPlugin,
+  cssPrefixPlugin,
+  rewriteCssVarName,
+} from './cem-plugin/index.js';

@@ -88,5 +88,5 @@ These activate when you edit matching files:
 
 - Package manager: **pnpm** (workspaces). Run a single component's tests with
   `pnpm test -- --group <name>`.
-- Build: Vite + `tsc`; manifest via `@custom-elements-manifest/analyzer`.
+- Build: Vite + `tsc`; manifest via `@wc-toolkit/cem-generator`.
 - Dev: `pnpm dev` runs Storybook on port 6006.

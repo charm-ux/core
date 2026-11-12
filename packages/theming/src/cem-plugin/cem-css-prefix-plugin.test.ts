@@ -3,6 +3,8 @@ import { expect, test } from 'vitest';
 import {
   ANY_PREFIX,
   applyThemePrefix,
+  cemAnalyzerCssPrefixPlugin,
+  cemGeneratorCssPrefixPlugin,
   cssPrefixPlugin,
   DEFAULT_PREFIX,
   rewriteCssVarName,
@@ -134,9 +136,9 @@ test('applyThemePrefix tolerates a malformed manifest', () => {
   expect(applyThemePrefix({ modules: [{}] }, { prefix: 'acme' })).toBe(0);
 });
 
-// --- cssPrefixPlugin ---
+// --- cssPrefixPlugin (analyzer) ---
 
-test('cssPrefixPlugin defaults to the theme prefix and first-segment replacement', () => {
+test('cssPrefixPlugin keeps the analyzer plugin contract and defaults to the theme prefix', () => {
   const plugin = cssPrefixPlugin();
   expect(plugin.name).toBe('charm-css-prefix');
 
@@ -147,6 +149,14 @@ test('cssPrefixPlugin defaults to the theme prefix and first-segment replacement
     `--${DEFAULT_PREFIX}-form-control-bg-color`,
     `--${DEFAULT_PREFIX}-overflow-item-gap`,
   ]);
+});
+
+test('cemAnalyzerCssPrefixPlugin is exported as the explicit analyzer plugin name', () => {
+  const plugin = cemAnalyzerCssPrefixPlugin({ prefix: 'acme' });
+  const manifest = buildManifest();
+  plugin.packageLinkPhase({ customElementsManifest: manifest });
+
+  expect(manifest.modules![0].declarations![0].cssProperties![0].name).toBe('--acme-form-control-bg-color');
 });
 
 test('cssPrefixPlugin honors an explicit prefix option', () => {
@@ -173,4 +183,19 @@ test('cssPrefixPlugin honors an explicit defaultPrefix to scope stripping', () =
 
   // With defaultPrefix 'charm', an unprefixed name keeps its first segment.
   expect(manifest.modules[0].declarations[0].cssProperties[0].name).toBe('--charm-form-control-bg-color');
+});
+
+// --- cemGeneratorCssPrefixPlugin ---
+
+test('cemGeneratorCssPrefixPlugin exposes the generator lifecycle and normalizes the manifest', () => {
+  const plugin = cemGeneratorCssPrefixPlugin({ prefix: 'acme' });
+  expect(plugin.name).toBe('charm-css-prefix-generator');
+
+  const manifest = buildManifest();
+  plugin.afterGenerate(manifest);
+
+  expect(manifest.modules![0].declarations![0].cssProperties!.map(p => p.name)).toEqual([
+    '--acme-form-control-bg-color',
+    '--acme-overflow-item-gap',
+  ]);
 });

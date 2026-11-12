@@ -7,9 +7,9 @@
  * `@charm-ux/theming` `cssVar.ts`). This module rewrites the `cssProperties[].name`
  * entries in a manifest so the documented names match the theme's prefix.
  *
- * Exposes both a standalone transform (`applyThemePrefix`) that operates on a parsed
- * `custom-elements.json`, and an analyzer plugin (`cssPrefixPlugin`) that applies the
- * same transform during `cem analyze`.
+ * Exposes a standalone transform (`applyThemePrefix`) that operates on a parsed
+ * `custom-elements.json`, plus analyzer and CEM Generator plugins that apply the same
+ * transform at their respective manifest lifecycle hooks.
  */
 
 import { charmDefinition } from '@charm-ux/theming/themes';
@@ -99,8 +99,8 @@ interface CustomElementsManifest {
 
 /**
  * Rewrite every `cssProperties[].name` in a Custom Elements Manifest so it carries
- * the theme prefix. Mutates `manifest` in place (matching the analyzer's plugin
- * contract) and returns the number of names that changed.
+ * the theme prefix. Mutates `manifest` in place and returns the number of names that
+ * changed.
  *
  * @param {CustomElementsManifest} manifest - Parsed `custom-elements.json`.
  * @param {PrefixOptions} options
@@ -145,8 +145,8 @@ interface CssPrefixPluginOptions {
 
 /**
  * Custom Elements Manifest analyzer plugin that normalizes every documented CSS
- * custom property name to the theme prefix. Runs during `packageLinkPhase` so it
- * sees the fully linked manifest (including inherited `cssProperties`).
+ * custom property name to the theme prefix. Runs during `packageLinkPhase`, after
+ * inherited `cssProperties` have been linked.
  *
  * Register it in `custom-elements-manifest.config.mjs` before `cemSorterPlugin` so
  * the finalized names are the ones that get sorted.
@@ -154,13 +154,39 @@ interface CssPrefixPluginOptions {
  * @param {CssPrefixPluginOptions} [options]
  * @returns {{ name: string, packageLinkPhase: (params: { customElementsManifest: CustomElementsManifest }) => void }}
  */
-export function cssPrefixPlugin(options: CssPrefixPluginOptions = {}) {
+export function cemAnalyzerCssPrefixPlugin(options: CssPrefixPluginOptions = {}) {
   const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = [DEFAULT_PREFIX] } = options;
 
   return {
     name: 'charm-css-prefix',
     packageLinkPhase({ customElementsManifest }: { customElementsManifest: CustomElementsManifest }) {
       applyThemePrefix(customElementsManifest, { prefix, defaultPrefix });
+    },
+  };
+}
+
+/**
+ * Backwards-compatible alias for {@link cemAnalyzerCssPrefixPlugin}.
+ *
+ * @param {CssPrefixPluginOptions} [options]
+ * @returns {{ name: string, packageLinkPhase: (params: { customElementsManifest: CustomElementsManifest }) => void }}
+ */
+export const cssPrefixPlugin = cemAnalyzerCssPrefixPlugin;
+
+/**
+ * CEM Generator plugin that normalizes every documented CSS custom property name to
+ * the theme prefix. Runs after generation, including inherited `cssProperties`.
+ *
+ * @param {CssPrefixPluginOptions} [options]
+ * @returns {{ name: string, afterGenerate: (manifest: CustomElementsManifest) => void }}
+ */
+export function cemGeneratorCssPrefixPlugin(options: CssPrefixPluginOptions = {}) {
+  const { prefix = charmDefinition.prefix ?? DEFAULT_PREFIX, defaultPrefix = [DEFAULT_PREFIX] } = options;
+
+  return {
+    name: 'charm-css-prefix-generator',
+    afterGenerate(manifest: CustomElementsManifest) {
+      applyThemePrefix(manifest, { prefix, defaultPrefix });
     },
   };
 }

@@ -13,7 +13,7 @@
   "sideEffects": false,
   "license": "MIT",
   "scripts": {
-    "analyze": "pnpm -r --filter=\"./packages/*\" analyze",
+    "cem": "pnpm build:theming && pnpm -r --filter=\"./packages/*\" cem",
     "changeset": "changeset",
     "changeset:status": "changeset status",
     "changeset:version": "changeset version",
