@@ -7,5 +7,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@wc-toolkit/cem-generator-utils@0.1.8'
   - '@wc-toolkit/cem-generator@0.2.10'
-  - '@wc-toolkit/cem-generator-cli@0.3.3'
+  - '@wc-toolkit/cem-generator-cli@0.3.4'
   - '@wc-toolkit/cem-generator-lit@0.1.27'
