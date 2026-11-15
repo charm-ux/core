@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 const site = 'https://charm-ux.github.io/core';
-const base = '/core';
+const base = process.env.DOCS_BASE ?? '/core';
 
 // https://astro.build/config
 export default defineConfig({
