@@ -1,13 +1,14 @@
 import { defineCollection } from 'astro:content';
+import { docsLoader, i18nLoader } from '@astrojs/starlight/loaders';
 import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 
-// Export collections using JavaScript (not TypeScript)
 export const collections = {
   docs: defineCollection({
+    loader: docsLoader(),
     schema: docsSchema(),
   }),
   i18n: defineCollection({
-    type: 'data',
+    loader: i18nLoader(),
     schema: i18nSchema(),
   }),
 };
