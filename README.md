@@ -144,8 +144,8 @@ document.documentElement.style.cssText = theme;
 
 ### Prerequisites
 
-- Node.js 20 or higher. For consistency with CI, use the recommended version pinned in [.nvmrc](.nvmrc).
-- pnpm 8 or higher
+- Node.js 24.11.0, pinned in [.nvmrc](.nvmrc). After cloning, run `nvm install && nvm use` from the repository root, or install that version using your preferred version manager.
+- pnpm 9
 
 ### Setup
 
