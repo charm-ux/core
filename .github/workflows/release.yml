@@ -25,11 +25,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
 
-      # npm trusted publishing (OIDC) requires npm >= 11.5.1; the npm bundled
-      # with Node 20 is older. Pin the 11.x line to guarantee an OIDC-capable
-      # npm without tracking npm@latest.
+      # npm trusted publishing (OIDC) requires npm >= 11.5.1.
+      # Pin the 11.x line without tracking npm@latest.
       - name: Upgrade npm for OIDC trusted publishing
         run: npm install -g npm@^11 && npm --version
 
