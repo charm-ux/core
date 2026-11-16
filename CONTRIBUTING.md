@@ -6,7 +6,7 @@ Thank you for your interest in contributing to Charm! This document provides gui
 
 ### Prerequisites
 
-- Node.js 20 or higher
+- Node.js 20 or higher. For consistency with CI, use the recommended version pinned in [.nvmrc](.nvmrc).
 - pnpm 8 or higher
 
 ### Setup
