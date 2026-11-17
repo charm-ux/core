@@ -5,3 +5,9 @@ updates:
     schedule:
       interval: weekly
     versioning-strategy: widen
+    groups:
+      storybook:
+        patterns:
+          - 'storybook'
+          - '@storybook/*'
+          - 'eslint-plugin-storybook'
