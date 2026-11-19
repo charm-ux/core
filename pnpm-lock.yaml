@@ -135,7 +135,7 @@ importers:
         version: 1.1.0
       '@wc-toolkit/storybook-helpers':
         specifier: ^10.0.0
-        version: 10.0.0(lit@3.3.3)(storybook@10.6.7(@types/react@19.2.7)(prettier@3.9.10)(react@18.3.1))
+        version: 10.7.7(lit@3.3.3)(storybook@10.6.7(@types/react@19.2.7)(prettier@3.9.10)(react@18.3.1))
       '@wc-toolkit/type-parser':
         specifier: ^1.2.0
         version: 1.2.0
@@ -2877,11 +2877,11 @@ packages:
   '@wc-toolkit/jsdoc-tags@1.1.0':
     resolution: {integrity: sha512-7MHpQ3FtRNJBJONMChkfIWxOWy1rvDtwOJJ4ubeGJBUEj2hp8Xy/9G8GqqNvPGzp38haAfdMcmwx6rySu4AAqg==}
 
-  '@wc-toolkit/storybook-helpers@10.0.0':
-    resolution: {integrity: sha512-7S7JMPfXgsSJB/Fnat7FfNM7h3mkth41cvOm45eu6y1tu/P2RyNSJGbgXWEuLiYaTgFqnhFGpWP/bdW1Ibb1FA==}
+  '@wc-toolkit/storybook-helpers@10.7.7':
+    resolution: {integrity: sha512-0gxZELLBYUw2o6hoYihOWhyi5U1NUprJrt7hpyx2z91ZHb2NKGOq6pYUsDws+JfHF33CdnLiIVwDZK79+cAiGw==}
     peerDependencies:
       lit: ^2.0.0 || ^3.0.0
-      storybook: '>=10.0.0-0 <11.0.0-0'
+      storybook: '>=10.1.11-0 <11.0.0-0'
 
   '@wc-toolkit/type-parser@1.2.0':
     resolution: {integrity: sha512-d1Vsf4bk3+fIzca14Mtg5h9rZxOATLv5V9r0KArgJYIc59HiegkyII9v4SnVw55hBVSD0j3O7RMuCAprU5572A==}
@@ -10742,7 +10742,7 @@ snapshots:
 
   '@wc-toolkit/jsdoc-tags@1.1.0': {}
 
-  '@wc-toolkit/storybook-helpers@10.0.0(lit@3.3.3)(storybook@10.6.7(@types/react@19.2.7)(prettier@3.9.10)(react@18.3.1))':
+  '@wc-toolkit/storybook-helpers@10.7.7(lit@3.3.3)(storybook@10.6.7(@types/react@19.2.7)(prettier@3.9.10)(react@18.3.1))':
     dependencies:
       lit: 3.3.3
       storybook: 10.6.7(@types/react@19.2.7)(prettier@3.9.10)(react@18.3.1)
