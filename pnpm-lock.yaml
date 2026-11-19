@@ -6016,11 +6016,6 @@ packages:
   nanocolors@0.2.13:
     resolution: {integrity: sha512-0n3mSAQLPpGLV9ORXT5+C/D4mwew7Ebws69Hx4E2sgz2ZA5+32Q80B9tL8PbL7XHnRDiAxH/pnrUJ9a4fkTNTA==}
 
-  nanoid@3.3.11:
-    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
-
   nanoid@3.3.20:
     resolution: {integrity: sha512-uKdg2G3GNCKQn9byYOpxbGqrT2fGO5KRt5J/8b3pok8rT6qxGWF6hxMyJiEYtAf+FVyYuD9hRaDqX5uPFYJ4ZQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -10956,7 +10951,7 @@ snapshots:
       istanbul-reports: 3.2.0
       log-update: 4.0.0
       nanocolors: 0.2.13
-      nanoid: 3.3.11
+      nanoid: 3.3.20
       open: 8.4.2
       picomatch: 2.3.1
       source-map: 0.7.6
@@ -10989,7 +10984,7 @@ snapshots:
       istanbul-reports: 3.2.0
       log-update: 4.0.0
       nanocolors: 0.2.13
-      nanoid: 3.3.11
+      nanoid: 3.3.20
       open: 8.4.2
       picomatch: 2.3.2
       source-map: 0.7.6
@@ -14748,8 +14743,6 @@ snapshots:
       thenify-all: 1.6.0
 
   nanocolors@0.2.13: {}
-
-  nanoid@3.3.11: {}
 
   nanoid@3.3.20: {}
 
