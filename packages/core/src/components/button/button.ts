@@ -65,6 +65,12 @@ export class CoreButton extends CharmFocusableElement {
   protected static formAssociated = true;
 
   /**
+   * Sets "aria-label" on the internal button or link.
+   */
+  @property({ attribute: 'aria-label', reflect: true })
+  public override ariaLabel: string | null = null;
+
+  /**
    * Sets "aria-current" on the internal button or link.
    */
   @property({ reflect: true })
@@ -298,6 +304,7 @@ export class CoreButton extends CharmFocusableElement {
     const tag = this.href ? literal`a` : literal`button`;
 
     return html`<${tag}
+      aria-label=${ifDefined(this.ariaLabel)}
       aria-current=${ifDefined(this.current)}
       aria-disabled=${ifDefined(!isLink && this.disabled !== undefined ? this.disabled : undefined)}
       aria-expanded=${ifDefined(!isLink && this.expanded !== undefined ? this.expanded : undefined)}
