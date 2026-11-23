@@ -40,13 +40,13 @@ To disable on page load, use the `disabled` attribute within the `<ch-button>` e
 
 ## Icon only
 
-To create an icon-only button, you can use the `icon-only` attribute or leave the button text blank and put the icon in the default slot. Remember to add a label for the icon to keep it accessible to screen readers and other assistive technologies.
+To create an icon-only button, you can use the `icon-only` attribute or leave the button text blank and put the icon in the default slot. Give the icon a label that describes the button's action to keep it accessible to screen readers and other assistive technologies.
 
 <code-bubble>
 
 ```html
 <ch-button icon-only>
-  <ch-icon name="success" label="success"></ch-icon>
+  <ch-icon name="dismiss" label="Close"></ch-icon>
 </ch-button>
 ```
 
@@ -54,9 +54,40 @@ To create an icon-only button, you can use the `icon-only` attribute or leave th
 
 ## Accessible name
 
-Visible button text provides the accessible name by default. For an icon-only button or an explicit name, set `aria-label` on `<ch-button>`. The label is forwarded to the native button or link and stays in sync when updated or removed. The `ariaLabel` property is also supported.
+Visible button text provides the accessible name by default and is the preferred way to name a button. When the design requires an icon-only button, use a labeled `<ch-icon>` as shown above, or add visually hidden text inside the button. Core's `<ch-icon>` renders its label as visually hidden text.
 
-Host `aria-labelledby` references are not forwarded: IDs outside the component's shadow root cannot be resolved by the internal control. Use visible text or `aria-label` instead.
+Visually hidden text stays available to assistive technologies and can be translated as text by browser translation tools. Hide the decorative icon from assistive technologies so it does not contribute a duplicate name.
+
+<code-bubble>
+
+```html
+<ch-button icon-only>
+  <ch-icon name="dismiss" aria-hidden="true"></ch-icon>
+  <span class="visually-hidden">Close</span>
+</ch-button>
+
+<style>
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+  }
+</style>
+```
+
+</code-bubble>
+
+Define `.visually-hidden` in the stylesheet for the button's light-DOM content. The component's shadow-root styles do not style this span. Do not use `hidden` or `display: none`, which would also hide the text from assistive technologies.
+
+Prefer these text-based patterns over `aria-label`, which browser translation tools and extensions may not translate. If an existing integration uses `aria-label` on `<ch-button>`, it is forwarded to the native button or link and stays in sync when updated or removed. The `ariaLabel` property is also supported.
+
+Host `aria-labelledby` references are not forwarded: IDs outside the component's shadow root cannot be resolved by the internal control. Use visible or visually hidden text instead.
 
 ## Name
 
