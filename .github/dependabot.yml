@@ -4,6 +4,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 6
     versioning-strategy: widen
     groups:
       storybook:
@@ -11,3 +12,17 @@ updates:
           - 'storybook'
           - '@storybook/*'
           - 'eslint-plugin-storybook'
+      development-dependencies:
+        dependency-type: development
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch
+      security-dependencies:
+        applies-to: security-updates
+        patterns:
+          - '*'
+        update-types:
+          - minor
+          - patch

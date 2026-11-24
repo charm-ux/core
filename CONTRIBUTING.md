@@ -89,6 +89,31 @@ Format code:
 pnpm run prettier
 ```
 
+### Dependency Updates
+
+Dependabot checks npm dependencies weekly, with up to six open version-update
+pull requests. To reduce competing changes to `pnpm-lock.yaml`, its configuration
+in [`.github/dependabot.yml`](./.github/dependabot.yml) follows this policy:
+
+- Storybook packages stay in their existing coordinated group, including major
+  upgrades. Keep this rule before the broader development-dependency group:
+  Dependabot uses the first matching group.
+- Other development dependencies share one group for minor and patch updates;
+  major upgrades remain individual pull requests.
+- Minor and patch security updates share a separate group across development and
+  production dependencies. Major security updates remain individual.
+- Routine production-dependency updates remain enabled as individual pull
+  requests, except for packages in the coordinated Storybook group.
+- The scheduled version-update PR limit does not apply to security updates.
+
+Grouping reduces lockfile conflicts but cannot eliminate them or repair existing
+conflicting pull requests. If a dependency pull request conflicts after another
+update merges, comment `@dependabot rebase` on the affected pull request and merge
+updates sequentially. Avoid hand-merging the generated lockfile or resolving
+conflicts by taking an entire side.
+
+Changes to this configuration take effect on `main` after merge.
+
 ## Creating a Changeset
 
 We use [Changesets](https://github.com/changesets/changesets) to manage versions and changelogs. When you make changes that should be published, you need to create a changeset.
