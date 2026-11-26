@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@charm-ux/theming": "workspace:*",
-    "@custom-elements-manifest/analyzer": "^0.10.3",
+    "@custom-elements-manifest/analyzer": "^0.11.0",
     "@microsoft/applicationinsights-core-js": "^3.3.3",
     "@open-wc/lit-helpers": "^0.7.0",
     "@open-wc/testing": "^4.0.0",
@@ -92,7 +92,7 @@
     "storybook-addon-rtl": "^3.0.2",
     "typescript": "^5.9.3",
     "vite": "^8.3.6",
-    "web-test-runner-performance": "^0.1.6"
+    "web-test-runner-performance": "^0.4.0"
   },
   "customElements": "custom-elements.json"
 }
